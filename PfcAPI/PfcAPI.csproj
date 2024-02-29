@@ -1,0 +1,137 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="AppointeeCount\**" />
+    <Compile Remove="AppointeeUploads\**" />
+    <Compile Remove="Controllers\Base\**" />
+    <Compile Remove="DatabaseMigration\**" />
+    <Compile Remove="Infrastucture\**" />
+    <Compile Remove="Migrations\**" />
+    <Compile Remove="Model\**" />
+    <Compile Remove="ReportTemplate\**" />
+    <Compile Remove="Services\**" />
+    <Content Remove="AppointeeCount\**" />
+    <Content Remove="AppointeeUploads\**" />
+    <Content Remove="Controllers\Base\**" />
+    <Content Remove="DatabaseMigration\**" />
+    <Content Remove="Infrastucture\**" />
+    <Content Remove="Migrations\**" />
+    <Content Remove="Model\**" />
+    <Content Remove="ReportTemplate\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="AppointeeCount\**" />
+    <EmbeddedResource Remove="AppointeeUploads\**" />
+    <EmbeddedResource Remove="Controllers\Base\**" />
+    <EmbeddedResource Remove="DatabaseMigration\**" />
+    <EmbeddedResource Remove="Infrastucture\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <EmbeddedResource Remove="Model\**" />
+    <EmbeddedResource Remove="ReportTemplate\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="AppointeeCount\**" />
+    <None Remove="AppointeeUploads\**" />
+    <None Remove="Controllers\Base\**" />
+    <None Remove="DatabaseMigration\**" />
+    <None Remove="Infrastucture\**" />
+    <None Remove="Migrations\**" />
+    <None Remove="Model\**" />
+    <None Remove="ReportTemplate\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\Company\CompanyController.cs" />
+    <Compile Remove="Controllers\Company\CompanyUsersController.cs" />
+    <Compile Remove="Controllers\RestApi\AadhaarValidationController1.cs" />
+    <Compile Remove="WeatherForecast.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="FileUploaded\Sampledata.xlsx" />
+    <None Remove="FileUploaded\SampleUpdatedata.xlsx" />
+    <None Remove="FileUploaded\~%24SAMPLEDATA.XLSX.tmp" />
+    <None Remove="webapi-20230628.log" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="FileUploaded\Sampledata.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FileUploaded\SampleUpdatedata.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.10.2" />
+    <PackageReference Include="EPPlus" Version="7.0.3" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.7" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.7" />
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.20.3" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.7" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Cors" Version="5.2.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets" Version="2.1.40" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.10" />
+    <PackageReference Include="NLog.Database" Version="5.2.0" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
+    <PackageReference Include="Select.HtmlToPdf.NetCore" Version="23.1.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.3.0" />
+    <PackageReference Include="Serilog.Sinks.PostgreSQL" Version="2.3.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="DatabaseMigration\DMLScript\Admin\activity.activity_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.escalationlevel_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.escalation_case_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.escalation_setup.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.escaltionlevel_email_mapping.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.generalSetup.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.menu_action_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.menu_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.menu_role_mapping.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.role_user_mapping.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.user_authentication.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Admin\admin.user_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.api_type_mapping.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.api_type_master.Table.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DatabaseMigration\DMLScript\config\" />
+    <Folder Include="Downloads\EPFPSBK\" />
+    <Folder Include="Tools\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VERIDATA.BLL\VERIDATA.BLL.csproj" />
+    <ProjectReference Include="..\VERIDATA.DAL\VERIDATA.DAL.csproj" />
+    <ProjectReference Include="..\VERIDATA.Model\VERIDATA.Model.csproj" />
+  </ItemGroup>
+
+</Project>

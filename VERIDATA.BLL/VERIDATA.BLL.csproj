@@ -1,0 +1,87 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Context\**" />
+    <Compile Remove="DBContext\**" />
+    <Compile Remove="Interfaces\**" />
+    <EmbeddedResource Remove="Context\**" />
+    <EmbeddedResource Remove="DBContext\**" />
+    <EmbeddedResource Remove="Interfaces\**" />
+    <None Remove="Context\**" />
+    <None Remove="DBContext\**" />
+    <None Remove="Interfaces\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Authentication\HangfireAuthorizationFilter.cs" />
+    <Compile Remove="Authentication\IDashboardAuthorizationFilter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="NotificationTemplates\newusermailsend.txt" />
+    <None Remove="NotificationTemplates\updateusermailsend.txt" />
+    <None Remove="NotificationTemplates\userForcedApproved.txt" />
+    <None Remove="NotificationTemplates\userOtpAuth.txt" />
+    <None Remove="NotificationTemplates\userReject.txt" />
+    <None Remove="NotificationTemplates\userRemainder.txt" />
+    <None Remove="NotificationTemplates\userReprocess.txt" />
+    <None Remove="NotificationTemplates\userValidityRemarks.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Context\FileContext.cs" />
+    <Compile Include="Context\CandidateContext.cs" />
+    <Compile Include="Context\ReportingContext.cs" />
+    <Compile Include="Context\SetupConfigarationContext.cs" />
+    <Compile Include="Context\UserContext.cs" />
+    <Compile Include="Context\VerifyDataContext.cs" />
+    <Compile Include="Context\WorkFlowContext.cs" />
+    <Compile Include="Interfaces\IFileContext.cs" />
+    <Compile Include="Interfaces\ICandidateContext.cs" />
+    <Compile Include="Interfaces\IReportingContext.cs" />
+    <Compile Include="Interfaces\ISetupConfigarationContext.cs" />
+    <Compile Include="Interfaces\IUserContext.cs" />
+    <Compile Include="Interfaces\IVerifyDataContext.cs" />
+    <Compile Include="Interfaces\IWorkFlowContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="NotificationTemplates\newusermailsend.txt" />
+    <EmbeddedResource Include="NotificationTemplates\updateusermailsend.txt" />
+    <EmbeddedResource Include="NotificationTemplates\userForcedApproved.txt" />
+    <EmbeddedResource Include="NotificationTemplates\userOtpAuth.txt" />
+    <EmbeddedResource Include="NotificationTemplates\userReject.txt" />
+    <EmbeddedResource Include="NotificationTemplates\userRemainder.txt" />
+    <EmbeddedResource Include="NotificationTemplates\userReprocess.txt" />
+    <EmbeddedResource Include="NotificationTemplates\userValidityRemarks.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="7.0.2" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.7" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.7" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.7" />
+    <PackageReference Include="MailKit" Version="4.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.24.0" />
+    <PackageReference Include="mustache-sharp" Version="1.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.24.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VERIDATA.DAL\VERIDATA.DAL.csproj" />
+    <ProjectReference Include="..\VERIDATA.Model\VERIDATA.Model.csproj" />
+  </ItemGroup>
+
+</Project>

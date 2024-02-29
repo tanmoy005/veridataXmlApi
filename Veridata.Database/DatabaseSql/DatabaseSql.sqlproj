@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>DatabaseSql</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{571773d8-89d5-41fb-924e-25e282e8e916}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>DatabaseSql</RootNamespace>
+    <AssemblyName>DatabaseSql</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="master\" />
+    <Folder Include="master\Tables\" />
+    <Folder Include="HangFire\" />
+    <Folder Include="HangFire\Tables\" />
+    <Folder Include="config\" />
+    <Folder Include="config\Tables\" />
+    <Folder Include="admin\" />
+    <Folder Include="admin\Tables\" />
+    <Folder Include="activity\" />
+    <Folder Include="activity\Tables\" />
+    <Folder Include="Security\" />
+    <Folder Include="DbScript" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\workflow_details_hist.sql" />
+    <Build Include="dbo\Tables\workflow_details.sql" />
+    <Build Include="dbo\Tables\uploaded_xls_file.sql" />
+    <Build Include="dbo\Tables\upload_details.sql" />
+    <Build Include="dbo\Tables\upload_appointee_counter.sql" />
+    <Build Include="dbo\Tables\unprocessed_file_data.sql" />
+    <Build Include="dbo\Tables\under_process_file_data.sql" />
+    <Build Include="dbo\Tables\rejected_file_data.sql" />
+    <Build Include="dbo\Tables\raw_file_data.sql" />
+    <Build Include="dbo\Tables\processed_file_data.sql" />
+    <Build Include="dbo\Tables\Logs.sql" />
+    <Build Include="dbo\Tables\appointee_reason_details.sql" />
+    <Build Include="dbo\Tables\appointee_master.sql" />
+    <Build Include="dbo\Tables\appointee_id_gen.sql" />
+    <Build Include="dbo\Tables\appointee_details.sql" />
+    <Build Include="dbo\Tables\__EFMigrationsHistory.sql" />
+    <Build Include="master\Tables\reason_master.sql" />
+    <Build Include="master\Tables\workflow_state_master.sql" />
+    <Build Include="master\Tables\workflow_approval_status_master.sql" />
+    <Build Include="master\Tables\user_types.sql" />
+    <Build Include="master\Tables\upload_type_master.sql" />
+    <Build Include="master\Tables\role_master.sql" />
+    <Build Include="master\Tables\qualification_master.sql" />
+    <Build Include="master\Tables\nationility_master.sql" />
+    <Build Include="master\Tables\marital_status_master.sql" />
+    <Build Include="master\Tables\gender_master.sql" />
+    <Build Include="master\Tables\disability_master.sql" />
+    <Build Include="HangFire\Tables\AggregatedCounter.sql" />
+    <Build Include="HangFire\Tables\Hash.sql" />
+    <Build Include="HangFire\Tables\Counter.sql" />
+    <Build Include="HangFire\Tables\Set.sql" />
+    <Build Include="HangFire\Tables\List.sql" />
+    <Build Include="HangFire\Tables\Server.sql" />
+    <Build Include="HangFire\Tables\JobQueue.sql" />
+    <Build Include="HangFire\Tables\JobParameter.sql" />
+    <Build Include="HangFire\Tables\State.sql" />
+    <Build Include="HangFire\Tables\Job.sql" />
+    <Build Include="HangFire\Tables\Schema.sql" />
+    <Build Include="config\Tables\api_couter_log.sql" />
+    <Build Include="admin\Tables\escaltionlevel_email_mapping.sql" />
+    <Build Include="admin\Tables\escalation_setup.sql" />
+    <Build Include="admin\Tables\escalation_case_master.sql" />
+    <Build Include="admin\Tables\user_master.sql" />
+    <Build Include="admin\Tables\user_authentication_hist.sql" />
+    <Build Include="admin\Tables\user_authentication.sql" />
+    <Build Include="admin\Tables\role_user_mapping.sql" />
+    <Build Include="admin\Tables\menu_role_mapping.sql" />
+    <Build Include="admin\Tables\menu_master.sql" />
+    <Build Include="admin\Tables\menu_action_master.sql" />
+    <Build Include="admin\Tables\menu_action_mapping.sql" />
+    <Build Include="admin\Tables\generalSetup.sql" />
+    <Build Include="admin\Tables\escalationlevel_master.sql" />
+    <Build Include="admin\Tables\company.sql" />
+    <Build Include="activity\Tables\appointee_update_activity.sql" />
+    <Build Include="activity\Tables\activity_transaction.sql" />
+    <Build Include="activity\Tables\activity_master.sql" />
+    <Build Include="Security\master.sql" />
+    <Build Include="Security\HangFire.sql" />
+    <Build Include="Security\config.sql" />
+    <Build Include="Security\admin.sql" />
+    <Build Include="Security\activity.sql" />
+    <Build Include="dbo\Tables\raw_file_history_data.sql" />
+    <Build Include="config\Tables\appointee_update_log.sql" />
+    <Build Include="master\Tables\api_type_mapping.sql" />
+    <Build Include="master\Tables\api_type_master.sql" />
+    <Build Include="dbo\Tables\appointee_consent_maaping.sql" />
+  </ItemGroup>
+</Project>

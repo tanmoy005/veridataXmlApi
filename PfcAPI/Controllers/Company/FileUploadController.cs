@@ -1,0 +1,161 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using VERIDATA.BLL.Interfaces;
+using VERIDATA.Model.Base;
+using VERIDATA.Model.DataAccess;
+using VERIDATA.Model.DataAccess.Response;
+using VERIDATA.Model.Request;
+using VERIDATA.Model.Response;
+using static VERIDATA.BLL.utility.CommonEnum;
+
+namespace PfcAPI.Controllers.Company
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class FileUploadController : ControllerBase
+    {
+        private readonly IFileContext _fileService;
+        private readonly IWorkFlowContext _workflowcontext;
+        public FileUploadController(IFileContext fileService, IWorkFlowContext workflowcontext)
+        {
+            _fileService = fileService;
+            _workflowcontext = workflowcontext;
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("DownloadSampleXlsFile")]
+        public ActionResult DownloadSampleXlsFile()
+        {
+            try
+            {
+                string reportname = $"Sample_File.xlsx";
+                string Cuurentpath = Directory.GetCurrentDirectory();
+                string path = Path.Combine(Cuurentpath, "FileUploaded", "Sampledata.xlsx");
+
+                byte[]? fileData = Task.Run(async () => await _fileService.GetFileDataAsync(path)).GetAwaiter().GetResult();
+                Filedata _Filedata = new() { FileData = fileData, FileName = reportname, FileType = "xlsx" };
+                return Ok(new BaseResponse<Filedata>(HttpStatusCode.OK, _Filedata));
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        [Route("DownloadUpdateSampleXlsFile")]
+        public ActionResult DownloadUpdateSampleXlsFile()
+        {
+            try
+            {
+                string reportname = $"Update_Sample_File.xlsx";
+                string Cuurentpath = Directory.GetCurrentDirectory();
+                string path = Path.Combine(Cuurentpath, "FileUploaded", "SampleUpdatedata.xlsx");
+
+                byte[]? fileData = Task.Run(async () => await _fileService.GetFileDataAsync(path)).GetAwaiter().GetResult();
+                Filedata _Filedata = new() { FileData = fileData, FileName = reportname, FileType = "xlsx" };
+                return Ok(new BaseResponse<Filedata>(HttpStatusCode.OK, _Filedata));
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        [Route("DownloadPassbookFile")]
+        public ActionResult DownloadPassbook(AppointeePassbookDownloadRequest reqobj)
+        {
+            try
+            {
+                FileDetailsResponse fileDetails = new();
+                
+                if (reqobj.Type == FileTypealias.PFPassbookTrust)
+                {
+                    fileDetails = Task.Run(async () => await _fileService.DownloadTrustPassbook(reqobj.AppointeeId, reqobj.UserId)).GetAwaiter().GetResult();
+                }
+                Filedata _Filedata = new() { FileData = fileDetails.FileData, FileName = fileDetails.FileData != null ? fileDetails.FileName : string.Empty, FileType = fileDetails.FileData != null ? fileDetails.FileExtention : string.Empty };
+                return Ok(new BaseResponse<Filedata>(HttpStatusCode.OK, _Filedata));
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
+
+
+        /// <summary>
+        /// Single xls File Upload
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("UploadxlsFile")]
+        public ActionResult UploadxlsFile([FromForm] CompanyFileUploadRequest fileDetails)
+        {
+            if (fileDetails == null)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                UploadedxlsRawFileDataResponse response = new();
+
+                response = Task.Run(async () => await _fileService.UploadAppointeexlsFile(fileDetails)).GetAwaiter().GetResult();
+
+                return Ok(new BaseResponse<UploadedxlsRawFileDataResponse>(HttpStatusCode.OK, response));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [Authorize]
+        //[AllowAnonymous]
+        [HttpPost("UploadUpdatexlsFile")]
+        public ActionResult UploadUpdatedxlsFile([FromForm] CompanyFileUploadRequest fileDetails)
+        {
+            if (fileDetails == null)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                UploadedxlsRawFileDataResponse response = new();
+
+                response = Task.Run(async () => await _fileService.UploadUpdateAppointeexlsFile(fileDetails)).GetAwaiter().GetResult();
+
+                return Ok(new BaseResponse<UploadedxlsRawFileDataResponse>(HttpStatusCode.OK, response));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+        // GET: api/FileUpload/GetRawFileData
+        [Authorize]
+        [HttpGet("GetRawFileData")]
+        public ActionResult GetRawFileData(int companyId, int? fileId)
+        {
+            try
+            {
+                List<RawFileDataDetailsResponse> RawFileData = new();
+                RawFileData = Task.Run(async () => await _workflowcontext.getRawfileData(fileId, companyId)).GetAwaiter().GetResult();
+                return Ok(new BaseResponse<RawFileDataDetailsResponse>(HttpStatusCode.OK, RawFileData));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+    }
+}
