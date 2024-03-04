@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Net;
+using System.Xml;
 using VERIDATA.BLL.apiContext.karza;
 using VERIDATA.BLL.apiContext.surepass;
 using VERIDATA.BLL.Interfaces;
@@ -14,6 +15,7 @@ using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
 using VERIDATA.Model.Response.api.surepass;
 using VERIDATA.Model.Table.Master;
+using VERIDATA.Model.Table.Public;
 using static VERIDATA.BLL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
@@ -438,6 +440,66 @@ namespace VERIDATA.BLL.Context
             }
             return Response;
         }
+        public async Task<AadharSubmitOtpDetails> GetAadharDetailsFromXml(string? xmlData)
+        {
+            AadharSubmitOtpDetails response = new();
+            if (xmlData != null)
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(xmlData);
+
+                // Navigate and extract data
+                XmlNode root = xmlDoc.DocumentElement;
+                XmlNode personNode = root.SelectSingleNode("UidData");
+
+                if (personNode != null)
+                {
+
+                    XmlNode personalInfoNode = personNode.SelectSingleNode("Poi");
+                    XmlNode personalAddresNode = personNode.SelectSingleNode("Poa");
+                    string referenceId = root.SelectSingleNode("@referenceId").Value;
+                    string nameNode = personalInfoNode.SelectSingleNode("@name").Value;
+                    string genderNode = personalInfoNode.SelectSingleNode("@gender").Value;
+                    string dobNode = personalInfoNode.SelectSingleNode("@dob").Value;
+                    string careofNode = personalAddresNode.SelectSingleNode("@careof").Value;
+                    var lastFourDigit = new string(referenceId.Where(char.IsDigit).Take(4).ToArray());
+                    response.Name = nameNode;
+                    response.Dob = dobNode;
+                    response.CareOf = careofNode;
+                    response.Gender = genderNode;
+                    response.AadharNumber = $"{"XXXXXXXX"}{lastFourDigit}";
+
+                }
+            }
+            return response;
+        }
+        public async Task<string> GetAadharDetailsFromXML(int appointeeId, string shareCode)
+        {
+
+            AadharSubmitOtpDetails Response = new();
+            AadharSubmitOtpDetails _apiResponse = new();
+            AppointeeUploadDetails _uploadDetails = await _fileService.getFiledetailsByFileType(appointeeId, FileTypealias.Adhaar);
+            string getDirectoryPath = Path.GetDirectoryName(_uploadDetails.UploadPath);
+            string getFileName = Path.GetFileName(_uploadDetails.UploadPath);
+
+
+
+
+
+            //Response.StatusCode = _apiResponse.StatusCode;
+            //if (_apiResponse.StatusCode != HttpStatusCode.OK)
+            //{
+            //    bool IsUnprocessableEntity = (int)_apiResponse.StatusCode == (int)HttpStatusCode.UnprocessableEntity;
+            //    Response.UserMessage = IsUnprocessableEntity ? "Invalid OTP, Please retry" : GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "UIDAI (Aadhar)");
+            //    Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
+            //}
+            //else
+            //{
+            //    Response = _apiResponse;
+            //}
+            return "";
+        }
+
         public async Task<CandidateValidateResponse> VerifyAadharData(AadharValidationRequest reqObj)
         {
             bool IsValid = false;
@@ -817,5 +879,6 @@ namespace VERIDATA.BLL.Context
             await _activityContext.PostActivityDetails(appointeeId, userId, activityCode);
 
         }
+
     }
 }

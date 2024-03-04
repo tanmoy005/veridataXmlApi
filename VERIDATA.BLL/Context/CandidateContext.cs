@@ -118,33 +118,13 @@ namespace VERIDATA.BLL.Context
                 //GetFileDataModel
                 string? _paddedName = _appointeedetails?.AppointeeName?.Length > 4 ? _appointeedetails.AppointeeName?[..3] : _appointeedetails?.AppointeeName?.PadRight(3, '0');
                 string candidateFileName = $"{_appointeedetails?.CandidateId}_{_paddedName}";
-                await getFiledetailsByAppointeeId(appointeeId, candidateFileName, _FileDataList);
+                await _fileContext.getFiledetailsByAppointeeId(appointeeId, candidateFileName, _FileDataList);
                 data.FileUploaded = _FileDataList;
 
             }
             return data;
         }
-        private async Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList)
-        {
-            List<AppointeeUploadDetails> _UploadDetails = await _appointeeDalContext.GetAppinteeUploadDetails(appointeeId);
-            if (_UploadDetails?.Count > 0)
-            {
-                foreach ((AppointeeUploadDetails obj, FileDetailsResponse doc) in from obj in _UploadDetails
-                                                                                  let doc = new FileDetailsResponse()
-                                                                                  select (obj, doc))
-                {
-                    byte[]? _FileData = await _fileContext.GetFileDataAsync(obj.UploadPath);
-                    doc.FileData = _FileData;
-                    string _fileName = $"{candidateFileName}_{obj?.UploadTypeCode}";
-                    doc.FileName = _fileName;
-                    doc.UploadTypeId = obj?.UploadTypeId ?? 0;
-                    doc.mimeType = obj?.MimeType ?? string.Empty;
-                    doc.UploadTypeAlias = obj?.UploadTypeCode ?? string.Empty;
-                    _FileDataList.Add(doc);
-
-                }
-            }
-        }
+       
         public async Task<CandidateValidateResponse> UpdateCandidateValidateData(CandidateValidateUpdatedDataRequest validationReq)
         {
             string? key = _apiConfig.EncriptKey;

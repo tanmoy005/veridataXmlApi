@@ -21,91 +21,149 @@ namespace PfcAPI.Controllers.RestApi
         private readonly ErrorResponse _ErrorResponse = new();
         private readonly ApiConfiguration _apiConfig;
         private readonly IVerifyDataContext _varifyCandidate;
+        private readonly IFileContext _fileContext;
 
-        public AadhaarValidateController(IVerifyDataContext varifyCandidate, ApiConfiguration apiConfig)
+        public AadhaarValidateController(IVerifyDataContext varifyCandidate, ApiConfiguration apiConfig, IFileContext fileContext)
         {
             _varifyCandidate = varifyCandidate;
             _apiConfig = apiConfig;
+            _fileContext = fileContext;
         }
 
 
+        //[Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        //[HttpPost]
+        //[Route("GenerateOTP")]
+        //public IActionResult GenerateAadhaarOTP(AppointeeAadhaarValidateRequest reqObj)
+        //{
+        //    try
+        //    {
+        //        AppointeeAadhaarGenerateOtpResponse Response = new();
+        //        if (_apiConfig.IsApiCall)
+        //        {
+        //            AadharGenerateOTPDetails GenarateOtpResponse = Task.Run(async () => await _varifyCandidate.GeneratetAadharOTP(reqObj)).GetAwaiter().GetResult();
+        //            if (GenarateOtpResponse.StatusCode != HttpStatusCode.OK)
+        //            {
+        //                _ErrorResponse.ErrorCode = (int)GenarateOtpResponse.StatusCode;
+        //                _ErrorResponse.UserMessage = GenarateOtpResponse?.UserMessage ?? string.Empty;
+        //                _ErrorResponse.InternalMessage = GenarateOtpResponse?.ReasonPhrase ?? string.Empty;
+        //                return Ok(new BaseResponse<ErrorResponse>(GenarateOtpResponse.StatusCode, _ErrorResponse));
+        //            }
+        //            else
+        //            {
+        //                Response.if_number = GenarateOtpResponse?.if_number ?? false;
+        //                Response.otp_sent = GenarateOtpResponse?.otp_sent ?? false;
+        //                Response.client_id = GenarateOtpResponse?.client_id ?? string.Empty;
+        //                Response.valid_aadhaar = GenarateOtpResponse?.valid_aadhaar ?? false;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            _ErrorResponse.ErrorCode = (int)HttpStatusCode.InternalServerError;
+        //            _ErrorResponse.UserMessage = "server is temporarily shutdown by the admin;please contact with administrator";
+        //            return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _ErrorResponse));
+
+        //        }
+
+        //        return Ok(new BaseResponse<AppointeeAadhaarGenerateOtpResponse>(HttpStatusCode.OK, Response));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string msg = _varifyCandidate.GenarateErrorMsg((int)HttpStatusCode.InternalServerError, "", "UIDAI (Aadhar)");
+        //        Task.Run(async () => await _varifyCandidate.PostActivity(reqObj.appointeeId, reqObj.userId, ActivityLog.ADHVERIFIFAILED)).GetAwaiter().GetResult();
+        //        CustomException excp = new(msg, ex);
+        //        throw excp;
+
+        //    }
+        //}
+
+        //[Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        //[HttpPost]
+        //[Route("SubmitOTP")]
+        //public IActionResult SubmitAadhaarOTP(AppointeeAadhaarSubmitOtpRequest reqObj)
+        //{
+        //    try
+        //    {
+        //        VarificationStatusResponse response = new();
+        //        if (_apiConfig.IsApiCall)
+        //        {
+        //            AadharSubmitOtpDetails GenarateOtpResponse = Task.Run(async () => await _varifyCandidate.SubmitAadharOTP(reqObj)).GetAwaiter().GetResult();
+
+        //            if (GenarateOtpResponse.StatusCode != HttpStatusCode.OK)
+        //            {
+        //                _ErrorResponse.ErrorCode = (int)GenarateOtpResponse.StatusCode;
+        //                _ErrorResponse.UserMessage = GenarateOtpResponse?.UserMessage ?? string.Empty;
+        //                _ErrorResponse.InternalMessage = GenarateOtpResponse?.ReasonPhrase ?? string.Empty;
+        //                return Ok(new BaseResponse<ErrorResponse>(GenarateOtpResponse.StatusCode, _ErrorResponse));
+        //            }
+        //            else
+        //            {
+        //                AadharValidationRequest VarifyReq = new()
+        //                {
+        //                    AadharDetails = GenarateOtpResponse,
+        //                    isValidAdhar = true,
+        //                    AppointeeId = reqObj.appointeeId,
+        //                    AppointeeAadhaarName = reqObj.aadharName
+        //                };
+
+        //                CandidateValidateResponse? VerifyAadhar = Task.Run(async () => await _varifyCandidate.VerifyAadharData(VarifyReq)).GetAwaiter().GetResult();
+        //                response = new()
+        //                {
+        //                    IsVarified = VerifyAadhar?.IsValid ?? false,
+        //                    Remarks = VerifyAadhar?.Remarks
+        //                };
+        //            }
+
+        //        }
+        //        else
+        //        {
+        //            _ErrorResponse.ErrorCode = (int)HttpStatusCode.InternalServerError;
+        //            _ErrorResponse.UserMessage = "server is temporarily shutdown by the admin;please contact with administrator";
+        //            return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _ErrorResponse));
+
+        //        }
+        //        return Ok(new BaseResponse<VarificationStatusResponse>(HttpStatusCode.OK, response));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string msg = _varifyCandidate.GenarateErrorMsg((int)HttpStatusCode.InternalServerError, "", "UIDAI (Aadhar)");
+        //        CustomException excp = new(msg, ex);
+        //        throw excp;
+        //    }
+        //}
+
         [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        //[AllowAnonymous]
         [HttpPost]
-        [Route("GenerateOTP")]
-        public IActionResult GenerateAadhaarOTP(AppointeeAadhaarValidateRequest reqObj)
-        {
-            try
-            {
-                AppointeeAadhaarGenerateOtpResponse Response = new();
-                if (_apiConfig.IsApiCall)
-                {
-                    AadharGenerateOTPDetails GenarateOtpResponse = Task.Run(async () => await _varifyCandidate.GeneratetAadharOTP(reqObj)).GetAwaiter().GetResult();
-                    if (GenarateOtpResponse.StatusCode != HttpStatusCode.OK)
-                    {
-                        _ErrorResponse.ErrorCode = (int)GenarateOtpResponse.StatusCode;
-                        _ErrorResponse.UserMessage = GenarateOtpResponse?.UserMessage ?? string.Empty;
-                        _ErrorResponse.InternalMessage = GenarateOtpResponse?.ReasonPhrase ?? string.Empty;
-                        return Ok(new BaseResponse<ErrorResponse>(GenarateOtpResponse.StatusCode, _ErrorResponse));
-                    }
-                    else
-                    {
-                        Response.if_number = GenarateOtpResponse?.if_number ?? false;
-                        Response.otp_sent = GenarateOtpResponse?.otp_sent ?? false;
-                        Response.client_id = GenarateOtpResponse?.client_id ?? string.Empty;
-                        Response.valid_aadhaar = GenarateOtpResponse?.valid_aadhaar ?? false;
-                    }
-                }
-                else
-                {
-                    _ErrorResponse.ErrorCode = (int)HttpStatusCode.InternalServerError;
-                    _ErrorResponse.UserMessage = "server is temporarily shutdown by the admin;please contact with administrator";
-                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _ErrorResponse));
-
-                }
-
-                return Ok(new BaseResponse<AppointeeAadhaarGenerateOtpResponse>(HttpStatusCode.OK, Response));
-            }
-            catch (Exception ex)
-            {
-                string msg = _varifyCandidate.GenarateErrorMsg((int)HttpStatusCode.InternalServerError, "", "UIDAI (Aadhar)");
-                Task.Run(async () => await _varifyCandidate.PostActivity(reqObj.appointeeId, reqObj.userId, ActivityLog.ADHVERIFIFAILED)).GetAwaiter().GetResult();
-                CustomException excp = new(msg, ex);
-                throw excp;
-
-            }
-        }
-
-        [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
-        [HttpPost]
-        [Route("SubmitOTP")]
-        public IActionResult SubmitAadhaarOTP(AppointeeAadhaarSubmitOtpRequest reqObj)
+        [Route("VerifyAadharViaXml")]
+        public IActionResult VerifyAadharViaXml([FromForm] AppointeeAadhaarAadharXmlVarifyRequest reqObj)
         {
             try
             {
                 VarificationStatusResponse response = new();
                 if (_apiConfig.IsApiCall)
                 {
-                    AadharSubmitOtpDetails GenarateOtpResponse = Task.Run(async () => await _varifyCandidate.SubmitAadharOTP(reqObj)).GetAwaiter().GetResult();
+                    var unZipRes = Task.Run(async () => await _fileContext.unzipAdharzipFiles(reqObj)).GetAwaiter().GetResult();
 
-                    if (GenarateOtpResponse.StatusCode != 
-                        )
+                    if (!unZipRes.IsValid)
                     {
-                        _ErrorResponse.ErrorCode = (int)GenarateOtpResponse.StatusCode;
-                        _ErrorResponse.UserMessage = GenarateOtpResponse?.UserMessage ?? string.Empty;
-                        _ErrorResponse.InternalMessage = GenarateOtpResponse?.ReasonPhrase ?? string.Empty;
-                        return Ok(new BaseResponse<ErrorResponse>(GenarateOtpResponse.StatusCode, _ErrorResponse));
+                        _ErrorResponse.ErrorCode = (int)HttpStatusCode.InternalServerError;
+                        _ErrorResponse.UserMessage = unZipRes?.Message ?? string.Empty;
+                        _ErrorResponse.InternalMessage = unZipRes?.Message ?? string.Empty;
+                        return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _ErrorResponse));
                     }
                     else
                     {
+                        var getAadharDetails = Task.Run(async () => await _varifyCandidate.GetAadharDetailsFromXml(unZipRes.FileContent)).GetAwaiter().GetResult();
                         AadharValidationRequest VarifyReq = new()
                         {
-                            AadharDetails = GenarateOtpResponse,
+                            AadharDetails = getAadharDetails,
                             isValidAdhar = true,
                             AppointeeId = reqObj.appointeeId,
                             AppointeeAadhaarName = reqObj.aadharName
                         };
+                        var VerifyAadhar = Task.Run(async () => await _varifyCandidate.VerifyAadharData(VarifyReq)).GetAwaiter().GetResult();
 
-                        CandidateValidateResponse? VerifyAadhar = Task.Run(async () => await _varifyCandidate.VerifyAadharData(VarifyReq)).GetAwaiter().GetResult();
                         response = new()
                         {
                             IsVarified = VerifyAadhar?.IsValid ?? false,

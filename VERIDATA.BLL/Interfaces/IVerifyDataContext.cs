@@ -14,6 +14,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<GetUanResponse> GetUanNumber(GetUanNumberDetailsRequest reqObj);
         public Task<AadharGenerateOTPDetails> GeneratetAadharOTP(AppointeeAadhaarValidateRequest reqObj);
         public Task<AadharSubmitOtpDetails> SubmitAadharOTP(AppointeeAadhaarSubmitOtpRequest reqObj);
+        public Task<AadharSubmitOtpDetails> GetAadharDetailsFromXml(string? xmlData);
         public Task<CandidateValidateResponse> VerifyAadharData(AadharValidationRequest reqObj);
         public Task<UanGenerateOtpDetails> GeneratetUANOTP(UanGenerateOtpRequest reqObj);
         public Task<UanSubmitOtpDetails> SubmitUanOTP(AppointeeUANSubmitOtpRequest reqObj);

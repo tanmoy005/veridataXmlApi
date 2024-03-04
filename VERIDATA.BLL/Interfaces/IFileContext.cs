@@ -7,6 +7,7 @@ using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
+using VERIDATA.Model.Table.Public;
 using static VERIDATA.BLL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Interfaces
@@ -29,6 +30,9 @@ namespace VERIDATA.BLL.Interfaces
         public Task<byte[]?> GetFileDataAsync(string filePath);
         public Task postappointeeUploadedFiles(AppointeeFileDetailsRequest AppointeeDetails);
         public Task<FileDetailsResponse> DownloadTrustPassbook(int appointeeId, int userId);
+        public Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList);
+        public Task<AppointeeUploadDetails> getFiledetailsByFileType(int appointeeId, string fileTypeCode);
         public Task postAppointeePassbookUpload(AppointeeDataSaveInFilesRequset UploadDetails);
+        public Task<UnzipAadharDataResponse> unzipAdharzipFiles(AppointeeAadhaarAadharXmlVarifyRequest AppointeeAdharUploadFileDetails);
     }
 }

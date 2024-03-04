@@ -160,7 +160,7 @@ namespace VERIDATA.BLL.Context
                         isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
                         Status = row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         StatusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
-                        ConsentStatusCode = row.ConsentStatusId?? 0,
+                        ConsentStatusCode = row.ConsentStatusId ?? 0,
                         //ConsentStatusCode = row.ConsentStatusId != null ? row.ConsentStatusId == (Int32)ConsentStatus.Agree ? "Given" : row.ConsentStatusId == 2 ? "Declined" : "Revoked" : "Pending",
                         CreatedDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
@@ -501,7 +501,6 @@ namespace VERIDATA.BLL.Context
         public async Task PostAppointeeFileDetailsAsync(AppointeeFileDetailsRequest AppointeeFileDetails)
         {
             _ = _aadhaarConfig.EncriptKey;
-            _ = AppointeeFileDetails.AppointeeDetailsId;
             int appointeeId = AppointeeFileDetails.AppointeeId;
             AppointeeDetails? _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
             if (_appointeedetails.IsProcessed != true)

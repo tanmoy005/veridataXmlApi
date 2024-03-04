@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using System.Data;
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
@@ -606,6 +608,7 @@ namespace VERIDATA.BLL.Context
         /// </summary>
         /// <param name="AppointeeDetails"></param>
         /// <returns></returns>
+        /// 
         public async Task postappointeeUploadedFiles(AppointeeFileDetailsRequest AppointeeDetails)
         {
             //try
@@ -746,7 +749,60 @@ namespace VERIDATA.BLL.Context
                 }
             }
         }
+        public async Task<UnzipAadharDataResponse> unzipAdharzipFiles(AppointeeAadhaarAadharXmlVarifyRequest AppointeeAdharUploadFileDetails)
+        {
+            UnzipAadharDataResponse response = new();
+            string unzipFileContent = string.Empty;
+            string messeege = string.Empty;
+            bool isValid = false;
 
+            if ((AppointeeAdharUploadFileDetails?.appointeeId ?? 0) != 0 && AppointeeAdharUploadFileDetails?.aadharFileDetails != null)
+            {
+                IFormFile? AdharfileUploaded = AppointeeAdharUploadFileDetails.aadharFileDetails;
+                try
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        AdharfileUploaded.CopyTo(memoryStream);
+
+                        memoryStream.Position = 0;
+                        using (var zipStream = new ZipInputStream(memoryStream))
+                        {
+                            if (!string.IsNullOrEmpty(AppointeeAdharUploadFileDetails.shareCode))
+                            {
+                                zipStream.Password = AppointeeAdharUploadFileDetails.shareCode;
+                            }
+                            else
+                            {
+
+                            }
+
+                            ZipEntry entry;
+                            while ((entry = zipStream.GetNextEntry()) != null)
+                            {
+                                using (var reader = new StreamReader(zipStream, Encoding.UTF8))
+                                {
+                                    unzipFileContent = reader.ReadToEnd();
+                                    isValid = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (ZipException ex)
+                {
+                    messeege = $"Error reading zip file: {ex.Message}";
+                }
+                catch (Exception ex)
+                {
+                    messeege = $"An unexpected error occurred: {ex.Message}";
+                }
+            }
+            response.FileContent = unzipFileContent;
+            response.IsValid = isValid;
+            response.Message = messeege;
+            return response;
+        }
 
         public async Task<FileDetailsResponse> DownloadTrustPassbook(int appointeeId, int userId)
         {
@@ -776,5 +832,37 @@ namespace VERIDATA.BLL.Context
             return fileDetails;
         }
 
+        public async Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList)
+        {
+            List<AppointeeUploadDetails> _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
+            if (_UploadDetails?.Count > 0)
+            {
+                foreach ((AppointeeUploadDetails obj, FileDetailsResponse doc) in from obj in _UploadDetails
+                                                                                  let doc = new FileDetailsResponse()
+                                                                                  select (obj, doc))
+                {
+                    byte[]? _FileData = await GetFileDataAsync(obj.UploadPath);
+                    doc.FileData = _FileData;
+                    string _fileName = $"{candidateFileName}_{obj?.UploadTypeCode}";
+                    doc.FileName = _fileName;
+                    doc.UploadTypeId = obj?.UploadTypeId ?? 0;
+                    doc.mimeType = obj?.MimeType ?? string.Empty;
+                    doc.UploadTypeAlias = obj?.UploadTypeCode ?? string.Empty;
+                    _FileDataList.Add(doc);
+
+                }
+            }
+        }
+        public async Task<AppointeeUploadDetails> getFiledetailsByFileType(int appointeeId, string fileTypeCode)
+        {
+            AppointeeUploadDetails FileDetailsResponse = new();
+            List<AppointeeUploadDetails> _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
+            if (_UploadDetails?.Count > 0)
+            {
+                FileDetailsResponse = _UploadDetails?.LastOrDefault(x => x.UploadTypeCode == fileTypeCode);
+            }
+            return FileDetailsResponse;
+        }
+       
     }
 }
