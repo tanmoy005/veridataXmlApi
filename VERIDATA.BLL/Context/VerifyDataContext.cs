@@ -672,9 +672,9 @@ namespace VERIDATA.BLL.Context
 
                 if (GetPassbookDetails.StatusCode != HttpStatusCode.OK)
                 {
-                    GetPassbookDetails.StatusCode = GenarateOtpResponse.StatusCode;
-                    GetPassbookDetails.UserMessage = GenarateOtpResponse?.UserMessage ?? string.Empty;
-                    GetPassbookDetails.ReasonPhrase = GenarateOtpResponse?.ReasonPhrase ?? string.Empty;
+                    GetPassbookDetails.StatusCode = GetPassbookDetails.StatusCode;
+                    GetPassbookDetails.UserMessage = GetPassbookDetails?.UserMessage ?? string.Empty;
+                    GetPassbookDetails.ReasonPhrase = GetPassbookDetails?.ReasonPhrase ?? string.Empty;
                 }
             }
 
@@ -862,7 +862,7 @@ namespace VERIDATA.BLL.Context
                 UserName = appointeedetail?.AppointeeName,
                 IsPensionApplicable = _IsPensionApplicable,
                 Type = RemarksType.UAN,
-                UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? CommonUtility.CustomEncryptString(_apiConfigContext.EncriptKey, appointeedetail?.UANNumber) : reqObj?.PassbookDetails?.PfUan,
+                UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? appointeedetail?.UANNumber : reqObj?.PassbookDetails?.PfUan,
             };
 
             CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);

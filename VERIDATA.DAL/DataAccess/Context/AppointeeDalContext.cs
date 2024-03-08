@@ -21,7 +21,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<AppointeeDetails> GetAppinteeDetailsById(int appointeeId)
         {
-            AppointeeDetails _appointeedetails = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true) ;
+            AppointeeDetails _appointeedetails = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true);
             return _appointeedetails;
         }
         public async Task<UnderProcessFileData> GetUnderProcessAppinteeDetailsById(int appointeeId)
@@ -131,6 +131,22 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             return AllRemarks;
         }
+        public async Task UpdateRemarksStatusByType(int AppointeeId, string Type, int UserId)
+        {
+            string AllRemarks = string.Empty;
+
+            List<ReasonMaser> AllResonDetails = await GetAllRemarksByType(Type);
+            var AllReasonId = AllResonDetails?.Select(x => x.ReasonId)?.ToList();
+            List<AppointeeReasonMappingData> AllPrevReason = await _dbContextClass.AppointeeReasonMappingData.Where(x => x.AppointeeId.Equals(AppointeeId) && x.ActiveStatus == true && AllReasonId.Contains(x.ReasonId)).ToListAsync();
+
+            // var ResonDetails = AllResonDetails.Where(x => ReasonCodeList.Contains(x.ReasonCode)).ToList();
+            if (AllPrevReason?.Count > 0)
+            {
+                AllPrevReason?.ForEach(x => { x.ActiveStatus = false; x.UpdatedOn = DateTime.Now; x.UpdatedBy = UserId; });
+
+                await _dbContextClass.SaveChangesAsync();
+            }
+        }
         public async Task uploadFilesNUpdatePrevfiles(AppointeeUploadDetails uploadDetails, AppointeeUploadDetails prevDocDetails, int userId)
         {
             //using var transaction = _dbContextClass.Database.BeginTransaction();
@@ -180,7 +196,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                             join a in _dbContextClass.AppointeeReasonMappingData
                                 on r.ReasonId equals a.ReasonId
                             where r.ActiveStatus == true && a.AppointeeId == appointeeId && a.ActiveStatus == true
-                            select new { a.Remarks, r.ReasonId, r.ReasonCode, r.ReasonCategory ,a.ActiveStatus };
+                            select new { a.Remarks, r.ReasonId, r.ReasonCode, r.ReasonCategory, a.ActiveStatus };
 
             var list = await querydata.ToListAsync().ConfigureAwait(false);
             if (list.Count > 0)

@@ -108,10 +108,10 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                     on r.AppointeeId equals x.AppointeeId into grouping
                                                                 from a in grouping.DefaultIfEmpty()
                                                                 where r.ActiveStatus == true && rm.ActiveStatus == true && rp.ActiveStatus == true
-&& (string.IsNullOrEmpty(filter.AppointeeName) || u.AppointeeName.Contains(filter.AppointeeName))
-&& (string.IsNullOrEmpty(filter.CandidateId) || u.CandidateId.Contains(filter.CandidateId))
-&& (filter.FromDate == null || r.CreatedOn >= filter.FromDate)
-&& (filter.ToDate == null || r.CreatedOn < _ToDate)
+                                                                && (string.IsNullOrEmpty(filter.AppointeeName) || u.AppointeeName.Contains(filter.AppointeeName))
+                                                                && (string.IsNullOrEmpty(filter.CandidateId) || u.CandidateId.Contains(filter.CandidateId))
+                                                                && (filter.FromDate == null || r.CreatedOn >= filter.FromDate)
+                                                                && (filter.ToDate == null || r.CreatedOn < _ToDate)
                                                                 select new RejectedDataDetailsResponse
                                                                 {
                                                                     CompanyId = u.CompanyId,

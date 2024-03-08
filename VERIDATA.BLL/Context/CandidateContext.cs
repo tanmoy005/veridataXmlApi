@@ -124,7 +124,7 @@ namespace VERIDATA.BLL.Context
             }
             return data;
         }
-       
+
         public async Task<CandidateValidateResponse> UpdateCandidateValidateData(CandidateValidateUpdatedDataRequest validationReq)
         {
             string? key = _apiConfig.EncriptKey;
@@ -168,6 +168,10 @@ namespace VERIDATA.BLL.Context
                         await _emailSender.SendAppointeeMail(validationReq?.EmailId, mailDetails);
                     }
                 }
+            }
+            else
+            {
+                await _appointeeDalContext.UpdateRemarksStatusByType(validationReq.AppointeeId, validationReq?.Type ?? "", validationReq?.UserId ?? 0);
             }
             Response.IsValid = validationReq.Status ?? false;
             Response.Remarks = Remarks;
@@ -221,12 +225,12 @@ namespace VERIDATA.BLL.Context
                 {
                     // Read entire text file content in one string
                     string _passbookdata = File.ReadAllText(path);
-                    if (_DocList.UploadSubTypeCode == "SurePass")
+                    if (_DocList.UploadSubTypeCode == ApiProviderType.SurePass)
                     {
                         Surepass_GetUanPassbookResponse PassBookResponse = JsonConvert.DeserializeObject<Surepass_GetUanPassbookResponse>(_passbookdata);
                         passbookDetails = ParsePassbookDetailsSurePass(PassBookResponse);
                     }
-                    if (_DocList.UploadSubTypeCode == "Karza")
+                    if (_DocList.UploadSubTypeCode == ApiProviderType.Karza)
                     {
                         UanPassbookDetails PassBookResponse1 = JsonConvert.DeserializeObject<UanPassbookDetails>(_passbookdata);
                         passbookDetails = await ParsePassbookDetailsKarza(PassBookResponse1, appointeeId);
