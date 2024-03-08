@@ -301,7 +301,7 @@ namespace VERIDATA.BLL.Context
                 foreach (EstDetail obj in PassBookResponse?.est_details)
                 {
                     //var _copmnyData = obj.Value;
-                    DateTime transMonth = Convert.ToDateTime(obj.doj_epf);
+                    DateTime transMonth = Convert.ToDateTime(obj.doe_epf);
                     PfCompanyDetails _companyDetails = new()
                     {
                         passbook = new List<CompanyPassbookDetails>(),
