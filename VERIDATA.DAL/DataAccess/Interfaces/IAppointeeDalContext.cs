@@ -22,6 +22,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<UploadTypeMaster> getFileTypeDataByAliasAsync(string? fileTypeAlias);
         public Task<AppointeeConsentMapping> getAppointeeContestAsync(int? appointeeId);
         public Task postAppointeeContestAsync(AppointeeConsentSubmitRequest req);
+        public Task PostOfflineKycStatus(OfflineAadharVarifyStatusUpdateRequest reqObj);
 
     }
 }

@@ -180,7 +180,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                             join a in _dbContextClass.AppointeeReasonMappingData
                                 on r.ReasonId equals a.ReasonId
                             where r.ActiveStatus == true && a.AppointeeId == appointeeId && a.ActiveStatus == true
-                            select new { a.Remarks, r.ReasonId, r.ReasonCode, r.ReasonCategory };
+                            select new { a.Remarks, r.ReasonId, r.ReasonCode, r.ReasonCategory ,a.ActiveStatus };
 
             var list = await querydata.ToListAsync().ConfigureAwait(false);
             if (list.Count > 0)
@@ -233,6 +233,13 @@ namespace VERIDATA.DAL.DataAccess.Context
                 await _dbContextClass.SaveChangesAsync();
             }
             return;
+        }
+
+        public async Task PostOfflineKycStatus(OfflineAadharVarifyStatusUpdateRequest reqObj)
+        {
+            AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(reqObj.AppointeeId);
+            appointeeDetails.IsOfflineKyc = reqObj.OfflineKycStatus;
+            _ = await _dbContextClass.SaveChangesAsync();
         }
     }
 }

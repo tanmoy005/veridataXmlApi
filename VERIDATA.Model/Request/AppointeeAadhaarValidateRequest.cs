@@ -8,8 +8,8 @@ namespace VERIDATA.Model.Request
         [Required]
         public int userId { get; set; }
 
-        [Required]
-        [StringLength(12, MinimumLength = 12, ErrorMessage = "Aadhaar Number length must be equal 12 characters.")]
+        //[Required]
+        //[StringLength(12, MinimumLength = 12, ErrorMessage = "Aadhaar Number length must be equal 12 characters.")]
         public string aaddharNumber { get; set; }
         public string aaddharName { get; set; }
     }

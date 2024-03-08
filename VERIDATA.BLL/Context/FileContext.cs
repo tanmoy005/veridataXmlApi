@@ -831,7 +831,12 @@ namespace VERIDATA.BLL.Context
 
             return fileDetails;
         }
+        public async Task OfflineKycStatusUpdate(OfflineAadharVarifyStatusUpdateRequest reqObj)
+        {
 
+            await _appointeeContext.PostOfflineKycStatus(reqObj);
+
+        }
         public async Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList)
         {
             List<AppointeeUploadDetails> _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
@@ -863,6 +868,6 @@ namespace VERIDATA.BLL.Context
             }
             return FileDetailsResponse;
         }
-       
+
     }
 }

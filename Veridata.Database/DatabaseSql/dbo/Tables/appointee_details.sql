@@ -44,6 +44,7 @@
     [active_status]          BIT             NULL,
     [is_save]                BIT             NULL,
     [is_submit]              BIT             NULL,
+    [is_offline_kyc]         BIT             NULL,
     [created_by]             INT             NULL,
     [created_on]             DATETIME        NULL,
     [updated_by]             INT             NULL,

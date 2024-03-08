@@ -29,6 +29,7 @@ namespace VERIDATA.BLL.Interfaces
         public Filedata GenerateDataTableTofile(DataTable data, string category, ValidationType type);
         public Task<byte[]?> GetFileDataAsync(string filePath);
         public Task postappointeeUploadedFiles(AppointeeFileDetailsRequest AppointeeDetails);
+        public Task OfflineKycStatusUpdate(OfflineAadharVarifyStatusUpdateRequest reqObj);
         public Task<FileDetailsResponse> DownloadTrustPassbook(int appointeeId, int userId);
         public Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList);
         public Task<AppointeeUploadDetails> getFiledetailsByFileType(int appointeeId, string fileTypeCode);

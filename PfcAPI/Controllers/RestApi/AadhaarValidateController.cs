@@ -135,6 +135,26 @@ namespace PfcAPI.Controllers.RestApi
         [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
         //[AllowAnonymous]
         [HttpPost]
+        [Route("OfflineKycStatusUpdate")]
+        public IActionResult OfflineKycStatusUpdate(OfflineAadharVarifyStatusUpdateRequest reqObj)
+        {
+            try
+            {
+
+                Task.Run(async () => await _fileContext.OfflineKycStatusUpdate(reqObj)).GetAwaiter().GetResult();
+
+
+                return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
+        [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        //[AllowAnonymous]
+        [HttpPost]
         [Route("VerifyAadharViaXml")]
         public IActionResult VerifyAadharViaXml([FromForm] AppointeeAadhaarAadharXmlVarifyRequest reqObj)
         {

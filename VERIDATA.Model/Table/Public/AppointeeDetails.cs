@@ -186,6 +186,10 @@ namespace VERIDATA.Model.Table.Public
         [DefaultValue(false)]
         public bool? IsSubmit { get; set; }
 
+        [Column("is_offline_kyc", TypeName = DbDataType._boolean)]
+        [DefaultValue(false)]
+        public bool? IsOfflineKyc { get; set; }
+
         [Column("created_by", TypeName = DbDataType._integer)]
         public int? CreatedBy { get; set; }
 
