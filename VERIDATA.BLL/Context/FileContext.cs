@@ -5,8 +5,11 @@ using Newtonsoft.Json;
 using OfficeOpenXml;
 using System.Data;
 using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
@@ -52,11 +55,11 @@ namespace VERIDATA.BLL.Context
             if (validateresdata.InValidXlsData?.Rows?.Count > 0)
             {
                 _InvalidUserCount = validateresdata.InValidXlsData?.Rows?.Count ?? 0;
-                Filedata _fileDetails = GenerateDataTableTofile(validateresdata.InValidXlsData, "Error", ValidationType.Invalid);
+                Filedata _fileDetails = GenerateDataTableTofile(validateresdata.InValidXlsData, "Error", CommonEnum.ValidationType.Invalid);
                 Filedata _InvalidFiledata = new() { FileData = _fileDetails.FileData, FileName = "Invalid_Data", FileType = _fileDetails.FileType };
                 _FileDataList.Add(_InvalidFiledata);
                 List<Filedata> attachtData = new() { _InvalidFiledata };
-                await _emailSender.SendMailWithAttachtment(userData.UserName, userData.EmailId, attachtData, ValidationType.Invalid);
+                await _emailSender.SendMailWithAttachtment(userData.UserName, userData.EmailId, attachtData, CommonEnum.ValidationType.Invalid);
                 //send mail to companyUser with error data file attached
             }
 
@@ -97,11 +100,11 @@ namespace VERIDATA.BLL.Context
                     _duplicateUserCount = ExistingUserList?.Count ?? 0;
                     _rawlistdata = rawListData.Except(ExistingUserList).ToList();
                     DataTable _rawfinallistdDT = CommonUtility.ToDataTable(ExistingUserList);
-                    Filedata _fileDetails = GenerateDataTableTofile(_rawfinallistdDT, "Error", ValidationType.Duplicate);
+                    Filedata _fileDetails = GenerateDataTableTofile(_rawfinallistdDT, "Error", CommonEnum.ValidationType.Duplicate);
                     Filedata _duplicateFiledata = new() { FileData = _fileDetails?.FileData, FileName = "Duplicate_Data", FileType = "xlsx" };
                     _FileDataList.Add(_duplicateFiledata);
                     List<Filedata> attachtData = new() { _duplicateFiledata };
-                    await _emailSender.SendMailWithAttachtment(userData.UserName, userData.EmailId, attachtData, ValidationType.Duplicate);
+                    await _emailSender.SendMailWithAttachtment(userData.UserName, userData.EmailId, attachtData, CommonEnum.ValidationType.Duplicate);
                 }
 
                 List<AppointeeBasicInfo> _rawfinallistdata = _rawlistdata.GroupBy(m => new { m.CandidateID })
@@ -157,11 +160,11 @@ namespace VERIDATA.BLL.Context
             if (validateResdata.InValidXlsData?.Rows?.Count > 0)
             {
                 _InvalidUserCount = validateResdata.InValidXlsData?.Rows?.Count ?? 0;
-                Filedata _fileDetails = GenerateDataTableTofile(validateResdata.InValidXlsData, "Error", ValidationType.Invalid);
+                Filedata _fileDetails = GenerateDataTableTofile(validateResdata.InValidXlsData, "Error", CommonEnum.ValidationType.Invalid);
                 Filedata _InvalidFiledata = new() { FileData = _fileDetails.FileData, FileName = "Invalid_Data", FileType = _fileDetails.FileType };
                 _FileDataList.Add(_InvalidFiledata);
                 List<Filedata> attachtData = new() { _InvalidFiledata };
-                await _emailSender.SendMailWithAttachtment(userData.UserName, userData.EmailId, attachtData, ValidationType.Invalid);
+                await _emailSender.SendMailWithAttachtment(userData.UserName, userData.EmailId, attachtData, CommonEnum.ValidationType.Invalid);
                 //send mail to companyUser with error data file attached
             }
 
@@ -199,11 +202,11 @@ namespace VERIDATA.BLL.Context
                     _nonExitingUserCount = _nonExitingUserList?.Count ?? 0;
                     _updatelistdata = updateListData.Except(_nonExitingUserList).ToList();
                     DataTable _finallistdDT = CommonUtility.ToDataTable(_nonExitingUserList);
-                    Filedata _fileDetails = GenerateDataTableTofile(_finallistdDT, "Error", ValidationType.Invalid);
+                    Filedata _fileDetails = GenerateDataTableTofile(_finallistdDT, "Error", CommonEnum.ValidationType.Invalid);
                     Filedata _nonExistingFiledata = new() { FileData = _fileDetails?.FileData, FileName = "Non_Existing_Data", FileType = "xlsx" };
                     _FileDataList.Add(_nonExistingFiledata);
                     List<Filedata> attachtData = new() { _nonExistingFiledata };
-                    await _emailSender.SendMailWithAttachtment(userData.UserName, userData.EmailId, attachtData, ValidationType.NonExsist);
+                    await _emailSender.SendMailWithAttachtment(userData.UserName, userData.EmailId, attachtData, CommonEnum.ValidationType.NonExsist);
                 }
             }
             UploadedxlsRawFileDataResponse rawDataResponse = new() { RawFileData = RawFileData, DownloadFileData = _FileDataList, NonExsitingCount = _nonExitingUserCount, InvalidUserCount = _InvalidUserCount };
@@ -540,21 +543,21 @@ namespace VERIDATA.BLL.Context
             return validateData;
         }
 
-        public Filedata GenerateDataTableTofile(DataTable data, string category, ValidationType type)
+        public Filedata GenerateDataTableTofile(DataTable data, string category, CommonEnum.ValidationType type)
         {
             DateTime _currDate = DateTime.Now;
             string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
             string subfolder = type switch
             {
-                ValidationType.Invalid => "Invalid",
-                ValidationType.Duplicate => "Duplicate",
-                ValidationType.ApiCount => "ApiCount",
-                ValidationType.AppointeeCount => "AppointeeCount",
-                ValidationType.Critical1week => "Critical",
-                ValidationType.Critical2week => "Critical",
-                ValidationType.NoLinkSent => "NoLinkSent",
-                ValidationType.NoResponse => "NoResponse",
-                ValidationType.Processing => "Processing",
+                CommonEnum.ValidationType.Invalid => "Invalid",
+                CommonEnum.ValidationType.Duplicate => "Duplicate",
+                CommonEnum.ValidationType.ApiCount => "ApiCount",
+                CommonEnum.ValidationType.AppointeeCount => "AppointeeCount",
+                CommonEnum.ValidationType.Critical1week => "Critical",
+                CommonEnum.ValidationType.Critical2week => "Critical",
+                CommonEnum.ValidationType.NoLinkSent => "NoLinkSent",
+                CommonEnum.ValidationType.NoResponse => "NoResponse",
+                CommonEnum.ValidationType.Processing => "Processing",
                 _ => "Default",
             };
             string fileName = $"{subfolder}_{category}_{_currDateString}.xlsx";
@@ -749,61 +752,6 @@ namespace VERIDATA.BLL.Context
                 }
             }
         }
-        public async Task<UnzipAadharDataResponse> unzipAdharzipFiles(AppointeeAadhaarAadharXmlVarifyRequest AppointeeAdharUploadFileDetails)
-        {
-            UnzipAadharDataResponse response = new();
-            string unzipFileContent = string.Empty;
-            string messeege = string.Empty;
-            bool isValid = false;
-
-            if ((AppointeeAdharUploadFileDetails?.appointeeId ?? 0) != 0 && AppointeeAdharUploadFileDetails?.aadharFileDetails != null)
-            {
-                IFormFile? AdharfileUploaded = AppointeeAdharUploadFileDetails.aadharFileDetails;
-                try
-                {
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        AdharfileUploaded.CopyTo(memoryStream);
-
-                        memoryStream.Position = 0;
-                        using (var zipStream = new ZipInputStream(memoryStream))
-                        {
-                            if (!string.IsNullOrEmpty(AppointeeAdharUploadFileDetails.shareCode))
-                            {
-                                zipStream.Password = AppointeeAdharUploadFileDetails.shareCode;
-                            }
-                            else
-                            {
-
-                            }
-
-                            ZipEntry entry;
-                            while ((entry = zipStream.GetNextEntry()) != null)
-                            {
-                                using (var reader = new StreamReader(zipStream, Encoding.UTF8))
-                                {
-                                    unzipFileContent = reader.ReadToEnd();
-                                    isValid = true;
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (ZipException ex)
-                {
-                    messeege = $"Error reading zip file: {ex.Message}";
-                }
-                catch (Exception ex)
-                {
-                    messeege = $"An unexpected error occurred: {ex.Message}";
-                }
-            }
-            response.FileContent = unzipFileContent;
-            response.IsValid = isValid;
-            response.Message = messeege;
-            return response;
-        }
-
         public async Task<FileDetailsResponse> DownloadTrustPassbook(int appointeeId, int userId)
         {
             FileDetailsResponse fileDetails = new();
@@ -868,6 +816,135 @@ namespace VERIDATA.BLL.Context
             }
             return FileDetailsResponse;
         }
+        public async Task<UnzipAadharDataResponse> unzipAdharzipFiles(AppointeeAadhaarAadharXmlVarifyRequest AppointeeAdharUploadFileDetails)
+        {
+            UnzipAadharDataResponse response = new();
+            string unzipFileContent = string.Empty;
+            string messeege = string.Empty;
+            bool isValid = false;
 
+            if ((AppointeeAdharUploadFileDetails?.appointeeId ?? 0) != 0 && AppointeeAdharUploadFileDetails?.aadharFileDetails != null && !string.IsNullOrEmpty(AppointeeAdharUploadFileDetails.shareCode))
+            {
+                IFormFile? AdharfileUploaded = AppointeeAdharUploadFileDetails.aadharFileDetails;
+                try
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        AdharfileUploaded.CopyTo(memoryStream);
+
+                        memoryStream.Position = 0;
+                        using (var zipStream = new ZipInputStream(memoryStream))
+                        {
+                            if (!string.IsNullOrEmpty(AppointeeAdharUploadFileDetails.shareCode))
+                            {
+                                zipStream.Password = AppointeeAdharUploadFileDetails.shareCode;
+                            }
+
+                            ZipEntry entry;
+                            while ((entry = zipStream.GetNextEntry()) != null)
+                            {
+                                using (var reader = new StreamReader(zipStream, Encoding.UTF8))
+                                {
+                                    unzipFileContent = reader.ReadToEnd();
+                                    isValid = true;
+                                }
+                            }
+
+                        }
+                    }
+                }
+                catch (ZipException ex)
+                {
+                    messeege = $"Error reading zip file: {ex.Message}";
+                }
+                catch (Exception ex)
+                {
+                    messeege = $"An unexpected error occurred: {ex.Message}";
+                }
+            }
+            else
+            {
+                if (AppointeeAdharUploadFileDetails?.aadharFileDetails == null)
+                {
+                    messeege = "eKYC file can not be null,";
+                }
+
+                if (string.IsNullOrEmpty(AppointeeAdharUploadFileDetails?.shareCode))
+                {
+                    messeege = messeege + " share code can not be null";
+                }
+            }
+            if (isValid)
+            {
+                var isSigValid = await OfflineKycDigitalSignatureCheck(unzipFileContent);
+                messeege = isSigValid ? messeege : "Invalid Kyc File signature";
+                isValid = isSigValid;
+            }
+            response.FileContent = unzipFileContent;
+            response.IsValid = isValid;
+            response.Message = messeege;
+            return response;
+        }
+        private async Task<bool> OfflineKycDigitalSignatureCheck(string? xmlFileData)
+        {
+            bool isValid = false;
+            try
+            {
+                if (xmlFileData != null)
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(xmlFileData);
+
+                    // Navigate and extract data
+                    XmlNode root = xmlDoc.DocumentElement;
+
+                    // Find the signature node
+                    XmlNode signatureNode = root.SelectSingleNode("//ds:Signature", GetNamespaceManager(xmlDoc));
+                    if (signatureNode == null)
+                    {
+                        return false;
+                    }
+
+                    // Create a new SignedXml object and load the signature node
+                    SignedXml signedXml = new SignedXml(xmlDoc);
+                    signedXml.LoadXml((XmlElement)signatureNode);
+
+                    // Find the signing certificate
+                    X509Certificate2 certificate = null;
+                    foreach (KeyInfoClause keyInfoClause in signedXml.KeyInfo)
+                    {
+                        if (keyInfoClause is KeyInfoX509Data)
+                        {
+                            foreach (var cert in ((KeyInfoX509Data)keyInfoClause).Certificates)
+                            {
+                                certificate = (X509Certificate2)cert;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (certificate == null)
+                    {
+                        return false;
+                    }
+
+                    // Verify the signature
+                    isValid = signedXml.CheckSignature(certificate, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+            return isValid;
+        }
+
+        private static XmlNamespaceManager GetNamespaceManager(XmlDocument xmlDoc)
+        {
+            XmlNamespaceManager nsMgr = new XmlNamespaceManager(xmlDoc.NameTable);
+            nsMgr.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
+            return nsMgr;
+        }
     }
 }
