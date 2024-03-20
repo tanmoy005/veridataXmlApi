@@ -57,7 +57,7 @@ namespace VERIDATA.Model.Response.api.Karza
         public string? doj_epf { get; set; }
         public string? doe_epf { get; set; }
         public string? doe_eps { get; set; }
-        public PfBalance pf_balance { get; set; }
+        //public PfBalance pf_balance { get; set; }
         public List<Passbook> passbook { get; set; }
     }
 
@@ -73,9 +73,9 @@ namespace VERIDATA.Model.Response.api.Karza
     {
         public string tr_date_my { get; set; }
         public string approved_on { get; set; }
-        public string cr_ee_share { get; set; }
-        public string cr_er_share { get; set; }
-        public string cr_pen_bal { get; set; }
+        //public string cr_ee_share { get; set; }
+        //public string cr_er_share { get; set; }
+        //public string cr_pen_bal { get; set; }
         public string db_cr_flag { get; set; }
         public string particular { get; set; }
         public string month_year { get; set; }
