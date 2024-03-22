@@ -120,6 +120,17 @@
     <None Include="DatabaseMigration\DMLScript\Admin\admin.user_master.Table.sql" />
     <None Include="DatabaseMigration\DMLScript\Master\master.api_type_mapping.Table.sql" />
     <None Include="DatabaseMigration\DMLScript\Master\master.api_type_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.disability_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.gender_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.marital_status_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.nationility_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.qualification_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.reason_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.role_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.upload_type_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.user_types.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.workflow_approval_status_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.workflow_state_master.Table.sql" />
   </ItemGroup>
 
   <ItemGroup>

@@ -28,12 +28,12 @@ namespace VERIDATA.Model.Response.api.Karza
         public int balance { get; set; }
     }
 
-    public class EmployeeShareTotal
-    {
-        public int debit { get; set; }
-        public int credit { get; set; }
-        public int balance { get; set; }
-    }
+    //public class EmployeeShareTotal
+    //{
+    //    public int debit { get; set; }
+    //    public int credit { get; set; }
+    //    public int balance { get; set; }
+    //}
 
     public class EmployerShare
     {
@@ -42,12 +42,12 @@ namespace VERIDATA.Model.Response.api.Karza
         public int balance { get; set; }
     }
 
-    public class EmployerShareTotal
-    {
-        public int debit { get; set; }
-        public int credit { get; set; }
-        public int balance { get; set; }
-    }
+    //public class EmployerShareTotal
+    //{
+    //    public int debit { get; set; }
+    //    public int credit { get; set; }
+    //    public int balance { get; set; }
+    //}
 
     public class EstDetail
     {
@@ -64,9 +64,9 @@ namespace VERIDATA.Model.Response.api.Karza
     public class OverallPfBalance
     {
         public int pension_balance { get; set; }
-        public int current_pf_balance { get; set; }
-        public EmployeeShareTotal employee_share_total { get; set; }
-        public EmployerShareTotal employer_share_total { get; set; }
+        //public int current_pf_balance { get; set; }
+        //public EmployeeShareTotal employee_share_total { get; set; }
+        //public EmployerShareTotal employer_share_total { get; set; }
     }
 
     public class Passbook
@@ -88,14 +88,14 @@ namespace VERIDATA.Model.Response.api.Karza
     //    public string pdf_data { get; set; }
     //}
 
-    public class PfBalance
-    {
-        public int net_balance { get; set; }
-        public bool is_pf_full_withdrawn { get; set; }
-        public bool is_pf_partial_withdrawn { get; set; }
-        public EmployeeShare employee_share { get; set; }
-        public EmployerShare employer_share { get; set; }
-    }
+    //public class PfBalance
+    //{
+    //    public int net_balance { get; set; }
+    //    public bool is_pf_full_withdrawn { get; set; }
+    //    public bool is_pf_partial_withdrawn { get; set; }
+    //    public EmployeeShare employee_share { get; set; }
+    //    public EmployerShare employer_share { get; set; }
+    //}
 
     public class UanPassbookDetails
     {
