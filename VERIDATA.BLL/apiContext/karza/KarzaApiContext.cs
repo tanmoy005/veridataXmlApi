@@ -282,8 +282,8 @@ namespace VERIDATA.BLL.apiContext.karza
                     }
                     else if (OTPResponse.statusCode == (int)KarzaStatusCode.NotFound)
                     {
-                        Response.StatusCode = HttpStatusCode.BadRequest;
-                        Response.ReasonPhrase = "Mobile Number not linked with  Uan Number ";
+                        Response.StatusCode = HttpStatusCode.NotFound;
+                        Response.ReasonPhrase = "Uan is inactive / Mobile Number not linked with  Uan Number  ";
                     }
                     else
                     {

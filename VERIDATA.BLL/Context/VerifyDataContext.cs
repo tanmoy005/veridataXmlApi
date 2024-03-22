@@ -602,13 +602,14 @@ namespace VERIDATA.BLL.Context
             if (apiProvider?.ToLower() == ApiProviderType.Karza)
             {
                 _apiResponse = await _karzaApiContext.GenerateUANOTP(reqObj.UanNumber, reqObj.userId);
+                Response.StatusCode = _apiResponse.StatusCode == HttpStatusCode.NotFound ? HttpStatusCode.UnprocessableEntity : _apiResponse.StatusCode;
             }
             if (apiProvider?.ToLower() == ApiProviderType.SurePass)
             {
                 _apiResponse = await _surepassApiContext.GenerateUANOTP(reqObj.UanNumber, reqObj.userId);
+                Response.StatusCode = _apiResponse.StatusCode;
             }
 
-            Response.StatusCode = _apiResponse.StatusCode;
             if (_apiResponse.StatusCode == HttpStatusCode.OK)
             {
                 return _apiResponse;
@@ -724,7 +725,6 @@ namespace VERIDATA.BLL.Context
             if (apiProvider?.ToLower() == ApiProviderType.Karza)
             {
                 _apiResponse = await _karzaApiContext.GetPassbookBySubmitUanOTP(reqObj.OtpDetails.ClientId, reqObj.Otp, reqObj.UserId);
-                passbookJsonData = JsonConvert.SerializeObject(_apiResponse.KarzaPassbkdata);
                 UanPassbookDetails? _passBookData = _apiResponse?.KarzaPassbkdata;
                 if (_passBookData?.overall_pf_balance != null)
                 {
@@ -732,8 +732,11 @@ namespace VERIDATA.BLL.Context
                     if (_pensionshare > 0)
                     {
                         isPensionApplicable = Convert.ToInt32(_pensionshare) > 0;
+                        _passBookData.overall_pf_balance.pension_balance = 1;
                     }
                 }
+                passbookJsonData = JsonConvert.SerializeObject(_passBookData);
+
             }
             Response.StatusCode = _apiResponse.StatusCode;
             if (_apiResponse.StatusCode != HttpStatusCode.OK)
