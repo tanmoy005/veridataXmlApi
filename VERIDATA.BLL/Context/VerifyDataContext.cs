@@ -596,6 +596,20 @@ namespace VERIDATA.BLL.Context
         {
             UanGenerateOtpDetails Response = new();
             UanGenerateOtpDetails _apiResponse = new();
+            List<ReasonRemarks> ReasonList = new();
+
+            CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
+            {
+                AppointeeId = reqObj.appointeeId,
+                EmailId = string.Empty,
+                UserId = reqObj.userId,
+                UserName = string.Empty,
+                Reasons = ReasonList,
+                UanNumber = reqObj.UanNumber,
+                Type = RemarksType.UAN
+
+            };
+            _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
 
             var apiProvider = await _masterContext.GetApiProviderData(ApiType.EPFO);
             await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.UANVERIFICATIONSTART);
