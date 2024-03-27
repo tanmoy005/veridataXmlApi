@@ -355,8 +355,8 @@ namespace VERIDATA.BLL.Context
         }
         public async Task<bool> validateProfilePasswowrdAsync(ValidateProfilePasswordRequest req)
         {
-            string dycriptPassword = CommonUtility.DecryptString(_configSetup.EncriptKey, req.ProfilePassword);
-            string _password = CommonUtility.hashPassword(password: dycriptPassword);
+            //string dycriptPassword = CommonUtility.DecryptString(_configSetup.EncriptKey, req.ProfilePassword);
+            string _password = CommonUtility.hashPassword(password: req.ProfilePassword);
 
             UserAuthentication _authenticatedPassword = await _userDalContext.getAuthUserDetailsById(req.UserId);
             bool Isvalidate = _authenticatedPassword?.UserProfilePwd == _password;
