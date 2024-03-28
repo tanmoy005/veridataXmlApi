@@ -48,13 +48,13 @@ namespace VERIDATA.DAL.DataAccess.Context
                                        //where r.ReasonId == othRsnCatgry.ReasonId
                                    select new
                                    {
-                                       data = a.p,
-                                       a.p.AppointeeId,
-                                       a.MStatusName,
-                                       a.QualificationName,
-                                       a.GenderName,
-                                       r.Remarks,
-                                       r.ReasonId
+                                       data = a?.p,
+                                       AppointeeId = a?.p?.AppointeeId,
+                                       MStatusName = a?.MStatusName,
+                                       QualificationName = a?.QualificationName,
+                                       GenderName = a?.GenderName,
+                                       Remarks = r?.Remarks,
+                                       ReasonId = r?.ReasonId
                                    };
             List<ProcessedDataReportDetailsResponse> Response = remarksquerydata.ToList().GroupBy(x => x.AppointeeId).Select(r => new ProcessedDataReportDetailsResponse
             {
@@ -131,7 +131,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         {
             IQueryable<NonProcessCandidateReportDataResponse> nonProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
                                          .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
-&& (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
+                                            && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
                                                                                     join a in _dbContextClass.UnProcessedFileData
                                                                                     on ap.FileId equals a.FileId
                                                                                     where string.IsNullOrEmpty(reqObj.AppointeeName) ||
@@ -152,7 +152,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         {
             IQueryable<UnderProcessCandidateReportDataResponse> underProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
                                        .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
-&& (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
+                                                                                        && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
                                                                                         join a in _dbContextClass.UnderProcessFileData
                                                                                         on ap.FileId equals a.FileId
                                                                                         join w in _dbContextClass.WorkFlowDetails
@@ -164,9 +164,9 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                         from p in grouping.DefaultIfEmpty()
                                                                                         where (string.IsNullOrEmpty(reqObj.AppointeeName) ||
                                                                                         a.AppointeeName.ToUpper().Contains(reqObj.AppointeeName))
-&& (string.IsNullOrEmpty(_statusCode) || wm.AppvlStatusCode == _statusCode)
-&& (_intSubmitCode == null || (p.IsSubmit == _intSubmitCode))
-&& (_intSubStatusCode == null || (_intSubStatusCode == 1 && p.SaveStep == _intSubStatusCode && p.IsSubmit != true)
+                                                                                        && (string.IsNullOrEmpty(_statusCode) || wm.AppvlStatusCode == _statusCode)
+                                                                                        && (_intSubmitCode == null || (p.IsSubmit == _intSubmitCode))
+                                                                                        && (_intSubStatusCode == null || (_intSubStatusCode == 1 && p.SaveStep == _intSubStatusCode && p.IsSubmit != true)
                                                                                         || (_intSubStatusCode == 0 && p.SaveStep != 1 && p.IsSubmit != true))
                                                                                         select new UnderProcessCandidateReportDataResponse
                                                                                         {

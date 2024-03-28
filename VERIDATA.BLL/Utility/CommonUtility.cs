@@ -222,7 +222,7 @@ namespace VERIDATA.BLL.utility
         }
         public static byte[] ExportFromDataTableToExcel(DataTable? table, string sheetName, string? filePassword)
         {
-            string? password = string.IsNullOrEmpty(filePassword) ? filePassword : DecryptString(config.EncriptKey, filePassword);
+            string? password = string.IsNullOrEmpty(filePassword) ? filePassword : filePassword; //DecryptString(config.EncriptKey, filePassword);
             using ExcelPackage pack = new();
             ExcelWorksheet ws = pack.Workbook.Worksheets.Add(sheetName);
             _ = ws.Cells["A1"].LoadFromDataTable(table, true, TableStyles.Light1);
