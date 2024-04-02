@@ -71,10 +71,8 @@
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.10.2" />
     <PackageReference Include="EPPlus" Version="7.0.3" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.7" />
-    <PackageReference Include="Hangfire.Core" Version="1.8.7" />
-    <PackageReference Include="Hangfire.PostgreSql" Version="1.20.3" />
-    <PackageReference Include="Hangfire.SqlServer" Version="1.8.7" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.11" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.11" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Cors" Version="5.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.12" />

@@ -1,14 +1,12 @@
 using Hangfire;
+using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Globalization;
-using System.Text;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.apiContext.karza;
 using VERIDATA.BLL.apiContext.surepass;
@@ -76,7 +74,6 @@ builder.Services.AddScoped<IUitityContext, UitityContext>();
 //builder.Services.AddDbContext<DbContextDB>(Options => Options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
 builder.Services.AddDbContext<DbContextDalDB>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("WebApiDatabase"), builder => builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)));
 //builder.Services.AddDbContext<DbContextDB>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("WebApiDatabase")));
-//builder.Services.AddDbContext<DbContextDalDB>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("WebApiDatabase")));
 builder.Services.AddCors();
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 {
@@ -135,32 +132,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddScheme<CustomAuthenticationOptions, CustomAuthenticationHandler>(JwtBearerDefaults.AuthenticationScheme, options => { });
-//.AddJwtBearer(options =>
-//{
-//    options.TokenValidationParameters = new TokenValidationParameters
-//    {
-//        ValidIssuer = builder.Configuration["JwtToken:Issuer"],
-//        ValidAudience = builder.Configuration["JwtToken:Audience"],
-//        IssuerSigningKey = new SymmetricSecurityKey
-//        (Encoding.UTF8.GetBytes(builder.Configuration["JwtToken:Key"])),
-//        ValidateIssuer = true,
-//        ValidateAudience = true,
-//        ValidateLifetime = true,
-//        ValidateIssuerSigningKey = true,
-//        ClockSkew = TimeSpan.Zero
-//    };
-//    options.Events = new JwtBearerEvents
-//    {
-//        OnMessageReceived = context =>
-//        {
-//            context.Token = context.Request.Headers["Authorization"]
-//                .FirstOrDefault()?.Split(" ").Last();
 
-//            return Task.CompletedTask;
-//        }
-//    };
-//});
-//builder.Services.AddScoped<CustomJwtAuthenticationHandler>();
 builder.Services.AddAuthorization();
 
 //builder.Services.AddHangfire(configuration => configuration.UsePostgreSqlStorage(builder.Configuration.GetConnectionString("WebApiDatabase")));
@@ -213,19 +185,29 @@ app.UseCors(builder =>
     .AllowAnyMethod()
     .AllowAnyHeader();
 });
+app.UseAuthentication();
+app.UseAuthorization();
 //backgroundJobs.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
-    //Authorization = new[] { new HangfireAuthFilter() },
+    Authorization = new[] { new DashboardAuthorizationFilter() },
     DashboardTitle = "My Background Jobs"
     // You can customize the dashboard options here.
 });
 
 //app.UseHttpsRedirection();
 app.MapHangfireDashboard();
-app.UseAuthentication();
-app.UseAuthorization();
+
 
 app.MapControllers();
 
 app.Run();
+public class DashboardAuthorizationFilter : IDashboardAuthorizationFilter
+{
+    public bool Authorize(DashboardContext context)
+    {
+        // Check if user is authenticated and has necessary permissions
+        //return context.GetHttpContext().User.Identity.IsAuthenticated;
+        return true;
+    }
+}
