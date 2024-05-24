@@ -91,5 +91,10 @@ namespace VERIDATA.BLL.Context
             await _masterDalContext.PostSetupData(setupRequest);
 
         }
+        public async Task<List<FaqDetailsResponse>> GetFaqData()
+        {
+            List<FaqDetailsResponse> response = await _masterDalContext.GetAllFaqMaster();
+            return response;
+        }
     }
 }

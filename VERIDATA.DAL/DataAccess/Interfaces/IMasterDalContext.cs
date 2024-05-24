@@ -28,7 +28,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         //public Task<ApiConfigResponse> GetApiConfigData(string apiType, string apiName, string provider);
         public Task<List<ApiConfigResponse>> GetApiConfigDataAll();
         public Task<string> GetApiProviderData(string? apiType);
-
+        public Task<List<FaqDetailsResponse>> GetAllFaqMaster();
 
     }
 }

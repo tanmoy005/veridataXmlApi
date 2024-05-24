@@ -20,10 +20,12 @@ namespace VERIDATA.DAL.DataAccess.Context
     {
         private readonly DbContextDalDB _dbContextClass;
         private readonly TokenConfiguration _tokenConfig;
-        public UserDalContext(DbContextDalDB dbContextClass, TokenConfiguration tokenConfig)
+        private readonly IMasterDalContext _dbContextMaster;
+        public UserDalContext(DbContextDalDB dbContextClass, TokenConfiguration tokenConfig, IMasterDalContext dbContextMaster)
         {
             _dbContextClass = dbContextClass;
             _tokenConfig = tokenConfig;
+            _dbContextMaster = dbContextMaster;
         }
 
         public async Task<List<string?>> GetAllCandidateId(string type)
@@ -65,6 +67,13 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<UserDetailsResponse> GetUserDetailsAsyncbyId(int uid)
         {
+
+            List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextMaster.GetAllApprovalStateMaster();
+            WorkflowApprovalStatusMaster? closeState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ProcessClose?.Trim());
+            WorkflowApprovalStatusMaster? verifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Approved?.Trim());
+            WorkflowApprovalStatusMaster? forcedVerifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ForcedApproved?.Trim());
+            WorkflowApprovalStatusMaster? rejectedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
+
             UserDetailsResponse userDetails = new();
             var userDetailsQuery = from u in _dbContextClass.UserMaster
                                    join a in _dbContextClass.UserAuthentication
@@ -84,6 +93,27 @@ namespace VERIDATA.DAL.DataAccess.Context
                 var IsConsentAvailable = consentStatusList?.Where(x => x.ConsentId != 2)?.ToList();
                 IsConsentProcessed = IsConsentAvailable?.Count() > 0;
             }
+            var _userStatusDetails = await _dbContextClass.WorkFlowDetails.FirstOrDefaultAsync(x => x.ActiveStatus == true && x.AppointeeId == users.u.RefAppointeeId);
+            string status = "No Response";
+
+            if (_userStatusDetails != null)
+            {
+                switch (true)
+                {
+                    case bool _ when _userStatusDetails.AppvlStatusId == verifiedState.AppvlStatusId || _userStatusDetails.AppvlStatusId == forcedVerifiedState.AppvlStatusId:
+                        status = "Approved";
+                        break;
+                    case bool _ when _userStatusDetails.AppvlStatusId == rejectedState.AppvlStatusId:
+                        status = "Rejected";
+                        break;
+                    case bool _ when _userDetails?.IsSubmit ?? false:
+                        status = "Submitted";
+                        break;
+                    case bool _ when _userDetails?.SaveStep == 1:
+                        status = "Ongoing";
+                        break;
+                }
+            }
 
             userDetails.UserId = users?.u?.UserId ?? 0;
             userDetails.UserName = users?.u?.UserName;
@@ -101,6 +131,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             userDetails.IsSubmit = _userDetails?.IsSubmit ?? false;
             userDetails.IsSetProfilePassword = !string.IsNullOrEmpty(users?.UserProfilePwd);
             userDetails.CompanyId = 1;
+            userDetails.Status = status;
 
             return userDetails;
         }
@@ -239,8 +270,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                         join ua in _dbContextClass.UserAuthentication
                                                         on ur.UserId equals ua.UserId
                                                         where um.ActiveStatus == true && r.ActiveStatus == true
-&& ur.ActiveStatus == true
-&& r.IsCompanyAdmin == true && ua.ActiveStatus == true
+                                                        && ur.ActiveStatus == true
+                                                        && r.IsCompanyAdmin == true && ua.ActiveStatus == true
                                                         select new UserDetailsResponse
                                                         {
                                                             UserId = um.UserId,

@@ -65,6 +65,8 @@ namespace VERIDATA.DAL.DBContext
         public DbSet<ReasonMaser> ReasonMaser { get; set; }
         public DbSet<ApiTypeMaster> ApiTypeMaster { get; set; }
         public DbSet<ApiTypeMappingConfig> ApiTypeMapping { get; set; }
+        public DbSet<FaqMaster> FaqMaster { get; set; }
+
         #endregion
 
         #region Configuration

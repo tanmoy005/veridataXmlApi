@@ -20,11 +20,14 @@ namespace PfcAPI.Controllers.Account
         private readonly ISetupConfigarationContext _setupConfigarationContext;
         private readonly ErrorResponse _ErrorResponse = new();
         private readonly IApiConfigService _apiConfigService;
-        public AccountController(IUserContext userContext, ISetupConfigarationContext setupConfigarationContext, IApiConfigService apiConfigService)
+        private readonly ISetupConfigarationContext _configService;
+
+        public AccountController(IUserContext userContext, ISetupConfigarationContext setupConfigarationContext, IApiConfigService apiConfigService, ISetupConfigarationContext configService)
         {
             _userContext = userContext;
             _setupConfigarationContext = setupConfigarationContext;
             _apiConfigService = apiConfigService;
+            _configService = configService;
         }
 
         [AllowAnonymous]
@@ -335,6 +338,22 @@ namespace PfcAPI.Controllers.Account
                 //ApiConfigResponse _data = new();
                 var _data = _apiConfigService.GetApiConfigDetails();
                 return Ok(new BaseResponse<ApiConfigResponse>(HttpStatusCode.OK, _data));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("GetFaqData")]
+        public ActionResult GetFaqData()
+        {
+            try
+            {
+                var _data = Task.Run(async () => await _configService.GetFaqData()).GetAwaiter().GetResult();
+                return Ok(new BaseResponse<FaqDetailsResponse>(HttpStatusCode.OK, _data));
             }
             catch (Exception)
             {

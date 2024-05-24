@@ -399,6 +399,18 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             return response;
         }
+        public async Task<List<FaqDetailsResponse>> GetAllFaqMaster()
+        {
+            var responseData = await _dbContextClass.FaqMaster?.Where(x => x.ActiveStatus == true)?.
+                Select(y => new FaqDetailsResponse
+                {
+                    FaqId = y.FaqId,
+                    FaqName = y.FaqName,
+                    FaqDescription = y.FaqDesc
+                })?.ToListAsync();
+            //response = responseData.Provider;
+            return responseData;
+        }
 
     }
 }
