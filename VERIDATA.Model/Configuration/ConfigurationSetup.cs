@@ -4,5 +4,6 @@
     {
         public int CriticalDaysLimit { get; set; }
         public int DashBoardWizFilterDays { get; set; }
+        public int ProfileLockDuration { get; set; }
     }
 }

@@ -62,7 +62,7 @@ namespace PfcAPI.Controllers.Account
         [AllowAnonymous]
         [HttpPost]
         [Route("UserSignInDetails")]
-        public ActionResult UserSignInDetails([FromBody] ValidateUserSignInResponse user)
+        public ActionResult UserSignInDetails([FromBody] ValidateUserSignInRequest user)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace PfcAPI.Controllers.Account
                 int validatedUserId = Task.Run(async () => await _userContext.validateUserByOtp(user.clientId, user.OTP, user.dbUserType)).GetAwaiter().GetResult();
                 if (validatedUserId == 0)
                 {
-                    string _errormsg = "Otp Is invalid, Please try again";
+                    string _errormsg = "The OTP is invalid. Please try again.";
 
                     _ErrorResponse.ErrorCode = 400;
                     _ErrorResponse.UserMessage = _errormsg;
@@ -81,6 +81,23 @@ namespace PfcAPI.Controllers.Account
                 userDetails = Task.Run(async () => await _userContext.getValidatedSigninUserDetails(validatedUserId)).GetAwaiter().GetResult();
 
                 return Ok(new BaseResponse<AuthenticatedUserResponse>(HttpStatusCode.OK, userDetails));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("DefaultPasswordChange")]
+
+        public ActionResult DefaultPasswordChange(SetNewPasswordRequest req)
+        {
+            try
+            {
+                Task.Run(async () => await _userContext.postUserPasswordChange(req)).GetAwaiter().GetResult();
+                return Ok(new BaseResponse<bool>(HttpStatusCode.OK, true));
             }
             catch (Exception)
             {

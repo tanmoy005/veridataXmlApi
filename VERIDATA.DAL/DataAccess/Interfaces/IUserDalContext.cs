@@ -26,8 +26,12 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task updateAdminUser(AdminUserUpdateRequest userDetails);
         public Task deleteUserDetails(int uid, int userId);
         public Task postUserAuthDetailsAsyncbyId(UserAuthDetailsRequest req);
+        public Task updateUserAuthDetailsAsyncbyId(int UserId);
+        public Task<List<UserAuthenticationHist>> getUserOtpTryDetailsAsyncbyId(int UserId);
         public Task postUserTokenDetailsAsyncbyId(int userId, string token);
         public Task postUserSignOutDetailsAsyncbyId(int userId);
+        public Task postUserPasswordChangeAsyncbyId(int userId, string password);
+
         public Task editUserProfile(EditUserProfileRequest req);
         public Task<RoleDetailsResponse> GetUserRole(int userid);
         public Task<List<MenuNodeDetails>> GetMenuLeafNodeList(int roleId);

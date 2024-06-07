@@ -12,6 +12,8 @@
         public bool IsApiCall { get; set; }
         public bool? ApiDataLog { get; set; }
         //public bool IsValidOtp { get; set; }
-
+        public int ProfileLockDuration { get; set; }
+        public int OtpExpiryDuration { get; set; }
+        public int WrongOtpAttempt { get; set; }
     }
 }

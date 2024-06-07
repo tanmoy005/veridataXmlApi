@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Ocsp;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
 using VERIDATA.DAL.utility;
@@ -6,6 +7,7 @@ using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
+using VERIDATA.Model.Table.Activity;
 using VERIDATA.Model.Table.Master;
 using VERIDATA.Model.Table.Public;
 using static VERIDATA.DAL.utility.CommonEnum;
@@ -256,6 +258,29 @@ namespace VERIDATA.DAL.DataAccess.Context
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(reqObj.AppointeeId);
             appointeeDetails.IsOfflineKyc = reqObj.OfflineKycStatus;
             _ = await _dbContextClass.SaveChangesAsync();
+        }
+        public async Task PostMailTransDetails(mailTransactionRequest reqObj)
+        {
+            MailTransaction mailTransaction = new();
+            mailTransaction.AppointeeId = reqObj.AppointeeId;
+            mailTransaction.MailType = reqObj.Type;
+            mailTransaction.ActiveStatus = true;
+            mailTransaction.CreatedOn = DateTime.Now;
+            mailTransaction.CreatedBy = reqObj.UserId;
+            _dbContextClass.AppointeeMailTransaction.Add(mailTransaction);
+            _ = await _dbContextClass.SaveChangesAsync();
+        }
+        public async Task<mailTransactionResponse> GetMailTransDetails(int appointeeId, int userId)
+        {
+            mailTransactionResponse response = new();
+            var transactionDetails = await _dbContextClass.AppointeeMailTransaction?.OrderByDescending(x=>x.MailTransId)?.FirstOrDefaultAsync(x => x.AppointeeId.Equals(appointeeId));
+            if (transactionDetails != null)
+            {
+                response.AppointeeId = transactionDetails?.AppointeeId ?? 0;
+                response.UserId = transactionDetails?.CreatedBy ?? 0;
+                response.CreatedOn = transactionDetails.CreatedOn;
+            }
+            return response;
         }
     }
 }

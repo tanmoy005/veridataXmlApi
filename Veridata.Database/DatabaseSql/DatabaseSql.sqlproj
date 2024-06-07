@@ -139,5 +139,6 @@
     <Build Include="master\Tables\api_type_master.sql" />
     <Build Include="dbo\Tables\appointee_consent_maaping.sql" />
     <Build Include="master\Tables\faq_master.sql" />
+    <Build Include="activity\Tables\mail_transaction.sql" />
   </ItemGroup>
 </Project>

@@ -44,6 +44,9 @@ namespace VERIDATA.Model.Table.Admin
         [Column("otp_no", TypeName = DbDataType._text10)]
         public string? Otp { get; set; }
 
+        [Column("otp_expiry_time", TypeName = DbDataType._datetime)]
+        public DateTime? OtpExpiryTime { get; set; }
+
         [Column("exit_status", TypeName = DbDataType._text10)]
         [DefaultValue("N")]
         public string? ExitStatus { get; set; } //COMMENT 'N-Normal logout, A-Abnormal',

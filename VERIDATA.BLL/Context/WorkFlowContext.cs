@@ -758,11 +758,12 @@ namespace VERIDATA.BLL.Context
 
             await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
         }
-        public async Task PostRemainderMail(int appointeeId)
+        public async Task PostRemainderMail(int appointeeId, int UserId)
         {
             UnderProcessFileData? appointeeDetails = await _dbContextCandiate.GetUnderProcessAppinteeDetailsById(appointeeId);
             if (!string.IsNullOrEmpty(appointeeDetails?.AppointeeEmailId))
             {
+                mailTransactionRequest transReq = new();
                 MailDetails mailDetails = new();
                 MailBodyParseDataDetails bodyDetails = new()
                 {
@@ -773,8 +774,32 @@ namespace VERIDATA.BLL.Context
                 mailDetails.MailType = MailType.Remainder;
                 mailDetails.ParseData = bodyDetails;
                 await _emailSender.SendAppointeeMail(appointeeDetails.AppointeeEmailId, mailDetails);
+                
+                transReq.AppointeeId = appointeeId;
+                transReq.UserId = UserId;
+                transReq.Type = "REMDR";
+                await _dbContextCandiate.PostMailTransDetails(transReq);
             }
 
+        }
+        public async Task<VarificationStatusResponse> ValidateRemainderMail(int appointeeId, int UserId)
+        {
+            VarificationStatusResponse response = new();
+            response.IsVarified = true;
+
+            mailTransactionResponse? mailDetails = await _dbContextCandiate.GetMailTransDetails(appointeeId, UserId);
+            if (mailDetails?.AppointeeId != 0)
+            {
+                var limitTime = mailDetails.CreatedOn?.AddMinutes(_emailConfig.RemainderResendLockDuration);
+                if (DateTime.Now < limitTime)
+                {
+                    var remainTime = (limitTime - DateTime.Now).GetValueOrDefault().Minutes;
+
+                    response.Remarks = $"Your last email was sent at {mailDetails.CreatedOn}. Please wait {remainTime} minutes before trying again.";
+                    response.IsVarified = false;
+                }
+            }
+            return response;
         }
 
     }

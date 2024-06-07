@@ -1,6 +1,7 @@
 using Hangfire;
 using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -178,6 +179,11 @@ if (app.Environment.IsDevelopment())
     _ = app.UseSwagger();
     _ = app.UseSwaggerUI();
 }
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts(); // Enable HSTS in non-development environments
+}
 // Shows UseCors with CorsPolicyBuilder.
 app.UseCors(builder =>
 {
@@ -187,6 +193,12 @@ app.UseCors(builder =>
 });
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+    await next();
+});
 //backgroundJobs.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {

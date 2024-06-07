@@ -9,6 +9,7 @@
     [browser_name]  NVARCHAR (50) NULL,
     [token_no]      NVARCHAR (50) NULL,
     [refresh_token_expiry_time]    DATETIME      NULL,
+    [otp_expiry_time]    DATETIME      NULL,
     [otp_no]        NVARCHAR(10) NULL, 
     [exit_status]   NVARCHAR (10) NULL,
     [active_status] BIT           NULL,

@@ -24,6 +24,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<AppointeeConsentMapping> getAppointeeContestAsync(int? appointeeId);
         public Task postAppointeeContestAsync(AppointeeConsentSubmitRequest req);
         public Task PostOfflineKycStatus(OfflineAadharVarifyStatusUpdateRequest reqObj);
-
+        public Task PostMailTransDetails(mailTransactionRequest reqObj);
+        public Task<mailTransactionResponse> GetMailTransDetails(int appointeeId, int userId);
     }
 }

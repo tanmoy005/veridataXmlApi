@@ -255,6 +255,7 @@ namespace VERIDATA.BLL.Context
                     -2 => "User ID expired",
                     -3 => "You have crossed your joining date with grace pireod",
                     -4 => "Your application has been cancelled by your Recruitment partner / Admin",
+                    -5 => "Your profile is locked due to consecutive wrong otp, please try after some time",
                     _ => string.Empty,
                 };
                 validateUserResponse.StatusCode = HttpStatusCode.NotFound;
@@ -288,13 +289,22 @@ namespace VERIDATA.BLL.Context
             {
                 clientId = req.clientId,
                 dbUserType = req.dbUserType,
-                OTP = req.otp
+                //OTP = req.otp
             };
             return res;
         }
+        public async Task updateUserAuthdetails(int userId)
+        {
+            await _userDalContext.updateUserAuthDetailsAsyncbyId(userId);
+        }
+
         public async Task postUsersignOut(int userId)
         {
             await _userDalContext.postUserSignOutDetailsAsyncbyId(userId);
+        }
+        public async Task postUserPasswordChange(SetNewPasswordRequest req)
+        {
+            await _userDalContext.postUserPasswordChangeAsyncbyId(req.UserId, req.Password);
         }
         private async Task<ValidateUserDetails> validateUserSignDataAsync(UserSignInRequest user)
         {
@@ -317,10 +327,17 @@ namespace VERIDATA.BLL.Context
                     dbuserStatusId = _authenticatedUserId == null ? 0 : dbusers.UserId;
                     if (dbusers.RefAppointeeId != null)
                     {
+                        var otpCountDetails = await _userDalContext.getUserOtpTryDetailsAsyncbyId(dbusers.UserId);
+                        int otpCount = otpCountDetails?.Count ?? 0;
+                        DateTime? varifyLockTime = otpCountDetails?.LastOrDefault()?.CreatedOn?.AddMinutes(_configSetup.ProfileLockDuration);
                         UnderProcessFileData _userDetails = await _appointeeDalContext.GetUnderProcessAppinteeDetailsById(dbusers.RefAppointeeId ?? 0);
                         if (_userDetails.DateOfJoining?.AddDays(GeneralSetup?.GracePeriod ?? 0) < DateTime.Now)
                         {
                             dbuserStatusId = -3;
+                        }
+                        if (otpCount >= _configSetup.WrongOtpAttempt && varifyLockTime > DateTime.Now)
+                        {
+                            dbuserStatusId = -5;
                         }
                     }
                 }
@@ -366,7 +383,12 @@ namespace VERIDATA.BLL.Context
         {
             UserAuthenticationHist? dbusers = await _userDalContext.getAuthHistUserDetailsByClientId(clientId);
 
-            int _userId = userType == (int)UserType.Appoientee ? dbusers?.Otp == otp ? dbusers.UserId : 0 : dbusers?.UserId ?? -1;
+            int _userId = userType == (int)UserType.Appoientee ? (dbusers?.Otp == otp && dbusers?.OtpExpiryTime > DateTime.Now) ? dbusers.UserId : 0 : dbusers?.UserId ?? -1;
+            if (_userId != 0)
+            {
+                await _userDalContext.updateUserAuthDetailsAsyncbyId(dbusers.UserId);
+            }
+
             return _userId;
         }
         public async Task<AuthenticatedUserResponse> getValidatedSigninUserDetails(int userId)

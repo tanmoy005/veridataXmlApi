@@ -28,7 +28,7 @@ namespace VERIDATA.BLL.Extensions
                         {
                             ErrorCode = context.Response.StatusCode,
                             UserMessage = contextFeature.Error.Message,
-                            InternalMessage = contextFeature.Error.StackTrace ?? string.Empty,
+                            //InternalMessage = contextFeature.Error.StackTrace ?? string.Empty,
                         };
                         string response = JsonConvert.SerializeObject(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _errorResponse)).ToString();
                         await context.Response.WriteAsync(response);

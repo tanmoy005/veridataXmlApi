@@ -82,6 +82,7 @@ namespace VERIDATA.DAL.DBContext
         public DbSet<ApiCounter> ApiCounter { get; set; }
         public DbSet<UploadAppointeeCounter> UploadAppointeeCounter { get; set; }
         public DbSet<AppointeeDetailsUpdateActivity> AppointeeDetailsUpdateActivity { get; set; }
+        public DbSet<MailTransaction> AppointeeMailTransaction { get; set; }
         #endregion
 
     }

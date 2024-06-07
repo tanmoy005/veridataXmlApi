@@ -23,7 +23,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task PostAppointeeApprove(AppointeeApproverRequest request);
         public Task PostAppointeeRejected(AppointeeApproverRequest request);
         public Task PostAppointeeClose(AppointeeApproverRequest request);
-        public Task PostRemainderMail(int appointeeId);
-
+        public Task PostRemainderMail(int appointeeId, int UserId);
+        public Task<VarificationStatusResponse> ValidateRemainderMail(int appointeeId, int UserId);
     }
 }

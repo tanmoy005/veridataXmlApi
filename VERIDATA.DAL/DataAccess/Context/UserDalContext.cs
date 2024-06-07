@@ -20,12 +20,14 @@ namespace VERIDATA.DAL.DataAccess.Context
     {
         private readonly DbContextDalDB _dbContextClass;
         private readonly TokenConfiguration _tokenConfig;
+        private readonly ApiConfiguration _apiConfig;
         private readonly IMasterDalContext _dbContextMaster;
-        public UserDalContext(DbContextDalDB dbContextClass, TokenConfiguration tokenConfig, IMasterDalContext dbContextMaster)
+        public UserDalContext(DbContextDalDB dbContextClass, TokenConfiguration tokenConfig, IMasterDalContext dbContextMaster, ApiConfiguration apiConfig)
         {
             _dbContextClass = dbContextClass;
             _tokenConfig = tokenConfig;
             _dbContextMaster = dbContextMaster;
+            _apiConfig = apiConfig;
         }
 
         public async Task<List<string?>> GetAllCandidateId(string type)
@@ -79,7 +81,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                    join a in _dbContextClass.UserAuthentication
                                                        on u.UserId equals a.UserId
                                    where u.ActiveStatus == true && a.UserId == uid && a.ActiveStatus == true
-                                   select new { u, a.UserPwdTxt, a.UserProfilePwd };
+                                   select new { u, a.UserPwdTxt, a.UserProfilePwd, a.IsDefaultPass };
             var users = await userDetailsQuery.FirstOrDefaultAsync().ConfigureAwait(false);
             //var users = await _dbContextClass.UserMaster.FirstOrDefaultAsync(m => m.UserId.Equals(uid) & m.ActiveStatus == true);
             RoleUserMapping? usersRole = await _dbContextClass.RoleUserMapping.FirstOrDefaultAsync(m => m.UserId.Equals(uid) && m.ActiveStatus == true);
@@ -130,6 +132,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             userDetails.IsConsentProcessed = IsConsentProcessed;
             userDetails.IsSubmit = _userDetails?.IsSubmit ?? false;
             userDetails.IsSetProfilePassword = !string.IsNullOrEmpty(users?.UserProfilePwd);
+            userDetails.IsDefaultPassword = !string.IsNullOrEmpty(users?.IsDefaultPass) && users?.IsDefaultPass == "Y";
             userDetails.CompanyId = 1;
             userDetails.Status = status;
 
@@ -318,13 +321,13 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<UserAuthenticationHist?> getAuthHistUserDetailsById(int? userId)
         {
-            UserAuthenticationHist? authDbUser = await _dbContextClass.UserAuthenticationHist.LastOrDefaultAsync(m => m.UserId == userId && m.ActiveStatus == true);
+            UserAuthenticationHist? authDbUser = await _dbContextClass.UserAuthenticationHist.OrderByDescending(x => x.AuthoHistId).FirstOrDefaultAsync(m => m.UserId == userId && m.ActiveStatus == true);
 
             return authDbUser;
         }
         public async Task<UserAuthenticationHist?> getAuthHistUserDetailsByClientId(string? clientId)
         {
-            UserAuthenticationHist? authDbUser = await _dbContextClass.UserAuthenticationHist.FirstOrDefaultAsync(m => m.ClientId == clientId && m.ActiveStatus == true);
+            UserAuthenticationHist? authDbUser = await _dbContextClass.UserAuthenticationHist.OrderByDescending(x => x.AuthoHistId).FirstOrDefaultAsync(m => m.ClientId == clientId && m.ActiveStatus == true);
 
             return authDbUser;
         }
@@ -440,7 +443,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         public async Task postUserAuthDetailsAsyncbyId(UserAuthDetailsRequest req)
         {
             List<UserAuthenticationHist> usersauthdata = await _dbContextClass.UserAuthenticationHist.Where(m => m.UserId.Equals(req.UserId) && m.ActiveStatus == true).ToListAsync();
-            usersauthdata?.ForEach(x => x.ActiveStatus = false);
+            //usersauthdata?.ForEach(x => x.ActiveStatus = false);
             var timeOutTime = DateTime.Now.AddMinutes(_tokenConfig?.Timeout ?? 0);
             UserAuthenticationHist _userAuthHis = new()
             {
@@ -452,6 +455,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 TokenNo = req.Token,
                 RefreshTokenExpiryTime = timeOutTime.AddMinutes(-1),
                 Otp = req.Otp,
+                OtpExpiryTime = string.IsNullOrEmpty(req.Otp) ? null : DateTime.Now.AddMinutes(_apiConfig.OtpExpiryDuration),
                 ActiveStatus = true,
                 CreatedBy = req.UserId,
                 CreatedOn = DateTime.Now
@@ -459,6 +463,17 @@ namespace VERIDATA.DAL.DataAccess.Context
             };
             _ = _dbContextClass.UserAuthenticationHist.Add(_userAuthHis);
             _ = await _dbContextClass.SaveChangesAsync();
+        }
+        public async Task updateUserAuthDetailsAsyncbyId(int UserId)
+        {
+            List<UserAuthenticationHist> usersauthdata = await _dbContextClass.UserAuthenticationHist.Where(m => m.UserId.Equals(UserId) && m.ActiveStatus == true).ToListAsync();
+            usersauthdata?.ForEach(x => x.ActiveStatus = false);
+            _ = await _dbContextClass.SaveChangesAsync();
+        }
+        public async Task<List<UserAuthenticationHist>> getUserOtpTryDetailsAsyncbyId(int UserId)
+        {
+            List<UserAuthenticationHist> usersauthdata = await _dbContextClass.UserAuthenticationHist.Where(m => m.UserId.Equals(UserId) && m.ActiveStatus == true).ToListAsync();
+            return usersauthdata;
         }
         public async Task postUserTokenDetailsAsyncbyId(int userId, string token)
         {
@@ -479,6 +494,21 @@ namespace VERIDATA.DAL.DataAccess.Context
             {
                 usersauthdata?.ForEach(x => x.ActiveStatus = false);
                 _ = await _dbContextClass.SaveChangesAsync();
+            }
+        }
+        public async Task postUserPasswordChangeAsyncbyId(int userId, string password)
+        {
+            UserAuthentication usersauthdata = await _dbContextClass.UserAuthentication.FirstOrDefaultAsync(m => m.UserId.Equals(userId) && m.ActiveStatus == true);
+
+            if (usersauthdata?.UserAuthoId != null)
+            {
+                usersauthdata.IsDefaultPass = "N";
+                usersauthdata.UserPwd = CommonUtility.hashPassword(password);
+                usersauthdata.UserPwdTxt = password;
+                usersauthdata.UpdatedOn = DateTime.Now;
+                usersauthdata.UpdatedBy = userId;
+
+                 await _dbContextClass.SaveChangesAsync();
             }
         }
         public async Task editUserProfile(EditUserProfileRequest req)

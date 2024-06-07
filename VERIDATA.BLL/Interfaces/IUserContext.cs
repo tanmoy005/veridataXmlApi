@@ -10,7 +10,9 @@ namespace VERIDATA.BLL.Interfaces
     {
         public Task<ValidateUserDetails> validateUserSign(UserSignInRequest user);
         public Task<ValidateUserSignInResponse> postUserAuthdetails(ValidateUserDetails req);
+        public Task updateUserAuthdetails(int userId);
         public Task postUsersignOut(int userId);
+        public Task postUserPasswordChange(SetNewPasswordRequest req);
         public Task<int> validateUserByOtp(string? clientId, string? otp, int userType);
         public Task<AuthenticatedUserResponse> getValidatedSigninUserDetails(int userId);
         public Task<TokenDetailsResponse> getRefreshToken(RefreshTokenRequest reqObj);

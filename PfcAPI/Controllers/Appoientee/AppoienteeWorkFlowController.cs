@@ -378,13 +378,21 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [HttpPost("PostRemainderMail")]
-        public ActionResult PostRemainderMail(int AppointeeId)
+        public ActionResult PostRemainderMail(int AppointeeId, int UserId)
         {
             try
             {
-                Task.Run(async () => await _workflowContext.PostRemainderMail(AppointeeId)).GetAwaiter().GetResult();
+                var validateMailRequest = Task.Run(async () => await _workflowContext.ValidateRemainderMail(AppointeeId, UserId)).GetAwaiter().GetResult();
+                if (!validateMailRequest.IsVarified)
+                {
+                    _ErrorResponse.ErrorCode = (int)HttpStatusCode.BadRequest;
+                    _ErrorResponse.UserMessage = validateMailRequest.Remarks;
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
 
+                }
+                Task.Run(async () => await _workflowContext.PostRemainderMail(AppointeeId, UserId)).GetAwaiter().GetResult();
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
+
             }
             catch (Exception)
             {
@@ -405,7 +413,7 @@ namespace PfcAPI.Controllers.Appoientee
 
                 List<GetAppointeeGlobalSearchResponse> appointeeSearchList = Task.Run(async () => await _workflowContext.GetAppointeeSearchGlobal(appointeeName)).GetAwaiter().GetResult();
 
-                return Ok(new BaseResponse<GetAppointeeGlobalSearchResponse>(HttpStatusCode.OK,  appointeeSearchList));
+                return Ok(new BaseResponse<GetAppointeeGlobalSearchResponse>(HttpStatusCode.OK, appointeeSearchList));
             }
             catch (Exception)
             {
