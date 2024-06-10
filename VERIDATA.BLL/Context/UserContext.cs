@@ -359,7 +359,7 @@ namespace VERIDATA.BLL.Context
             int dbuserStatusId = 0;
             var otpCountDetails = await _userDalContext.getUserOtpTryDetailsAsyncbyId(userId);
             int otpCount = otpCountDetails?.Count ?? 0;
-            DateTime? varifyLockTime = otpCountDetails?.LastOrDefault()?.CreatedOn?.AddMinutes(_configSetup.ProfileLockDuration);
+            DateTime? varifyLockTime = otpCountDetails?.Where(x => x.CreatedOn < DateTime.Now.AddMinutes(-(_configSetup.ProfileLockDuration)))?.LastOrDefault()?.CreatedOn?.AddMinutes(_configSetup.ProfileLockDuration);
             if (otpCount >= _configSetup.WrongOtpAttempt && varifyLockTime > DateTime.Now)
             {
                 dbuserStatusId = -5;
