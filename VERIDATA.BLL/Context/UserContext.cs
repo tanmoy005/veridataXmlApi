@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Org.BouncyCastle.Ocsp;
+using System.Net;
 using System.Security.Claims;
 using VERIDATA.BLL.Authentication;
 using VERIDATA.BLL.Interfaces;
@@ -382,8 +383,16 @@ namespace VERIDATA.BLL.Context
         public async Task<int> validateUserByOtp(string? clientId, string? otp, int userType)
         {
             UserAuthenticationHist? dbusers = await _userDalContext.getAuthHistUserDetailsByClientId(clientId);
-
-            int _userId = userType == (int)UserType.Appoientee ? (dbusers?.Otp == otp && dbusers?.OtpExpiryTime > DateTime.Now) ? dbusers.UserId : 0 : dbusers?.UserId ?? -1;
+            int _userId = 0;
+            if (dbusers?.Otp != otp)
+            {
+                UserAuthDetailsRequest authreq = new() { ClientId = clientId, UserId = dbusers.UserId, Otp = otp };
+                await _userDalContext.postUserAuthDetailsAsyncbyId(authreq);
+            }
+            else
+            {
+                _userId = userType == (int)UserType.Appoientee ? (dbusers?.Otp == otp && dbusers?.OtpExpiryTime > DateTime.Now) ? dbusers.UserId : 0 : dbusers?.UserId ?? -1;
+            }
             if (_userId != 0)
             {
                 await _userDalContext.updateUserAuthDetailsAsyncbyId(dbusers.UserId);
