@@ -328,18 +328,19 @@ namespace VERIDATA.BLL.Context
                     dbuserStatusId = _authenticatedUserId == null ? 0 : dbusers.UserId;
                     if (dbusers.RefAppointeeId != null)
                     {
-                        var otpCountDetails = await _userDalContext.getUserOtpTryDetailsAsyncbyId(dbusers.UserId);
-                        int otpCount = otpCountDetails?.Count ?? 0;
-                        DateTime? varifyLockTime = otpCountDetails?.LastOrDefault()?.CreatedOn?.AddMinutes(_configSetup.ProfileLockDuration);
+                        int validateDbUserId = await validateOtpAttempt(dbusers.UserId);
+
+
                         UnderProcessFileData _userDetails = await _appointeeDalContext.GetUnderProcessAppinteeDetailsById(dbusers.RefAppointeeId ?? 0);
                         if (_userDetails.DateOfJoining?.AddDays(GeneralSetup?.GracePeriod ?? 0) < DateTime.Now)
                         {
                             dbuserStatusId = -3;
                         }
-                        if (otpCount >= _configSetup.WrongOtpAttempt && varifyLockTime > DateTime.Now)
+                        if (validateDbUserId != 0)
                         {
-                            dbuserStatusId = -5;
+                            dbuserStatusId = validateDbUserId;
                         }
+
                     }
                 }
             }
@@ -351,6 +352,19 @@ namespace VERIDATA.BLL.Context
             res.userName = dbusers?.UserName;
             res.userId = dbusers?.UserId ?? 0;
             return res;
+        }
+
+        private async Task<int> validateOtpAttempt(int userId)
+        {
+            int dbuserStatusId = 0;
+            var otpCountDetails = await _userDalContext.getUserOtpTryDetailsAsyncbyId(userId);
+            int otpCount = otpCountDetails?.Count ?? 0;
+            DateTime? varifyLockTime = otpCountDetails?.LastOrDefault()?.CreatedOn?.AddMinutes(_configSetup.ProfileLockDuration);
+            if (otpCount >= _configSetup.WrongOtpAttempt && varifyLockTime > DateTime.Now)
+            {
+                dbuserStatusId = -5;
+            }
+            return dbuserStatusId;
         }
         private async Task<string> candidateSigninGenerateOtp(ValidateUserDetails user)
         {
@@ -382,22 +396,37 @@ namespace VERIDATA.BLL.Context
         }
         public async Task<int> validateUserByOtp(string? clientId, string? otp, int userType)
         {
-            UserAuthenticationHist? dbusers = await _userDalContext.getAuthHistUserDetailsByClientId(clientId);
             int _userId = 0;
-            if (dbusers?.Otp != otp)
+
+            UserAuthenticationHist? dbusers = await _userDalContext.getAuthHistUserDetailsByClientId(clientId);
+            if ((int)UserType.Appoientee == userType)
             {
-                UserAuthDetailsRequest authreq = new() { ClientId = clientId, UserId = dbusers.UserId, Otp = otp };
-                await _userDalContext.postUserAuthDetailsAsyncbyId(authreq);
+                int validateDbUserId = await validateOtpAttempt(dbusers.UserId);
+                if (validateDbUserId == 0)
+                {
+                    if (dbusers?.Otp != otp)
+                    {
+                        UserAuthDetailsRequest authreq = new() { ClientId = clientId, UserId = dbusers.UserId, Otp = dbusers.Otp };
+                        await _userDalContext.postUserAuthDetailsAsyncbyId(authreq);
+                    }
+                    else
+                    {
+                        _userId = (dbusers?.OtpExpiryTime > DateTime.Now) ? dbusers.UserId : -2;
+                    }
+                    if (_userId > 0)
+                    {
+                        await _userDalContext.updateUserAuthDetailsAsyncbyId(dbusers.UserId);
+                    }
+                }
+                else
+                {
+                    _userId = -1;
+                }
             }
             else
             {
-                _userId = userType == (int)UserType.Appoientee ? (dbusers?.Otp == otp && dbusers?.OtpExpiryTime > DateTime.Now) ? dbusers.UserId : 0 : dbusers?.UserId ?? -1;
+                _userId = dbusers.UserId;
             }
-            if (_userId != 0)
-            {
-                await _userDalContext.updateUserAuthDetailsAsyncbyId(dbusers.UserId);
-            }
-
             return _userId;
         }
         public async Task<AuthenticatedUserResponse> getValidatedSigninUserDetails(int userId)

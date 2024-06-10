@@ -443,6 +443,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         public async Task postUserAuthDetailsAsyncbyId(UserAuthDetailsRequest req)
         {
             List<UserAuthenticationHist> usersauthdata = await _dbContextClass.UserAuthenticationHist.Where(m => m.UserId.Equals(req.UserId) && m.ActiveStatus == true).ToListAsync();
+            var userAuthDetails = usersauthdata?.LastOrDefault();
             //usersauthdata?.ForEach(x => x.ActiveStatus = false);
             var timeOutTime = DateTime.Now.AddMinutes(_tokenConfig?.Timeout ?? 0);
             UserAuthenticationHist _userAuthHis = new()
@@ -455,7 +456,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 TokenNo = req.Token,
                 RefreshTokenExpiryTime = timeOutTime.AddMinutes(-1),
                 Otp = req.Otp,
-                OtpExpiryTime = string.IsNullOrEmpty(req.Otp) ? null : DateTime.Now.AddMinutes(_apiConfig.OtpExpiryDuration),
+                OtpExpiryTime = string.IsNullOrEmpty(req.Otp) ? null : userAuthDetails?.Otp==req.Otp? userAuthDetails?.OtpExpiryTime: DateTime.Now.AddMinutes(_apiConfig.OtpExpiryDuration),
                 ActiveStatus = true,
                 CreatedBy = req.UserId,
                 CreatedOn = DateTime.Now

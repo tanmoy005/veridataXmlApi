@@ -69,9 +69,9 @@ namespace PfcAPI.Controllers.Account
                 AuthenticatedUserResponse userDetails = new();
 
                 int validatedUserId = Task.Run(async () => await _userContext.validateUserByOtp(user.clientId, user.OTP, user.dbUserType)).GetAwaiter().GetResult();
-                if (validatedUserId == 0)
+                if (validatedUserId <= 0)
                 {
-                    string _errormsg = "The OTP is invalid. Please try again.";
+                    string _errormsg = validatedUserId==0? "The OTP is invalid. Please try again.": validatedUserId == -1? "Your profile is locked due to consecutive wrong otp, please try after some time" :"Otp timed out, Please retry";
 
                     _ErrorResponse.ErrorCode = 400;
                     _ErrorResponse.UserMessage = _errormsg;
