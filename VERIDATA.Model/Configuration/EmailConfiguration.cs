@@ -11,7 +11,8 @@
         public string? EnableSSLorTLS { get; set; }
         public bool IsMailSend { get; set; }
         public string? HostUrl { get; set; }
-        public int RemainderResendLockDuration { get; set; }
+        public int ReminderResendLockDuration { get; set; }
+        public int ReminderAttempt { get; set; }
 
     }
 }

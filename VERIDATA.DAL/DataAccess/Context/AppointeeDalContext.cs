@@ -270,15 +270,18 @@ namespace VERIDATA.DAL.DataAccess.Context
             _dbContextClass.AppointeeMailTransaction.Add(mailTransaction);
             _ = await _dbContextClass.SaveChangesAsync();
         }
-        public async Task<mailTransactionResponse> GetMailTransDetails(int appointeeId, int userId)
+        public async Task<List<mailTransactionResponse>> GetMailTransDetails(int appointeeId, int userId)
         {
-            mailTransactionResponse response = new();
-            var transactionDetails = await _dbContextClass.AppointeeMailTransaction?.OrderByDescending(x=>x.MailTransId)?.FirstOrDefaultAsync(x => x.AppointeeId.Equals(appointeeId));
-            if (transactionDetails != null)
+            List<mailTransactionResponse> response = new();
+            var transactionListDetails = await _dbContextClass.AppointeeMailTransaction?.OrderByDescending(x => x.MailTransId)?.Where(x => x.AppointeeId.Equals(appointeeId))?.ToListAsync();
+            if (transactionListDetails.Count > 0)
             {
-                response.AppointeeId = transactionDetails?.AppointeeId ?? 0;
-                response.UserId = transactionDetails?.CreatedBy ?? 0;
-                response.CreatedOn = transactionDetails.CreatedOn;
+                response = transactionListDetails?.Select(x => new mailTransactionResponse
+                {
+                    AppointeeId = x?.AppointeeId ?? 0,
+                    UserId = x?.CreatedBy ?? 0,
+                    CreatedOn = x.CreatedOn,
+                }).ToList();
             }
             return response;
         }

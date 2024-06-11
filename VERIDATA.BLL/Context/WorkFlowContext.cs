@@ -774,7 +774,7 @@ namespace VERIDATA.BLL.Context
                 mailDetails.MailType = MailType.Remainder;
                 mailDetails.ParseData = bodyDetails;
                 await _emailSender.SendAppointeeMail(appointeeDetails.AppointeeEmailId, mailDetails);
-                
+
                 transReq.AppointeeId = appointeeId;
                 transReq.UserId = UserId;
                 transReq.Type = "REMDR";
@@ -787,15 +787,18 @@ namespace VERIDATA.BLL.Context
             VarificationStatusResponse response = new();
             response.IsVarified = true;
 
-            mailTransactionResponse? mailDetails = await _dbContextCandiate.GetMailTransDetails(appointeeId, UserId);
-            if (mailDetails?.AppointeeId != 0)
+            List<mailTransactionResponse>? mailDetails = await _dbContextCandiate.GetMailTransDetails(appointeeId, UserId);
+            if (mailDetails?.Count != 0)
             {
-                var limitTime = mailDetails.CreatedOn?.AddMinutes(_emailConfig.RemainderResendLockDuration);
-                if (DateTime.Now < limitTime)
+                var limitTime = DateTime.Now.AddMinutes(-(_emailConfig.ReminderResendLockDuration));
+                var MailCount = mailDetails?.Where(x => x.CreatedOn > limitTime)?.ToList();
+                //var limitTime = mailDetails.CreatedOn?.AddMinutes(_emailConfig.ReminderResendLockDuration);
+                if (MailCount?.Count > _emailConfig.ReminderAttempt)
                 {
-                    var remainTime = (limitTime - DateTime.Now).GetValueOrDefault().Minutes;
+                    var lastMailSend = MailCount?.OrderByDescending(x => x.CreatedOn).FirstOrDefault().CreatedOn;
+                    var remainTime = (lastMailSend - limitTime).GetValueOrDefault().Minutes;
 
-                    response.Remarks = $"Your last email was sent at {mailDetails.CreatedOn}. Please wait {remainTime} minutes before trying again.";
+                    response.Remarks = $"You have send {_emailConfig.ReminderAttempt} mail in last {_emailConfig.ReminderResendLockDuration} min . Please wait {remainTime} minutes before trying again.";
                     response.IsVarified = false;
                 }
             }

@@ -376,7 +376,7 @@ namespace PfcAPI.Controllers.Appoientee
                 throw;
             }
         }
-
+        [Authorize]
         [HttpPost("PostRemainderMail")]
         public ActionResult PostRemainderMail(int AppointeeId, int UserId)
         {
@@ -437,7 +437,7 @@ namespace PfcAPI.Controllers.Appoientee
             }
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost]
         [Route("GetPassbookDetails")]
         public ActionResult GetPassbookDetails(int AppointeeId)
