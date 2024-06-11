@@ -793,7 +793,7 @@ namespace VERIDATA.BLL.Context
                 var limitTime = DateTime.Now.AddMinutes(-(_emailConfig.ReminderResendLockDuration));
                 var MailCount = mailDetails?.Where(x => x.CreatedOn > limitTime)?.ToList();
                 //var limitTime = mailDetails.CreatedOn?.AddMinutes(_emailConfig.ReminderResendLockDuration);
-                if (MailCount?.Count > _emailConfig.ReminderAttempt)
+                if (MailCount?.Count >= _emailConfig.ReminderAttempt)
                 {
                     var lastMailSend = MailCount?.OrderByDescending(x => x.CreatedOn).FirstOrDefault().CreatedOn;
                     var remainTime = (lastMailSend - limitTime).GetValueOrDefault().Minutes;
