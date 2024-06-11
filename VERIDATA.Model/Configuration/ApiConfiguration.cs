@@ -15,5 +15,6 @@
         public int ProfileLockDuration { get; set; }
         public int OtpExpiryDuration { get; set; }
         public int WrongOtpAttempt { get; set; }
+        public int PasswordExpiryDays { get; set; }
     }
 }

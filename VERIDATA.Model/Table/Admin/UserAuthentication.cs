@@ -29,6 +29,9 @@ namespace VERIDATA.Model.Table.Admin
         [DefaultValue("Y")]
         public string? IsDefaultPass { get; set; }
 
+        [Column("password_set_date", TypeName = DbDataType._datetime)]
+        public DateTime? PasswordSetDate { get; set; }
+
         [Column("active_status", TypeName = DbDataType._boolean)]
         [DefaultValue(true)]
         public bool? ActiveStatus { get; set; }

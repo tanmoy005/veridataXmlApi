@@ -81,7 +81,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                    join a in _dbContextClass.UserAuthentication
                                                        on u.UserId equals a.UserId
                                    where u.ActiveStatus == true && a.UserId == uid && a.ActiveStatus == true
-                                   select new { u, a.UserPwdTxt, a.UserProfilePwd, a.IsDefaultPass };
+                                   select new { u, a.UserPwdTxt, a.UserProfilePwd, a.IsDefaultPass, a.PasswordSetDate };
             var users = await userDetailsQuery.FirstOrDefaultAsync().ConfigureAwait(false);
             //var users = await _dbContextClass.UserMaster.FirstOrDefaultAsync(m => m.UserId.Equals(uid) & m.ActiveStatus == true);
             RoleUserMapping? usersRole = await _dbContextClass.RoleUserMapping.FirstOrDefaultAsync(m => m.UserId.Equals(uid) && m.ActiveStatus == true);
@@ -133,6 +133,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             userDetails.IsSubmit = _userDetails?.IsSubmit ?? false;
             userDetails.IsSetProfilePassword = !string.IsNullOrEmpty(users?.UserProfilePwd);
             userDetails.IsDefaultPassword = !string.IsNullOrEmpty(users?.IsDefaultPass) && users?.IsDefaultPass == "Y";
+            userDetails.IsPasswordExpire = users?.PasswordSetDate == null && users?.IsDefaultPass == "Y" ? false : users?.PasswordSetDate.GetValueOrDefault().AddDays(_apiConfig.PasswordExpiryDays) <= DateTime.Now;
             userDetails.CompanyId = 1;
             userDetails.Status = status;
 
@@ -456,7 +457,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 TokenNo = req.Token,
                 RefreshTokenExpiryTime = timeOutTime.AddMinutes(-1),
                 Otp = req.Otp,
-                OtpExpiryTime = string.IsNullOrEmpty(req.Otp) ? null : userAuthDetails?.Otp==req.Otp? userAuthDetails?.OtpExpiryTime: DateTime.Now.AddMinutes(_apiConfig.OtpExpiryDuration),
+                OtpExpiryTime = string.IsNullOrEmpty(req.Otp) ? null : userAuthDetails?.Otp == req.Otp ? userAuthDetails?.OtpExpiryTime : DateTime.Now.AddMinutes(_apiConfig.OtpExpiryDuration),
                 ActiveStatus = true,
                 CreatedBy = req.UserId,
                 CreatedOn = DateTime.Now
@@ -506,10 +507,11 @@ namespace VERIDATA.DAL.DataAccess.Context
                 usersauthdata.IsDefaultPass = "N";
                 usersauthdata.UserPwd = CommonUtility.hashPassword(password);
                 usersauthdata.UserPwdTxt = password;
+                usersauthdata.PasswordSetDate = DateTime.Now;
                 usersauthdata.UpdatedOn = DateTime.Now;
                 usersauthdata.UpdatedBy = userId;
 
-                 await _dbContextClass.SaveChangesAsync();
+                await _dbContextClass.SaveChangesAsync();
             }
         }
         public async Task editUserProfile(EditUserProfileRequest req)

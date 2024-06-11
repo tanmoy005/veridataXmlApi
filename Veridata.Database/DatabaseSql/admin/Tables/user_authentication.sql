@@ -5,6 +5,7 @@
     [user_pwd_txt]    NVARCHAR (10) NULL,
     [user_profile_pwd] NVARCHAR(100) NULL, 
     [is_default_pass] CHAR (1)      NULL,
+    [password_set_date]      DATETIME      NULL,
     [active_status]   BIT           NULL,
     [created_by]      INT           NULL,
     [created_on]      DATETIME      NULL,
