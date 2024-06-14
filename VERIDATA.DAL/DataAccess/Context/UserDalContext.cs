@@ -445,6 +445,8 @@ namespace VERIDATA.DAL.DataAccess.Context
         {
             List<UserAuthenticationHist> usersauthdata = await _dbContextClass.UserAuthenticationHist.Where(m => m.UserId.Equals(req.UserId) && m.ActiveStatus == true).ToListAsync();
             var userAuthDetails = usersauthdata?.LastOrDefault();
+            usersauthdata.Where(x => x.CreatedOn < DateTime.Now.AddMinutes(-(_apiConfig.ProfileLockDuration)))?.ToList()?.ForEach(x => x.ActiveStatus = false);
+
             //usersauthdata?.ForEach(x => x.ActiveStatus = false);
             var timeOutTime = DateTime.Now.AddMinutes(_tokenConfig?.Timeout ?? 0);
             UserAuthenticationHist _userAuthHis = new()

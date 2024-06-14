@@ -328,7 +328,7 @@ namespace VERIDATA.BLL.Context
                     dbuserStatusId = _authenticatedUserId == null ? 0 : dbusers.UserId;
                     if (dbusers.RefAppointeeId != null)
                     {
-                        int validateDbUserId = await validateOtpAttempt(dbusers.UserId);
+                        int validateDbUserId = await validateOtpAttempt(dbusers.UserId, "");
 
 
                         UnderProcessFileData _userDetails = await _appointeeDalContext.GetUnderProcessAppinteeDetailsById(dbusers.RefAppointeeId ?? 0);
@@ -354,13 +354,23 @@ namespace VERIDATA.BLL.Context
             return res;
         }
 
-        private async Task<int> validateOtpAttempt(int userId)
+        private async Task<int> validateOtpAttempt(int userId, string? clientId)
         {
             int dbuserStatusId = 0;
             var otpCountDetails = await _userDalContext.getUserOtpTryDetailsAsyncbyId(userId);
             int otpCount = otpCountDetails?.Count ?? 0;
-            DateTime? varifyLockTime = otpCountDetails?.Where(x => x.CreatedOn > DateTime.Now.AddMinutes(-(_configSetup.ProfileLockDuration)))?.LastOrDefault()?.CreatedOn?.AddMinutes(_configSetup.ProfileLockDuration);
-            if (otpCount > _configSetup.WrongOtpAttempt && varifyLockTime > DateTime.Now)
+            if (!string.IsNullOrEmpty(clientId))
+            {
+                var newOtpReqest = otpCountDetails.Where(x => x.ClientId == clientId).ToList();
+                otpCountDetails = newOtpReqest?.Count > 1 ? otpCountDetails : otpCountDetails.Where(x => x.ClientId != clientId).ToList();
+            }
+            else
+            {
+                otpCountDetails = otpCountDetails.Where(x => x.CreatedOn > DateTime.Now.AddMinutes(-(_configSetup.ProfileLockDuration)))?.ToList();
+            }
+            //var currentOtpRequest = otpCountDetails?.Where(x => x.CreatedOn > DateTime.Now.AddMinutes(-(_configSetup.ProfileLockDuration)))?.ToList();
+            DateTime? varifyLockTime = otpCountDetails?.LastOrDefault()?.CreatedOn?.AddMinutes(_configSetup.ProfileLockDuration);
+            if (otpCount >= _configSetup.WrongOtpAttempt && varifyLockTime > DateTime.Now)
             {
                 dbuserStatusId = -5;
             }
@@ -401,7 +411,7 @@ namespace VERIDATA.BLL.Context
             UserAuthenticationHist? dbusers = await _userDalContext.getAuthHistUserDetailsByClientId(clientId);
             if ((int)UserType.Appoientee == userType)
             {
-                int validateDbUserId = await validateOtpAttempt(dbusers.UserId);
+                int validateDbUserId = await validateOtpAttempt(dbusers.UserId, clientId);
                 if (validateDbUserId == 0)
                 {
                     if (dbusers?.Otp != otp)
