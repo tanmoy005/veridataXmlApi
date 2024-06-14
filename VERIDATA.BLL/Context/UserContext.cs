@@ -361,16 +361,16 @@ namespace VERIDATA.BLL.Context
             int otpCount = otpCountDetails?.Count ?? 0;
             if (!string.IsNullOrEmpty(clientId))
             {
-                var newOtpReqest = otpCountDetails.Where(x => x.ClientId == clientId).ToList();
+                var newOtpReqest = otpCountDetails?.Where(x => x.ClientId == clientId).ToList();
                 otpCountDetails = newOtpReqest?.Count > 1 ? otpCountDetails : otpCountDetails.Where(x => x.ClientId != clientId).ToList();
             }
             else
             {
-                otpCountDetails = otpCountDetails.Where(x => x.CreatedOn > DateTime.Now.AddMinutes(-(_configSetup.ProfileLockDuration)))?.ToList();
+                otpCountDetails = otpCountDetails?.Where(x => x.CreatedOn > DateTime.Now.AddMinutes(-(_configSetup.ProfileLockDuration)))?.ToList();
             }
             //var currentOtpRequest = otpCountDetails?.Where(x => x.CreatedOn > DateTime.Now.AddMinutes(-(_configSetup.ProfileLockDuration)))?.ToList();
             DateTime? varifyLockTime = otpCountDetails?.LastOrDefault()?.CreatedOn?.AddMinutes(_configSetup.ProfileLockDuration);
-            if (otpCount >= _configSetup.WrongOtpAttempt && varifyLockTime > DateTime.Now)
+            if (otpCount > _configSetup.WrongOtpAttempt && varifyLockTime > DateTime.Now)
             {
                 dbuserStatusId = -5;
             }
