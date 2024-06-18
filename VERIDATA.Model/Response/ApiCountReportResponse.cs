@@ -7,6 +7,7 @@ namespace VERIDATA.Model.Response
     public class ApiCountReportResponse
     {
         public List<ApiCountJobResponse>? ApiCountList { get; set; }
+        public List<ApiCountJobResponse>? ApiConsolidateCountList { get; set; }
         public Filedata? Filedata { get; set; }
     }
 }

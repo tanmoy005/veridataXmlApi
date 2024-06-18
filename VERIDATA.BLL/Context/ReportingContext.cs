@@ -69,7 +69,7 @@ namespace VERIDATA.BLL.Context
                         Nationality = string.IsNullOrEmpty(r.Nationality) ? "NA" : r.Nationality,
                         UANNumber = string.IsNullOrEmpty(r.UANNumber) ? "NA" : CommonUtility.DecryptString(key, r.UANNumber),
                         PANNumber = string.IsNullOrEmpty(r.PANNumber) ? "NA" : CommonUtility.DecryptString(key, r.PANNumber),
-                        AadhaarNumber = string.IsNullOrEmpty(r.AadhaarNumberView) ? "NA" :  r.AadhaarNumberView,
+                        AadhaarNumber = string.IsNullOrEmpty(r.AadhaarNumberView) ? "NA" : r.AadhaarNumberView,
                         //AadhaarNumber = string.IsNullOrEmpty(r.AadhaarNumber) ? "NA" : CommonUtility.DecryptString(key, r.AadhaarNumber),
                         Remarks = Remarks
 
@@ -147,7 +147,7 @@ namespace VERIDATA.BLL.Context
                        PANName = r?.AppointeeData?.PANName,
                        PANNumber = string.IsNullOrEmpty(r?.AppointeeData?.PANNumber) ? "NA" : CommonUtility.DecryptString(key, r?.AppointeeData?.PANNumber),
                        AadhaarName = r?.AppointeeData?.AadhaarName,
-                       AadhaarNumber = string.IsNullOrEmpty(r?.AppointeeData?.AadhaarNumberView) ? "NA" :  r?.AppointeeData?.AadhaarNumberView,
+                       AadhaarNumber = string.IsNullOrEmpty(r?.AppointeeData?.AadhaarNumberView) ? "NA" : r?.AppointeeData?.AadhaarNumberView,
                        //AadhaarNumber = string.IsNullOrEmpty(r?.AppointeeData?.AadhaarNumber) ? "NA" : CommonUtility.DecryptString(key, r?.AppointeeData?.AadhaarNumber),
                    }).ToList();
             }
@@ -174,11 +174,21 @@ namespace VERIDATA.BLL.Context
         }
 
 
-        public async Task<List<ApiCountJobResponse>> ApiCountReport(DateTime? FromDate, DateTime? ToDate)
+        public async Task<ApiCountReportResponse> ApiCountReport(DateTime? FromDate, DateTime? ToDate)
         {
-            List<ApiCountJobResponse> ReportRes = new();
+            ApiCountReportResponse ReportRes = new();
             List<ApiCounter>? totalApiList = await _reportingDalContext.GetTotalApiList(FromDate, ToDate);
 
+            var DetailedReportRes = GetDatewiseApiCountDetails(totalApiList);
+            var ConsolidateReportRes = GetApiNamewiseApiCountDetails(totalApiList,$"{FromDate?.ToShortDateString()??"NA"}-{ToDate?.ToShortDateString()??"NA"}");
+            ReportRes.ApiCountList = DetailedReportRes;
+            ReportRes.ApiConsolidateCountList = ConsolidateReportRes;
+            return ReportRes;
+        }
+
+        private List<ApiCountJobResponse> GetDatewiseApiCountDetails(List<ApiCounter>? totalApiList)
+        {
+            List<ApiCountJobResponse> DetailedReportRes = new();
             List<IGrouping<string?, ApiCounter>>? DateWiseTotalRequestApiList = totalApiList?.Where(x => x?.Type == "Request")?.GroupBy(x => x.CreatedOn?.ToShortDateString())?.ToList();
             List<ApiCounter>? TotalResponseApiList = totalApiList?.Where(x => x?.Type == "Response")?.ToList();
 
@@ -223,12 +233,43 @@ namespace VERIDATA.BLL.Context
                     obj.TotalFailureCount = TotalFaliureApiCount?.Where(x => x.ApiName?.ToLower() == obj?.ApiName?.ToLower())?.FirstOrDefault()?.TotalFailureCount ?? 0;
                     //count++;
                 }
-                ReportRes.AddRange(TotalApiCount);
+                DetailedReportRes.AddRange(TotalApiCount);
 
             }
-            return ReportRes;
-        }
 
+            return DetailedReportRes;
+        }
+        private List<ApiCountJobResponse> GetApiNamewiseApiCountDetails(List<ApiCounter>? totalApiList, string date)
+        {
+            List<ApiCountJobResponse> ConsolidateReportRes = new();
+            List<IGrouping<string?, ApiCounter>>? NameWiseTotalRequestApiList = totalApiList?.Where(x => x?.Type == "Request")?.GroupBy(x => x.ApiName)?.ToList();
+            List<ApiCounter>? TotalResponseApiList = totalApiList?.Where(x => x?.Type == "Response")?.ToList();
+
+            foreach (IGrouping<string?, ApiCounter>? TotalApi in NameWiseTotalRequestApiList)
+            {
+                string? _currApi = TotalApi?.Key?.ToString();
+                List<ApiCounter>? _currTotalData = TotalApi?.ToList();
+                ApiCountJobResponse obj = new();
+                var TotalApiCount = _currTotalData?.Where(x => x?.Type == "Request")?.ToList();
+
+                List<ApiCounter>? TotalResponsesApiCount = TotalResponseApiList?.Where(x => x.ApiName?.ToLower() == _currApi?.ToLower())?.ToList();
+                List<ApiCounter>? TotalSuccessApiCount = TotalResponsesApiCount?.Where(x => x?.Status == (int)HttpStatusCode.OK)?.ToList();
+                List<ApiCounter>? TotalUnproceesbleApiCount = TotalResponsesApiCount?.Where(x => x?.Status == (int)HttpStatusCode.UnprocessableEntity)?.ToList();
+                List<ApiCounter>? TotalFaliureApiCount = TotalResponsesApiCount?.Where(x => x?.Status is not (((int)HttpStatusCode.UnprocessableEntity) or ((int)HttpStatusCode.OK)))?.ToList();
+
+                obj.Date = date;
+                obj.ApiName = _currApi;
+                obj.TotalApiCount = _currTotalData?.Count() ?? 0;
+                obj.TotalSuccessApiCount = TotalSuccessApiCount?.Count() ?? 0;
+                obj.TotalUnprocessableEntityCount = TotalUnproceesbleApiCount?.Count() ?? 0;
+                obj.TotalFailureCount = TotalFaliureApiCount?.Count() ?? 0;
+
+                ConsolidateReportRes.Add(obj);
+
+            }
+
+            return ConsolidateReportRes;
+        }
         public async Task<AppointeeCountDateWiseDetails> AppointeeCountReport(AppointeeCountReportSearchRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
         {
             AppointeeCountDateWiseDetails _response = new();

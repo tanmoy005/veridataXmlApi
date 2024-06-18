@@ -229,7 +229,8 @@ namespace PfcAPI.Controllers.Report
             }
         }
 
-        [Authorize]
+        //[Authorize]
+        [AllowAnonymous]
         [HttpPost]
         [Route("ApiCounterReport")]
         public ActionResult ApiCounterReport(DateTime? FromDate, DateTime? ToDate)
@@ -237,20 +238,19 @@ namespace PfcAPI.Controllers.Report
             try
             {
                 ApiCountReportResponse res = new();
-                List<ApiCountJobResponse> apiList = new();
+                //List<ApiCountJobResponse> apiList = new();
                 Filedata _Filedata = new();
                 ToDate = ToDate != null ? ToDate.Value.AddDays(1) : ToDate;
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
                 string reportname = $"Api_Count_Report_{_currDateString}.xlsx";
-                apiList = Task.Run(async () => await _reportContext.ApiCountReport(FromDate, ToDate)).GetAwaiter().GetResult();
-                if (apiList.Count > 0)
+                res = Task.Run(async () => await _reportContext.ApiCountReport(FromDate, ToDate)).GetAwaiter().GetResult();
+                if (res?.ApiCountList?.Count > 0)
                 {
-                    DataTable _exportdt = CommonUtility.ToDataTable<ApiCountJobResponse>(apiList);
+                    DataTable _exportdt = CommonUtility.ToDataTable<ApiCountJobResponse>(res.ApiCountList);
                     byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt, reportname, string.Empty);
                     _Filedata = new Filedata() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
                 }
-                res.ApiCountList = apiList;
                 res.Filedata = _Filedata;
                 return Ok(new BaseResponse<ApiCountReportResponse>(HttpStatusCode.OK, res));
             }
