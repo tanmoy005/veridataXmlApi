@@ -30,6 +30,7 @@ namespace VERIDATA.BLL.apiContext.Common
 
             ApiCountLogRequest ApiCountLogReq = new ApiCountLogRequest()
             {
+                Provider=apiConfig.apiProvider,
                 Url = apiConfig.apiUrl,
                 Type = "Request",
                 UserId = userId,
@@ -54,6 +55,7 @@ namespace VERIDATA.BLL.apiContext.Common
 
             if (responsse.StatusCode != HttpStatusCode.OK)
             {
+                ApiCountLogReq.Provider = apiConfig.apiProvider;
                 ApiCountLogReq.Type = "Response";
                 ApiCountLogReq.Status = (Int32)responsse.StatusCode;
                 ApiCountLogReq.Payload = _apiConfig.ApiDataLog ?? false ? await responsse.Content.ReadAsStringAsync() : string.Empty;

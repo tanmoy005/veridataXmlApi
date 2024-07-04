@@ -84,6 +84,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 ApiCounter apiActivty = new()
                 {
                     ApiName = getApiName,
+                    ProviderName=req?.Provider,
                     Url = req.Url,
                     Type = req.Type,
                     Status = req.Status,
