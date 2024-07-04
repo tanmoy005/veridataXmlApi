@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [config].[api_couter_log] (
     [id]         BIGINT         IDENTITY (1, 1) NOT NULL,
+    [provider_name]   NVARCHAR (50) NULL,
     [api_name]   NVARCHAR (100) NOT NULL,
     [api_url]    NVARCHAR (50)  NOT NULL,
     [api_type]   NVARCHAR (50)  NULL,

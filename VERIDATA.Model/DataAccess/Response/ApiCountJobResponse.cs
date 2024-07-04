@@ -7,6 +7,9 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Date")]
         public string? Date { get; set; }
 
+        [DisplayName("Provider Name")]
+        public string? ProviderName { get; set; }
+        
         [DisplayName("Api Name")]
         public string? ApiName { get; set; }
 

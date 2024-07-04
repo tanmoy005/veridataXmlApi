@@ -180,7 +180,7 @@ namespace VERIDATA.BLL.Context
             List<ApiCounter>? totalApiList = await _reportingDalContext.GetTotalApiList(FromDate, ToDate);
 
             var DetailedReportRes = GetDatewiseApiCountDetails(totalApiList);
-            var ConsolidateReportRes = GetApiNamewiseApiCountDetails(totalApiList,$"{FromDate?.ToShortDateString()??"NA"}-{ToDate?.ToShortDateString()??"NA"}");
+            var ConsolidateReportRes = GetApiProvider_NameWiseApiCountDetails(totalApiList, $"{FromDate?.ToShortDateString() ?? "NA"}-{ToDate?.ToShortDateString() ?? "NA"}");
             ReportRes.ApiCountList = DetailedReportRes;
             ReportRes.ApiConsolidateCountList = ConsolidateReportRes;
             return ReportRes;
@@ -196,75 +196,99 @@ namespace VERIDATA.BLL.Context
             {
                 string? _currDate = TotalApiPerDate?.Key?.ToString();
                 List<ApiCounter>? _currTotalData = TotalApiPerDate?.ToList();
-
-                List<ApiCountJobResponse>? TotalApiCount = _currTotalData?.Where(x => x?.Type == "Request")?.GroupBy(x => x.ApiName)?.Select(y => new ApiCountJobResponse
-                {
-                    ApiName = y.Key?.ToLower(),
-                    TotalApiCount = y?.ToList()?.Count() ?? 0,
-                })?.ToList();
+                List<ApiCountJobResponse>? TotalApiCount = new();
+                List<ApiCountJobResponse>? TotalSuccessApiCount = new();
+                List<ApiCountJobResponse>? TotalUnproceesbleApiCount = new();
+                List<ApiCountJobResponse>? TotalFaliureApiCount = new();
 
                 List<ApiCounter>? DateWiseTotalResponseApiList = TotalResponseApiList?.Where(x => x?.CreatedOn?.ToShortDateString() == _currDate)?.ToList();
 
-                List<ApiCountJobResponse>? TotalSuccessApiCount = DateWiseTotalResponseApiList?.Where(x => x?.Status == (int)HttpStatusCode.OK)?.GroupBy(x => x.ApiName)?.Select(y => new ApiCountJobResponse
-                {
-                    ApiName = y?.Key,
-                    TotalSuccessApiCount = y?.ToList()?.Count() ?? 0,
-                })?.ToList();
+                var TotalApiCountByName = _currTotalData?.Where(x => x?.Type == "Request")?.GroupBy(x => x.ApiName)?.ToList();
 
-                List<ApiCountJobResponse>? TotalUnproceesbleApiCount = DateWiseTotalResponseApiList?.Where(x => x?.Status == (int)HttpStatusCode.UnprocessableEntity)?.GroupBy(x => x.ApiName)?.Select(y => new ApiCountJobResponse
+                foreach (var obj in TotalApiCountByName)
                 {
-                    ApiName = y?.Key,
-                    TotalUnprocessableEntityCount = y?.ToList()?.Count() ?? 0,
-                    //TotalApiCount = TotalApiCount?.Where(x => x.ApiName?.ToLower() == y?.Key?.ToLower())?.ToList()?.Count() ?? 0
-                })?.ToList();
+                    var TotalApiCountProviderWise = obj?.GroupBy(x => x.ProviderName)?.Select(y => new ApiCountJobResponse
+                    {
+                        ProviderName = y.Key,
+                        ApiName = obj.Key?.ToLower(),
+                        TotalApiCount = y?.ToList()?.Count() ?? 0,
+                    })?.ToList();
 
-                List<ApiCountJobResponse>? TotalFaliureApiCount = DateWiseTotalResponseApiList?.Where(x => x?.Status is not (((int)HttpStatusCode.UnprocessableEntity) or ((int)HttpStatusCode.OK)))?.GroupBy(x => x.ApiName)?.Select(y => new ApiCountJobResponse
-                {
-                    ApiName = y?.Key,
-                    TotalFailureCount = y?.ToList()?.Count() ?? 0,
-                })?.ToList();
-                //var count = 0;
-                foreach (ApiCountJobResponse? obj in TotalApiCount)
-                {
 
-                    obj.Date = _currDate;
-                    obj.TotalSuccessApiCount = TotalSuccessApiCount?.Where(x => x.ApiName?.ToLower() == obj?.ApiName?.ToLower())?.FirstOrDefault()?.TotalSuccessApiCount ?? 0;
-                    obj.TotalUnprocessableEntityCount = TotalUnproceesbleApiCount?.Where(x => x.ApiName?.ToLower() == obj?.ApiName?.ToLower())?.FirstOrDefault()?.TotalUnprocessableEntityCount ?? 0;
-                    obj.TotalFailureCount = TotalFaliureApiCount?.Where(x => x.ApiName?.ToLower() == obj?.ApiName?.ToLower())?.FirstOrDefault()?.TotalFailureCount ?? 0;
-                    //count++;
+                    TotalSuccessApiCount = DateWiseTotalResponseApiList?.Where(x => x?.Status == (int)HttpStatusCode.OK && x.ApiName?.ToLower() == obj.Key?.ToLower())?.GroupBy(x => x.ProviderName)?.Select(y => new ApiCountJobResponse
+                    {
+                        ProviderName = y.Key,
+                        ApiName = obj.Key?.ToLower(),
+                        TotalSuccessApiCount = y?.ToList()?.Count() ?? 0,
+                    })?.ToList();
+
+                    TotalUnproceesbleApiCount = DateWiseTotalResponseApiList?.Where(x => x?.Status == (int)HttpStatusCode.UnprocessableEntity && x.ApiName?.ToLower() == obj.Key?.ToLower())?.GroupBy(x => x.ProviderName)?.Select(y => new ApiCountJobResponse
+                    {
+                        ProviderName = y.Key,
+                        ApiName = obj.Key?.ToLower(),
+                        TotalUnprocessableEntityCount = y?.ToList()?.Count() ?? 0,
+                        //TotalApiCount = TotalApiCount?.Where(x => x.ApiName?.ToLower() == y?.Key?.ToLower())?.ToList()?.Count() ?? 0
+                    })?.ToList();
+
+                    TotalFaliureApiCount = DateWiseTotalResponseApiList?.Where(x => x?.Status is not (((int)HttpStatusCode.UnprocessableEntity) or ((int)HttpStatusCode.OK)) && x.ApiName?.ToLower() == obj.Key?.ToLower())?.GroupBy(x => x.ProviderName)?.Select(y => new ApiCountJobResponse
+                    {
+                        ProviderName = y?.Key,
+                        ApiName = obj.Key?.ToLower(),
+                        TotalFailureCount = y?.ToList()?.Count() ?? 0,
+                    })?.ToList();
+
+                    foreach (ApiCountJobResponse? obj1 in TotalApiCountProviderWise)
+                    {
+
+                        obj1.Date = _currDate;
+                        obj1.TotalSuccessApiCount = TotalSuccessApiCount?.Where(x => x.ProviderName?.ToLower() == obj1?.ProviderName?.ToLower())?.FirstOrDefault()?.TotalSuccessApiCount ?? 0;
+                        obj1.TotalUnprocessableEntityCount = TotalUnproceesbleApiCount?.Where(x => x.ProviderName?.ToLower() == obj1?.ProviderName?.ToLower())?.FirstOrDefault()?.TotalUnprocessableEntityCount ?? 0;
+                        obj1.TotalFailureCount = TotalFaliureApiCount?.Where(x => x.ProviderName?.ToLower() == obj1?.ProviderName?.ToLower())?.FirstOrDefault()?.TotalFailureCount ?? 0;
+                        //count++;
+                    }
+                    DetailedReportRes.AddRange(TotalApiCountProviderWise);
                 }
-                DetailedReportRes.AddRange(TotalApiCount);
+
 
             }
 
             return DetailedReportRes;
         }
-        private List<ApiCountJobResponse> GetApiNamewiseApiCountDetails(List<ApiCounter>? totalApiList, string date)
+        private List<ApiCountJobResponse> GetApiProvider_NameWiseApiCountDetails(List<ApiCounter>? totalApiList, string date)
         {
             List<ApiCountJobResponse> ConsolidateReportRes = new();
-            List<IGrouping<string?, ApiCounter>>? NameWiseTotalRequestApiList = totalApiList?.Where(x => x?.Type == "Request")?.GroupBy(x => x.ApiName)?.ToList();
+            List<IGrouping<string?, ApiCounter>>? ProviderNameWiseTotalRequestApiList = totalApiList?.Where(x => x?.Type == "Request")?.GroupBy(x => x.ProviderName)?.ToList();
             List<ApiCounter>? TotalResponseApiList = totalApiList?.Where(x => x?.Type == "Response")?.ToList();
 
-            foreach (IGrouping<string?, ApiCounter>? TotalApi in NameWiseTotalRequestApiList)
+            foreach (IGrouping<string?, ApiCounter>? TotalApiProvider in ProviderNameWiseTotalRequestApiList)
             {
-                string? _currApi = TotalApi?.Key?.ToString();
-                List<ApiCounter>? _currTotalData = TotalApi?.ToList();
-                ApiCountJobResponse obj = new();
-                var TotalApiCount = _currTotalData?.Where(x => x?.Type == "Request")?.ToList();
+                string? _currApiProvider = TotalApiProvider?.Key?.ToString();
+                List<IGrouping<string?, ApiCounter>>? NameWiseTotalRequestApiList = TotalApiProvider?.Where(x => x?.Type == "Request")?.GroupBy(x => x.ApiName)?.ToList();
 
-                List<ApiCounter>? TotalResponsesApiCount = TotalResponseApiList?.Where(x => x.ApiName?.ToLower() == _currApi?.ToLower())?.ToList();
-                List<ApiCounter>? TotalSuccessApiCount = TotalResponsesApiCount?.Where(x => x?.Status == (int)HttpStatusCode.OK)?.ToList();
-                List<ApiCounter>? TotalUnproceesbleApiCount = TotalResponsesApiCount?.Where(x => x?.Status == (int)HttpStatusCode.UnprocessableEntity)?.ToList();
-                List<ApiCounter>? TotalFaliureApiCount = TotalResponsesApiCount?.Where(x => x?.Status is not (((int)HttpStatusCode.UnprocessableEntity) or ((int)HttpStatusCode.OK)))?.ToList();
+                foreach (IGrouping<string?, ApiCounter>? TotalApi in NameWiseTotalRequestApiList)
+                {
+                    string? _currApi = TotalApi?.Key?.ToString();
 
-                obj.Date = date;
-                obj.ApiName = _currApi;
-                obj.TotalApiCount = _currTotalData?.Count() ?? 0;
-                obj.TotalSuccessApiCount = TotalSuccessApiCount?.Count() ?? 0;
-                obj.TotalUnprocessableEntityCount = TotalUnproceesbleApiCount?.Count() ?? 0;
-                obj.TotalFailureCount = TotalFaliureApiCount?.Count() ?? 0;
+                    List<ApiCounter>? _currTotalData = TotalApi?.ToList();
+                    ApiCountJobResponse obj = new();
+                    var TotalApiCount = _currTotalData?.Where(x => x?.Type == "Request")?.ToList();
 
-                ConsolidateReportRes.Add(obj);
+                    List<ApiCounter>? TotalResponsesApiCount = TotalResponseApiList?.Where(x => x.ApiName?.ToLower() == _currApi?.ToLower() && x.ProviderName?.ToLower() == _currApiProvider?.ToLower())?.ToList();
+                    List<ApiCounter>? TotalSuccessApiCount = TotalResponsesApiCount?.Where(x => x?.Status == (int)HttpStatusCode.OK)?.ToList();
+                    List<ApiCounter>? TotalUnproceesbleApiCount = TotalResponsesApiCount?.Where(x => x?.Status == (int)HttpStatusCode.UnprocessableEntity)?.ToList();
+                    List<ApiCounter>? TotalFaliureApiCount = TotalResponsesApiCount?.Where(x => x?.Status is not (((int)HttpStatusCode.UnprocessableEntity) or ((int)HttpStatusCode.OK)))?.ToList();
+
+                    obj.Date = date;
+                    obj.ProviderName = _currApiProvider;
+                    obj.ApiName = _currApi;
+                    obj.TotalApiCount = _currTotalData?.Count() ?? 0;
+                    obj.TotalSuccessApiCount = TotalSuccessApiCount?.Count() ?? 0;
+                    obj.TotalUnprocessableEntityCount = TotalUnproceesbleApiCount?.Count() ?? 0;
+                    obj.TotalFailureCount = TotalFaliureApiCount?.Count() ?? 0;
+
+                    ConsolidateReportRes.Add(obj);
+
+                }
 
             }
 
