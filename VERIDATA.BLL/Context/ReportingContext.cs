@@ -180,7 +180,7 @@ namespace VERIDATA.BLL.Context
             List<ApiCounter>? totalApiList = await _reportingDalContext.GetTotalApiList(FromDate, ToDate);
 
             var DetailedReportRes = GetDatewiseApiCountDetails(totalApiList);
-            var ConsolidateReportRes = GetApiProvider_NameWiseApiCountDetails(totalApiList, $"{FromDate?.ToShortDateString() ?? "NA"}-{ToDate?.ToShortDateString() ?? "NA"}");
+            var ConsolidateReportRes = GetApiProvider_NameWiseApiCountDetails(totalApiList);
             ReportRes.ApiCountList = DetailedReportRes;
             ReportRes.ApiConsolidateCountList = ConsolidateReportRes;
             return ReportRes;
@@ -254,9 +254,9 @@ namespace VERIDATA.BLL.Context
 
             return DetailedReportRes;
         }
-        private List<ApiCountJobResponse> GetApiProvider_NameWiseApiCountDetails(List<ApiCounter>? totalApiList, string date)
+        private List<ConsolidateApiCountJobResponse> GetApiProvider_NameWiseApiCountDetails(List<ApiCounter>? totalApiList)
         {
-            List<ApiCountJobResponse> ConsolidateReportRes = new();
+            List<ConsolidateApiCountJobResponse> ConsolidateReportRes = new();
             List<IGrouping<string?, ApiCounter>>? ProviderNameWiseTotalRequestApiList = totalApiList?.Where(x => x?.Type == "Request")?.GroupBy(x => x.ProviderName)?.ToList();
             List<ApiCounter>? TotalResponseApiList = totalApiList?.Where(x => x?.Type == "Response")?.ToList();
 
@@ -270,7 +270,7 @@ namespace VERIDATA.BLL.Context
                     string? _currApi = TotalApi?.Key?.ToString();
 
                     List<ApiCounter>? _currTotalData = TotalApi?.ToList();
-                    ApiCountJobResponse obj = new();
+                    ConsolidateApiCountJobResponse obj = new();
                     var TotalApiCount = _currTotalData?.Where(x => x?.Type == "Request")?.ToList();
 
                     List<ApiCounter>? TotalResponsesApiCount = TotalResponseApiList?.Where(x => x.ApiName?.ToLower() == _currApi?.ToLower() && x.ProviderName?.ToLower() == _currApiProvider?.ToLower())?.ToList();
@@ -278,7 +278,6 @@ namespace VERIDATA.BLL.Context
                     List<ApiCounter>? TotalUnproceesbleApiCount = TotalResponsesApiCount?.Where(x => x?.Status == (int)HttpStatusCode.UnprocessableEntity)?.ToList();
                     List<ApiCounter>? TotalFaliureApiCount = TotalResponsesApiCount?.Where(x => x?.Status is not (((int)HttpStatusCode.UnprocessableEntity) or ((int)HttpStatusCode.OK)))?.ToList();
 
-                    obj.Date = date;
                     obj.ProviderName = _currApiProvider;
                     obj.ApiName = _currApi;
                     obj.TotalApiCount = _currTotalData?.Count() ?? 0;
