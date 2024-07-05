@@ -455,5 +455,25 @@ namespace PfcAPI.Controllers.Appoientee
             }
         }
 
+        [Authorize]
+        //[AllowAnonymous]
+
+        [HttpPost]
+        [Route("GetEmployementDetails")]
+        public ActionResult GetEmployementDetails(int AppointeeId)
+        {
+            try
+            {
+                AppointeeEmployementDetailsViewResponse employementDetails = Task.Run(async () => await _candidateContext.GetGetEmployementDetailsByAppointeeId(AppointeeId)).GetAwaiter().GetResult();
+                //var _Filedata = new Filedata() { FileData = fileDetails.FileData, FileName = fileDetails.FileData != null ? fileDetails.FileName : string.Empty, FileType = fileDetails.FileData != null ? fileDetails.FileExtention : string.Empty };
+                return Ok(new BaseResponse<AppointeeEmployementDetailsViewResponse>(HttpStatusCode.OK, employementDetails));
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
+
     }
 }

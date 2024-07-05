@@ -328,5 +328,119 @@ namespace VERIDATA.BLL.Context
 
             return passbookDetails;
         }
+
+        public async Task<AppointeeEmployementDetailsViewResponse> GetGetEmployementDetailsByAppointeeId(int appointeeId)
+        {
+            AppointeeEmployementDetailsViewResponse passbookDetails = new();
+            string filePath = string.Empty;
+            List<AppointeeUploadDetails> _UploadDetails = await _appointeeDalContext.GetAppinteeUploadDetails(appointeeId);
+            AppointeeUploadDetails? _DocList = _UploadDetails.Find(x => x.UploadTypeCode == FileTypealias.PFPassbook);
+            if (_DocList != null)
+            {
+                string path = _DocList.UploadPath;
+                if (File.Exists(path))
+                {
+                    // Read entire text file content in one string
+                    string _passbookdata = File.ReadAllText(path);
+                    if (_DocList.UploadSubTypeCode == ApiProviderType.SurePass)
+                    {
+                        Surepass_GetUanPassbookResponse PassBookResponse = JsonConvert.DeserializeObject<Surepass_GetUanPassbookResponse>(_passbookdata);
+                        passbookDetails = ParseEmployementDetailsSurePass(PassBookResponse);
+                    }
+                    if (_DocList.UploadSubTypeCode == ApiProviderType.Karza)
+                    {
+                        UanPassbookDetails PassBookResponse1 = JsonConvert.DeserializeObject<UanPassbookDetails>(_passbookdata);
+                        passbookDetails = await ParseEmployementDetailsKarza(PassBookResponse1, appointeeId);
+                    }
+                }
+            }
+            return passbookDetails;
+            //  return filePath;
+        }
+
+        private AppointeeEmployementDetailsViewResponse ParseEmployementDetailsSurePass(Surepass_GetUanPassbookResponse PassBookResponse)
+        {
+            AppointeeEmployementDetailsViewResponse passbookDetails = new();
+            PassbookData? PassBookResponseData = PassBookResponse?.data;
+            if (PassBookResponseData != null)
+            {
+                List<PfEmployementDetails> _companyDetailsList = new();
+                passbookDetails.clientId = PassBookResponseData.client_id;
+                passbookDetails.fullName = PassBookResponseData.full_name;
+                passbookDetails.fatherName = PassBookResponseData.father_name;
+                passbookDetails.pfUan = PassBookResponseData.pf_uan;
+                passbookDetails.dob = PassBookResponseData.dob;
+
+                foreach (KeyValuePair<string, CandidateCompanies> obj in PassBookResponseData.companies)
+                {
+                    CandidateCompanies _copmnyData = obj.Value;
+                    var TotalWorkDays =Convert.ToInt32(((Convert.ToDateTime(_copmnyData?.passbook.LastOrDefault()?.approved_on)) - (Convert.ToDateTime(_copmnyData?.passbook.FirstOrDefault()?.approved_on))).TotalDays);
+
+                    PfEmployementDetails _companyDetails = new()
+                    {
+                        companyName = _copmnyData?.company_name,
+                        establishmentId = _copmnyData?.establishment_id,
+                        memberId = _copmnyData?.passbook.LastOrDefault()?.member_id,
+                        FirstTransactionApprovedOn = _copmnyData?.passbook.FirstOrDefault()?.approved_on,
+                        FirstTransactionMonth = CommonUtility.getMonthName(Convert.ToInt32(_copmnyData?.passbook.FirstOrDefault()?.month)),
+                        FirstTransactionYear = _copmnyData?.passbook.FirstOrDefault()?.year,
+                        LastTransactionApprovedOn = _copmnyData?.passbook.LastOrDefault()?.approved_on,
+                        LastTransactionMonth = CommonUtility.getMonthName(Convert.ToInt32(_copmnyData?.passbook.LastOrDefault()?.month)),
+                        LastTransactionYear = _copmnyData?.passbook.LastOrDefault()?.year,
+                        TotalWorkDays= TotalWorkDays,
+                        WorkForYear = TotalWorkDays / 365,
+                        WorkForMonth = (TotalWorkDays % 365)/30,
+                    };
+                    _companyDetailsList.Add(_companyDetails);
+                }
+                passbookDetails.companies = _companyDetailsList;
+            }
+
+            return passbookDetails;
+        }
+        private async Task<AppointeeEmployementDetailsViewResponse> ParseEmployementDetailsKarza(UanPassbookDetails PassBookResponse, int appointeeId)
+        {
+            string? key = _apiConfig.EncriptKey;
+            AppointeeEmployementDetailsViewResponse passbookDetails = new();
+            AppointeeDetails _appointeedetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
+            if (PassBookResponse != null)
+            {
+                EmployeeDetails PassBookResponseData = PassBookResponse.employee_details;
+                List<PfEmployementDetails> _companyDetailsList = new();
+                passbookDetails.clientId = "NA"; //PassBookResponseData.client_id;
+                passbookDetails.fullName = PassBookResponseData?.member_name;
+                passbookDetails.fatherName = PassBookResponseData?.father_name;
+                passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.UANNumber));
+                passbookDetails.dob = PassBookResponseData?.dob;
+
+                foreach (EstDetail obj in PassBookResponse?.est_details)
+                {
+                    //var _copmnyData = obj.Value;
+                    var TotalWorkDays = Convert.ToInt32(((Convert.ToDateTime(obj?.passbook.LastOrDefault()?.approved_on)) - (Convert.ToDateTime(obj?.passbook.FirstOrDefault()?.approved_on))).TotalDays);
+
+                    DateTime transFirstMonth = Convert.ToDateTime(obj?.passbook.FirstOrDefault()?.approved_on);
+                    DateTime transLastMonth = Convert.ToDateTime(obj?.passbook.LastOrDefault()?.approved_on);
+                    PfEmployementDetails _companyDetails = new()
+                    {
+                        companyName = obj?.est_name,
+                        establishmentId = "NA",// _copmnyData?.establishment_id;
+                        memberId = obj?.member_id,
+                        FirstTransactionApprovedOn = obj?.passbook.FirstOrDefault()?.approved_on,
+                        FirstTransactionMonth = CommonUtility.getMonthName(transFirstMonth.Month),
+                        FirstTransactionYear = transFirstMonth.Year.ToString(),
+                        LastTransactionApprovedOn = obj?.passbook.LastOrDefault()?.approved_on,
+                        LastTransactionMonth = CommonUtility.getMonthName(transLastMonth.Month),
+                        LastTransactionYear = transLastMonth.Year.ToString(),
+                        TotalWorkDays = TotalWorkDays,
+                        WorkForYear = TotalWorkDays / 365,
+                        WorkForMonth = (TotalWorkDays % 365) / 30,
+                    };
+                    _companyDetailsList.Add(_companyDetails);
+                }
+                passbookDetails.companies = _companyDetailsList;
+            }
+
+            return passbookDetails;
+        }
     }
 }

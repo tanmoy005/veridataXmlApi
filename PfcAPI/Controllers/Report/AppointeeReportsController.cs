@@ -229,8 +229,8 @@ namespace PfcAPI.Controllers.Report
             }
         }
 
-        //[Authorize]
-        [AllowAnonymous]
+        [Authorize]
+        // [AllowAnonymous]
         [HttpPost]
         [Route("ApiCounterReport")]
         public ActionResult ApiCounterReport(DateTime? FromDate, DateTime? ToDate)
@@ -303,8 +303,8 @@ namespace PfcAPI.Controllers.Report
             }
         }
 
-        // [Authorize]
-        [AllowAnonymous]
+        [Authorize]
+        //[AllowAnonymous]
         //[Authorize(Roles = $"{RoleTypeAlias.SuperAdmin},{RoleTypeAlias.CompanyAdmin},{RoleTypeAlias.GeneralAdmin}")]
         [HttpPost]
         [Route("AdminAppointeeCounterReport")]

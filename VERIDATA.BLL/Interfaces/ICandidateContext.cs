@@ -13,6 +13,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<string?> GetRemarksRemedy(int remarksId);
         public Task<List<AppointeeActivityDetailsResponse>> GetActivityDetails(int appointeeId);
         public Task<AppointeePassbookDetailsViewResponse> GetPassbookDetailsByAppointeeId(int appointeeId);
+        public Task<AppointeeEmployementDetailsViewResponse> GetGetEmployementDetailsByAppointeeId(int appointeeId);
 
 
     }
