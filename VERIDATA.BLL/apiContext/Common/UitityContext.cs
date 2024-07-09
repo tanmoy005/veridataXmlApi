@@ -61,6 +61,14 @@ namespace VERIDATA.BLL.apiContext.Common
                 ApiCountLogReq.Payload = _apiConfig.ApiDataLog ?? false ? await responsse.Content.ReadAsStringAsync() : string.Empty;
                 Task.Run(async () => await _activityContext.PostApiActivity(ApiCountLogReq)).GetAwaiter().GetResult();
             }
+            else
+            {
+                ApiCountLogReq.Provider = apiConfig.apiProvider;
+                ApiCountLogReq.Type = "Response";
+                ApiCountLogReq.Status = (Int32)responsse.StatusCode;
+                ApiCountLogReq.Payload = string.Empty;
+                Task.Run(async () => await _activityContext.PostApiActivity(ApiCountLogReq)).GetAwaiter().GetResult();
+            }
             return responsse;
         }
     }
