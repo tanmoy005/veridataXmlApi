@@ -18,53 +18,29 @@ namespace VERIDATA.BLL.Authentication
 
         public string createToken(string? UserName, string? Role, int? userId)
         {
-            //SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_tokenConfig?.Key));
-            //SigningCredentials credentials = new(securityKey, SecurityAlgorithms.HmacSha256);
-            //var Subject = new Claim(new Claim[]
-            //  {
-            //        new Claim(ClaimTypes.Name, "UserName"),
-            //        new Claim(ClaimTypes.Role, "Role")
-            //  });
-            //var token = new JwtSecurityToken("your-issuer", "your-audience", null, expires: DateTime.Now.AddMinutes(60), signingCredentials: credentials);
-            //var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-            //var claims = new ClaimsIdentity(new Claim[] {
-            //             new Claim(JwtRegisteredClaimNames.Sub, "JWTServiceAccessToken"),
-            //             new Claim(ClaimTypes.Name, UserName),
-            //             new Claim(ClaimTypes.Role, Role),
-            //             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            //             new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-            //             new Claim("UserId", userId.ToString()),
-            //        }
-            //);
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, "JWTServiceAccessToken"),
                 new Claim(ClaimTypes.Name, UserName),
                 new Claim(ClaimTypes.Role, Role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString()),
                 new Claim("userId", userId.ToString()),
             };
             string Token = GenerateAccessToken(claims);
-            //JwtSecurityTokenHandler tokenHandler = new();
-            //SecurityTokenDescriptor tokenDescriptor =
-            //    new()
-            //    {
-            //        Issuer = _tokenConfig?.Issuer,
-            //        Audience = _tokenConfig?.Audience,
-            //        Subject = claims,
-            //        IssuedAt = DateTime.UtcNow,
-            //        Expires = DateTime.UtcNow.AddMinutes(_tokenConfig?.Timeout ?? 0),
-            //        // SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            //        SigningCredentials = credentials
-            //    };
-
-            //SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-            //string Token = tokenHandler.WriteToken(token);
             return Token;
         }
+        private static long ToUnixEpochDate(DateTime date)
 
+        {
+
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            var timeSpan = date - epoch;
+
+            return (long)timeSpan.TotalSeconds;
+
+        }
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
             SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_tokenConfig?.Key));
@@ -81,27 +57,6 @@ namespace VERIDATA.BLL.Authentication
             );
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-
-            //SecurityTokenDescriptor tokenDescriptor =
-            //    new()
-            //    {
-            //        Issuer = _tokenConfig?.Issuer,
-            //        Audience = _tokenConfig?.Audience,
-            //        Subject = claims,
-            //        //Subject = new ClaimsIdentity(new Claim[]
-            //        //{
-            //        //    new Claim(ClaimTypes.Name, UserName),
-            //        //    new Claim(ClaimTypes.Role, Role),
-            //        //    new Claim(ClaimTypes.Role, Role)
-            //        //}),
-            //        IssuedAt = DateTime.UtcNow,
-            //        Expires = DateTime.UtcNow.AddMinutes(_tokenConfig?.Timeout ?? 0),
-            //        // SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            //        SigningCredentials = credentials
-            //    };
-
-            //SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-            //string Token = tokenHandler.WriteToken(token);
             return tokenString;
         }
 

@@ -225,7 +225,7 @@ namespace PfcAPI.Controllers.RestApi
                         _ErrorResponse.ErrorCode = (int)Response.StatusCode;
                         _ErrorResponse.UserMessage = Response?.UserMessage ?? string.Empty;
                         _ErrorResponse.InternalMessage = Response?.ReasonPhrase ?? string.Empty;
-                        return Ok(new BaseResponse<ErrorResponse>(Response.StatusCode, _ErrorResponse));
+                        return Ok(new BaseResponse<ErrorResponse>(Response?.StatusCode?? HttpStatusCode.InternalServerError, _ErrorResponse));
                     }
 
                 }

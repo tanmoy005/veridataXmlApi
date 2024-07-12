@@ -43,7 +43,7 @@ namespace VERIDATA.BLL.Context
             _workflowDalContext = workflowDalContext;
             _configSetup = apiConfiguration;
         }
-        public async Task<List<AppointeeBasicInfo>?> validateExistingUser(List<AppointeeBasicInfo> _appointeeList)
+        public async Task<List<AppointeeBasicInfo>> validateExistingUser(List<AppointeeBasicInfo> _appointeeList)
         {
             List<AppointeeBasicInfo>? exstinguserList = new();
             List<AppointeeBasicInfo> duplicateCheckUsersList = new();
