@@ -68,12 +68,12 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                          on p.AppointeeId equals x.AppointeeId into grouping
                                                                  from a in grouping.DefaultIfEmpty()
                                                                  where p.ActiveStatus == true
-&& (startDate == null || p.CreatedOn >= startDate)
-&& (filter.ToDate == null || p.CreatedOn < _ToDate)
-&& (filter.IsPfRequired == null || a.IsPFverificationReq == filter.IsPfRequired)
-&& (string.IsNullOrEmpty(filter.ProcessStatus) || w.AppvlStatusId == _filteredStatus.AppvlStatusId)
-&& (string.IsNullOrEmpty(filter.AppointeeName) || u.AppointeeName.Contains(filter.AppointeeName))
-&& (string.IsNullOrEmpty(filter.CandidateId) || u.CandidateId.Contains(filter.CandidateId))
+                                                                    && (startDate == null || p.CreatedOn >= startDate)
+                                                                    && (filter.ToDate == null || p.CreatedOn < _ToDate)
+                                                                    && (filter.IsPfRequired == null || a.IsPFverificationReq == filter.IsPfRequired)
+                                                                    && (string.IsNullOrEmpty(filter.ProcessStatus) || w.AppvlStatusId == _filteredStatus.AppvlStatusId)
+                                                                    && (string.IsNullOrEmpty(filter.AppointeeName) || u.AppointeeName.Contains(filter.AppointeeName))
+                                                                    && (string.IsNullOrEmpty(filter.CandidateId) || u.CandidateId.Contains(filter.CandidateId))
                                                                  select new ProcessedDataDetailsResponse
                                                                  {
 
@@ -184,7 +184,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                       AppointeeDetails = p,
                                                                       AppvlStatusId = w.AppvlStatusId,
                                                                       AppointeeId = b.AppointeeId,
-                                                                      ConsentStatusId=c.ConsentStatus,
+                                                                      ConsentStatusId = c.ConsentStatus,
                                                                       IsJoiningDateLapsed = b.DateOfJoining < _CurrDate
                                                                   };
 
@@ -265,7 +265,6 @@ namespace VERIDATA.DAL.DataAccess.Context
         public async Task PostRawfiledataAsync(RawdataSubmitRequest data)
         {
             int? _userId = data?.UserId;
-            int? _companyId = data?.CompanyId;
             int? _fileId = data?.FileId;
 
             List<RawFileData>? _rawfileDatalist = data?.ApnteFileData?.Select(x => new RawFileData
@@ -283,7 +282,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 CreatedBy = _userId,
                 ActiveStatus = true,
                 CreatedOn = DateTime.Now,
-                CompanyId = _companyId ?? 0,
+                CompanyId = data?.EntityData?.FirstOrDefault(y => y.CompanyName?.Trim()?.ToLower() == x.CompanyName?.Trim()?.ToLower() || y.CompanyCode?.Trim()?.ToLower() == x.CompanyName?.Trim()?.ToLower())?.CompanyId ?? 0,
                 FileId = _fileId ?? 0
             }).ToList();
             await _dbContextClass.RawFileData.AddRangeAsync(_rawfileDatalist);
@@ -303,7 +302,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 CreatedBy = _userId,
                 ActiveStatus = true,
                 CreatedOn = DateTime.Now,
-                CompanyId = _companyId ?? 0,
+                CompanyId = data?.EntityData?.FirstOrDefault(y => y.CompanyName?.Trim()?.ToLower() == x.CompanyName?.Trim()?.ToLower() || y.CompanyCode?.Trim()?.ToLower() == x.CompanyName?.Trim()?.ToLower())?.CompanyId ?? 0,
                 FileId = _fileId ?? 0
             }).ToList();
             await _dbContextClass.RawFileHistoryData.AddRangeAsync(_rawfileHistDatalist);

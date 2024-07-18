@@ -32,14 +32,16 @@ namespace VERIDATA.BLL.Context
         private readonly IUserContext _userContext;
         private readonly IEmailSender _emailSender;
         private readonly IWorkFlowDalContext _workFlowDalContext;
+        private readonly IMasterDalContext _masterDalContext;
 
-        public FileContext(IAppointeeDalContext appointeeContext, IUserContext userContext, IEmailSender emailSender, IWorkFlowDalContext workFlowDalContext)
+        public FileContext(IAppointeeDalContext appointeeContext, IUserContext userContext, IEmailSender emailSender, IWorkFlowDalContext workFlowDalContext, IMasterDalContext masterDalContext)
         {
             //_dbContextClass = dbContextClass;
             _appointeeContext = appointeeContext;
             _userContext = userContext;
             _emailSender = emailSender;
             _workFlowDalContext = workFlowDalContext;
+            _masterDalContext = masterDalContext;
         }
 
         public async Task<UploadedxlsRawFileDataResponse> UploadAppointeexlsFile(CompanyFileUploadRequest fileDetails)
@@ -48,9 +50,10 @@ namespace VERIDATA.BLL.Context
             int _InvalidUserCount = 0;
             List<Filedata> _FileDataList = new();
             UserDetailsResponse userData = await _userContext.getUserDetailsAsyncbyId(fileDetails.UserId);
+            List<CompanyEntityDetailsResponse> companyEntities = await _masterDalContext.GetAllCompanyEntityMaster();
             List<RawFileDataDetailsResponse> RawFileData = new();
             UploadedXSLfileDetailsResponse resdata = await GetDataTableFromxlsFile(fileDetails.CompanyId, fileDetails.FileDetails, "NewUser");
-            XSLfileDetailsListResponse validateresdata = ValidateFromxlsFile(resdata);
+            XSLfileDetailsListResponse validateresdata = ValidateFromxlsFile(resdata, companyEntities);
 
             if (validateresdata.InValidXlsData?.Rows?.Count > 0)
             {
@@ -78,6 +81,7 @@ namespace VERIDATA.BLL.Context
                     string? appointeeName = ((string)row["Name"])?.Trim();
                     string? AppointeeEmailId = ((string)row["EmailId"])?.Trim();
                     string? CompanyName = ((string)row["Company Name"])?.Trim();
+
                     if (!(string.IsNullOrEmpty(AppointeeEmailId) && string.IsNullOrEmpty(appointeeName)))
                     {
                         _rawData.CandidateID = candidateID;
@@ -89,6 +93,7 @@ namespace VERIDATA.BLL.Context
                         _rawData.lvl1Email = ((string)row["level1 Email"])?.Trim();
                         _rawData.lvl2Email = ((string)row["level2 Email"])?.Trim();
                         _rawData.lvl3Email = ((string)row["level3 Email"])?.Trim();
+                       // _rawData.CompanyId = CompanyDetails?.CompanyId;
                         _rawData.CompanyName = CompanyName?.Trim();
                         rawListData.Add(_rawData);
                     }
@@ -114,7 +119,7 @@ namespace VERIDATA.BLL.Context
                 RawdataSubmitRequest reqObj = new()
                 {
                     ApnteFileData = _rawfinallistdata,
-                    CompanyId = fileDetails?.CompanyId ?? 0,
+                    EntityData = companyEntities,
                     UserId = fileDetails?.UserId ?? 0,
                     FileId = _Fileid
                 };
@@ -290,7 +295,7 @@ namespace VERIDATA.BLL.Context
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public XSLfileDetailsListResponse ValidateFromxlsFile(UploadedXSLfileDetailsResponse data)
+        private XSLfileDetailsListResponse ValidateFromxlsFile(UploadedXSLfileDetailsResponse data, List<CompanyEntityDetailsResponse> entityDetails)
         {
             XSLfileDetailsListResponse validateData = new();
             DataTable ValidData = new();
@@ -325,12 +330,23 @@ namespace VERIDATA.BLL.Context
                     string errormsg = string.Empty;
                     string msg = string.Empty;
                     bool isdataValid = true;
-                    if (string.IsNullOrEmpty(candidateId) || string.IsNullOrEmpty(appointeeName) || !string.IsNullOrEmpty(IsPFverificationReq))
+                    CompanyEntityDetailsResponse? CompanyDetails = entityDetails?.FirstOrDefault(x => x.CompanyName?.Trim()?.ToLower() == companyName?.Trim()?.ToLower() || x.CompanyCode?.Trim()?.ToLower() == companyName?.Trim()?.ToLower());
+           
+                    if (string.IsNullOrEmpty(candidateId) || string.IsNullOrEmpty(appointeeName) || string.IsNullOrEmpty(companyName) || CompanyDetails?.CompanyId == null)
                     {
-                        if (string.IsNullOrEmpty(companyName))
+                        if (string.IsNullOrEmpty(candidateId))
                         {
                             isdataValid = false;
-                            string _Issue = "Company Name should not be blank.";
+                            string _Issue = "Candidate ID should not be blank.";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {candidateId}, Issue: {_Issue} " : $" Data: {candidateId}, Issue: {_Issue} ";
+                            validateData.InternalMessages.Add(msg);
+                            errormsg += $"{msg}, ";
+                        }
+
+                        if (string.IsNullOrEmpty(companyName) || CompanyDetails?.CompanyId == null)
+                        {
+                            isdataValid = false;
+                            string _Issue = "Invalid Company Name.";
                             msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {companyName}, Issue: {_Issue} " : $" Data: {companyName}, Issue: {_Issue} ";
                             validateData.InternalMessages.Add(msg);
                             errormsg += $"{msg}, ";

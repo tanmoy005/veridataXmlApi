@@ -34,6 +34,9 @@ namespace VERIDATA.Model.DataAccess.Response
 
         [DisplayName("Candidate Id")]
         public string? CandidateId { get; set; }
+        
+        [DisplayName("Compnay Name")]
+        public string? CompanyName { get; set; }
 
         [DisplayName("Appointee Name")]
         public string? AppointeeName { get; set; }

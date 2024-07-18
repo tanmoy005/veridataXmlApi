@@ -215,7 +215,7 @@ namespace VERIDATA.BLL.Context
                     })?.ToList();
 
 
-                   
+
                     TotalUnproceesbleApiCount = DateWiseTotalResponseApiList?.Where(x => x?.Status == (int)HttpStatusCode.UnprocessableEntity && x.ApiName?.ToLower() == obj.Key?.ToLower())?.GroupBy(x => x.ProviderName)?.Select(y => new ApiCountJobResponse
                     {
                         ProviderName = y.Key,
@@ -241,7 +241,7 @@ namespace VERIDATA.BLL.Context
 
                     foreach (ApiCountJobResponse? obj1 in TotalApiCountProviderWise)
                     {
-                        var _unprocessebleEntity= TotalUnproceesbleApiCount?.Where(x => x.ProviderName?.ToLower() == obj1?.ProviderName?.ToLower())?.FirstOrDefault()?.TotalUnprocessableEntityCount ?? 0;
+                        var _unprocessebleEntity = TotalUnproceesbleApiCount?.Where(x => x.ProviderName?.ToLower() == obj1?.ProviderName?.ToLower())?.FirstOrDefault()?.TotalUnprocessableEntityCount ?? 0;
                         var _faliure = TotalFaliureApiCount?.Where(x => x.ProviderName?.ToLower() == obj1?.ProviderName?.ToLower())?.FirstOrDefault()?.TotalFailureCount ?? 0;
                         obj1.Date = _currDate;
                         //obj1.TotalSuccessApiCount = TotalSuccessApiCount?.Where(x => x.ProviderName?.ToLower() == obj1?.ProviderName?.ToLower())?.FirstOrDefault()?.TotalSuccessApiCount ?? 0;
@@ -311,18 +311,20 @@ namespace VERIDATA.BLL.Context
 
                 List<IGrouping<string?, NonProcessCandidateReportDataResponse>>? _noProcessAppointeeCountdateWise = nonProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToString("dd-MM-yyyy"))?.ToList();
 
-                foreach ((List<NonProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate, AppointeeCountDateWise _currDateWiseCount, AppointeeTotalCount _currAppointeeCount) in from obj in _noProcessAppointeeCountdateWise
-                                                                                                                                                                                                           let _currdata = obj?.ToList()
-                                                                                                                                                                                                           let _totalCount = _currdata?.Count ?? 0
-                                                                                                                                                                                                           let _currDate = obj?.Key
-                                                                                                                                                                                                           let _currDateWiseCount = new AppointeeCountDateWise()
-                                                                                                                                                                                                           let _currAppointeeCount = new AppointeeTotalCount()
-                                                                                                                                                                                                           select (_currdata, _totalCount, _currDate, _currDateWiseCount, _currAppointeeCount))
+                foreach ((List<NonProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate,
+                    AppointeeCountDateWise _currDateWiseCount, AppointeeTotalCount _currAppointeeCount) in from obj in _noProcessAppointeeCountdateWise
+                                                                                                           let _currdata = obj?.ToList()
+                                                                                                           let _totalCount = _currdata?.Count ?? 0
+                                                                                                           let _currDate = obj?.Key
+                                                                                                           let _currDateWiseCount = new AppointeeCountDateWise()
+                                                                                                           let _currAppointeeCount = new AppointeeTotalCount()
+                                                                                                           select (_currdata, _totalCount, _currDate, _currDateWiseCount, _currAppointeeCount))
                 {
                     List<AppointeeCountDetails>? _apntDetails = _currdata?.Select(x => new AppointeeCountDetails
                     {
                         AppointeeName = x?.AppointeeName,
                         CandidateId = x?.CandidateId,
+                        CompanyName = x?.CompanyName,
                         EmailId = x?.AppointeeEmail,
                         ActionTaken = x?.CreatedOn?.ToString("dd-MM-yyyy"),
                         AppointeeStatus = "Link Not Sent",
@@ -381,22 +383,24 @@ namespace VERIDATA.BLL.Context
                 List<UnderProcessCandidateReportDataResponse> underProcessAppointeeList = await _reportingDalContext.GetUnderProcessCandidateReport(reqObj, _statusCode, _intSubmitCode, _intSubStatusCode);
 
                 List<IGrouping<string?, UnderProcessCandidateReportDataResponse>>? _appointeeCountdateWise = underProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToString("dd-MM-yyyy"))?.ToList();
-                foreach ((List<UnderProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate, AppointeeCountDateWise _currDateWiseCount, AppointeeCountDateWise _nonProcessData, AppointeeTotalCount _currAppointeeCount) in from obj in _appointeeCountdateWise
-                                                                                                                                                                                                                                                     let _currdata = obj?.ToList()
-                                                                                                                                                                                                                                                     let _totalCount = _currdata?.Count ?? 0
-                                                                                                                                                                                                                                                     let _currDate = obj?.Key
-                                                                                                                                                                                                                                                     let _nonProcessData = _appointeeNonProcessDateWise?.Where(x => x?.appointeeTotalCount?.Date == _currDate).FirstOrDefault()
-                                                                                                                                                                                                                                                     let _currDateWiseCount = new AppointeeCountDateWise()
-                                                                                                                                                                                                                                                     let _currAppointeeCount = new AppointeeTotalCount()
-                                                                                                                                                                                                                                                     select (_currdata, _totalCount, _currDate, _currDateWiseCount, _nonProcessData, _currAppointeeCount))
+                foreach ((List<UnderProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate, AppointeeCountDateWise _currDateWiseCount,
+                    AppointeeCountDateWise _nonProcessData, AppointeeTotalCount _currAppointeeCount) in from obj in _appointeeCountdateWise
+                                                                                                        let _currdata = obj?.ToList()
+                                                                                                        let _totalCount = _currdata?.Count ?? 0
+                                                                                                        let _currDate = obj?.Key
+                                                                                                        let _nonProcessData = _appointeeNonProcessDateWise?.Where(x => x?.appointeeTotalCount?.Date == _currDate).FirstOrDefault()
+                                                                                                        let _currDateWiseCount = new AppointeeCountDateWise()
+                                                                                                        let _currAppointeeCount = new AppointeeTotalCount()
+                                                                                                        select (_currdata, _totalCount, _currDate, _currDateWiseCount, _nonProcessData, _currAppointeeCount))
                 {
 
                     //var _date = _currdata;
-
-                    List<AppointeeCountDetails>? _apntDetails = _currdata?.Select(x => new AppointeeCountDetails
+                    List<AppointeeCountDetails>? _apntListDetails = new();
+                   List<AppointeeCountDetails>? _apntDetails = _currdata?.Select(x => new AppointeeCountDetails
                     {
                         AppointeeName = x?.AppointeeName,
                         CandidateId = x?.CandidateId,
+                        CompanyName=x?.CompanyName,
                         EmailId = x?.AppointeeEmail,
                         ActionTaken = (x?.AppvlStatusCode != WorkFlowType.ProcessIni?.Trim() && x?.SaveStep == 1) ? x?.UpdatedOn?.ToString("dd-MM-yyyy") ?? x?.ActionTakenAt?.ToString("dd-MM-yyyy")
                                      : x?.ActionTakenAt?.ToString("dd-MM-yyyy"),
@@ -405,24 +409,25 @@ namespace VERIDATA.BLL.Context
                                      : x?.AppvlStatusDesc,
                         Date = _currDate,
                     })?.ToList();
-
+                    _apntDetailsList.AddRange(_apntDetails);
                     if (_nonProcessData != null)
                     {
                         _apntDetails?.AddRange(_nonProcessData.AppointeeCountDetails);
                     }
+                   
                     _currAppointeeCount.TotalAppointeeCount = (_nonProcessData != null) ? (_nonProcessData?.appointeeTotalCount?.TotalAppointeeCount ?? 0) + _totalCount : _totalCount;
                     _currAppointeeCount.TotalLinkNotSentCount = (_nonProcessData != null) ? _nonProcessData?.appointeeTotalCount?.TotalLinkNotSentCount ?? 0 : 0;
                     _currAppointeeCount.TotalLinkSentCount = _totalCount;
                     _currAppointeeCount.Date = _currDate;
                     _currDateWiseCount.appointeeTotalCount = _currAppointeeCount;
                     _currDateWiseCount.AppointeeCountDetails = _apntDetails;
-                    _apntDetailsList.AddRange(_apntDetails);
+                    
                     _appointeeCountDateWises.Add(_currDateWiseCount);
                     _appointeeTotalCountList.Add(_currAppointeeCount);
                 }
             }
             _response.AppointeeCountDateWise = _appointeeCountDateWises;
-            _response.AppointeeCountDetails = _apntDetailsList;
+            _response.AppointeeCountDetails = _apntDetailsList?.OrderBy(x=> Convert.ToDateTime(x.Date))?.ToList();
             _response.AppointeeTotalCount = _appointeeTotalCountList;
 
             return _response;

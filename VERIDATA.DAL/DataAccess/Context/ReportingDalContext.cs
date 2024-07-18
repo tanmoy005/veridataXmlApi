@@ -134,6 +134,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                                             && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
                                                                                     join a in _dbContextClass.UnProcessedFileData
                                                                                     on ap.FileId equals a.FileId
+                                                                                    join c in _dbContextClass.CompanyDetails
+                                                                                      on a.CompanyId equals c.Id
                                                                                     where string.IsNullOrEmpty(reqObj.AppointeeName) ||
                                                                                     a.AppointeeName.Contains(reqObj.AppointeeName)
                                                                                     select new NonProcessCandidateReportDataResponse
@@ -142,6 +144,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                         AppointeeEmail = a.AppointeeEmailId,
                                                                                         CandidateId = a.CandidateId,
                                                                                         DateOfJoining = a.DateOfJoining,
+                                                                                        CompanyName=c.CompanyName,
                                                                                         CreatedOn = ap.CreatedOn,
                                                                                     };
 
@@ -155,6 +158,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                         && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
                                                                                         join a in _dbContextClass.UnderProcessFileData
                                                                                         on ap.FileId equals a.FileId
+                                                                                        join c in _dbContextClass.CompanyDetails
+                                                                                        on a.CompanyId equals c.Id
                                                                                         join w in _dbContextClass.WorkFlowDetails
                                                                                         on a.AppointeeId equals w.AppointeeId
                                                                                         join wm in _dbContextClass.WorkflowApprovalStatusMaster
@@ -173,6 +178,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                             AppointeeName = a.AppointeeName,
                                                                                             AppointeeEmail = a.AppointeeEmailId,
                                                                                             CandidateId = a.CandidateId,
+                                                                                            CompanyName= c.CompanyName,
                                                                                             DateOfJoining = a.DateOfJoining,
                                                                                             CreatedOn = ap.CreatedOn,
                                                                                             AppvlStatusId = w.AppvlStatusId,

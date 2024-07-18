@@ -18,6 +18,9 @@ namespace VERIDATA.Model.Table.Admin
         [Column("company_name", TypeName = DbDataType._text100)]
         public string? CompanyName { get; set; }
 
+        [Column("company_alias", TypeName = DbDataType._text50)]
+        public string? CompanyAlias { get; set; }
+
         [Column("company_address", TypeName = DbDataType._text200)]
         public string? CompanyAddress { get; set; }
 

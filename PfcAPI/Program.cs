@@ -181,7 +181,11 @@ if (app.Environment.IsDevelopment())
 }
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler(new ExceptionHandlerOptions()
+    {
+        AllowStatusCode404Response = true,
+        ExceptionHandlingPath="/error"
+    });
     app.UseHsts(); // Enable HSTS in non-development environments
 }
 // Shows UseCors with CorsPolicyBuilder.

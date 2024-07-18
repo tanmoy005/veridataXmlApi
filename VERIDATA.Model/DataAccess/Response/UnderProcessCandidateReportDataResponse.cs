@@ -5,6 +5,7 @@
         public string? AppointeeName { get; set; }
         public string? AppointeeEmail { get; set; }
         public string? CandidateId { get; set; }
+        public string? CompanyName { get; set; }
         public string? AppvlStatusDesc { get; set; }
         public string? AppvlStatusCode { get; set; }
         public int? SaveStep { get; set; }

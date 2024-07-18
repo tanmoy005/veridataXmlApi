@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [admin].[company] (
     [company_id]      INT            IDENTITY (1, 1) NOT NULL,
     [company_name]    NVARCHAR (100) NULL,
+    [company_alias]    NVARCHAR (50) NULL,
     [company_address] NVARCHAR (200) NULL,
     [company_city]    NVARCHAR (50)  NULL,
     [no_doc_upld_req] INT            NULL,

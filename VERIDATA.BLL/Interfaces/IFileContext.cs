@@ -24,7 +24,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<UploadedxlsRawFileDataResponse> UploadAppointeexlsFile(CompanyFileUploadRequest fileDetails);//
         public Task<UploadedxlsRawFileDataResponse> UploadUpdateAppointeexlsFile(CompanyFileUploadRequest fileDetails);//
         public Task<UploadedXSLfileDetailsResponse> GetDataTableFromxlsFile(int? CompanyId, IFormFile fileData, string? subfolder);
-        public XSLfileDetailsListResponse ValidateFromxlsFile(UploadedXSLfileDetailsResponse data);
+        //public XSLfileDetailsListResponse ValidateFromxlsFile(UploadedXSLfileDetailsResponse data);
         public XSLfileDetailsListResponse ValidateUpdatexlsFile(UploadedXSLfileDetailsResponse data);
         public Filedata GenerateDataTableTofile(DataTable data, string category, ValidationType type);
         public Task<byte[]?> GetFileDataAsync(string filePath);

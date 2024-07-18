@@ -411,6 +411,19 @@ namespace VERIDATA.DAL.DataAccess.Context
             //response = responseData.Provider;
             return responseData;
         }
+        public async Task<List<CompanyEntityDetailsResponse>> GetAllCompanyEntityMaster()
+        {
+            var responseData = await _dbContextClass.CompanyDetails?.Where(x => x.ActiveStatus == true)?.
+                Select(y => new CompanyEntityDetailsResponse
+                {
+                    CompanyId = y.Id,
+                    CompanyName = y.CompanyName,
+                    CompanyCode = y.CompanyAlias,
+                    CompanyCity = y.City,
+                })?.ToListAsync();
+            //response = responseData.Provider;
+            return responseData;
+        }
 
     }
 }

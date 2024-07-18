@@ -30,7 +30,7 @@ namespace VERIDATA.Model.DataAccess
 
         [DisplayName("Company Name")]
         public string? CompanyName { get; set; }
-
+        
         [DisplayName("level1 Email")]
         public string? lvl1Email { get; set; }
 
