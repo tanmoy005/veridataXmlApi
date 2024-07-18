@@ -10,6 +10,7 @@
         public string? Password { get; set; }
         public string? EnableSSLorTLS { get; set; }
         public bool IsMailSend { get; set; }
+        public bool AllowServerAuth { get; set; }
         public string? HostUrl { get; set; }
         public int ReminderResendLockDuration { get; set; }
         public int ReminderAttempt { get; set; }

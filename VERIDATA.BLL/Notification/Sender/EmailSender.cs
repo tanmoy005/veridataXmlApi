@@ -338,7 +338,10 @@ namespace VERIDATA.BLL.Notification.Sender
 
                 client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, SecureSocketOptions.StartTls);
                 // client.AuthenticationMechanisms.Remove("XOAUTH2");
-                client.Authenticate(_emailConfig.Username, _emailConfig.Password);
+                if (_emailConfig.AllowServerAuth)
+                {
+                    client.Authenticate(_emailConfig.Username, _emailConfig.Password);
+                }
 
                 //client.Send(mailMessage);
                 _ = await client.SendAsync(mailMessage);
