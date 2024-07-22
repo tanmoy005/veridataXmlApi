@@ -234,6 +234,8 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task postAppointeeContestAsync(AppointeeConsentSubmitRequest req)
         {
+            ///// note : ConsentStatus ==1 : consent Given ; 2=consent  decline;3 =consent  revoke , 4 = Prerequisite data available ;5 = Prerequisite data not available
+
             AppointeeConsentMapping newAppointeeConsentRequest = new();
             AppointeeConsentMapping? appointeeConsentMapping = await _dbContextClass.AppointeeConsentMapping.Where(x => x.AppointeeId.Equals(req.AppointeeId) && x.ActiveStatus == true).FirstOrDefaultAsync() ?? new AppointeeConsentMapping();
 

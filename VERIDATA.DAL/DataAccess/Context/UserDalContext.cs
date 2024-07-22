@@ -89,10 +89,12 @@ namespace VERIDATA.DAL.DataAccess.Context
             AppointeeDetails? _userDetails = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.ActiveStatus == true && x.AppointeeId == users.u.RefAppointeeId);
             List<AppointeeConsentMapping>? consentStatusList = await _dbContextClass.AppointeeConsentMapping.Where(x => x.AppointeeId == users.u.RefAppointeeId).ToListAsync();
             var consentStatus = consentStatusList?.FirstOrDefault(x => x.ActiveStatus == true);
+            bool? IsPrerequisiteDataAvailable = null;
             var IsConsentProcessed = false;
             if (consentStatusList.Any())
             {
-                var IsConsentAvailable = consentStatusList?.Where(x => x.ConsentId != 2)?.ToList();
+                IsPrerequisiteDataAvailable = consentStatusList?.Any(x => x.ConsentId == (Int32)ConsentStatus.PrerequisiteYes);
+                var IsConsentAvailable = consentStatusList?.Where(x => x.ConsentId == (Int32)ConsentStatus.Agree || x.ConsentId == (Int32)ConsentStatus.Revoked)?.ToList();
                 IsConsentProcessed = IsConsentAvailable?.Count() > 0;
             }
             var _userStatusDetails = await _dbContextClass.WorkFlowDetails.FirstOrDefaultAsync(x => x.ActiveStatus == true && x.AppointeeId == users.u.RefAppointeeId);
@@ -130,6 +132,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             userDetails.IsProcessed = _userDetails?.IsProcessed ?? false;
             userDetails.ConsentStatus = consentStatus?.ConsentStatus ?? 0;
             userDetails.IsConsentProcessed = IsConsentProcessed;
+            userDetails.IsPrerequisiteDataAvailable = IsPrerequisiteDataAvailable;
             userDetails.IsSubmit = _userDetails?.IsSubmit ?? false;
             userDetails.IsSetProfilePassword = !string.IsNullOrEmpty(users?.UserProfilePwd);
             userDetails.IsDefaultPassword = !string.IsNullOrEmpty(users?.IsDefaultPass) && users?.IsDefaultPass == "Y";

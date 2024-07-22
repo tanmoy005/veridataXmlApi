@@ -197,6 +197,31 @@ namespace PfcAPI.Controllers.Account
             }
         }
 
+        [Authorize]
+        [HttpPost("AppointeePrerequisiteUpdate")]
+        public ActionResult SubmitPrerequisiteStatus(AppointeeConsentSubmitRequest consentRequest)
+        {
+
+            try
+            {
+                if (consentRequest == null)
+                {
+                    return Ok(new BaseResponse<string>(HttpStatusCode.BadRequest, "Error"));
+                }
+                else
+                {
+                    Task.Run(async () => await _userContext.updateAppointeePrerequisite(consentRequest)).GetAwaiter().GetResult();
+
+                    return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
+
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost("EncriptData")]
         public ActionResult EncriptData(string data)

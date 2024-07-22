@@ -1154,5 +1154,12 @@ namespace VERIDATA.BLL.Context
             await _appointeeDalContext.postAppointeeContestAsync(req);
 
         }
+
+        public async Task updateAppointeePrerequisite(AppointeeConsentSubmitRequest req)
+        {
+            // await _activityDalContext.PostActivityDetails(req.AppointeeId, req.UserId, req.ConsentStatusCode);
+            await _appointeeDalContext.postAppointeeContestAsync(req);
+
+        }
     }
 }

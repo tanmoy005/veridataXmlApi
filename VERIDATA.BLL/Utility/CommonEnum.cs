@@ -223,6 +223,8 @@
             public const string CONSENTGIVEN = "CNSTGVN";
             public const string CONSENTDECLINE = "CNSTDCLN";
             public const string CONSENTREVOKED = "CNSTRVK";
+            public const string PREREQUISITECONFIRMYES = "PREREQCNFYES";
+            public const string PREREQUISITECONFIRMNO = "PREREQCNFNO";
         }
         public static class MenuCode
         {
@@ -282,12 +284,9 @@
             NotFound = 103,
             MaxTry = 104,
         }
-        public enum ConsentStatus
-        {
-            Agree = 1,
-            Disagree = 2,
-            Revoked = 3,
-        }
+       
+
+
         //public static class LogLevel
         //{
         //    public const string Error = "Error";

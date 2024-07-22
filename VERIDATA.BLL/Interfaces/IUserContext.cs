@@ -33,5 +33,6 @@ namespace VERIDATA.BLL.Interfaces
         public Task<WidgetProgressDataResponse> GetTotalProgressWidgetData();
         public Task<List<AppointeeStatusWizResponse>> GetAppointeeStatusWidgetData(string code);
         public Task updateAppointeeConsent(AppointeeConsentSubmitRequest req);
+        public Task updateAppointeePrerequisite (AppointeeConsentSubmitRequest req);
     }
 }

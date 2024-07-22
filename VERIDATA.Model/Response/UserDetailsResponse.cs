@@ -23,6 +23,7 @@ namespace VERIDATA.Model.Response
         public string? CompanyName { get; set; }
         public int ConsentStatus { get; set; }
         public bool? IsConsentProcessed { get; set; }
+        public bool? IsPrerequisiteDataAvailable { get; set; }
         public bool? IsProcessed { get; set; }
         public bool? IsSubmit { get; set; }
         //public int Createdby { get; set; }

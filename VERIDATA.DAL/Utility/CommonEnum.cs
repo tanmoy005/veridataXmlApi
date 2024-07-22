@@ -245,12 +245,14 @@
             public const string ForcedApproved = "FA";
 
         }
-        //public static class LogLevel
-        //{
-        //    public const string Error = "Error";
-        //    public const string Debug = "Debug";
-        //    public const string Info = "Info";
+        public enum ConsentStatus
+        {
+            Agree = 1,
+            Disagree = 2,
+            Revoked = 3,
+            PrerequisiteYes = 5,
+            PrerequisiteNo = 6,
+        }
 
-        //}
     }
 }
