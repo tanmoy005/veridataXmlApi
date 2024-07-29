@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [admin].[user_authentication] (
     [user_autho_id]   BIGINT        IDENTITY (1, 1) NOT NULL,
     [user_id]         BIGINT        NOT NULL,
-    [user_pwd]        NVARCHAR (100) NULL,
+    [user_pwd]        NVARCHAR (250) NULL,
     [user_pwd_txt]    NVARCHAR (10) NULL,
-    [user_profile_pwd] NVARCHAR(100) NULL, 
+    [user_profile_pwd] NVARCHAR(250) NULL, 
     [is_default_pass] CHAR (1)      NULL,
     [password_set_date]      DATETIME      NULL,
     [active_status]   BIT           NULL,
