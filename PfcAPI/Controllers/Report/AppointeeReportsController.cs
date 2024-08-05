@@ -342,5 +342,38 @@ namespace PfcAPI.Controllers.Report
 
             }
         }
+        [Authorize]
+        [HttpPost]
+        [Route("AppointeeAgingFilterReport")]
+        public ActionResult AppointeeAgingFilterReport(GetAgingReportRequest reqObj)
+        {
+            try
+            {
+                GetAgingReportResponse Response = new();
+                List<DataTable> _exportdt = new();
+                //string reportname = $"approved_appointee_{_currDateString}.xlsx";
+                DateTime _currDate = DateTime.Now;
+                string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
+                string reportname = $"Appointee_Aging_Report_{_currDateString}.xlsx";
+                List<AppointeeAgingDataReportDetails>? appointeeList = Task.Run(async () => await _reportContext.AppointeeDetailsAgingReport(reqObj)).GetAwaiter().GetResult();
+                if (appointeeList?.Count > 0)
+                {
+                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeAgingDataReportDetails>(appointeeList);
+                    byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportname, reqObj.FilePassword??string.Empty);
+                    //var _file = file(exportbytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", reportname);
+                    Filedata _filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
+                    Response.AppointeeDetails = appointeeList;
+                    Response.Filedata = _filedata;
+                    return Ok(new BaseResponse<GetAgingReportResponse>(HttpStatusCode.OK, Response));
+                }
+
+                return Ok(new BaseResponse<AppointeeAgingDataReportDetails>(HttpStatusCode.OK, appointeeList));
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
     }
 }

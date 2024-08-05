@@ -144,7 +144,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                         AppointeeEmail = a.AppointeeEmailId,
                                                                                         CandidateId = a.CandidateId,
                                                                                         DateOfJoining = a.DateOfJoining,
-                                                                                        CompanyName=c.CompanyName,
+                                                                                        CompanyName = c.CompanyName,
                                                                                         CreatedOn = ap.CreatedOn,
                                                                                     };
 
@@ -165,7 +165,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                         join wm in _dbContextClass.WorkflowApprovalStatusMaster
                                                                                         on w.AppvlStatusId equals wm.AppvlStatusId
                                                                                         join p in _dbContextClass.AppointeeDetails
-                                                                                    on a.AppointeeId equals p.AppointeeId into grouping
+                                                                                        on a.AppointeeId equals p.AppointeeId into grouping
                                                                                         from p in grouping.DefaultIfEmpty()
                                                                                         where (string.IsNullOrEmpty(reqObj.AppointeeName) ||
                                                                                         a.AppointeeName.ToUpper().Contains(reqObj.AppointeeName))
@@ -178,7 +178,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                             AppointeeName = a.AppointeeName,
                                                                                             AppointeeEmail = a.AppointeeEmailId,
                                                                                             CandidateId = a.CandidateId,
-                                                                                            CompanyName= c.CompanyName,
+                                                                                            CompanyName = c.CompanyName,
                                                                                             DateOfJoining = a.DateOfJoining,
                                                                                             CreatedOn = ap.CreatedOn,
                                                                                             AppvlStatusId = w.AppvlStatusId,

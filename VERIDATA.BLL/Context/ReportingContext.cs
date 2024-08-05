@@ -396,17 +396,17 @@ namespace VERIDATA.BLL.Context
 
                     //var _date = _currdata;
                     List<AppointeeCountDetails>? _apntListDetails = new();
-                   List<AppointeeCountDetails>? _apntDetails = _currdata?.Select(x => new AppointeeCountDetails
+                    List<AppointeeCountDetails>? _apntDetails = _currdata?.Select(x => new AppointeeCountDetails
                     {
                         AppointeeName = x?.AppointeeName,
                         CandidateId = x?.CandidateId,
-                        CompanyName=x?.CompanyName,
+                        CompanyName = x?.CompanyName,
                         EmailId = x?.AppointeeEmail,
                         ActionTaken = (x?.AppvlStatusCode != WorkFlowType.ProcessIni?.Trim() && x?.SaveStep == 1) ? x?.UpdatedOn?.ToString("dd-MM-yyyy") ?? x?.ActionTakenAt?.ToString("dd-MM-yyyy")
-                                     : x?.ActionTakenAt?.ToString("dd-MM-yyyy"),
+                                      : x?.ActionTakenAt?.ToString("dd-MM-yyyy"),
                         AppointeeStatus = x?.AppvlStatusCode == WorkFlowType.ProcessIni?.Trim() ?
-                                     x?.AppvlStatusDesc + "(" + (x?.IsSubmit ?? false ? "Submitted" : x?.SaveStep == 1 ? "Ongoing" : "No Response") + ")"
-                                     : x?.AppvlStatusDesc,
+                                      x?.AppvlStatusDesc + "(" + (x?.IsSubmit ?? false ? "Submitted" : x?.SaveStep == 1 ? "Ongoing" : "No Response") + ")"
+                                      : x?.AppvlStatusDesc,
                         Date = _currDate,
                     })?.ToList();
                     _apntDetailsList.AddRange(_apntDetails);
@@ -414,23 +414,80 @@ namespace VERIDATA.BLL.Context
                     {
                         _apntDetails?.AddRange(_nonProcessData.AppointeeCountDetails);
                     }
-                   
+
                     _currAppointeeCount.TotalAppointeeCount = (_nonProcessData != null) ? (_nonProcessData?.appointeeTotalCount?.TotalAppointeeCount ?? 0) + _totalCount : _totalCount;
                     _currAppointeeCount.TotalLinkNotSentCount = (_nonProcessData != null) ? _nonProcessData?.appointeeTotalCount?.TotalLinkNotSentCount ?? 0 : 0;
                     _currAppointeeCount.TotalLinkSentCount = _totalCount;
                     _currAppointeeCount.Date = _currDate;
                     _currDateWiseCount.appointeeTotalCount = _currAppointeeCount;
                     _currDateWiseCount.AppointeeCountDetails = _apntDetails;
-                    
+
                     _appointeeCountDateWises.Add(_currDateWiseCount);
                     _appointeeTotalCountList.Add(_currAppointeeCount);
                 }
             }
             _response.AppointeeCountDateWise = _appointeeCountDateWises;
-            _response.AppointeeCountDetails = _apntDetailsList?.OrderBy(x=> Convert.ToDateTime(x.Date))?.ToList();
+            _response.AppointeeCountDetails = _apntDetailsList?.OrderBy(x => Convert.ToDateTime(x.Date))?.ToList();
             _response.AppointeeTotalCount = _appointeeTotalCountList;
 
             return _response;
         }
+
+        public async Task<List<AppointeeAgingDataReportDetails>> AppointeeDetailsAgingReport(GetAgingReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
+        {
+            List<AppointeeAgingDataReportDetails> _response = new();
+
+            //int filterdaysrange = FilterDays;
+            DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
+            //var startDate = _currDate.AddDays(-filterdaysrange);
+            DateTime CurrDate = Convert.ToDateTime(_currDate);
+            DateTime? startDate = reqObj?.StartDate;
+            DateTime _actionFilterDate = reqObj.NoOfDays > 0 ? _currDate.AddDays(-reqObj.NoOfDays) : _currDate;
+
+            AppointeeSeacrhFilterRequest req = new()
+            {
+                FromDate = startDate,
+            };
+            List<UnderProcessWithActionQueryDataResponse> underProcessData = await _workFlowDetailsContext.GetUnderProcessDataWithActionAsync(req);
+            var _lastActionDateFilterList = underProcessData?.Where(x => x.LastActionDate <= _actionFilterDate).ToList();
+            if (reqObj.ReportType == ReportFilterStatus.ProcessIniNoResponse)
+            {
+                List<AppointeeAgingDataReportDetails>? _noResponseViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed && 
+                X?.AppointeeDetails?.IsSubmit != true && X?.AppointeeDetails?.SaveStep != 1)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeAgingDataReportDetails
+                {
+                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                    AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
+                    candidateId = row?.UnderProcess?.CandidateId,
+                    EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
+                    MobileNo = row?.UnderProcess?.MobileNo,
+                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
+                    CreatedDate = row?.UnderProcess?.CreatedOn,
+                    Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
+                    LastActionDate = row?.LastActionDate,
+                    LastActivityDesc = row?.ActivityDesc,
+                }).OrderByDescending(y => y.DateOfJoining).ToList();
+                _response = _noResponseViewdata;
+            }
+            else
+            {
+                List<AppointeeAgingDataReportDetails>? _underProcessViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed && (X?.AppointeeDetails?.IsSubmit == true || X?.AppointeeDetails?.SaveStep == 1))?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeAgingDataReportDetails
+                {
+                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                    AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
+                    candidateId = row?.UnderProcess?.CandidateId,
+                    EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
+                    MobileNo = row?.UnderProcess?.MobileNo,
+                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
+                    CreatedDate = row?.UnderProcess?.CreatedOn,
+                    Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
+                    LastActionDate = row?.LastActionDate,
+                    LastActivityDesc = row?.ActivityDesc,
+                }).OrderByDescending(y => y.DateOfJoining).ToList();
+                _response = _underProcessViewdata;
+
+            }
+            return _response;
+        }
+
     }
 }

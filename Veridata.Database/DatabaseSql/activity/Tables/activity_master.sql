@@ -4,6 +4,7 @@
     [activity_type]  NVARCHAR (50)  NULL,
     [activity_name]  NVARCHAR (100) NULL,
     [activity_info]  NVARCHAR (200) NULL,
+    [activity_desc]  NVARCHAR (200) NULL,
     [activity_color] NVARCHAR (100) NULL,
     [active_status]  BIT            NULL,
     [created_by]     INT            NULL,

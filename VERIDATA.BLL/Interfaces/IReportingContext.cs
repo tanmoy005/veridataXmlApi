@@ -13,5 +13,7 @@ namespace VERIDATA.BLL.Interfaces
         public List<UnderProcessedDataReportDetails> GetUnderProcessDetails(List<UnderProcessDetailsResponse> reqList);
         public Task<ApiCountReportResponse> ApiCountReport(DateTime? FromDate, DateTime? ToDate);
         public Task<AppointeeCountDateWiseDetails> AppointeeCountReport(AppointeeCountReportSearchRequest reqObj);// DateTime? FromDate, DateTime? ToDate);
+        public Task<List<AppointeeAgingDataReportDetails>> AppointeeDetailsAgingReport(GetAgingReportRequest reqObj);
+
     }
 }

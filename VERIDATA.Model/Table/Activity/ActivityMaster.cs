@@ -25,7 +25,10 @@ namespace VERIDATA.Model.Table.Activity
         public string? ActivityName { get; set; }
 
         [Column("activity_info", TypeName = DbDataType._text200)]
-        public string? ActivityInfo { get; set; }
+        public string? ActivityInfo { get; set; } 
+        
+        [Column("activity_desc", TypeName = DbDataType._text200)]
+        public string? ActivityDesc { get; set; }
 
         [Column("activity_color", TypeName = DbDataType._text100)]
         public string? ActivityColor { get; set; }

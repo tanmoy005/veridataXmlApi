@@ -41,6 +41,8 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task workflowdataUpdate(WorkFlowDataRequest WorkFlowRequest, WorkflowApprovalStatusMaster? approvalState, int _reprocessCount, WorkFlowDetails? _workFlow_det);
         public Task<List<GlobalSearchAppointeeData>> GetUnderProcessAppointeeSearch(string Name);
         public Task<List<GlobalSearchAppointeeData>> GetAppointeeSearchDetails(string name, string type);
+        public Task<List<UnderProcessWithActionQueryDataResponse>> GetUnderProcessDataWithActionAsync(AppointeeSeacrhFilterRequest reqObj);
+
 
 
     }
