@@ -276,6 +276,13 @@
             public const string ForcedApproved = "FA";
 
         }
+        public static class NationalityType
+        {
+            public const string All = "All";
+            public const string Indian = "IN";
+            public const string NonIndian = "OTH";
+
+        }
         public enum KarzaStatusCode
         {
             Invalid = 102,

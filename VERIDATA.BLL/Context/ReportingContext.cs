@@ -452,7 +452,7 @@ namespace VERIDATA.BLL.Context
             var _lastActionDateFilterList = underProcessData?.Where(x => x.LastActionDate <= _actionFilterDate).ToList();
             if (reqObj.ReportType == ReportFilterStatus.ProcessIniNoResponse)
             {
-                List<AppointeeAgingDataReportDetails>? _noResponseViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed && 
+                List<AppointeeAgingDataReportDetails>? _noResponseViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed &&
                 X?.AppointeeDetails?.IsSubmit != true && X?.AppointeeDetails?.SaveStep != 1)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeAgingDataReportDetails
                 {
                     AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
@@ -489,5 +489,59 @@ namespace VERIDATA.BLL.Context
             return _response;
         }
 
+        public async Task<List<AppointeeNationalityDataReportDetails>> AppointeeNationalityDetailsReport(GetNationalityReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
+        {
+            List<AppointeeNationalityDataReportDetails> _response = new();
+
+            //int filterdaysrange = FilterDays;
+            DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
+            //var startDate = _currDate.AddDays(-filterdaysrange);
+            DateTime CurrDate = Convert.ToDateTime(_currDate);
+            DateTime? startDate = reqObj?.FromDate;
+            DateTime? _endDate = reqObj?.ToDate;
+            //DateTime _actionFilterDate = reqObj.NoOfDays > 0 ? _currDate.AddDays(-reqObj.NoOfDays) : _currDate;
+
+            List<NationalityQueryDataResponse> nationalityData = await _reportingDalContext.GetCandidateNationalityReport(reqObj);
+            var Indian = "Indian";
+            if (reqObj.nationalityType == NationalityType.Indian)
+            {
+
+                List<NationalityQueryDataResponse>? nationalityDataList = nationalityData?.Where(x => x.AppointeeDetails?.Nationality?.ToUpper() == Indian.ToUpper())?.ToList();
+                List<AppointeeNationalityDataReportDetails>? _IndianList = GetNationalityList(nationalityDataList);
+                _response = _IndianList;
+            }
+            else if (reqObj.nationalityType == NationalityType.NonIndian)
+            {
+                List<NationalityQueryDataResponse>? nationalityDataList = nationalityData?.Where(x => x.AppointeeDetails?.Nationality?.ToUpper() != Indian.ToUpper())?.ToList();
+                List<AppointeeNationalityDataReportDetails>? _OthersList = GetNationalityList(nationalityDataList);
+                _response = _OthersList;
+
+            }
+            else
+            {
+                List<AppointeeNationalityDataReportDetails>? _AllList = GetNationalityList(nationalityData);
+                _response = _AllList;
+
+            }
+            return _response;
+        }
+
+        private static List<AppointeeNationalityDataReportDetails>? GetNationalityList(List<NationalityQueryDataResponse> nationalityData)
+        {
+            return nationalityData?.Select(row => new AppointeeNationalityDataReportDetails
+            {
+                AppointeeId = row?.AppointeeDetails?.AppointeeId,
+                AppointeeName = row?.AppointeeDetails?.AppointeeName,
+                candidateId = row?.AppointeeDetails?.CandidateId,
+                EmailId = row?.AppointeeDetails?.AppointeeEmailId,
+                MobileNo = row?.AppointeeDetails?.MobileNo,
+                Nationality = row?.AppointeeDetails?.Nationality,
+                CountryName = string.IsNullOrEmpty(row?.AppointeeDetails?.OriginCountry) ? "N/A" : row?.AppointeeDetails?.OriginCountry,
+                StartDate = row?.AppointeeDetails?.PassportValidFrom?.ToShortDateString()??"N/A",
+                ExpiryDate = row?.AppointeeDetails?.PassportValidTill?.ToShortDateString() ?? "N/A",
+                PassportNumber = string.IsNullOrEmpty(row?.AppointeeDetails?.PassportNo) ? "N/A" : row?.AppointeeDetails?.PassportNo,
+
+            }).OrderByDescending(y => y.AppointeeId).ToList();
+        }
     }
 }

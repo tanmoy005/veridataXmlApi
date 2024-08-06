@@ -14,6 +14,8 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task UpdateDownloadedProcessData(List<ProcessedFileData> data);
         public Task<List<ApiCounter>> GetTotalApiList(DateTime? FromDate, DateTime? ToDate);
         public Task<List<NonProcessCandidateReportDataResponse>> GetNonProcessCandidateReport(AppointeeCountReportSearchRequest reqObj);
+        public Task<List<NationalityQueryDataResponse>> GetCandidateNationalityReport(GetNationalityReportRequest reqObj);
         public Task<List<UnderProcessCandidateReportDataResponse>> GetUnderProcessCandidateReport(AppointeeCountReportSearchRequest reqObj, string? _statusCode, bool? _intSubmitCode, int? _intSubStatusCode);
+
     }
 }

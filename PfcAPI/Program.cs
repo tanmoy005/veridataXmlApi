@@ -191,7 +191,7 @@ if (!app.Environment.IsDevelopment())
 // Shows UseCors with CorsPolicyBuilder.
 app.UseCors(builder =>
 {
-    _ = builder.AllowAnyOrigin()
+    builder.AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader();
 });

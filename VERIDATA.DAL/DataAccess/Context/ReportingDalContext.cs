@@ -151,6 +151,42 @@ namespace VERIDATA.DAL.DataAccess.Context
             List<NonProcessCandidateReportDataResponse> nonProcessAppointeeList = await nonProcessQueryData.ToListAsync().ConfigureAwait(false);
             return nonProcessAppointeeList;
         }
+
+        public async Task<List<NationalityQueryDataResponse>> GetCandidateNationalityReport(GetNationalityReportRequest reqObj)
+        {
+            string CurrDate = DateTime.Now.ToShortDateString();
+            DateTime _CurrDate = Convert.ToDateTime(CurrDate);
+            DateTime? _ToDate = reqObj.ToDate != null ? reqObj.ToDate?.AddDays(1) : null;
+            List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
+            WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Reprocess?.Trim());
+            WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ProcessClose?.Trim());
+            WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
+            WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Approved?.Trim());
+
+
+            IQueryable<NationalityQueryDataResponse> querydata = from p in _dbContextClass.AppointeeDetails
+                                                                 join u in _dbContextClass.UnderProcessFileData
+                                                                 on p.AppointeeId equals u.AppointeeId
+                                                                 join w in _dbContextClass.WorkFlowDetails
+                                                                 on u.AppointeeId equals w.AppointeeId
+                                                                 where (!(w.AppvlStatusId == CloseState.AppvlStatusId || w.AppvlStatusId == ApproveState.AppvlStatusId || w.AppvlStatusId == RejectState.AppvlStatusId))
+                                                                 && (p.IsProcessed.Equals(false) || p.IsProcessed == null)
+                                                                 && (reqObj.FromDate == null || u.CreatedOn >= reqObj.FromDate) && (reqObj.ToDate == null || u.CreatedOn < _ToDate)
+                                                                 && !string.IsNullOrEmpty(p.Nationality)
+                                                                 //&& (string.IsNullOrEmpty(reqObj.nationalityType) || p.Nationality.Trim() == reqObj.nationalityType.Trim())
+                                                                 && u.ActiveStatus == true
+                                                                 orderby p.IsSubmit
+                                                                 select new NationalityQueryDataResponse
+                                                                 {
+                                                                     AppointeeDetails = p,
+                                                                     AppvlStatusId = w.AppvlStatusId,
+                                                                     AppointeeId = u.AppointeeId,
+                                                                     IsJoiningDateLapsed = u.DateOfJoining < _CurrDate
+                                                                 };
+
+            List<NationalityQueryDataResponse> list = await querydata.ToListAsync().ConfigureAwait(false);
+            return list;
+        }
         public async Task<List<UnderProcessCandidateReportDataResponse>> GetUnderProcessCandidateReport(AppointeeCountReportSearchRequest reqObj, string? _statusCode, bool? _intSubmitCode, int? _intSubStatusCode)
         {
             IQueryable<UnderProcessCandidateReportDataResponse> underProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter

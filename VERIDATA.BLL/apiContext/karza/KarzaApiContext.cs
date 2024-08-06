@@ -1,10 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Net;
 using System.Text;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.Services;
-using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Request.api.Karza;
@@ -76,44 +74,52 @@ namespace VERIDATA.BLL.apiContext.karza
                 string? uan = string.Empty;
                 bool multiActiveUanData = false;
                 List<Uan>? uanList = PanToUanResponse?.result?.uan?.ToList();
-                if (uanList != null && uanList.Count > 0)
+                if (PanToUanResponse?.result?.personalInfo != null && PanToUanResponse?.result?.summary != null)
                 {
-                    foreach (Uan? obj in uanList)
+                    if (uanList != null && uanList.Count > 0)
                     {
-                        string? uanNo = obj?.uan?.Trim();
-                        List<Employer>? activeUan = obj?.employer?.Where(x => x.isRecent == true)?.ToList();
-                        if (activeUan != null)
+                        foreach (Uan? obj in uanList)
                         {
-                            activeUanList?.AddRange(activeUan);
-                        }
-                        if (activeUanList?.Count == 1)
-                        {
-                            uan = uanNo;
-                        }
-                        else
-                        {
-                            multiActiveUanData = true;
-                        }
-                        if (multiActiveUanData)
-                        {
-                            res.StatusCode = _apiResponse.StatusCode;
-                            res.ReasonPhrase = "Multi Active Uan";
+                            string? uanNo = obj?.uan?.Trim();
+                            List<Employer>? activeUan = obj?.employer?.Where(x => x.isRecent == true)?.DistinctBy(x => x.memberId)?.ToList();
+                            if (activeUan != null)
+                            {
+                                activeUanList?.AddRange(activeUan);
+                            }
+                            if (activeUanList?.Count == 1)
+                            {
+                                uan = uanNo;
+                            }
+                            else
+                            {
+                                multiActiveUanData = true;
+                            }
+                            if (multiActiveUanData)
+                            {
+                                res.StatusCode = _apiResponse.StatusCode;
+                                res.ReasonPhrase = "Multi Active Uan";
+                            }
                         }
                     }
-                }
-                NameLookup? uanNameSummeryInfo = PanToUanResponse?.result?.summary?.nameLookup;
-                if (uanNameSummeryInfo != null)
-                {
-                    isIanactiveUan = !(uanNameSummeryInfo?.isUnique ?? false) && string.IsNullOrEmpty(uanNameSummeryInfo?.matchName);
+                    NameLookup? uanNameSummeryInfo = PanToUanResponse?.result?.summary?.nameLookup;
+                    if (uanNameSummeryInfo != null)
+                    {
+                        isIanactiveUan = !(uanNameSummeryInfo?.isUnique ?? false) && string.IsNullOrEmpty(uanNameSummeryInfo?.matchName);
+                    }
+                    else if (PanToUanResponse?.result?.personalInfo != null)
+                    {
+                        isIanactiveUan = true;
+                    }
+                    res.StatusCode = _apiResponse.StatusCode;
+                    res.IsUanAvailable = !string.IsNullOrEmpty(uan);
+                    res.IsInactiveUan = isIanactiveUan;
+                    res.UanNumber = uan;
                 }
                 else
                 {
-                    isIanactiveUan = true;
+                    res.StatusCode = HttpStatusCode.InternalServerError;
+                    res.ReasonPhrase = "EPFO server is currently busy!Please try again later";
                 }
-                res.StatusCode = _apiResponse.StatusCode;
-                res.IsUanAvailable = !string.IsNullOrEmpty(uan);
-                res.IsInactiveUan = isIanactiveUan;
-                res.UanNumber = uan;
             }
             else
             {
