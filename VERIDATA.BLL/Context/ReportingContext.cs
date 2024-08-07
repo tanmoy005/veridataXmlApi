@@ -526,7 +526,7 @@ namespace VERIDATA.BLL.Context
             return _response;
         }
 
-        private static List<AppointeeNationalityDataReportDetails>? GetNationalityList(List<NationalityQueryDataResponse> nationalityData)
+        private List<AppointeeNationalityDataReportDetails>? GetNationalityList(List<NationalityQueryDataResponse> nationalityData)
         {
             return nationalityData?.Select(row => new AppointeeNationalityDataReportDetails
             {
@@ -539,7 +539,7 @@ namespace VERIDATA.BLL.Context
                 CountryName = string.IsNullOrEmpty(row?.AppointeeDetails?.OriginCountry) ? "N/A" : row?.AppointeeDetails?.OriginCountry,
                 StartDate = row?.AppointeeDetails?.PassportValidFrom?.ToShortDateString()??"N/A",
                 ExpiryDate = row?.AppointeeDetails?.PassportValidTill?.ToShortDateString() ?? "N/A",
-                PassportNumber = string.IsNullOrEmpty(row?.AppointeeDetails?.PassportNo) ? "N/A" : row?.AppointeeDetails?.PassportNo,
+                PassportNumber = string.IsNullOrEmpty(row?.AppointeeDetails?.PassportNo) ? "N/A" : CommonUtility.DecryptString(key, row?.AppointeeDetails?.PassportNo),
 
             }).OrderByDescending(y => y.AppointeeId).ToList();
         }
