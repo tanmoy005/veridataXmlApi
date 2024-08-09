@@ -250,8 +250,8 @@
             Agree = 1,
             Disagree = 2,
             Revoked = 3,
-            PrerequisiteYes = 5,
-            PrerequisiteNo = 6,
+            PrerequisiteYes = 4,
+            PrerequisiteNo = 5,
         }
 
     }
