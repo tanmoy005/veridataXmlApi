@@ -93,8 +93,8 @@ namespace VERIDATA.DAL.DataAccess.Context
             var IsConsentProcessed = false;
             if (consentStatusList.Any())
             {
-                IsPrerequisiteDataAvailable = consentStatusList?.Any(x => x.ConsentId == (Int32)ConsentStatus.PrerequisiteYes);
-                var IsConsentAvailable = consentStatusList?.Where(x => x.ConsentId == (Int32)ConsentStatus.Agree || x.ConsentId == (Int32)ConsentStatus.Revoked)?.ToList();
+                IsPrerequisiteDataAvailable = consentStatusList?.Any(x => x.ConsentStatus == (int)ConsentStatus.PrerequisiteYes) ?? false;
+                var IsConsentAvailable = consentStatusList?.Where(x => x.ConsentStatus == (int)ConsentStatus.Agree || x.ConsentId == (int)ConsentStatus.Revoked)?.ToList();
                 IsConsentProcessed = IsConsentAvailable?.Count() > 0;
             }
             var _userStatusDetails = await _dbContextClass.WorkFlowDetails.FirstOrDefaultAsync(x => x.ActiveStatus == true && x.AppointeeId == users.u.RefAppointeeId);
