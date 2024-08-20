@@ -281,6 +281,46 @@ namespace VERIDATA.BLL.Context
             validateUserResponse.StatusCode = HttpStatusCode.OK;
             return validateUserResponse;
         }
+        public async Task<ValidateUserDetails> validateUserChangePassword(ChangePasswordGenerateOTPRequest user)
+        {
+            string _otp = string.Empty;
+            ValidateUserDetails validateUserResponse = await validateUserForgetPasswordDataAsync(user.UserCode);
+            int _dbUserId = validateUserResponse.userStatus;
+            validateUserResponse.otp = _otp;
+            if (_dbUserId <= 0)
+            {
+                string _errormsg = _dbUserId switch
+                {
+                    //0 => "User ID Password mismatch",
+                    -1 => "User ID invalid",
+                    -2 => "User ID expired",
+                    //-3 => "You have crossed your joining date with grace pireod",
+                    -4 => "Your application has been cancelled by your Recruitment partner / Admin",
+                    -5 => "Your profile is locked due to consecutive wrong otp, please try after some time",
+                    _ => string.Empty,
+                };
+                validateUserResponse.StatusCode = HttpStatusCode.NotFound;
+                validateUserResponse.UserMessage = _errormsg;
+
+                return validateUserResponse;
+            }
+            // if (validateUserResponse.dbUserType == (int)UserType.Appoientee)
+            //{
+            //generate otp ///
+            //send mail//
+            _otp = await candidateSigninGenerateOtp(validateUserResponse);
+            if (string.IsNullOrEmpty(_otp))
+            {
+                validateUserResponse.StatusCode = HttpStatusCode.NotFound;
+                validateUserResponse.UserMessage = "Email Address not available";
+                return validateUserResponse;
+            }
+            validateUserResponse.otp = _otp;
+
+            //            }
+            validateUserResponse.StatusCode = HttpStatusCode.OK;
+            return validateUserResponse;
+        }
         public async Task<ValidateUserSignInResponse> postUserAuthdetails(ValidateUserDetails req)
         {
             _ = new ValidateUserSignInResponse();
@@ -346,6 +386,48 @@ namespace VERIDATA.BLL.Context
             }
 
             res.clientId = string.Concat(user.UserCode, "_", CommonUtility.RandomString(8));
+            res.dbUserType = dbuserTypeId;
+            res.userStatus = dbuserStatusId;
+            res.userMailId = dbusers?.EmailId;
+            res.userName = dbusers?.UserName;
+            res.userId = dbusers?.UserId ?? 0;
+            return res;
+        }
+        private async Task<ValidateUserDetails> validateUserForgetPasswordDataAsync(string userCode)
+        {
+            ValidateUserDetails res = new();
+            int dbuserStatusId = -1;
+            int dbuserTypeId = -1;
+            UserMaster? dbusers = await _userDalContext.getUserByUserCode(userCode);
+
+            if (dbusers != null)
+            {
+                dbuserTypeId = dbusers.UserTypeId;
+                dbuserStatusId = (!(dbusers.ActiveStatus ?? false)) ? -2 : !(dbusers.CurrStatus ?? false) ? -4 : dbuserStatusId;
+                if (dbuserStatusId == -1)
+                {
+
+                    dbuserStatusId = dbusers?.UserId ?? dbuserStatusId;
+                    if (dbusers.RefAppointeeId != null)
+                    {
+                        int validateDbUserId = await validateOtpAttempt(dbusers.UserId, "");
+
+
+                        //UnderProcessFileData _userDetails = await _appointeeDalContext.GetUnderProcessAppinteeDetailsById(dbusers.RefAppointeeId ?? 0);
+                        //if (_userDetails.DateOfJoining?.AddDays(GeneralSetup?.GracePeriod ?? 0) < DateTime.Now)
+                        //{
+                        //    dbuserStatusId = -3;
+                        //}
+                        if (validateDbUserId != 0)
+                        {
+                            dbuserStatusId = validateDbUserId;
+                        }
+
+                    }
+                }
+            }
+
+            res.clientId = string.Concat(userCode, "_", CommonUtility.RandomString(8));
             res.dbUserType = dbuserTypeId;
             res.userStatus = dbuserStatusId;
             res.userMailId = dbusers?.EmailId;

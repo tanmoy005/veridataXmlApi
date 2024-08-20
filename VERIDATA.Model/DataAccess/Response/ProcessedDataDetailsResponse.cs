@@ -15,5 +15,7 @@ namespace VERIDATA.Model.DataAccess.Response
         public decimal? EpfWages { get; set; }
         public int? ProcessedId { get; set; }
         public string? StateAlias { get; set; }
+        public DateTime? CreatedDate { get; set; }
+
     }
 }

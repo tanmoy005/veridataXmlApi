@@ -8,6 +8,7 @@ using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
+using static VERIDATA.BLL.utility.CommonEnum;
 
 namespace PfcAPI.Controllers.Account
 {
@@ -71,7 +72,7 @@ namespace PfcAPI.Controllers.Account
                 int validatedUserId = Task.Run(async () => await _userContext.validateUserByOtp(user.clientId, user.OTP, user.dbUserType)).GetAwaiter().GetResult();
                 if (validatedUserId <= 0)
                 {
-                    string _errormsg = validatedUserId==0? "The OTP is invalid. Please try again.": validatedUserId == -1? "Your profile is locked due to consecutive wrong otp, please try after some time" :"Otp timed out, Please retry";
+                    string _errormsg = validatedUserId == 0 ? "The OTP is invalid. Please try again." : validatedUserId == -1 ? "Your profile is locked due to consecutive wrong otp, please try after some time" : "Otp timed out, Please retry";
 
                     _ErrorResponse.ErrorCode = 400;
                     _ErrorResponse.UserMessage = _errormsg;
@@ -87,15 +88,88 @@ namespace PfcAPI.Controllers.Account
                 throw;
             }
         }
-
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost]
-        [Route("DefaultPasswordChange")]
-
-        public ActionResult DefaultPasswordChange(SetNewPasswordRequest req)
+        [Route("ChangePasswordGenerateOTP")]
+        public ActionResult ChangePasswordGenerateOTP(ChangePasswordGenerateOTPRequest user)
         {
             try
             {
+                string _Otp = string.Empty;
+                ChangePasswordGenerateOTPResponse ChangePasswordGenerateOTPRes = new();
+                UserDetailsResponse userDetails = new();
+                ValidateUserDetails validateUserResponse = Task.Run(async () => await _userContext.validateUserChangePassword(user)).GetAwaiter().GetResult();
+                if (validateUserResponse.StatusCode == HttpStatusCode.NotFound)
+                {
+                    _ErrorResponse.ErrorCode = 400;
+                    _ErrorResponse.UserMessage = validateUserResponse.UserMessage;
+                    _ErrorResponse.InternalMessage = "Bad Request";
+
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+                }
+
+                ValidateUserSignInResponse res = Task.Run(async () => await _userContext.postUserAuthdetails(validateUserResponse)).GetAwaiter().GetResult();
+                ChangePasswordGenerateOTPRes.clientId = res.clientId;
+                ChangePasswordGenerateOTPRes.userId = validateUserResponse.userId;
+                ChangePasswordGenerateOTPRes.dbUserType = res.dbUserType;
+                //forgetPasswordRes.clientId = "Test_abcd";
+                //forgetPasswordRes.userId = 34;
+                //forgetPasswordRes.dbUserType = 2;
+                return Ok(new BaseResponse<ChangePasswordGenerateOTPResponse>(HttpStatusCode.OK, ChangePasswordGenerateOTPRes));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("ValidateUserByOtpForgetPassword")]
+        public ActionResult ValidateUserByOtp(ValidateUserSignInRequest user)
+        {
+            try
+            {
+                AuthenticatedUserResponse userDetails = new();
+
+                int validatedUserId = Task.Run(async () => await _userContext.validateUserByOtp(user.clientId, user.OTP, (int)UserType.Appoientee)).GetAwaiter().GetResult();
+                if (validatedUserId <= 0)
+                {
+                    string _errormsg = validatedUserId == 0 ? "The OTP is invalid. Please try again." : validatedUserId == -1 ? "Your profile is locked due to consecutive wrong otp, please try after some time" : "Otp timed out, Please retry";
+
+                    _ErrorResponse.ErrorCode = 400;
+                    _ErrorResponse.UserMessage = _errormsg;
+                    _ErrorResponse.InternalMessage = "Bad Request";
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+                }
+
+                return Ok(new BaseResponse<bool>(HttpStatusCode.OK, true));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("PostPasswordChange")]
+
+        public ActionResult PostPasswordChange(SetNewPasswordRequest req)
+        {
+            try
+            {
+                int validatedUserId = Task.Run(async () => await _userContext.validateUserByOtp(req.clientId, req.otp, (int)UserType.Appoientee)).GetAwaiter().GetResult();
+                if (validatedUserId <= 0)
+                {
+                    string _errormsg = validatedUserId == 0 ? "The OTP is invalid. Please try again." : validatedUserId == -1 ? "Your profile is locked due to consecutive wrong otp, please try after some time" : "Otp timed out, Please retry";
+
+                    _ErrorResponse.ErrorCode = 400;
+                    _ErrorResponse.UserMessage = _errormsg;
+                    _ErrorResponse.InternalMessage = "Bad Request";
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+                }
                 Task.Run(async () => await _userContext.postUserPasswordChange(req)).GetAwaiter().GetResult();
                 return Ok(new BaseResponse<bool>(HttpStatusCode.OK, true));
             }

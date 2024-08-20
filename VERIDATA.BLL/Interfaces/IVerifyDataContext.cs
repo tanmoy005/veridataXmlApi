@@ -17,7 +17,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<AadharSubmitOtpDetails> GetAadharDetailsFromXml(string? xmlData);
         public Task<CandidateValidateResponse> VerifyAadharData(AadharValidationRequest reqObj);
         public Task<UanGenerateOtpDetails> GeneratetUANOTP(UanGenerateOtpRequest reqObj);
-        public Task<UanSubmitOtpDetails> SubmitUanOTP(AppointeeUANSubmitOtpRequest reqObj);
+        //public Task<UanSubmitOtpDetails> SubmitUanOTP(AppointeeUANSubmitOtpRequest reqObj);
         public Task<GetPassbookDetailsResponse> GetPassbookBySubmitOTP(AppointeeUANSubmitOtpRequest reqObj);
         public Task<GetPassbookDetailsResponse> GetPfPassbookData(GetPassbookDetailsRequest reqObj);
         public Task<CandidateValidateResponse> VerifyUanData(UanValidationRequest reqObj);

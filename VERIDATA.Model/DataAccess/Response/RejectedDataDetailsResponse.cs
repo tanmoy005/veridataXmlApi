@@ -32,5 +32,7 @@
         public DateTime? DateOfBirth { get; set; }
         public decimal? EpfWages { get; set; }
         public int? RejectedId { get; set; }
+        public DateTime? CreatedDate { get; set; }
+
     }
 }

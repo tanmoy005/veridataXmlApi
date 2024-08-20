@@ -126,6 +126,7 @@
         public static class ApiProviderType
         {
             public const string Karza = "karza";
+            public const string Signzy = "signzy";
             public const string SurePass = "surepass";
         }
         public static class RoleTypeAlias
@@ -173,6 +174,7 @@
         }
         public static class FilterCode
         {
+            public const string All = "All";
             public const string UNDERPROCESS = "001";
             public const string LINKNOTSENT = "002";
             public const string VERIFIED = "003";
@@ -291,9 +293,19 @@
             NotFound = 103,
             MaxTry = 104,
         }
-       
-
-
+        public enum SignzyStatusCode
+        {
+            Invalid = 400,
+            NotFound = 404,
+            UpServerDown = 409,
+            Succed = 101,
+        }
+        public enum ConsentStatus
+        {
+            Agree = 1,
+            Disagree = 2,
+            Revoked = 3,
+        }
         //public static class LogLevel
         //{
         //    public const string Error = "Error";

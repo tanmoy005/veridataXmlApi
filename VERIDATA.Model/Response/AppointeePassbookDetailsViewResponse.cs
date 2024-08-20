@@ -17,6 +17,8 @@
         public string? LastTransactionMonth { get; set; }
         public string? LastTransactionApprovedOn { get; set; }
         public string? memberId { get; set; }
+        public string? IsPensionApplicable { get; set; }
+        public string? LastPensionDate { get; set; }
         public List<CompanyPassbookDetails>? passbook { get; set; }
     }
     public class CompanyPassbookDetails

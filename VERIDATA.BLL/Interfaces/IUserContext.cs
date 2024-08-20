@@ -9,6 +9,7 @@ namespace VERIDATA.BLL.Interfaces
     public interface IUserContext
     {
         public Task<ValidateUserDetails> validateUserSign(UserSignInRequest user);
+        public Task<ValidateUserDetails> validateUserChangePassword(ChangePasswordGenerateOTPRequest user);
         public Task<ValidateUserSignInResponse> postUserAuthdetails(ValidateUserDetails req);
         public Task updateUserAuthdetails(int userId);
         public Task postUsersignOut(int userId);

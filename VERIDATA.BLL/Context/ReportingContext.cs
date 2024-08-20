@@ -537,11 +537,116 @@ namespace VERIDATA.BLL.Context
                 MobileNo = row?.AppointeeDetails?.MobileNo,
                 Nationality = row?.AppointeeDetails?.Nationality,
                 CountryName = string.IsNullOrEmpty(row?.AppointeeDetails?.OriginCountry) ? "N/A" : row?.AppointeeDetails?.OriginCountry,
-                StartDate = row?.AppointeeDetails?.PassportValidFrom?.ToShortDateString()??"N/A",
+                StartDate = row?.AppointeeDetails?.PassportValidFrom?.ToShortDateString() ?? "N/A",
                 ExpiryDate = row?.AppointeeDetails?.PassportValidTill?.ToShortDateString() ?? "N/A",
                 PassportNumber = string.IsNullOrEmpty(row?.AppointeeDetails?.PassportNo) ? "N/A" : CommonUtility.DecryptString(key, row?.AppointeeDetails?.PassportNo),
 
             }).OrderByDescending(y => y.AppointeeId).ToList();
+        }
+
+        public async Task<List<AppointeeDataFilterReportResponse>> AppointeeDetailsReport(AppointeeDataFilterReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
+        {
+
+            DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
+            DateTime CurrDate = Convert.ToDateTime(_currDate);
+            string status = string.Empty;
+            List<AppointeeDataFilterReportResponse> _response = new();
+            bool _IsAllData = reqObj.StatusCode?.ToLower()?.Trim() == FilterCode.All?.ToLower()?.Trim();
+            if (reqObj.StatusCode == FilterCode.VERIFIED || _IsAllData)
+            {
+                ProcessedFilterRequest filterRequest = new ProcessedFilterRequest()
+                {
+                    FromDate = reqObj.FromDate,
+                    ToDate = reqObj.ToDate,
+                    AppointeeName = reqObj.AppointeeName,
+                    CandidateId = reqObj.CandidateId,
+                };
+
+                List<ProcessedDataDetailsResponse> list = await _workFlowDetailsContext.GetProcessedAppointeeDetailsAsync(filterRequest);
+                var _processViewdata = list?.DistinctBy(x => x.AppointeeId)?.OrderByDescending(x => x.ProcessedId)?.Select(row => new AppointeeDataFilterReportResponse
+                {
+                    candidateId = row?.CandidateId,
+                    AppointeeName = row?.AppointeeName,
+                    AppointeeId = row?.AppointeeId,
+                    EmailId = row?.AppointeeEmailId,
+                    MobileNo = row?.MobileNo,
+                    DateOfJoining = row?.DateOfJoining,
+                    Status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
+                    CreatedDate = row?.CreatedDate
+                }).ToList();
+                _response.AddRange(_processViewdata);
+            }
+
+            if (reqObj.StatusCode == FilterCode.REJECTED || _IsAllData)
+            {
+                FilterRequest filterRequest = new FilterRequest()
+                {
+                    FromDate = reqObj.FromDate,
+                    ToDate = reqObj.ToDate,
+                    AppointeeName = reqObj.AppointeeName,
+                    CandidateId = reqObj.CandidateId,
+                };
+
+                List<RejectedDataDetailsResponse> rejectedAppointeeList = await _workFlowDetailsContext.GetRejectedAppointeeDetailsAsync(filterRequest);
+                var _rejectedViewdata = rejectedAppointeeList?.DistinctBy(x => x.AppointeeId)?.OrderByDescending(x => x.RejectedId)?.Select(row => new AppointeeDataFilterReportResponse
+                {
+                    candidateId = row?.CandidateId,
+                    AppointeeName = row?.AppointeeName,
+                    AppointeeId = row?.AppointeeId,
+                    EmailId = row?.AppointeeEmailId,
+                    MobileNo = row?.MobileNo,
+                    DateOfJoining = row?.DateOfJoining,
+                    Status = "Rejected",
+                    CreatedDate = row?.CreatedDate
+                }).ToList();
+                _response.AddRange(_rejectedViewdata);
+            }
+
+            AppointeeSeacrhFilterRequest UnderProcessfilterRequest = new()
+            {
+                FromDate = reqObj.FromDate,
+                ToDate = reqObj.ToDate,
+                AppointeeName = reqObj.AppointeeName,
+                CandidateId = reqObj.CandidateId,
+
+            };
+
+            List<UnderProcessQueryDataResponse> underProcessData = await _workFlowDetailsContext.GetUnderProcessDataAsync(UnderProcessfilterRequest);
+
+            if (reqObj.StatusCode == FilterCode.LAPSED || _IsAllData)
+            {
+                List<AppointeeDataFilterReportResponse>? _lapsedViewdata = underProcessData?.Where(X => X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportResponse
+                {
+                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                    AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
+                    candidateId = row?.UnderProcess?.CandidateId,
+                    EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
+                    MobileNo = row?.UnderProcess?.MobileNo,
+                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
+                    CreatedDate = row?.UnderProcess?.CreatedOn,
+                    Status = "Lasped",
+                }).ToList();
+                _response.AddRange(_lapsedViewdata);
+            }
+            if (reqObj.StatusCode == FilterCode.UNDERPROCESS || _IsAllData)
+            {
+
+                List<AppointeeDataFilterReportResponse>? _underProcessViewdata = underProcessData?.Where(X => !X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportResponse
+                {
+                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                    AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
+                    candidateId = row?.UnderProcess?.CandidateId,
+                    EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
+                    MobileNo = row?.UnderProcess?.MobileNo,
+                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
+                    CreatedDate = row?.UnderProcess?.CreatedOn,
+                    Status = string.IsNullOrEmpty(status) ? row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response" : status,
+                }).ToList();
+                _response.AddRange(_underProcessViewdata);
+
+            }
+            var res = _response?.OrderByDescending(y => y?.DateOfJoining)?.ToList();
+            return res;
         }
     }
 }

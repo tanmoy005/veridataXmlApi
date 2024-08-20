@@ -51,6 +51,13 @@ namespace VERIDATA.BLL.apiContext.Common
                 request.Headers.Authorization = Authorization;
                 ////Token Auth
             }
+            if (apiConfig.apiProvider?.ToLower() == ApiProviderType.Signzy)
+            {
+                ////Token Auth
+                AuthenticationHeaderValue Authorization = new(_apiConfig.AuthTokenSignzy);
+                request.Headers.Authorization = Authorization;
+                ////Token Auth
+            }
             request.Content = content;
             HttpResponseMessage responsse = await client.SendAsync(request);
 

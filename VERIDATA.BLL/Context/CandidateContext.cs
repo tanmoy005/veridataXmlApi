@@ -9,6 +9,7 @@ using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.ExchangeModels;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
+using VERIDATA.Model.Response.api.Signzy;
 using VERIDATA.Model.Response.api.surepass;
 using VERIDATA.Model.Table.Public;
 using static VERIDATA.BLL.utility.CommonEnum;
@@ -235,6 +236,11 @@ namespace VERIDATA.BLL.Context
                         UanPassbookDetails PassBookResponse1 = JsonConvert.DeserializeObject<UanPassbookDetails>(_passbookdata);
                         passbookDetails = await ParsePassbookDetailsKarza(PassBookResponse1, appointeeId);
                     }
+                    if (_DocList.UploadSubTypeCode == ApiProviderType.Signzy)
+                    {
+                        SignzyUanPassbookDetails PassBookResponse1 = JsonConvert.DeserializeObject<SignzyUanPassbookDetails>(_passbookdata);
+                        passbookDetails = await ParsePassbookDetailsSignzy(PassBookResponse1, appointeeId);
+                    }
                 }
             }
             return passbookDetails;
@@ -298,36 +304,109 @@ namespace VERIDATA.BLL.Context
                 passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.UANNumber));
                 passbookDetails.dob = PassBookResponseData?.dob;
 
-                foreach (EstDetail obj in PassBookResponse?.est_details)
+                foreach (EstDetail obj in PassBookResponse?.est_details ?? new List<EstDetail>())
                 {
-                    //var _copmnyData = obj.Value;
+                    bool? isPensionApplicable = null;
+                    DateTime? LastPensionDate = null;
                     DateTime transMonth = Convert.ToDateTime(obj.doe_epf);
+                    List<CompanyPassbookDetails> passbookDetailsList = new();
+
+                    int index = 0;
+                    foreach (var x in obj.passbook ?? new List<Passbook>())
+                    {
+                        CompanyPassbookDetails pssbkData = new()
+                        {
+                            id = index + 1, // Set id as the index value (1-based index)
+                            approvedOn = x.approved_on,
+                            description = x.particular,
+                            month = CommonUtility.getMonthName(Convert.ToDateTime(x.approved_on).Month),
+                            year = Convert.ToDateTime(x.approved_on).Year.ToString()
+                        };
+
+                        passbookDetailsList.Add(pssbkData);
+
+                        if (Convert.ToInt32(x?.cr_pen_bal) > 0 && (LastPensionDate == null || Convert.ToDateTime(x?.approved_on) > LastPensionDate))
+                        {
+                            isPensionApplicable = true;
+                            LastPensionDate = Convert.ToDateTime(x?.approved_on);
+                        }
+
+                        index++;
+                    }
+
+
                     PfCompanyDetails _companyDetails = new()
                     {
-                        passbook = new List<CompanyPassbookDetails>(),
+                        passbook = passbookDetailsList,
                         companyName = obj?.est_name,
-                        establishmentId = "NA",// _copmnyData?.establishment_id;
+                        establishmentId = "NA", // Placeholder value; update as needed
                         memberId = obj?.member_id,
-                        LastTransactionApprovedOn = obj?.passbook.LastOrDefault()?.approved_on,
+                        LastTransactionApprovedOn = obj?.passbook?.LastOrDefault()?.approved_on,
                         LastTransactionMonth = CommonUtility.getMonthName(transMonth.Month),
-                        LastTransactionYear = transMonth.Year.ToString()
+                        LastTransactionYear = transMonth.Year.ToString(),
+                        IsPensionApplicable = isPensionApplicable==null?"NA": isPensionApplicable??false?"Yes":"No",
+                        LastPensionDate = LastPensionDate?.ToString("dd-MM-yyyy")??"NA",
                     };
-                    List<CompanyPassbookDetails>? passbookDetailsList = obj?.passbook?.Select((x, index) => new CompanyPassbookDetails
-                    {
-                        id = index + 1,
-                        approvedOn = x.approved_on,
-                        description = x.particular,
-                        month = CommonUtility.getMonthName(Convert.ToDateTime(x.approved_on).Month),
-                        year = Convert.ToDateTime(x.approved_on).Year.ToString()
-                    })?.ToList();
-                    _companyDetails.passbook = passbookDetailsList;
+
                     _companyDetailsList.Add(_companyDetails);
                 }
+
                 passbookDetails.companies = _companyDetailsList;
             }
 
             return passbookDetails;
         }
+        private async Task<AppointeePassbookDetailsViewResponse> ParsePassbookDetailsSignzy(SignzyUanPassbookDetails passBookResponse, int appointeeId)
+        {
+            string? key = _apiConfig.EncriptKey;
+            AppointeePassbookDetailsViewResponse passbookDetails = new();
+            AppointeeDetails appointeeDetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
+
+            if (passBookResponse != null)
+            {
+                passbookDetails.clientId = "NA";
+                passbookDetails.fullName = passBookResponse?.FullName;
+                passbookDetails.fatherName = passBookResponse?.FatherName;
+                passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, appointeeDetails?.UANNumber));
+                passbookDetails.dob = passBookResponse?.Dob.ToShortDateString();
+
+                List<PfCompanyDetails> companyDetailsList = new();
+
+                foreach (var company in passBookResponse.Companies)
+                {
+                    var estDetails = company.Value;
+
+                    DateTime transMonth = Convert.ToDateTime(estDetails.Passbook.LastOrDefault()?.ApprovedOn);
+                    PfCompanyDetails companyDetails = new()
+                    {
+                        passbook = new List<CompanyPassbookDetails>(),
+                        companyName = estDetails.CompanyName,
+                        establishmentId = estDetails.EstablishmentId,
+                        memberId = estDetails.Passbook.FirstOrDefault()?.MemberId,
+                        LastTransactionApprovedOn = estDetails.Passbook.LastOrDefault()?.ApprovedOn.ToShortDateString(),
+                        LastTransactionMonth = CommonUtility.getMonthName(transMonth.Month),
+                        LastTransactionYear = transMonth.Year.ToString()
+                    };
+
+                    List<CompanyPassbookDetails> passbookDetailsList = estDetails.Passbook.Select((x, index) => new CompanyPassbookDetails
+                    {
+                        id = index + 1,
+                        approvedOn = x.ApprovedOn.ToShortDateString(),
+                        description = x.Description,
+                        month = CommonUtility.getMonthName(Convert.ToDateTime(x.ApprovedOn).Month),
+                        year = Convert.ToDateTime(x.ApprovedOn).Year.ToString()
+                    }).ToList();
+
+                    companyDetails.passbook = passbookDetailsList;
+                    companyDetailsList.Add(companyDetails);
+                }
+
+                passbookDetails.companies = companyDetailsList;
+            }
+
+            return passbookDetails;
+        }
+
 
         public async Task<AppointeeEmployementDetailsViewResponse> GetGetEmployementDetailsByAppointeeId(int appointeeId)
         {
@@ -374,7 +453,7 @@ namespace VERIDATA.BLL.Context
                 foreach (KeyValuePair<string, CandidateCompanies> obj in PassBookResponseData.companies)
                 {
                     CandidateCompanies _copmnyData = obj.Value;
-                    var TotalWorkDays =Convert.ToInt32(((Convert.ToDateTime(_copmnyData?.passbook.LastOrDefault()?.approved_on)) - (Convert.ToDateTime(_copmnyData?.passbook.FirstOrDefault()?.approved_on))).TotalDays);
+                    var TotalWorkDays = Convert.ToInt32(((Convert.ToDateTime(_copmnyData?.passbook.LastOrDefault()?.approved_on)) - (Convert.ToDateTime(_copmnyData?.passbook.FirstOrDefault()?.approved_on))).TotalDays);
 
                     PfEmployementDetails _companyDetails = new()
                     {
@@ -387,9 +466,9 @@ namespace VERIDATA.BLL.Context
                         LastTransactionApprovedOn = _copmnyData?.passbook.LastOrDefault()?.approved_on,
                         LastTransactionMonth = CommonUtility.getMonthName(Convert.ToInt32(_copmnyData?.passbook.LastOrDefault()?.month)),
                         LastTransactionYear = _copmnyData?.passbook.LastOrDefault()?.year,
-                        TotalWorkDays= TotalWorkDays,
+                        TotalWorkDays = TotalWorkDays,
                         WorkForYear = TotalWorkDays / 365,
-                        WorkForMonth = (TotalWorkDays % 365)/30,
+                        WorkForMonth = (TotalWorkDays % 365) / 30,
                     };
                     _companyDetailsList.Add(_companyDetails);
                 }

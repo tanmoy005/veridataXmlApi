@@ -5,6 +5,7 @@
         public string? EncriptKey { get; set; }
         public string? ApiBaseUrl { get; set; }
         public string? ApiToken { get; set; }
+        public string? AuthTokenSignzy { get; set; }
         public string? ApiKey { get; set; }
         public string? ApiKeyValue { get; set; }
         //public string? ApiProvider { get; set; }

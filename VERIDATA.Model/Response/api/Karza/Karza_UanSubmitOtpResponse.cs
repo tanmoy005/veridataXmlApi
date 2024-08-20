@@ -75,7 +75,7 @@ namespace VERIDATA.Model.Response.api.Karza
         public string approved_on { get; set; }
         //public string cr_ee_share { get; set; }
         //public string cr_er_share { get; set; }
-        //public string cr_pen_bal { get; set; }
+        public string cr_pen_bal { get; set; }
         public string db_cr_flag { get; set; }
         public string particular { get; set; }
         public string month_year { get; set; }

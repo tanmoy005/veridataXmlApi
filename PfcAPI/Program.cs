@@ -1,7 +1,6 @@
 using Hangfire;
 using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +9,7 @@ using Serilog;
 using System.Globalization;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.apiContext.karza;
+using VERIDATA.BLL.apiContext.signzy;
 using VERIDATA.BLL.apiContext.surepass;
 using VERIDATA.BLL.Authentication;
 using VERIDATA.BLL.Context;
@@ -70,6 +70,7 @@ builder.Services.AddScoped<IWorkFlowDalContext, WorkFlowDalContext>();
 
 builder.Services.AddScoped<IkarzaApiContext, KarzaApiContext>();
 builder.Services.AddScoped<IsurepassApiContext, SurepassApiContext>();
+builder.Services.AddScoped<IsignzyApiContext, SignzyApiContext>();
 builder.Services.AddScoped<IUitityContext, UitityContext>();
 
 //builder.Services.AddDbContext<DbContextDB>(Options => Options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));

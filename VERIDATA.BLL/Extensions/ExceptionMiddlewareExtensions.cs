@@ -27,7 +27,7 @@ namespace VERIDATA.BLL.Extensions
                         ErrorResponse _errorResponse = new()
                         {
                             ErrorCode = context.Response.StatusCode,
-                            UserMessage = contextFeature.Error.Message,
+                            UserMessage ="Something Unexpected has occure, please try again later",// contextFeature.Error.Message,
                             //InternalMessage = contextFeature.Error.StackTrace ?? string.Empty,
                         };
                         string response = JsonConvert.SerializeObject(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _errorResponse)).ToString();

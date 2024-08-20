@@ -88,6 +88,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                      EpfWages = u.EPFWages,
                                                                      ProcessedId = p.ProcessedId,
                                                                      StateAlias = w.StateAlias,
+                                                                     CreatedDate=u.CreatedOn
                                                                  };
 
             List<ProcessedDataDetailsResponse> appointeelist = await querydata.ToListAsync().ConfigureAwait(false);
@@ -145,6 +146,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                     //AadhaarNumber = a.AadhaarNumber,
                                                                     Remarks = rp.Remarks,
                                                                     RejectedId = r.RejectedId,
+                                                                    CreatedDate=u.CreatedOn,
                                                                 };
 
             List<RejectedDataDetailsResponse> rejectedAppointeeList = await querydata.ToListAsync().ConfigureAwait(false);
@@ -1057,5 +1059,101 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return list;
         }
+        //public async Task<List<UnderProcessWithActionQueryDataResponse>> GetAppointeeDataWithActionAsync(AppointeeDataFilterReportRequest reqObj)
+        //{
+        //    string CurrDate = DateTime.Now.ToShortDateString();
+        //    DateTime _CurrDate = Convert.ToDateTime(CurrDate);
+        //    DateTime? _ToDate = reqObj.ToDate != null ? reqObj.ToDate?.AddDays(1) : null;
+        //    WorkflowApprovalStatusMaster? StatusFilterState = new WorkflowApprovalStatusMaster();
+        //    WorkflowApprovalStatusMaster? ForeceApproveState = new WorkflowApprovalStatusMaster();
+        //    List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
+
+        //    if (reqObj.StatusCode == FilterCode.VERIFIED)
+        //    {
+        //        StatusFilterState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Approved?.Trim());
+        //        ForeceApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ForcedApproved?.Trim());
+        //    }
+        //    if (reqObj.StatusCode == FilterCode.REJECTED)
+        //    {
+        //        StatusFilterState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
+        //    }
+        //    //WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Reprocess?.Trim());
+        //    //WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ProcessClose?.Trim());
+        //    //WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
+
+
+        //    // Step 1: Retrieve the data from the database
+        //    var activityQuery = from ac in _dbContextClass.ActivityMaster
+        //                        join at in _dbContextClass.ActivityTransaction
+        //                            on ac.ActivityId equals at.ActivityId
+        //                        where ac.ActiveStatus == true && at.ActiveStatus == true
+        //                        select new { ac, at };
+
+        //    var activityData = await activityQuery.ToListAsync().ConfigureAwait(false);
+
+        //    // Step 2: Perform the grouping and selection on the client side
+        //    var activityList = activityData?.GroupBy(x => x.at.AppointeeId)?.Select(g => g.OrderByDescending(x => x.at.CreatedOn)
+        //    ?.FirstOrDefault())?.Where(latestActivity => latestActivity != null)?.Select(latestActivity => new AppointeeLastActivityDetailsResponse
+        //    {
+        //        Id = latestActivity.at.ActivityTransId,
+        //        ActivityType = latestActivity.ac.ActivityType,
+        //        ActivityName = latestActivity.ac.ActivityName,
+        //        ActivityInfo = latestActivity.ac.ActivityInfo,
+        //        ActivityDesc = latestActivity.ac.ActivityDesc,
+        //        Color = latestActivity.ac.ActivityColor,
+        //        CreatedOn = latestActivity.at.CreatedOn,
+        //        AppointeeId = latestActivity.at.AppointeeId ?? 0
+        //    })?.ToList();
+
+
+        //    // Main query with the prepared activityList
+        //    IQueryable<UnderProcessWithActionQueryDataResponse> mainQueryData = from b in _dbContextClass.UnderProcessFileData
+        //                                                                        join w in _dbContextClass.WorkFlowDetails
+        //                                                                        on b.AppointeeId equals w.AppointeeId
+        //                                                                        join p in _dbContextClass.AppointeeDetails
+        //                                                                        on b.AppointeeId equals p.AppointeeId into grouping
+        //                                                                        from p in grouping.DefaultIfEmpty()
+        //                                                                        where
+        //                                                                         (StatusFilterState.AppvlStatusId == 0 || (w.AppvlStatusId == StatusFilterState.AppvlStatusId) ||
+        //                                                                         (reqObj.StatusCode == FilterCode.VERIFIED ? w.AppvlStatusId == ForeceApproveState.AppvlStatusId
+        //                                                                         : (w.AppvlStatusId == StatusFilterState.AppvlStatusId)))
+        //                                                                        //&& (p.IsProcessed.Equals(false) || p.IsProcessed == null)
+        //                                                                        && (string.IsNullOrEmpty(reqObj.AppointeeName) || b.AppointeeName.Contains(reqObj.AppointeeName))
+        //                                                                        && (string.IsNullOrEmpty(reqObj.CandidateId) || b.CandidateId.Contains(reqObj.CandidateId))
+        //                                                                        && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate)
+        //                                                                        && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
+        //                                                                        && b.ActiveStatus == true
+        //                                                                        orderby p.IsSubmit
+        //                                                                        select new UnderProcessWithActionQueryDataResponse
+        //                                                                        {
+        //                                                                            UnderProcess = b,
+        //                                                                            AppointeeDetails = p,
+        //                                                                            AppvlStatusId = w.AppvlStatusId,
+        //                                                                            AppointeeId = b.AppointeeId,
+        //                                                                            IsJoiningDateLapsed = b.DateOfJoining < _CurrDate
+        //                                                                        };
+
+        //    List<UnderProcessWithActionQueryDataResponse> appointeeList = await mainQueryData.ToListAsync().ConfigureAwait(false);
+
+        //    var list = (from m in appointeeList
+        //                join c in activityList
+        //                on m.AppointeeId equals c.AppointeeId into ActivityGrouping
+        //                from c in ActivityGrouping.DefaultIfEmpty()
+        //                select new UnderProcessWithActionQueryDataResponse
+        //                {
+        //                    UnderProcess = m.UnderProcess,
+        //                    AppointeeDetails = m.AppointeeDetails,
+        //                    LastActionDate = c != null ? c.CreatedOn : (DateTime?)null,
+        //                    ActivityType = c != null ? c.ActivityType : "NA",
+        //                    ActivityInfo = c != null ? c.ActivityInfo : "NA",
+        //                    ActivityDesc = c != null ? c.ActivityDesc : "NA",
+        //                    AppvlStatusId = m.AppvlStatusId,
+        //                    AppointeeId = m.AppointeeId,
+        //                    IsJoiningDateLapsed = m.IsJoiningDateLapsed
+        //                }).ToList();
+
+
+        //    return list;
+        //}
     }
 }
