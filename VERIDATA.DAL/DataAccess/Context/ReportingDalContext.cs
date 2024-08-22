@@ -68,6 +68,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 Nationality = r.FirstOrDefault()?.data?.AppointeeData?.Nationality,
                 QualificationName = r.FirstOrDefault()?.QualificationName,
                 UANNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.UANNumber),
+                PensionAvailable = r.FirstOrDefault()?.data?.AppointeeData?.IsPensionApplicable == null ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                 GenderName = r.FirstOrDefault()?.GenderName,
                 MaratialStatusName = r.FirstOrDefault()?.MStatusName,
                 MemberName = r.FirstOrDefault()?.data?.AppointeeData?.MemberName,

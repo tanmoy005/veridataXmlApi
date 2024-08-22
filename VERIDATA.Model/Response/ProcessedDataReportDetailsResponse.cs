@@ -24,6 +24,9 @@ namespace VERIDATA.Model.Response
         [DisplayName("UAN Number")]
         public string? UANNumber { get; set; }
 
+        [DisplayName("Pension Available")]
+        public string? PensionAvailable { get; set; }
+
         [DisplayName("Date Of Joining")]
         public string? DateOfJoining { get; set; }
 
