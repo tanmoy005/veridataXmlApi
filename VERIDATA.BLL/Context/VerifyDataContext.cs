@@ -112,9 +112,10 @@ namespace VERIDATA.BLL.Context
                 //&& (string.IsNullOrEmpty(phoneNo?.ToUpper()) || appointeedetail?.MobileNo?.ToUpper() == phoneNo?.ToUpper()))
                 {
                     IsValid = true;
+                    string maskedPhoneNumber = CommonUtility.MaskedString(phoneNo);
                     if (string.IsNullOrEmpty(phoneNo?.ToUpper()))
                     {
-                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANMOBILENOTAVAIL, Inputdata = appointeedetail?.MobileNo, Fetcheddata = phoneNo });
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANMOBILENOTAVAIL, Inputdata = appointeedetail?.MobileNo, Fetcheddata = maskedPhoneNumber });
                     }
                     if (appointeedetail?.AppointeeName?.Trim()?.ToUpper() != panFullName?.ToUpper())
                     {
@@ -122,7 +123,7 @@ namespace VERIDATA.BLL.Context
                     }
                     if (appointeedetail?.MobileNo != phoneNo && !string.IsNullOrEmpty(phoneNo?.ToUpper()))
                     {
-                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANMOBILE, Inputdata = appointeedetail?.MobileNo, Fetcheddata = phoneNo });
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANMOBILE, Inputdata = appointeedetail?.MobileNo, Fetcheddata = maskedPhoneNumber });
                     }
                 }
                 else
