@@ -10,7 +10,7 @@ namespace VERIDATA.BLL.Interfaces
     {
         public string GenarateErrorMsg(int statusCode, string reasonCode, string type);
         public Task<AppointeePanValidateResponse> PanDetailsValidation(AppointeePanValidateRequest reqObj);
-        public Task<CandidateValidateResponse> PassportDetailsValidation(AppointeePassportValidateRequest reqObj);
+        public Task<AppointeePassportValidateResponse> PassportDetailsValidation(AppointeePassportValidateRequest reqObj);
         public Task<GetUanResponse> GetUanNumber(GetUanNumberDetailsRequest reqObj);
         public Task<AadharGenerateOTPDetails> GeneratetAadharOTP(AppointeeAadhaarValidateRequest reqObj);
         public Task<AadharSubmitOtpDetails> SubmitAadharOTP(AppointeeAadhaarSubmitOtpRequest reqObj);

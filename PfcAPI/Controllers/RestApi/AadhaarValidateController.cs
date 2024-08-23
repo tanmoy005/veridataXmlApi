@@ -267,11 +267,17 @@ namespace PfcAPI.Controllers.RestApi
         {
             try
             {
-                CandidateValidateResponse Response = new();
+                AppointeePassportValidateResponse Response = new();
                 if (_apiConfig.IsApiCall)
                 {
                     Response = Task.Run(async () => await _varifyCandidate.PassportDetailsValidation(reqobj)).GetAwaiter().GetResult();
-
+                    if (Response.StatusCode != HttpStatusCode.OK)
+                    {
+                        _ErrorResponse.ErrorCode = Response.StatusCode == HttpStatusCode.NotAcceptable ? (int)HttpStatusCode.OK : (int)Response.StatusCode;
+                        _ErrorResponse.UserMessage = Response?.Remarks ?? string.Empty;
+                        _ErrorResponse.InternalMessage = Response?.Remarks ?? string.Empty;
+                        return Ok(new BaseResponse<ErrorResponse>(Response.StatusCode, _ErrorResponse));
+                    }
                 }
                 else
                 {
@@ -279,7 +285,7 @@ namespace PfcAPI.Controllers.RestApi
                     Response.Remarks = "server is temporarily shutdown by the admin;please contact with administrator";
 
                 }
-                return Ok(new BaseResponse<CandidateValidateResponse>(HttpStatusCode.OK, Response));
+                return Ok(new BaseResponse<AppointeePassportValidateResponse>(HttpStatusCode.OK, Response));
             }
             catch (Exception)
             {
@@ -302,6 +308,13 @@ namespace PfcAPI.Controllers.RestApi
                 if (_apiConfig.IsApiCall)
                 {
                     Response = Task.Run(async () => await _varifyCandidate.PanDetailsValidation(reqobj)).GetAwaiter().GetResult();
+                    if (Response.StatusCode != HttpStatusCode.OK)
+                    {
+                        _ErrorResponse.ErrorCode = Response.StatusCode == HttpStatusCode.NotAcceptable ? (int)HttpStatusCode.OK : (int)Response.StatusCode;
+                        _ErrorResponse.UserMessage = Response?.Remarks ?? string.Empty;
+                        _ErrorResponse.InternalMessage = Response?.Remarks ?? string.Empty;
+                        return Ok(new BaseResponse<ErrorResponse>(Response.StatusCode, _ErrorResponse));
+                    }
                 }
                 else
                 {

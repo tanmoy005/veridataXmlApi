@@ -71,6 +71,8 @@ namespace VERIDATA.BLL.Context
             {
                 _apiResponse = await _signzyApiContext.GetPanDetails(reqObj.panNummber, reqObj.userId);
             }
+            Response.StatusCode = _apiResponse.StatusCode;
+
             if (_apiResponse.StatusCode == HttpStatusCode.OK)
             {
                 CandidateValidateResponse verifyResponse = await VarifyPanData(_apiResponse, reqObj.appointeeId, reqObj.panName);
@@ -168,10 +170,10 @@ namespace VERIDATA.BLL.Context
             return response;
         }
 
-        public async Task<CandidateValidateResponse> PassportDetailsValidation(AppointeePassportValidateRequest reqObj)
+        public async Task<AppointeePassportValidateResponse> PassportDetailsValidation(AppointeePassportValidateRequest reqObj)
         {
             PassportDetails _apiResponse = new();
-            CandidateValidateResponse Response = new();
+            AppointeePassportValidateResponse Response = new();
             var apiProvider = await _masterContext.GetApiProviderData(ApiType.Passport);
             await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PASPRTVERIFICATIONSTART);
             if (apiProvider?.ToLower() == ApiProviderType.Karza)
@@ -190,10 +192,14 @@ namespace VERIDATA.BLL.Context
                     _apiResponse.ReasonPhrase = "Invalid Passport information";
                 }
             }
-
+            Response.StatusCode = _apiResponse.StatusCode;
             if (_apiResponse.StatusCode == HttpStatusCode.OK)
             {
-                Response = await VarifyPassportData(_apiResponse, reqObj.appointeeId);
+                var _VerifyResponse = await VarifyPassportData(_apiResponse, reqObj.appointeeId);
+                
+                Response.IsValid = _VerifyResponse.IsValid;
+                Response.Remarks = _VerifyResponse.Remarks;
+
                 string activitystate = Response?.IsValid ?? false ? ActivityLog.PASPRTVERIFICATIONCMPLTE : ActivityLog.PASPRTDATAVERIFICATIONFAILED;
                 await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, activitystate);
             }
