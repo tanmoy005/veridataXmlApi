@@ -13,8 +13,8 @@ namespace VERIDATA.Model.DataAccess
         //[DisplayName("EmailId")]
         //public string? AppointeeEmailId { get; set; }
 
-        //[DisplayName("Phone No")]
-        //public string? MobileNo { get; set; }
+        [DisplayName("Updated Phone No")]
+        public string? MobileNo { get; set; }
 
         [DisplayName("Updated Date Of Joining")]
         public string? DateOfJoining { get; set; }

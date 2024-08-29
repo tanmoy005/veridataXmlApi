@@ -93,7 +93,7 @@ namespace VERIDATA.BLL.Context
                         _rawData.lvl1Email = ((string)row["level1 Email"])?.Trim();
                         _rawData.lvl2Email = ((string)row["level2 Email"])?.Trim();
                         _rawData.lvl3Email = ((string)row["level3 Email"])?.Trim();
-                       // _rawData.CompanyId = CompanyDetails?.CompanyId;
+                        // _rawData.CompanyId = CompanyDetails?.CompanyId;
                         _rawData.CompanyName = CompanyName?.Trim();
                         rawListData.Add(_rawData);
                     }
@@ -186,11 +186,13 @@ namespace VERIDATA.BLL.Context
                 {
                     string? candidateID = ((string)row["Candidate ID"])?.Trim();
                     string? appointeeName = ((string)row["Updated Name"])?.Trim();
+                    string? appointeeMobileNo = ((string)row["Updated Phone No"])?.Trim();
                     if (!string.IsNullOrEmpty(candidateID))
                     {
                         _rawData.CandidateID = candidateID;
                         _rawData.AppointeeName = string.IsNullOrEmpty(appointeeName) ? string.Empty : appointeeName;
                         _rawData.DateOfJoining = ((string)row["Updated Date Of Joining"])?.Trim();
+                        _rawData.MobileNo  = appointeeMobileNo;
 
                         updateListData.Add(_rawData);
                     }
@@ -331,7 +333,7 @@ namespace VERIDATA.BLL.Context
                     string msg = string.Empty;
                     bool isdataValid = true;
                     CompanyEntityDetailsResponse? CompanyDetails = entityDetails?.FirstOrDefault(x => x.CompanyName?.Trim()?.ToLower() == companyName?.Trim()?.ToLower() || x.CompanyCode?.Trim()?.ToLower() == companyName?.Trim()?.ToLower());
-           
+
                     if (string.IsNullOrEmpty(candidateId) || string.IsNullOrEmpty(appointeeName) || string.IsNullOrEmpty(companyName) || CompanyDetails?.CompanyId == null)
                     {
                         if (string.IsNullOrEmpty(candidateId))
@@ -487,22 +489,22 @@ namespace VERIDATA.BLL.Context
                     _ = ValidData.Columns.Add(column.ToString());
                     _ = InValidData.Columns.Add(column.ToString());
                 }
-                foreach ((DataRow row, int index, string candidateId, string appointeeName, string DateOfJoining)//, AppointeeEmailId, MobileNo,companyName, IsPFverificationReq, lvl1Email, lvl2Email, lvl3Email)
+                foreach ((DataRow row, int index, string candidateId, string appointeeName, string DateOfJoining, string MobileNo)//, AppointeeEmailId,companyName, IsPFverificationReq, lvl1Email, lvl2Email, lvl3Email)
                     in from DataRow row in data.dataTable.Rows
                        let rowindex = data.dataTable.Rows.IndexOf(row)
                        let index = rowindex + 1
                        let candidateId = ((string)row["Candidate ID"])?.Trim()
                        let DateOfJoining = ((string)row["Updated Date Of Joining"])?.Trim()
                        let appointeeName = ((string)row["Updated Name"])?.Trim()
+                       let MobileNo = ((string)row["Updated Phone No"])?.Trim()
                        //let AppointeeEmailId = ((string)row["Updated EmailId"])?.Trim()
                        //let companyName = ((string)row["Updated Company Name"])?.Trim()
-                       //let MobileNo = ((string)row["Updated Phone No"])?.Trim()
                        //let IsPFverificationReq = ((string)row["Updated Fresher"])?.Trim()?.ToUpper()
                        //let lvl1Email = ((string)row["Updated level1 Email"])?.Trim()
                        //let lvl2Email = ((string)row["Updated level2 Email"])?.Trim()
                        //let lvl3Email = ((string)row["Updated level3 Email"])?.Trim()
                        where !string.IsNullOrEmpty(candidateId)
-                       select (row, index, candidateId, appointeeName, DateOfJoining))//, AppointeeEmailId, MobileNo, companyName, IsPFverificationReq, lvl1Email, lvl2Email, lvl3Email))
+                       select (row, index, candidateId, appointeeName, DateOfJoining, MobileNo))//, AppointeeEmailId, companyName, IsPFverificationReq, lvl1Email, lvl2Email, lvl3Email))
                 {
                     string errormsg = string.Empty;
                     string msg = string.Empty;
@@ -536,7 +538,19 @@ namespace VERIDATA.BLL.Context
                         }
                     }
 
+                    if (!string.IsNullOrEmpty(MobileNo))
+                    {
 
+                        bool isMobileNo = Regex.IsMatch(MobileNo, @"(^[0-9]{10}$)|(^\+[0-9]{2}\s+[0-9]{2}[0-9]{8}$)", RegexOptions.IgnoreCase);
+                        if (!isMobileNo)
+                        {
+                            isdataValid = false;
+                            string _Issue = "Mobile No format is wrong.";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {MobileNo},  Issue: {_Issue}" : $" Data: {MobileNo},  Issue: {_Issue}";
+                            validateData.InternalMessages.Add(msg);
+                            errormsg += $"{msg}, ";
+                        }
+                    }
                     if (isdataValid)
                     {
                         _ = ValidData.Rows.Add(row.ItemArray);

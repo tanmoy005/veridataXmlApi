@@ -155,7 +155,10 @@ namespace VERIDATA.DAL.DataAccess.Context
                 {
                     updateLogList.Add(new AppointeeUpdateLog { CandidateId = updatedobj.CandidateID, UpdateType = "DateOfJoining", UpdateValue = updatedobj.DateOfJoining, CreatedBy = userId, CreatedOn = DateTime.Now });
                 }
-
+                if (!string.IsNullOrEmpty(updatedobj.MobileNo))
+                {
+                    updateLogList.Add(new AppointeeUpdateLog { CandidateId = updatedobj.CandidateID, UpdateType = "Mobile", UpdateValue = updatedobj.MobileNo, CreatedBy = userId, CreatedOn = DateTime.Now });
+                }
                 //if (!string.IsNullOrEmpty(updatedobj.AppointeeEmailId))
                 //{
                 //    updateLogList.Add(new AppointeeUpdateLog { CandidateId = updatedobj.CandidateID, UpdateType = "Email", UpdateValue = updatedobj.AppointeeEmailId, CreatedBy = UserId, CreatedOn = DateTime.Now });
@@ -164,10 +167,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 //{
                 //    updateLogList.Add(new AppointeeUpdateLog { CandidateId = updatedobj.CandidateID, UpdateType = "Company", UpdateValue = updatedobj.CompanyName, CreatedBy = UserId, CreatedOn = DateTime.Now });
                 //}
-                //if (!string.IsNullOrEmpty(updatedobj.MobileNo))
-                //{
-                //    updateLogList.Add(new AppointeeUpdateLog { CandidateId = updatedobj.CandidateID, UpdateType = "Mobile", UpdateValue = updatedobj.MobileNo, CreatedBy = UserId, CreatedOn = DateTime.Now });
-                //}
+
 
             }
             if (updateLogList.Count > 0)
@@ -184,9 +184,9 @@ namespace VERIDATA.DAL.DataAccess.Context
                 UpdatedAppointeeBasicInfo? currRawdata = _appointeeList.Find(x => x.CandidateID == obj.CandidateId);
                 obj.DateOfJoining = !string.IsNullOrEmpty(currRawdata.DateOfJoining) ? Convert.ToDateTime(currRawdata.DateOfJoining) : obj.DateOfJoining;
                 obj.AppointeeName = (!string.IsNullOrEmpty(currRawdata.AppointeeName) && (obj.AppointeeName?.Trim() != currRawdata.AppointeeName)) ? currRawdata.AppointeeName : obj.AppointeeName;
+                obj.MobileNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.MobileNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.MobileNo;
                 //obj.AppointeeEmailId = (!string.IsNullOrEmpty(currRawdata.AppointeeEmailId) && (obj.AppointeeEmailId?.Trim() != currRawdata.AppointeeEmailId)) ? currRawdata.AppointeeEmailId : obj.AppointeeEmailId?.Trim();
                 //obj.CompanyName = (!string.IsNullOrEmpty(currRawdata.CompanyName) && (obj.CompanyName?.Trim() != currRawdata.CompanyName)) ? currRawdata.CompanyName : obj.CompanyName;
-                //obj.MobileNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.MobileNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.MobileNo;
                 obj.UpdatedBy = UserId;
                 obj.UpdatedOn = DateTime.Now;
             }
@@ -200,9 +200,9 @@ namespace VERIDATA.DAL.DataAccess.Context
                 UpdatedAppointeeBasicInfo? currRawdata = _appointeeList.Find(x => x.CandidateID == obj.CandidateId);
                 obj.DateOfJoining = !string.IsNullOrEmpty(currRawdata.DateOfJoining) ? Convert.ToDateTime(currRawdata.DateOfJoining) : obj.DateOfJoining;
                 obj.AppointeeName = (!string.IsNullOrEmpty(currRawdata.AppointeeName) && (obj.AppointeeName?.Trim() != currRawdata.AppointeeName)) ? currRawdata.AppointeeName : obj.AppointeeName;
+                obj.MobileNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.MobileNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.MobileNo;
                 //obj.AppointeeEmailId = (!string.IsNullOrEmpty(currRawdata.AppointeeEmailId) && (obj.AppointeeEmailId?.Trim() != currRawdata.AppointeeEmailId)) ? currRawdata.AppointeeEmailId : obj.AppointeeEmailId?.Trim();
                 //obj.CompanyName = (!string.IsNullOrEmpty(currRawdata.CompanyName) && (obj.CompanyName?.Trim() != currRawdata.CompanyName)) ? currRawdata.CompanyName : obj.CompanyName;
-                //obj.MobileNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.MobileNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.MobileNo;
                 obj.UpdatedBy = UserId;
                 obj.UpdatedOn = DateTime.Now;
             }
@@ -214,6 +214,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
                 obj.DateOfJoining = !string.IsNullOrEmpty(currRawdata.DateOfJoining) ? Convert.ToDateTime(currRawdata.DateOfJoining) : obj.DateOfJoining;
                 obj.AppointeeName = (!string.IsNullOrEmpty(currRawdata.AppointeeName) && (obj.AppointeeName?.Trim() != currRawdata.AppointeeName)) ? currRawdata.AppointeeName : obj.AppointeeName;
+                obj.MobileNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.MobileNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.MobileNo;
                 if (!string.IsNullOrEmpty(currRawdata.AppointeeName) && (obj.AppointeeName?.Trim() != currRawdata.AppointeeName))
                 {
                     if (obj.IsPanVarified ?? false)
@@ -232,7 +233,6 @@ namespace VERIDATA.DAL.DataAccess.Context
 
                 //obj.AppointeeEmailId = (!string.IsNullOrEmpty(currRawdata.AppointeeEmailId) && (obj.AppointeeEmailId?.Trim() != currRawdata.AppointeeEmailId)) ? currRawdata.AppointeeEmailId : obj.AppointeeEmailId?.Trim();
                 //obj.CompanyName = (!string.IsNullOrEmpty(currRawdata.CompanyName) && (obj.CompanyName?.Trim() != currRawdata.CompanyName)) ? currRawdata.CompanyName : obj.CompanyName;
-                //obj.MobileNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.MobileNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.MobileNo;
                 obj.UpdatedBy = UserId;
                 obj.UpdatedOn = DateTime.Now;
             }
@@ -259,9 +259,9 @@ namespace VERIDATA.DAL.DataAccess.Context
                 UpdatedAppointeeBasicInfo currRawdata = _appointeeList.Find(x => x.CandidateID == obj.CandidateId);
                 obj.DateOfJoining = !string.IsNullOrEmpty(currRawdata.DateOfJoining) ? Convert.ToDateTime(currRawdata.DateOfJoining) : obj.DateOfJoining;
                 obj.AppointeeName = (!string.IsNullOrEmpty(currRawdata.AppointeeName) && (obj.AppointeeName?.Trim() != currRawdata.AppointeeName)) ? currRawdata.AppointeeName : obj.AppointeeName;
+                obj.MobileNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.MobileNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.MobileNo;
                 //obj.AppointeeEmailId = (!string.IsNullOrEmpty(currRawdata.AppointeeEmailId) && (obj.AppointeeEmailId?.Trim() != currRawdata.AppointeeEmailId)) ? currRawdata.AppointeeEmailId : obj.AppointeeEmailId?.Trim();
                 //obj.CompanyName = (!string.IsNullOrEmpty(currRawdata.CompanyName) && (obj.CompanyName?.Trim() != currRawdata.CompanyName)) ? currRawdata.CompanyName : obj.CompanyName;
-                //obj.MobileNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.MobileNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.MobileNo;
                 obj.UpdatedBy = UserId;
                 obj.UpdatedOn = DateTime.Now;
             }
