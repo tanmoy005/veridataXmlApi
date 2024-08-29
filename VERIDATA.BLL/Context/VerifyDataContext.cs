@@ -196,7 +196,7 @@ namespace VERIDATA.BLL.Context
             if (_apiResponse.StatusCode == HttpStatusCode.OK)
             {
                 var _VerifyResponse = await VarifyPassportData(_apiResponse, reqObj.appointeeId);
-                
+
                 Response.IsValid = _VerifyResponse.IsValid;
                 Response.Remarks = _VerifyResponse.Remarks;
 
@@ -222,10 +222,14 @@ namespace VERIDATA.BLL.Context
             string passportName = request?.Name?.Trim();
             string? passportNo = request?.PassportNumber?.Trim();
             string? passportDOB = request?.DateOfBirth;
+            //string? passportValidFrom = request?.ValidFrom;
+            //string? passportValidTill = request?.ValidTill;
 
             if (appointeedetail.AppointeeDetailsId != null && request != null)
             {
                 DateTime _inptdob = Convert.ToDateTime(passportDOB);
+                // DateTime _inptValidFrom = Convert.ToDateTime(passportValidFrom);
+                //DateTime _inptValidTill = Convert.ToDateTime(passportValidTill);
                 //appointeedetail.AppointeeName?.Trim()?.ToUpper() == passportFullName?.ToUpper() &&
                 //if (appointeedetail?.DateOfBirth == _inptdob && appointeedetail?.PassportNo?.ToUpper() == passportNo?.ToUpper())
                 if (appointeedetail?.DateOfBirth == _inptdob && appointeedetail?.AppointeeName?.ToUpper() == passportName?.ToUpper())
@@ -238,10 +242,18 @@ namespace VERIDATA.BLL.Context
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PASSPRTDOB, Inputdata = appointeedetail?.DateOfBirth?.ToShortDateString(), Fetcheddata = passportDOB });
                     }
-                    if (appointeedetail?.AppointeeName?.ToUpper() == passportName?.ToUpper())
+                    if (appointeedetail?.AppointeeName?.ToUpper() != passportName?.ToUpper())
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PASSPRTNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = passportName });
                     }
+                    //if (appointeedetail?.PassportValidFrom  != _inptValidFrom)
+                    //{
+                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PASSPRTNAME, Inputdata = appointeedetail?.PassportValidFrom?.ToShortDateString(), Fetcheddata = passportValidFrom });
+                    //}
+                    //if (appointeedetail?.PassportValidTill  != _inptValidTill)
+                    //{
+                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PASSPRTNAME, Inputdata = appointeedetail?.PassportValidTill?.ToShortDateString(), Fetcheddata = passportValidTill });
+                    //}
                     //if (string.IsNullOrEmpty(passportNo))
                     //{
                     //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDPASSPRT, Inputdata = appointeedetail?.PassportNo, Fetcheddata = passportDOB });
