@@ -81,6 +81,7 @@
             public const string QUALIFICATION = "QUA";
             public const string ROLE = "RLE";
             public const string REPORTFILTERSTATUS = "RPTSTS";
+            public const string ENTITY = "ENTITY";
         }
 
         public static class FileTypealias

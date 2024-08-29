@@ -705,6 +705,15 @@ namespace VERIDATA.BLL.Context
                 case CommonEnum.MasterDataType.ROLE:
                     _dataList = await _masterDalContext.getUserRoleAsync();
                     break;
+                case CommonEnum.MasterDataType.ENTITY:
+                    var _companyList = await _masterDalContext.GetAllCompanyEntityMaster();
+                    _dataList = _companyList?.Select(x => new DropDownDetailsResponse
+                    {
+                        Id = x.CompanyId,
+                        Code = x.CompanyCode,
+                        Value = x.CompanyName
+                    })?.ToList();
+                    break;
                 default:
                     return _dataList;
 
