@@ -55,6 +55,7 @@
     [is_panvarified]         BIT             NULL,
     [company_name]           NVARCHAR (50)   NULL,
     [is_trustpassbook]       BIT             NULL,
+    [is_trustpension]        BIT             NULL,
     [level1_email]           NVARCHAR (50)   NULL,
     [level2_email]           NVARCHAR (50)   NULL,
     [level3_email]           NVARCHAR (50)   NULL,

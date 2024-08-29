@@ -189,6 +189,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
             appointeeDetails.IsSubmit = IsSubmit;
             appointeeDetails.IsTrustPassbook = TrustPassbookAvailable;
+            //appointeeDetails.IsTrustPension = TrustPensionAvailable;
             _ = await _dbContextClass.SaveChangesAsync();
         }
         public async Task<List<GetRemarksResponse>> GetRemarks(int appointeeId)

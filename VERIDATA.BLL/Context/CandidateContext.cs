@@ -112,6 +112,7 @@ namespace VERIDATA.BLL.Context
                 data.IsAadhaarVarified = _appointeedetails?.IsAadhaarVarified;
                 data.IsUanVarified = _appointeedetails?.IsUanVarified;
                 data.IsTrustPassbook = _appointeedetails?.IsTrustPassbook;
+                //data.IsTrustPension = _appointeedetails?.IsTrustPension;
                 data.IsProcessed = _appointeedetails?.IsProcessed;
                 data.SaveStep = _appointeedetails?.SaveStep ?? 0;
                 data.IsSubmit = _appointeedetails?.IsSubmit ?? false;

@@ -15,6 +15,7 @@
         public string? status { get; set; }
         public string? isPensionApplicable { get; set; }
         public bool? isTrustPFApplicable { get; set; }
+        //public bool? isTrustPensionApplicable { get; set; }
         public DateTime? dateOfJoining { get; set; }
         public decimal? epfWages { get; set; }
     }

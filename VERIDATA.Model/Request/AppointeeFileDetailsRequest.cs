@@ -9,6 +9,7 @@ namespace VERIDATA.Model.Request
         public int AppointeeId { get; set; }
         public string? AppointeeCode { get; set; }
         public bool? TrustPassbookAvailable { get; set; }
+        //public bool? TrustPensionAvailable { get; set; }
         [Required]
         public int UserId { get; set; }
         public List<IFormFile>? FileDetails { get; set; }

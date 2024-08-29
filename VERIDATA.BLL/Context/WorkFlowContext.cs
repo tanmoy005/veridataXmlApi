@@ -69,6 +69,7 @@ namespace VERIDATA.BLL.Context
                     status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
+                    //isTrustPensionApplicable = row?.AppointeeData?.IsTrustPension ?? false,
                 }).ToList();
             }
             else
@@ -93,6 +94,8 @@ namespace VERIDATA.BLL.Context
                     status = row.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
+                    //isTrustPensionApplicable = row?.AppointeeData?.IsTrustPension ?? false,
+
                 }).ToList();
             }
 
