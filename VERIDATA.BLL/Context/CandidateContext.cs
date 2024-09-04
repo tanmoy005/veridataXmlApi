@@ -7,6 +7,7 @@ using VERIDATA.Model.Configuration;
 using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.ExchangeModels;
+using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
 using VERIDATA.Model.Response.api.Signzy;
@@ -202,9 +203,39 @@ namespace VERIDATA.BLL.Context
             List<GetRemarksResponse> remarks = await _appointeeDalContext.GetRemarks(appointeeId);
             return remarks;
         }
-        public async Task<string?> GetRemarksRemedy(int remarksId)
+        public async Task<string?> GetRemarksRemedy(GetRemarksRemedyRequest reqObj)
         {
-            string? remarksRemedy = await _appointeeDalContext.GetRemarksRemedy(remarksId);
+            string? remarksRemedy = string.Empty;
+            if (reqObj.RemedyType == RemedyType.Issue)
+            {
+                remarksRemedy = await _appointeeDalContext.GetRemarksRemedy(reqObj?.RemarksId ?? 0);
+            }
+            if (reqObj.RemedyType == RemedyType.Others)
+            {
+                string? reasonType = string.Empty;
+                string? remarksCode = string.Empty;
+                if (!string.IsNullOrEmpty(reqObj.RemedySubType))
+                {
+                    switch (reqObj.RemedySubType)
+                    {
+                        case RemedySubType.INACTIVEUAN:
+                            reasonType = RemarksType.UAN;
+                            remarksCode = ReasonCode.INACTIVE;
+                            break;
+                        case RemedySubType.ADHAR:
+                            reasonType = RemarksType.Adhaar;
+                            remarksCode = ReasonCode.DOB;
+                            break;
+                        default:
+                            reasonType = string.Empty;
+                            remarksCode = string.Empty;
+                            break;
+
+                    }
+                }
+
+                remarksRemedy = await _appointeeDalContext.GetRemarksRemedyByCode(reasonType, remarksCode);
+            }
             return remarksRemedy;
         }
 
@@ -345,8 +376,8 @@ namespace VERIDATA.BLL.Context
                         LastTransactionApprovedOn = obj?.passbook?.LastOrDefault()?.approved_on,
                         LastTransactionMonth = CommonUtility.getMonthName(transMonth.Month),
                         LastTransactionYear = transMonth.Year.ToString(),
-                        IsPensionApplicable = isPensionApplicable==null?"NA": isPensionApplicable??false?"Yes":"No",
-                        LastPensionDate = LastPensionDate?.ToString("dd-MM-yyyy")??"NA",
+                        IsPensionApplicable = isPensionApplicable == null ? "NA" : isPensionApplicable ?? false ? "Yes" : "No",
+                        LastPensionDate = LastPensionDate?.ToString("dd-MM-yyyy") ?? "NA",
                     };
 
                     _companyDetailsList.Add(_companyDetails);

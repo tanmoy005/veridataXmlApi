@@ -103,6 +103,19 @@
             public const string Others = "OTH";
 
         }
+        public static class RemedyType
+        {
+            public const string Issue = "ISSU";
+            public const string Others = "OTH";
+
+        }
+        public static class RemedySubType
+        {
+            public const string INACTIVEUAN = "INACTUAN";
+            public const string ADHAR = "ADHAR";
+            public const string Others = "OTH";
+
+        }
         public static class ApiType
         {
             public const string UAN = "UAN";

@@ -939,7 +939,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             List<GlobalSearchAppointeeData> appointeeList = new();
             WorkflowApprovalStatusMaster closeState = await GetApprovalState(WorkFlowType.ProcessClose?.Trim());
 
-            IQueryable<GlobalSearchAppointeeData> querydata = from b in _dbContextClass.UnderProcessFileData.Where(m => m.AppointeeName.ToLower().Contains(Name.ToLower()) && m.ActiveStatus == true)
+            IQueryable<GlobalSearchAppointeeData> querydata = from b in _dbContextClass.UnderProcessFileData.Where(m => m.AppointeeName.ToLower().Contains(Name.ToLower()) || m.CandidateId.ToLower().Contains(Name.ToLower()) && m.ActiveStatus == true)
                                                               join w in _dbContextClass.WorkFlowDetails
                                                               on b.AppointeeId equals w.AppointeeId
                                                               where (w.AppvlStatusId != closeState.AppvlStatusId)
@@ -956,7 +956,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             List<GlobalSearchAppointeeData> appointeeList = new();
             if (type == "LinkNotSend")
             {
-                appointeeList = await _dbContextClass.UnProcessedFileData.Where(m => m.AppointeeName.ToLower().Contains(name.ToLower()) && m.ActiveStatus == true)
+                appointeeList = await _dbContextClass.UnProcessedFileData.Where(m => m.AppointeeName.ToLower().Contains(name.ToLower()) || m.CandidateId.ToLower().Contains(name.ToLower()) && m.ActiveStatus == true)
                     .Select(x => new GlobalSearchAppointeeData
                     {
                         AppointeeId = x.UnProcessedId,
@@ -967,7 +967,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             if (type == "Raw")
             {
-                appointeeList = await _dbContextClass.RawFileData.Where(m => m.AppointeeName.ToLower().Contains(name.ToLower()) && m.ActiveStatus == true)
+                appointeeList = await _dbContextClass.RawFileData.Where(m => m.AppointeeName.ToLower().Contains(name.ToLower())||  m.CandidateId.ToLower().Contains(name.ToLower()) && m.ActiveStatus == true)
                     .Select(x => new GlobalSearchAppointeeData
                     {
                         AppointeeId = x.RawFileId,

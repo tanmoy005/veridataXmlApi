@@ -332,12 +332,12 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [Authorize]
-        [HttpGet("GetRemarksRemedy")]
-        public ActionResult GetRemarksRemedy(int RemarksId)
+        [HttpPost("GetRemarksRemedy")]
+        public ActionResult GetRemarksRemedy(GetRemarksRemedyRequest reqObj)
         {
             try
             {
-                string? _getRemedyResponse = Task.Run(async () => await _candidateContext.GetRemarksRemedy(RemarksId)).GetAwaiter().GetResult();
+                string? _getRemedyResponse = Task.Run(async () => await _candidateContext.GetRemarksRemedy(reqObj)).GetAwaiter().GetResult();
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, _getRemedyResponse));
             }
             catch (Exception)

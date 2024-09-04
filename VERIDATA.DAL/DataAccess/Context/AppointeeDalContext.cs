@@ -221,6 +221,12 @@ namespace VERIDATA.DAL.DataAccess.Context
             string remedyhtml = await _dbContextClass.ReasonMaser?.Where(x => x.ReasonId == remarksId)?.Select(y => y.ReasonRemedy).FirstOrDefaultAsync();
             return remedyhtml;
         }
+
+        public async Task<string?> GetRemarksRemedyByCode(string ReasonType, string remarksCode)
+        {
+            string remedyhtml = await _dbContextClass.ReasonMaser?.Where(x => x.ReasonCode == remarksCode.Trim() && x.ReasonType== ReasonType.Trim())?.Select(y => y.ReasonRemedy).FirstOrDefaultAsync();
+            return remedyhtml;
+        }
         public async Task<UploadTypeMaster> getFileTypeDataByAliasAsync(string? fileTypeAlias)
         {
             UploadTypeMaster? uploadFileType = await _dbContextClass.UploadTypeMaster.Where(x => x.UploadTypeCode.Equals(fileTypeAlias) && x.ActiveStatus == true).FirstOrDefaultAsync() ?? new UploadTypeMaster();

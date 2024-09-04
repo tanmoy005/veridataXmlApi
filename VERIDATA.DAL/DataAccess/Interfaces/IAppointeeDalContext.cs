@@ -20,6 +20,8 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task UpdateAppointeeSubmit(int AppointeeId, bool TrustPassbookAvailable, bool IsSubmit);
         public Task<List<GetRemarksResponse>> GetRemarks(int appointeeId);
         public Task<string?> GetRemarksRemedy(int remarksId);
+        public Task<string?> GetRemarksRemedyByCode(string ReasonType, string remarksCode);
+
         public Task<UploadTypeMaster> getFileTypeDataByAliasAsync(string? fileTypeAlias);
         public Task<AppointeeConsentMapping> getAppointeeContestAsync(int? appointeeId);
         public Task postAppointeeContestAsync(AppointeeConsentSubmitRequest req);
