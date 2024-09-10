@@ -338,7 +338,7 @@ namespace VERIDATA.BLL.Context
                     _currDateWiseCount.appointeeTotalCount = _currAppointeeCount;
                     _currDateWiseCount.AppointeeCountDetails = _apntDetails;
                     _apntDetailsList.AddRange(_apntDetails);
-                    _appointeeNonProcessDateWise.Add(_currDateWiseCount);
+                    _appointeeCountDateWises.Add(_currDateWiseCount);
                     _appointeeTotalCountList.Add(_currAppointeeCount);
                 }
             }
@@ -384,14 +384,14 @@ namespace VERIDATA.BLL.Context
 
                 List<IGrouping<string?, UnderProcessCandidateReportDataResponse>>? _appointeeCountdateWise = underProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToString("dd-MM-yyyy"))?.ToList();
                 foreach ((List<UnderProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate, AppointeeCountDateWise _currDateWiseCount,
-                    AppointeeCountDateWise _nonProcessData, AppointeeTotalCount _currAppointeeCount) in from obj in _appointeeCountdateWise
+                    AppointeeCountDateWise _nonProcessExsistingData, AppointeeTotalCount _currAppointeeCount) in from obj in _appointeeCountdateWise
                                                                                                         let _currdata = obj?.ToList()
                                                                                                         let _totalCount = _currdata?.Count ?? 0
                                                                                                         let _currDate = obj?.Key
-                                                                                                        let _nonProcessData = _appointeeNonProcessDateWise?.Where(x => x?.appointeeTotalCount?.Date == _currDate).FirstOrDefault()
+                                                                                                        let _nonProcessExsistingData = _appointeeCountDateWises?.Where(x => x?.appointeeTotalCount?.Date == _currDate).FirstOrDefault()
                                                                                                         let _currDateWiseCount = new AppointeeCountDateWise()
                                                                                                         let _currAppointeeCount = new AppointeeTotalCount()
-                                                                                                        select (_currdata, _totalCount, _currDate, _currDateWiseCount, _nonProcessData, _currAppointeeCount))
+                                                                                                        select (_currdata, _totalCount, _currDate, _currDateWiseCount, _nonProcessExsistingData, _currAppointeeCount))
                 {
 
                     //var _date = _currdata;
@@ -410,20 +410,25 @@ namespace VERIDATA.BLL.Context
                         Date = _currDate,
                     })?.ToList();
                     _apntDetailsList.AddRange(_apntDetails);
-                    if (_nonProcessData != null)
+                    if (_nonProcessExsistingData != null)
                     {
-                        _apntDetails?.AddRange(_nonProcessData.AppointeeCountDetails);
+                        _nonProcessExsistingData.appointeeTotalCount.TotalAppointeeCount = (_nonProcessExsistingData != null) ? (_nonProcessExsistingData?.appointeeTotalCount?.TotalAppointeeCount ?? 0) + _totalCount : _totalCount;
+                        _nonProcessExsistingData.appointeeTotalCount.TotalLinkSentCount = _totalCount;
+                    }
+                    else
+                    {
+                        _currAppointeeCount.TotalAppointeeCount =  _totalCount;
+                        _currAppointeeCount.TotalLinkNotSentCount = 0;
+                        _currAppointeeCount.TotalLinkSentCount = _totalCount;
+                        _currAppointeeCount.Date = _currDate;
+                        _currDateWiseCount.appointeeTotalCount = _currAppointeeCount;
+                        _currDateWiseCount.AppointeeCountDetails = _apntDetails;
+
+                        _appointeeCountDateWises.Add(_currDateWiseCount);
+                        _appointeeTotalCountList.Add(_currAppointeeCount);
                     }
 
-                    _currAppointeeCount.TotalAppointeeCount = (_nonProcessData != null) ? (_nonProcessData?.appointeeTotalCount?.TotalAppointeeCount ?? 0) + _totalCount : _totalCount;
-                    _currAppointeeCount.TotalLinkNotSentCount = (_nonProcessData != null) ? _nonProcessData?.appointeeTotalCount?.TotalLinkNotSentCount ?? 0 : 0;
-                    _currAppointeeCount.TotalLinkSentCount = _totalCount;
-                    _currAppointeeCount.Date = _currDate;
-                    _currDateWiseCount.appointeeTotalCount = _currAppointeeCount;
-                    _currDateWiseCount.AppointeeCountDetails = _apntDetails;
-
-                    _appointeeCountDateWises.Add(_currDateWiseCount);
-                    _appointeeTotalCountList.Add(_currAppointeeCount);
+                   
                 }
             }
             _response.AppointeeCountDateWise = _appointeeCountDateWises;

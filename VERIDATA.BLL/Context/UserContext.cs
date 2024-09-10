@@ -521,6 +521,24 @@ namespace VERIDATA.BLL.Context
             }
             return _userId;
         }
+
+        public async Task<int> getUserByEmail(string? email)
+        {
+            int _userId = 0;
+
+            _userId = await _userDalContext.getUserIdByMailId(email);
+
+            if (_userId > 0)
+            {
+                await _userDalContext.updateUserAuthDetailsAsyncbyId(_userId);
+            }
+            else
+            {
+                _userId = -1;
+            }
+
+            return _userId;
+        }
         public async Task<AuthenticatedUserResponse> getValidatedSigninUserDetails(int userId)
         {
             AuthenticatedUserResponse authUsertDetails = new()

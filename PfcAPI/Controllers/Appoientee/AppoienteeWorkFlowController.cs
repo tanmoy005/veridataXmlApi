@@ -456,8 +456,6 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [Authorize]
-        //[AllowAnonymous]
-
         [HttpPost]
         [Route("GetEmployementDetails")]
         public ActionResult GetEmployementDetails(int AppointeeId)
@@ -467,6 +465,45 @@ namespace PfcAPI.Controllers.Appoientee
                 AppointeeEmployementDetailsViewResponse employementDetails = Task.Run(async () => await _candidateContext.GetGetEmployementDetailsByAppointeeId(AppointeeId)).GetAwaiter().GetResult();
                 //var _Filedata = new Filedata() { FileData = fileDetails.FileData, FileName = fileDetails.FileData != null ? fileDetails.FileName : string.Empty, FileType = fileDetails.FileData != null ? fileDetails.FileExtention : string.Empty };
                 return Ok(new BaseResponse<AppointeeEmployementDetailsViewResponse>(HttpStatusCode.OK, employementDetails));
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("UploadHandicapDetails")]
+        public ActionResult UploadHandicapDetails(AppointeeHadicapFileDetailsRequest reqObj)
+        {
+            try
+            {
+                AppointeeEmployementDetailsViewResponse employementDetails = Task.Run(async () => await _candidateContext.GetGetEmployementDetailsByAppointeeId(reqObj.FileRequest.AppointeeId)).GetAwaiter().GetResult();
+                //var _Filedata = new Filedata() { FileData = fileDetails.FileData, FileName = fileDetails.FileData != null ? fileDetails.FileName : string.Empty, FileType = fileDetails.FileData != null ? fileDetails.FileExtention : string.Empty };
+                return Ok(new BaseResponse<AppointeeEmployementDetailsViewResponse>(HttpStatusCode.OK, employementDetails));
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("UploadTrustPassbookDetails")]
+        public ActionResult UploadTrustPassbookDetails(AppointeeTrustPassbookFileDetailsRequest reqObj)
+        {
+            try
+            {
+                bool? _isSubmit = reqObj?.FileRequest?.IsSubmit;
+
+                //Task.Run(async () => await _fileService.postappointeeUploadedFiles(AppointeeDetails)).GetAwaiter().GetResult();
+                Task.Run(async () => await _workflowContext.PostAppointeeFileDetailsAsync(reqObj.FileRequest)).GetAwaiter().GetResult();
+
+                return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
             }
             catch (Exception)
             {

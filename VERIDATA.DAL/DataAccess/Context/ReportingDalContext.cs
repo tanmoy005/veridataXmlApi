@@ -137,8 +137,9 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                     on ap.FileId equals a.FileId
                                                                                     join c in _dbContextClass.CompanyDetails
                                                                                       on a.CompanyId equals c.Id
-                                                                                    where string.IsNullOrEmpty(reqObj.AppointeeName) ||
-                                                                                    a.AppointeeName.Contains(reqObj.AppointeeName)
+                                                                                    where (reqObj.EntityId == null || reqObj.EntityId == a.CompanyId) &&
+                                                                                    (string.IsNullOrEmpty(reqObj.AppointeeName) ||
+                                                                                    a.AppointeeName.Contains(reqObj.AppointeeName))
                                                                                     select new NonProcessCandidateReportDataResponse
                                                                                     {
                                                                                         AppointeeName = a.AppointeeName,
@@ -207,6 +208,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                         where (string.IsNullOrEmpty(reqObj.AppointeeName) ||
                                                                                         a.AppointeeName.ToUpper().Contains(reqObj.AppointeeName))
                                                                                         && (string.IsNullOrEmpty(_statusCode) || wm.AppvlStatusCode == _statusCode)
+                                                                                        && (reqObj.EntityId == null || reqObj.EntityId == a.CompanyId)
                                                                                         && (_intSubmitCode == null || (p.IsSubmit == _intSubmitCode))
                                                                                         && (_intSubStatusCode == null || (_intSubStatusCode == 1 && p.SaveStep == _intSubStatusCode && p.IsSubmit != true)
                                                                                         || (_intSubStatusCode == 0 && p.SaveStep != 1 && p.IsSubmit != true))

@@ -88,6 +88,37 @@ namespace PfcAPI.Controllers.Account
                 throw;
             }
         }
+
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("UserSignInDetailsByEmail")]
+        public ActionResult UserSignInDetailsByEmail(string email)
+        {
+            try
+            {
+                AuthenticatedUserResponse userDetails = new();
+
+                int validatedUserId = Task.Run(async () => await _userContext.getUserByEmail(email)).GetAwaiter().GetResult();
+                if (validatedUserId <= 0)
+                {
+                    string _errormsg = "Invalid User Please Login with valid user mail";
+
+                    _ErrorResponse.ErrorCode = 400;
+                    _ErrorResponse.UserMessage = _errormsg;
+                    _ErrorResponse.InternalMessage = "Bad Request";
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+                }
+                userDetails = Task.Run(async () => await _userContext.getValidatedSigninUserDetails(validatedUserId)).GetAwaiter().GetResult();
+
+                return Ok(new BaseResponse<AuthenticatedUserResponse>(HttpStatusCode.OK, userDetails));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost]
         [Route("ChangePasswordGenerateOTP")]

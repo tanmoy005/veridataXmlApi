@@ -529,6 +529,35 @@ namespace VERIDATA.BLL.Context
 
             await _dbContextActivity.PostActivityDetails(AppointeeFileDetails?.AppointeeId ?? 0, AppointeeFileDetails?.UserId ?? 0, ActivityLog.DATASBMT);
         }
+
+        public async Task PostAppointeeSubmitDetailsAsync(AppointeeSubmitDetailsRequest AppointeeSubmitDetails)
+        {
+            _ = _aadhaarConfig.EncriptKey;
+            int appointeeId = AppointeeSubmitDetails.AppointeeId;
+            AppointeeDetails? _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
+            if (_appointeedetails.IsProcessed != true)
+            {
+                bool _isSubmit = _appointeedetails?.IsSubmit ?? false;
+                if (_appointeedetails != null && !_isSubmit)
+                {
+                    //await _fileContext.postappointeeUploadedFiles(AppointeeFileDetails);
+                    //await _dbContextCandiate.UpdateAppointeeSubmit(appointeeId, AppointeeFileDetails.TrustPassbookAvailable ?? false, AppointeeFileDetails.IsSubmit ?? false);
+                    //_appointeedetails.IsSubmit = AppointeeFileDetails.IsSubmit ?? false;
+                }
+                if ((AppointeeSubmitDetails.IsSubmit ?? false) && !_isSubmit)
+                {
+
+                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsPanVarified ?? false))
+                    {
+                        await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeSubmitDetails?.UserId ?? 0, true);//isapprove set true
+
+                    }
+                }
+
+            }
+
+            await _dbContextActivity.PostActivityDetails(AppointeeSubmitDetails?.AppointeeId ?? 0, AppointeeSubmitDetails?.UserId ?? 0, ActivityLog.DATASBMT);
+        }
         public async Task DataUploadAndApproved(int? appointeeId, int userId, bool IsApproved)
         {
             int UploadDetailsId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);

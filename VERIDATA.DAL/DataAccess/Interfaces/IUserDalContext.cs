@@ -21,6 +21,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<UserAuthentication?> getAuthUserDetailsByPassword(int userId, string password);
         public Task<UserAuthentication> getAuthUserDetailsById(int userId);
         public Task<UserAuthenticationHist?> getAuthHistUserDetailsByClientId(string? clientId);
+        public Task<int> getUserIdByMailId(string? emailId);
         public Task<UserAuthenticationHist?> getAuthHistUserDetailsById(int? userId);
         public Task createNewUserwithRole(List<CreateUserDetailsRequest> userList, int userId);
         public Task updateAdminUser(AdminUserUpdateRequest userDetails);

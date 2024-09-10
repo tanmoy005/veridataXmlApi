@@ -15,6 +15,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task postUsersignOut(int userId);
         public Task postUserPasswordChange(SetNewPasswordRequest req);
         public Task<int> validateUserByOtp(string? clientId, string? otp, int userType);
+        public Task<int> getUserByEmail(string? email);
         public Task<AuthenticatedUserResponse> getValidatedSigninUserDetails(int userId);
         public Task<TokenDetailsResponse> getRefreshToken(RefreshTokenRequest reqObj);
         public Task<bool> validateProfilePasswowrdAsync(ValidateProfilePasswordRequest req);

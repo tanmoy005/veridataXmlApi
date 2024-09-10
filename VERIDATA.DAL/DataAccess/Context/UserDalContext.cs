@@ -334,6 +334,12 @@ namespace VERIDATA.DAL.DataAccess.Context
             UserAuthenticationHist? authDbUser = await _dbContextClass.UserAuthenticationHist.OrderByDescending(x => x.AuthoHistId).FirstOrDefaultAsync(m => m.ClientId == clientId && m.ActiveStatus == true);
 
             return authDbUser;
+        }  
+        public async Task<int> getUserIdByMailId(string? emailId)
+        {
+            UserMaster? authDbUser = await _dbContextClass.UserMaster.FirstOrDefaultAsync(m => m.EmailId == emailId && m.ActiveStatus == true);
+
+            return authDbUser?.UserId??0;
         }
         public async Task createNewUserwithRole(List<CreateUserDetailsRequest> userList, int userId)
         {
