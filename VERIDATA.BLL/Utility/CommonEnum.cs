@@ -57,6 +57,8 @@
             public const string CandidateCreate = "CNDCREATE";
             public const string CandidateUpdate = "CNDUPDATE";
             public const string Others = "OTHERS";
+            public const string AdminUserCreate = "ADMNCREATE";
+
         }
         public static class WorkFlowType
         {

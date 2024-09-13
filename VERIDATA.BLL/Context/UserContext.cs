@@ -218,6 +218,11 @@ namespace VERIDATA.BLL.Context
                     userdetails
                 };
                 await _userDalContext.createNewUserwithRole(userList, userdetails.UserId);
+                //bool _IsMailSend = _emailConfig.IsMailSend;
+                //if (_IsMailSend)
+                //{
+                await _emailSender.SendAppointeeLoginMail(userList, MailType.AdminUserCreate);
+                //}
                 isCreateUser = true;
             }
             else

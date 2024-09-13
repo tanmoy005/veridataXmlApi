@@ -167,6 +167,10 @@ namespace VERIDATA.BLL.Notification.Sender
                     _filename = "newusermailsend";
                     mailSubject = "VERIDATA: User Creation";
                     break;
+                case MailType.AdminUserCreate:
+                    _filename = "newAdminUserCreate";
+                    mailSubject = "VERIDATA: User Creation";
+                    break;
                 case MailType.CandidateUpdate:
                     _filename = "updateusermailsend";
                     mailSubject = "VERIDATA: User Creation";
