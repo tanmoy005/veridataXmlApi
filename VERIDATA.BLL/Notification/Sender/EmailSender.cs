@@ -37,7 +37,7 @@ namespace VERIDATA.BLL.Notification.Sender
                     Name = obj?.UserName,
                     UserCode = obj?.UserCode,
                     Password = obj?.Password?.ToString() ?? string.Empty,
-                    Url = _emailConfig.HostUrl,
+                    Url = (type == MailType.AdminUserCreate) ? _emailConfig.HostAdminUrl : _emailConfig.HostUrl,
                 };
                 MailDetails _mailDetails = new();
                 List<EmailAddress> ToList = new();

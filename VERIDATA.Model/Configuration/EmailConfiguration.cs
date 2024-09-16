@@ -12,6 +12,7 @@
         public bool IsMailSend { get; set; }
         public bool AllowServerAuth { get; set; }
         public string? HostUrl { get; set; }
+        public string? HostAdminUrl { get; set; }
         public int ReminderResendLockDuration { get; set; }
         public int ReminderAttempt { get; set; }
 
