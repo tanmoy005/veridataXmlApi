@@ -377,7 +377,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 UserAuthentication UsersAuth = new()
                 {
                     UserId = Users.UserId,
-                    UserPwd = CommonUtility.hashPassword(obj.Password),
+                    UserPwd = !string.IsNullOrEmpty(obj.Password)? CommonUtility.hashPassword(obj.Password): obj.Password,
                     UserPwdTxt = obj.Password,
                     IsDefaultPass = obj.UserTypeId == 3 ? CommonEnum.CheckType.yes : CommonEnum.CheckType.no,
                     ActiveStatus = true,
