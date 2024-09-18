@@ -225,6 +225,8 @@ namespace VERIDATA.BLL.Context
             bool isCreateUser;
             if (!ValidateUser)
             {
+                userdetails.UserCode = CommonUtility.GenarateUserName(userdetails.UserName, DateTime.Now.Day);
+
                 List<CreateUserDetailsRequest> userList = new()
                 {
                     userdetails
