@@ -136,7 +136,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             userDetails.IsSubmit = _userDetails?.IsSubmit ?? false;
             userDetails.IsSetProfilePassword = !string.IsNullOrEmpty(users?.UserProfilePwd);
             userDetails.IsDefaultPassword = !string.IsNullOrEmpty(users?.IsDefaultPass) && users?.IsDefaultPass == "Y";
-            userDetails.IsPasswordExpire = users?.PasswordSetDate == null && users?.IsDefaultPass == "Y" ? false : users?.PasswordSetDate.GetValueOrDefault().AddDays(_apiConfig.PasswordExpiryDays) <= DateTime.Now;
+            userDetails.IsPasswordExpire = (users?.u?.UserTypeId == 3) ? users?.PasswordSetDate == null && users?.IsDefaultPass == "Y" ? false : users?.PasswordSetDate.GetValueOrDefault().AddDays(_apiConfig.PasswordExpiryDays) <= DateTime.Now : false;
             userDetails.CompanyId = 1;
             userDetails.Status = status;
 
@@ -334,12 +334,12 @@ namespace VERIDATA.DAL.DataAccess.Context
             UserAuthenticationHist? authDbUser = await _dbContextClass.UserAuthenticationHist.OrderByDescending(x => x.AuthoHistId).FirstOrDefaultAsync(m => m.ClientId == clientId && m.ActiveStatus == true);
 
             return authDbUser;
-        }  
+        }
         public async Task<int> getUserIdByMailId(string? emailId)
         {
             UserMaster? authDbUser = await _dbContextClass.UserMaster.FirstOrDefaultAsync(m => m.EmailId == emailId && m.ActiveStatus == true);
 
-            return authDbUser?.UserId??0;
+            return authDbUser?.UserId ?? 0;
         }
         public async Task createNewUserwithRole(List<CreateUserDetailsRequest> userList, int userId)
         {
@@ -379,7 +379,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     UserId = Users.UserId,
                     UserPwd = CommonUtility.hashPassword(obj.Password),
                     UserPwdTxt = obj.Password,
-                    IsDefaultPass = CommonEnum.CheckType.yes,
+                    IsDefaultPass = obj.UserTypeId == 3 ? CommonEnum.CheckType.yes : CommonEnum.CheckType.no,
                     ActiveStatus = true,
                     CreatedBy = userId,
                     CreatedOn = DateTime.Now
