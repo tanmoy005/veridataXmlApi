@@ -35,6 +35,7 @@ namespace VERIDATA.BLL.Notification.Sender
                 MailBodyParseDataDetails parsedata = new()
                 {
                     Name = obj?.UserName,
+                    Email=obj?.EmailId,
                     UserCode = obj?.UserCode,
                     Password = obj?.Password?.ToString() ?? string.Empty,
                     Url = (type == MailType.AdminUserCreate) ? _emailConfig.HostAdminUrl : _emailConfig.HostUrl,

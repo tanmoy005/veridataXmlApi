@@ -7,11 +7,7 @@ namespace VERIDATA.Model.Request
         [Required]
         [StringLength(50, MinimumLength = 1, ErrorMessage = "User Name length must be less than 50 characters.")]
         public string? UserName { get; set; }
-        [Required]
-        [StringLength(50, MinimumLength = 1, ErrorMessage = "User Code length must be less than 50 characters.")]
         public string? UserCode { get; set; }
-        [Required]
-        [StringLength(10, MinimumLength = 6, ErrorMessage = "Password  length must be between 6 to 10 characters.")]
         public string? Password { get; set; }
         [Required]
         [EmailAddress]

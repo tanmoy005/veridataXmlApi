@@ -634,12 +634,9 @@
                                                             mso-line-height-alt: 24px;
                                                         "
                                                     >
-                                                    	<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Your user name and password is given below <br>
+                                                    	
 														<strong><a href={{Url}}>Click on the link to login :</a></strong></p>
 
-                                                       <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>User Name :</strong> {{UserCode}}</p>
-													   
-                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>Password :</strong> {{Password}}</p>
 														
                                                        
                                                     </div>

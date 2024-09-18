@@ -189,6 +189,18 @@ namespace VERIDATA.BLL.Context
 
             return isValidUser;
         }
+        public async Task<bool> validateUserByMail(string? userMail)
+        {
+            bool isValidUser = false;
+
+            int dbusers = await _userDalContext.getUserIdByMailId(userMail);
+            if (dbusers != 0)
+            {
+                isValidUser = true;
+            }
+
+            return isValidUser;
+        }
         public async Task<bool> validateUserById(int id)
         {
             bool isValidUser = false;
@@ -209,7 +221,7 @@ namespace VERIDATA.BLL.Context
         }
         public async Task<bool> createNewUserwithRole(CreateUserDetailsRequest userdetails)
         {
-            bool ValidateUser = await validateUserByCode(userdetails.UserCode);
+            bool ValidateUser = await validateUserByMail(userdetails.EmailId);
             bool isCreateUser;
             if (!ValidateUser)
             {

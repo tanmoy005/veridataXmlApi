@@ -3,6 +3,7 @@
     public class MailBodyParseDataDetails
     {
         public string? Name { get; set; }
+        public string? Email { get; set; }
         public string? UserCode { get; set; }
         public string? CandidateId { get; set; }
         public string? Password { get; set; }
