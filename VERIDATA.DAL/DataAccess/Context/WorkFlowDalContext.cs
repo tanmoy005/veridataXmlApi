@@ -68,8 +68,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                          on p.AppointeeId equals x.AppointeeId into grouping
                                                                  from a in grouping.DefaultIfEmpty()
                                                                  where p.ActiveStatus == true
-                                                                    && (startDate == null || p.CreatedOn >= startDate)
-                                                                    && (filter.ToDate == null || p.CreatedOn < _ToDate)
+                                                                    && (startDate == null || u.CreatedOn >= startDate)
+                                                                    && (filter.ToDate == null || u.CreatedOn < _ToDate)
                                                                     && (filter.IsPfRequired == null || a.IsPFverificationReq == filter.IsPfRequired)
                                                                     && (string.IsNullOrEmpty(filter.ProcessStatus) || w.AppvlStatusId == _filteredStatus.AppvlStatusId)
                                                                     && (string.IsNullOrEmpty(filter.AppointeeName) || u.AppointeeName.Contains(filter.AppointeeName))
@@ -111,8 +111,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                 where r.ActiveStatus == true && rm.ActiveStatus == true && rp.ActiveStatus == true
                                                                 && (string.IsNullOrEmpty(filter.AppointeeName) || u.AppointeeName.Contains(filter.AppointeeName))
                                                                 && (string.IsNullOrEmpty(filter.CandidateId) || u.CandidateId.Contains(filter.CandidateId))
-                                                                && (filter.FromDate == null || r.CreatedOn >= filter.FromDate)
-                                                                && (filter.ToDate == null || r.CreatedOn < _ToDate)
+                                                                && (filter.FromDate == null || u.CreatedOn >= filter.FromDate)
+                                                                && (filter.ToDate == null || u.CreatedOn < _ToDate)
                                                                 select new RejectedDataDetailsResponse
                                                                 {
                                                                     CompanyId = u.CompanyId,
