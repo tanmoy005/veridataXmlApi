@@ -30,12 +30,12 @@ namespace PfcAPI.Controllers.Company
         {
             try
             {
-                string reportname = $"Sample_File.xlsx";
+                string filename = $"Data_Upload_Template.xlsx";
                 string Cuurentpath = Directory.GetCurrentDirectory();
-                string path = Path.Combine(Cuurentpath, "FileUploaded", "Sampledata.xlsx");
+                string path = Path.Combine(Cuurentpath, "FileUploaded", "DataUploadTemplate.xlsx");
 
                 byte[]? fileData = Task.Run(async () => await _fileService.GetFileDataAsync(path)).GetAwaiter().GetResult();
-                Filedata _Filedata = new() { FileData = fileData, FileName = reportname, FileType = "xlsx" };
+                Filedata _Filedata = new() { FileData = fileData, FileName = filename, FileType = "xlsx" };
                 return Ok(new BaseResponse<Filedata>(HttpStatusCode.OK, _Filedata));
             }
             catch (Exception)
@@ -51,9 +51,9 @@ namespace PfcAPI.Controllers.Company
         {
             try
             {
-                string reportname = $"Update_Sample_File.xlsx";
+                string reportname = $"Update_Data_Upload_Template_File.xlsx";
                 string Cuurentpath = Directory.GetCurrentDirectory();
-                string path = Path.Combine(Cuurentpath, "FileUploaded", "SampleUpdatedata.xlsx");
+                string path = Path.Combine(Cuurentpath, "FileUploaded", "UpdateDataUploadTemplate.xlsx");
 
                 byte[]? fileData = Task.Run(async () => await _fileService.GetFileDataAsync(path)).GetAwaiter().GetResult();
                 Filedata _Filedata = new() { FileData = fileData, FileName = reportname, FileType = "xlsx" };
