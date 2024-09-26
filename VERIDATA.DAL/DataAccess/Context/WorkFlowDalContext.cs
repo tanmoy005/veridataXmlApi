@@ -88,7 +88,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                      EpfWages = u.EPFWages,
                                                                      ProcessedId = p.ProcessedId,
                                                                      StateAlias = w.StateAlias,
-                                                                     CreatedDate=u.CreatedOn
+                                                                     CreatedDate = u.CreatedOn
                                                                  };
 
             List<ProcessedDataDetailsResponse> appointeelist = await querydata.ToListAsync().ConfigureAwait(false);
@@ -146,7 +146,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                     //AadhaarNumber = a.AadhaarNumber,
                                                                     Remarks = rp.Remarks,
                                                                     RejectedId = r.RejectedId,
-                                                                    CreatedDate=u.CreatedOn,
+                                                                    CreatedDate = u.CreatedOn,
                                                                 };
 
             List<RejectedDataDetailsResponse> rejectedAppointeeList = await querydata.ToListAsync().ConfigureAwait(false);
@@ -342,8 +342,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             && (string.IsNullOrEmpty(reqObj.AppointeeName) || x.AppointeeName.Contains(reqObj.AppointeeName))
             && (string.IsNullOrEmpty(reqObj.CandidateId) || x.CandidateId.Contains(reqObj.CandidateId))
             && (reqObj.FromDate == null || x.CreatedOn >= reqObj.FromDate)
-            && (reqObj.ToDate == null || x.CreatedOn < _ToDate)
-                           ).ToListAsync();
+            && (reqObj.ToDate == null || x.CreatedOn < _ToDate)).ToListAsync();
             return nonProcessData;
         }
         public async Task<List<RawFileData>> GetRawfiledataAsync()
@@ -967,7 +966,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             if (type == "Raw")
             {
-                appointeeList = await _dbContextClass.RawFileData.Where(m => m.AppointeeName.ToLower().Contains(name.ToLower())||  m.CandidateId.ToLower().Contains(name.ToLower()) && m.ActiveStatus == true)
+                appointeeList = await _dbContextClass.RawFileData.Where(m => m.AppointeeName.ToLower().Contains(name.ToLower()) || m.CandidateId.ToLower().Contains(name.ToLower()) && m.ActiveStatus == true)
                     .Select(x => new GlobalSearchAppointeeData
                     {
                         AppointeeId = x.RawFileId,

@@ -561,6 +561,7 @@ namespace VERIDATA.BLL.Context
             {
                 ProcessedFilterRequest filterRequest = new ProcessedFilterRequest()
                 {
+                    IsFiltered=true,
                     FromDate = reqObj.FromDate,
                     ToDate = reqObj.ToDate,
                     AppointeeName = reqObj.AppointeeName,
