@@ -12,6 +12,7 @@ namespace VERIDATA.Model.Request.api.Karza
         }
         public bool runPanFlow { get; set; }
         public string pan { get; set; }
+        public string mobile { get; set; }
         public bool showFailures { get; set; }
 
 

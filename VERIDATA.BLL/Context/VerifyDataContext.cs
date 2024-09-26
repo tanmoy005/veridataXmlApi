@@ -346,7 +346,55 @@ namespace VERIDATA.BLL.Context
             GetUanResponse Response = new();
 
             _ = new GetCandidateUanDetails();
-            GetCandidateUanDetails _apiResponse = await _karzaApiContext.GetUanFromPan(reqObj.panNumber, reqObj.userId);
+            GetCandidateUanDetails _apiResponse = await _karzaApiContext.GetUanFromPan(reqObj.panNumber, reqObj.mobileNumber, reqObj.userId);
+            Response.StatusCode = _apiResponse.StatusCode;
+
+            if (_apiResponse.StatusCode == HttpStatusCode.OK)
+            {
+                Response.IsUanAvailable = _apiResponse.IsUanAvailable ?? false;
+                Response.UanNumber = _apiResponse.UanNumber;
+                Response.Remarks = _apiResponse.IsUanAvailable ?? false ? string.Empty : _apiResponse.ReasonPhrase;
+                List<ReasonRemarks> ReasonList = new();
+
+                if (_apiResponse.IsUanAvailable ?? false)
+                {
+                    CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
+                    {
+                        AppointeeId = reqObj.appointeeId,
+                        EmailId = string.Empty,
+                        UserId = reqObj.userId,
+                        UserName = string.Empty,
+                        Reasons = ReasonList,
+                        UanNumber = Response.UanNumber,
+                        Type = RemarksType.UAN
+
+                    };
+                    _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+                }
+                if (_apiResponse.IsInactiveUan ?? false)
+                {
+                    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                    Response.StatusCode = HttpStatusCode.UnprocessableEntity;
+                    Response.UserMessage = "Inactive UAN, Please activate your UAN from epfo site and try again.";
+                    Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
+                }
+                string activitystate = _apiResponse.IsUanAvailable ?? false ? ActivityLog.UANFETCH : ActivityLog.NOUAN;
+                await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, activitystate);
+            }
+            else
+            {
+                // await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PASPRTVERIFIFAILED);
+                Response.IsUanAvailable = false;
+                Response.UserMessage = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "EPFO");
+            }
+            return Response;
+        }
+        private async Task<GetUanResponse> GetMobileToUan(GetUanNumberDetailsRequest reqObj)
+        {
+            GetUanResponse Response = new();
+
+            _ = new GetCandidateUanDetails();
+            GetCandidateUanDetails _apiResponse = await _karzaApiContext.GetUanFromMobile(reqObj.mobileNumber, reqObj.userId);
             Response.StatusCode = _apiResponse.StatusCode;
 
             if (_apiResponse.StatusCode == HttpStatusCode.OK)

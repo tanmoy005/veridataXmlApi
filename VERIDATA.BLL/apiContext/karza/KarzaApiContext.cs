@@ -53,13 +53,87 @@ namespace VERIDATA.BLL.apiContext.karza
 
             return res;
         }
-        public async Task<GetCandidateUanDetails> GetUanFromPan(string panNo, int userId)
+
+        public async Task<GetCandidateUanDetails> GetUanFromMobile(string mobileNo, int userId)
+        {
+
+            GetCandidateUanDetails res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.UAN, ApiSubTYpeName.FindUan, ApiProviderType.Karza);
+            Karza_GetUanDetailsByMobileRequest request = new()
+            {
+                mobile = mobileNo,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+
+            bool isIanactiveUan = false;
+            if (_apiResponse.IsSuccessStatusCode)
+            {
+                List<Employer> activeUanList = new();
+                string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+                Karza_GetUanDetailsByMobileResponse MobileToUanResponse = JsonConvert.DeserializeObject<Karza_GetUanDetailsByMobileResponse>(apiResponse);
+                res.StatusCode = _apiResponse.StatusCode;
+                string? uan = string.Empty;
+                bool multiActiveUanData = false;
+                List<string>? uanList = MobileToUanResponse?.result?.Uan?.ToList();
+                if (MobileToUanResponse?.result != null)
+                {
+                    if (uanList != null && uanList.Count > 0)
+                    {
+                        uan = uanList?.FirstOrDefault();
+                        //foreach (Uan? obj in uanList)
+                        //{
+                        //    string? uanNo = obj?.uan?.Trim();
+                        //    List<Employer>? activeUan = obj?.employer?.Where(x => x.isRecent == true)?.DistinctBy(x => x.memberId)?.ToList();
+                        //    if (activeUan != null)
+                        //    {
+                        //        activeUanList?.AddRange(activeUan);
+                        //    }
+                        //    if (activeUanList?.Count == 1)
+                        //    {
+                        //        uan = uanNo;
+                        //    }
+                        //    else
+                        //    {
+                        //        multiActiveUanData = true;
+                        //    }
+                        //    if (multiActiveUanData)
+                        //    {
+                        //        res.StatusCode = _apiResponse.StatusCode;
+                        //        res.ReasonPhrase = "Multi Active Uan";
+                        //    }
+                        //}
+                    }
+                    
+                    
+                    res.StatusCode = _apiResponse.StatusCode;
+                    res.IsUanAvailable = !string.IsNullOrEmpty(uan);
+                    res.IsInactiveUan = isIanactiveUan;
+                    res.UanNumber = uan;
+                }
+                else
+                {
+                    res.StatusCode = HttpStatusCode.InternalServerError;
+                    res.ReasonPhrase = "EPFO server is currently busy!Please try again later";
+                }
+            }
+            else
+            {
+                res.StatusCode = _apiResponse.StatusCode;
+                res.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
+            }
+
+            return res;
+        }
+        public async Task<GetCandidateUanDetails> GetUanFromPan(string panNo, string MobileNo, int userId)
         {
             GetCandidateUanDetails res = new();
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.UAN, ApiSubTYpeName.FindUan, ApiProviderType.Karza);
             Karza_GetUanDetailsByPanRequest request = new()
             {
                 pan = panNo,
+                mobile=MobileNo,
             };
             StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
