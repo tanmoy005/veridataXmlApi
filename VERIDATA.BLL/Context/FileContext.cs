@@ -71,7 +71,7 @@ namespace VERIDATA.BLL.Context
                 //GetFileId
                 int _Fileid = await _workFlowDalContext.PostUploadedXSLfileAsync(resdata.FileName, resdata.FilePath, fileDetails.CompanyId);
                 List<AppointeeBasicInfo> rawListData = new();
-
+                string[] formats = { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "d/M/yyyy", "M/d/yyyy" };
                 foreach ((DataRow row, AppointeeBasicInfo _rawData) in
                 from DataRow row in validateresdata.ValidXlsData?.Rows
                 let _rawData = new AppointeeBasicInfo()
@@ -84,12 +84,16 @@ namespace VERIDATA.BLL.Context
 
                     if (!(string.IsNullOrEmpty(AppointeeEmailId) && string.IsNullOrEmpty(appointeeName)))
                     {
+                        DateTime joiningDate = new();
+                        var _dateOfJoining = ((string)row["Date Of Joining"])?.Trim();
+                        // Validate the date format (dd/MM/yyyy)
+                         DateTime.TryParseExact(_dateOfJoining, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out joiningDate);
                         _rawData.CandidateID = candidateID;
                         _rawData.AppointeeName = appointeeName;
                         _rawData.AppointeeEmailId = AppointeeEmailId?.Trim();
                         _rawData.MobileNo = ((string)row["Phone No"])?.Trim();
-                        _rawData.IsFresher = ((string)row["Fresher"])?.Trim()?.ToUpper();
-                        _rawData.DateOfJoining = ((string)row["Date Of Joining"])?.Trim();
+                        _rawData.IsFresher = string.IsNullOrEmpty(((string)row["Fresher"])?.Trim()?.ToUpper()) ? "NO" : ((string)row["Fresher"])?.Trim()?.ToUpper();
+                        _rawData.DateOfJoining = joiningDate.ToString("dd-MM-yyyy");
                         _rawData.lvl1Email = ((string)row["level1 Email"])?.Trim();
                         _rawData.lvl2Email = ((string)row["level2 Email"])?.Trim();
                         _rawData.lvl3Email = ((string)row["level3 Email"])?.Trim();
@@ -141,6 +145,7 @@ namespace VERIDATA.BLL.Context
                     _data.appointeeEmailId = row.AppointeeEmailId;
                     _data.mobileNo = row.MobileNo;
                     _data.dateOfOffer = row.DateOfOffer;
+                    _data.isPFverificationReq = row.IsPFverificationReq;
                     _data.dateOfJoining = row.DateOfJoining;
                     _data.isChecked = null;
                     RawFileData.Add(_data);
@@ -192,7 +197,7 @@ namespace VERIDATA.BLL.Context
                         _rawData.CandidateID = candidateID;
                         _rawData.AppointeeName = string.IsNullOrEmpty(appointeeName) ? string.Empty : appointeeName;
                         _rawData.DateOfJoining = ((string)row["Updated Date Of Joining"])?.Trim();
-                        _rawData.MobileNo  = appointeeMobileNo;
+                        _rawData.MobileNo = appointeeMobileNo;
 
                         updateListData.Add(_rawData);
                     }
@@ -322,7 +327,7 @@ namespace VERIDATA.BLL.Context
                        let MobileNo = ((string)row["Phone No"])?.Trim()
                        let AppointeeEmailId = ((string)row["EmailId"])?.Trim()
                        let DateOfJoining = ((string)row["Date Of Joining"])?.Trim()
-                       let IsPFverificationReq = ((string)row["Fresher"])?.Trim()?.ToUpper()
+                       let IsPFverificationReq = string.IsNullOrEmpty(((string)row["Fresher"])?.Trim()?.ToUpper()) ? "No" : ((string)row["Fresher"])?.Trim()?.ToUpper()
                        let lvl1Email = ((string)row["level1 Email"])?.Trim()
                        let lvl2Email = ((string)row["level2 Email"])?.Trim()
                        let lvl3Email = ((string)row["level3 Email"])?.Trim()
@@ -420,30 +425,46 @@ namespace VERIDATA.BLL.Context
                         errormsg += $"{msg}, ";
                     }
 
+                    DateTime joiningDate = new();
+                    bool isDateProvided = !string.IsNullOrWhiteSpace(DateOfJoining); // Check if the date is not blank
 
-                    DateTime Jngrdate = new();
-                    bool joindateValidity = DateTime.TryParseExact(DateOfJoining, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out Jngrdate);
-
-                    if (!joindateValidity)
+                    // Check if the date is provided
+                    if (!isDateProvided)
                     {
                         isdataValid = false;
-                        string _Issue = "Joining date format(dd-MM-yyyy) is wrong.";
-                        msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {DateOfJoining},  Issue: {_Issue} " : $" Data: {DateOfJoining},  Issue: {_Issue} ";
+                        string _Issue = "Joining date should not be blank.";
+                        msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index}, Issue: {_Issue}" : $" Issue: {_Issue}";
                         validateData.InternalMessages.Add(msg);
                         errormsg += $"{msg}, ";
                     }
                     else
                     {
-                        if (Jngrdate < DateTime.Now)
+                        string[] formats = {"dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy","d/M/yyyy","M/d/yyyy"};
+                        // Validate the date format (dd/MM/yyyy)
+                        bool joindateValidity = DateTime.TryParseExact(DateOfJoining, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out joiningDate);
+
+                        if (!joindateValidity)
                         {
                             isdataValid = false;
-                            string _Issue = "Joining date must be a future date.";
-                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {DateOfJoining},  Issue: {_Issue} " : $" Data: {DateOfJoining},  Issue: {_Issue} ";
+                            string _Issue = "Joining date format (dd-MM-yyyy) is wrong.";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index}, Data: {DateOfJoining}, Issue: {_Issue}" : $" Data: {DateOfJoining}, Issue: {_Issue}";
                             validateData.InternalMessages.Add(msg);
                             errormsg += $"{msg}, ";
                         }
+                        else
+                        {
+                            // Check if the date is in the future
+                            if (joiningDate < DateTime.Now)
+                            {
+                                isdataValid = false;
+                                string _Issue = "Joining date must be a future date.";
+                                msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index}, Data: {DateOfJoining}, Issue: {_Issue}" : $" Data: {DateOfJoining}, Issue: {_Issue}";
+                                validateData.InternalMessages.Add(msg);
+                                errormsg += $"{msg}, ";
+                            }
+                        }
                     }
-                    if (string.IsNullOrEmpty(IsPFverificationReq) || !(IsPFverificationReq == "YES" || IsPFverificationReq == "NO"))
+                    if (string.IsNullOrEmpty(IsPFverificationReq) || !(IsPFverificationReq?.ToUpper() == "YES" || IsPFverificationReq?.ToUpper() == "NO"))
                     {
                         isdataValid = false;
                         string _Issue = "Fresher should not be blank and value should be 'YES' or 'NO'";
@@ -475,7 +496,6 @@ namespace VERIDATA.BLL.Context
             validateData.InValidXlsData = InValidData;
             return validateData;
         }
-
         public XSLfileDetailsListResponse ValidateUpdatexlsFile(UploadedXSLfileDetailsResponse data)
         {
             XSLfileDetailsListResponse validateData = new();
