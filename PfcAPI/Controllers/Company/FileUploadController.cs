@@ -32,7 +32,7 @@ namespace PfcAPI.Controllers.Company
             {
                 string filename = $"Data_Upload_Template.xlsx";
                 string Cuurentpath = Directory.GetCurrentDirectory();
-                string path = Path.Combine(Cuurentpath, "FileUploaded", "DataUploadTemplate.xlsx");
+                string path = Path.Combine(Cuurentpath, "FileUploaded", "Sampledata.xlsx");
 
                 byte[]? fileData = Task.Run(async () => await _fileService.GetFileDataAsync(path)).GetAwaiter().GetResult();
                 Filedata _Filedata = new() { FileData = fileData, FileName = filename, FileType = "xlsx" };
@@ -53,7 +53,7 @@ namespace PfcAPI.Controllers.Company
             {
                 string reportname = $"Update_Data_Upload_Template_File.xlsx";
                 string Cuurentpath = Directory.GetCurrentDirectory();
-                string path = Path.Combine(Cuurentpath, "FileUploaded", "UpdateDataUploadTemplate.xlsx");
+                string path = Path.Combine(Cuurentpath, "FileUploaded", "SampleUpdatedata.xlsx");
 
                 byte[]? fileData = Task.Run(async () => await _fileService.GetFileDataAsync(path)).GetAwaiter().GetResult();
                 Filedata _Filedata = new() { FileData = fileData, FileName = reportname, FileType = "xlsx" };
