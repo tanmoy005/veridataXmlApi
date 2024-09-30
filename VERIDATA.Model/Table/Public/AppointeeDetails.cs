@@ -155,7 +155,7 @@ namespace VERIDATA.Model.Table.Public
 
         [DefaultValue(false)]
         public bool? IsTrustPassbook { get; set; }
-        
+
         [Column("is_trustpension", TypeName = DbDataType._boolean)]
 
         [DefaultValue(false)]
@@ -206,5 +206,7 @@ namespace VERIDATA.Model.Table.Public
 
         [Column("updated_on", TypeName = DbDataType._datetime)]
         public DateTime? UpdatedOn { get; set; }
+        [Column("is_uan_available", TypeName = DbDataType._boolean)]
+        public bool? IsUanAvailable { get; set; }
     }
 }
