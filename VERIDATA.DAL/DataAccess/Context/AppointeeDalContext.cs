@@ -184,13 +184,34 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
 
         }
-        public async Task UpdateAppointeeSubmit(int AppointeeId, bool TrustPassbookAvailable, bool IsSubmit)
+        public async Task UpdateAppointeeSubmit(int AppointeeId, bool IsSubmit)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
             appointeeDetails.IsSubmit = IsSubmit;
-            appointeeDetails.IsTrustPassbook = TrustPassbookAvailable;
+            //appointeeDetails.IsTrustPassbook = TrustPassbookAvailable;
             //appointeeDetails.IsTrustPension = TrustPensionAvailable;
             _ = await _dbContextClass.SaveChangesAsync();
+        }
+        public async Task UpdateAppointeeTrustnUanAvailibility(int AppointeeId, bool? TrustPassbookAvailable, bool? IsUanAvailable)
+        {
+            AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
+            if (appointeeDetails.IsProcessed != true)
+            {
+                appointeeDetails.IsTrustPassbook = TrustPassbookAvailable;
+                appointeeDetails.IsUanAvailable = IsUanAvailable;
+                _ = await _dbContextClass.SaveChangesAsync();
+            }
+        }
+        public async Task UpdateAppointeeHandicapDetails(int AppointeeId, string? IsHandicap, string? HandicapType)
+        {
+            AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
+            bool _isHandicap = IsHandicap?.ToString()?.ToUpper() == CheckType.yes;
+            if (appointeeDetails.IsProcessed != true)
+            {
+                appointeeDetails.IsHandicap = string.IsNullOrEmpty(IsHandicap) ? null : IsHandicap.ToString()?.ToUpper();
+                appointeeDetails.HandicapeType = _isHandicap ? HandicapType?.ToString() : string.Empty;
+                _ = await _dbContextClass.SaveChangesAsync();
+            }
         }
         public async Task<List<GetRemarksResponse>> GetRemarks(int appointeeId)
         {
@@ -221,10 +242,9 @@ namespace VERIDATA.DAL.DataAccess.Context
             string remedyhtml = await _dbContextClass.ReasonMaser?.Where(x => x.ReasonId == remarksId)?.Select(y => y.ReasonRemedy).FirstOrDefaultAsync();
             return remedyhtml;
         }
-
         public async Task<string?> GetRemarksRemedyByCode(string ReasonType, string remarksCode)
         {
-            string remedyhtml = await _dbContextClass.ReasonMaser?.Where(x => x.ReasonCode == remarksCode.Trim() && x.ReasonType== ReasonType.Trim())?.Select(y => y.ReasonRemedy).FirstOrDefaultAsync();
+            string remedyhtml = await _dbContextClass.ReasonMaser?.Where(x => x.ReasonCode == remarksCode.Trim() && x.ReasonType == ReasonType.Trim())?.Select(y => y.ReasonRemedy).FirstOrDefaultAsync();
             return remedyhtml;
         }
         public async Task<UploadTypeMaster> getFileTypeDataByAliasAsync(string? fileTypeAlias)
@@ -261,7 +281,6 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             return;
         }
-
         public async Task PostOfflineKycStatus(OfflineAadharVarifyStatusUpdateRequest reqObj)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(reqObj.AppointeeId);

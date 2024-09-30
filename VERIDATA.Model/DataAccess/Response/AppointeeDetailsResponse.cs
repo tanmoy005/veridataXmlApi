@@ -48,6 +48,7 @@ namespace VERIDATA.Model.DataAccess.Response
         public bool? IsPFverificationReq { get; set; }
         public bool? isPanVarified { get; set; }
         public bool? IsAadhaarVarified { get; set; }
+        public bool? IsUanAvailable { get; set; }
         public bool? IsUanVarified { get; set; }
         public bool? IsTrustPassbook { get; set; }
         //public bool? IsTrustPension { get; set; }

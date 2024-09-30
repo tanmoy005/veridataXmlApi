@@ -12,6 +12,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<UserDetailsResponse> GetUserDetailsAsyncbyId(int uid);
         public Task<List<string?>> GetAllCandidateId(string type);
         public Task PostAppointeeUpdateLog(List<UpdatedAppointeeBasicInfo> updatedList, int userId);
+        public Task UpdateUserMasterCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId);
         public Task UpdateRawCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId);
         public Task UpdateUnderProcessCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId);
         public Task UpdateNonProcessCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId);

@@ -108,25 +108,25 @@ namespace VERIDATA.BLL.Context
 
             List<UpdatedAppointeeBasicInfo>? UpdateUsersList = new();
 
-            if (_appointeeList.Any())
+            if (_appointeeList.Count != 0)
             {
                 UpdateUsersList = _appointeeList;
                 //updating in raw data
                 List<string?> _rawUserList = await _userDalContext.GetAllCandidateId(CandidateIdType.Raw);
-                if (_rawUserList.Any())
+                if (_rawUserList.Count != 0)
                 {
                     List<UpdatedAppointeeBasicInfo> exstingRawUserList = _appointeeList.Where(y => _rawUserList.Contains(y.CandidateID)).ToList();
-                    if (exstingRawUserList?.Count() > 0)
+                    if (exstingRawUserList?.Count > 0)
                     {
                         UpdateUsersList = UpdateUsersList?.Except(exstingRawUserList)?.ToList();
                         await updateCandidateDataStatusWise(exstingRawUserList, CandidateUpdateTableType.Raw, userId);
                     }
                 }
                 List<string?> _nonProcessUserList = await _userDalContext.GetAllCandidateId(CandidateIdType.UnProcess);
-                if (_nonProcessUserList.Any())
+                if (_nonProcessUserList.Count != 0)
                 {
                     List<UpdatedAppointeeBasicInfo>? exstingNonProcessUserList = UpdateUsersList?.Where(y => _nonProcessUserList.Contains(y?.CandidateID))?.ToList();
-                    if (exstingNonProcessUserList?.Count() > 0)
+                    if (exstingNonProcessUserList?.Count > 0)
                     {
                         UpdateUsersList = UpdateUsersList?.Except(exstingNonProcessUserList)?.ToList();
                         await updateCandidateDataStatusWise(exstingNonProcessUserList, CandidateUpdateTableType.linknotsend, userId);
@@ -135,16 +135,20 @@ namespace VERIDATA.BLL.Context
 
                 //updating in user data
                 List<string?> activeCandidateIdList = await _userDalContext.GetAllCandidateId(CandidateIdType.UnderProcess);
-                if (activeCandidateIdList.Any())
+                if (activeCandidateIdList.Count != 0)
                 {
                     List<UpdatedAppointeeBasicInfo>? underProcessUserList = UpdateUsersList?.Where(y => activeCandidateIdList.Contains(y.CandidateID))?.ToList();
-                    if (underProcessUserList?.Count() > 0)
+                    if (underProcessUserList?.Count > 0)
                     {
                         UpdateUsersList = UpdateUsersList?.Except(underProcessUserList)?.ToList();
                         await updateCandidateDataStatusWise(underProcessUserList, CandidateUpdateTableType.underProcess, userId);
 
                     }
 
+                }
+                if (UpdateUsersList?.Count != 0)
+                {
+                    await updateCandidateDataStatusWise(UpdateUsersList, CandidateUpdateTableType.userMaster, userId);
                 }
                 List<UpdatedAppointeeBasicInfo>? updatedList = _appointeeList.Except(UpdateUsersList)?.ToList();
                 await _userDalContext.PostAppointeeUpdateLog(updatedList, userId);
@@ -169,6 +173,11 @@ namespace VERIDATA.BLL.Context
             if (type == CandidateUpdateTableType.underProcess && candidateIdList?.Count > 0)
             {
                 await _userDalContext.UpdateUnderProcessCandidateData(_appointeeList, candidateIdList, userId);
+
+            }
+            if (type == CandidateUpdateTableType.userMaster && candidateIdList?.Count > 0)
+            {
+                await _userDalContext.UpdateUserMasterCandidateData(_appointeeList, candidateIdList, userId);
 
             }
         }

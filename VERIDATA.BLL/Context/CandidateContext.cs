@@ -24,6 +24,7 @@ namespace VERIDATA.BLL.Context
         private readonly IEmailSender _emailSender;
         private readonly IAppointeeDalContext _appointeeDalContext;
         private readonly IActivityDalContext _activityDalContext;
+
         public CandidateContext(ApiConfiguration apiConfig, IFileContext fileContext, IAppointeeDalContext appointeeDalContext, IEmailSender emailSender, IActivityDalContext activityDalContext)
         {
             _apiConfig = apiConfig;
@@ -56,7 +57,9 @@ namespace VERIDATA.BLL.Context
                     data.IsPFverificationReq = _appntundrprocessdata?.IsPFverificationReq;
                     data.SaveStep = 0;
                     data.IsPassportValid = null;
+                    data.IsPassportValid = null;
                     data.isPanVarified = null;
+                    data.IsUanAvailable = null;
                     data.IsUanVarified = null;
                     data.IsAadhaarVarified = null;
                     data.IsProcessed = false;
@@ -113,6 +116,7 @@ namespace VERIDATA.BLL.Context
                 data.IsAadhaarVarified = _appointeedetails?.IsAadhaarVarified;
                 data.IsUanVarified = _appointeedetails?.IsUanVarified;
                 data.IsTrustPassbook = _appointeedetails?.IsTrustPassbook;
+                data.IsUanAvailable = _appointeedetails?.IsUanAvailable;
                 //data.IsTrustPension = _appointeedetails?.IsTrustPension;
                 data.IsProcessed = _appointeedetails?.IsProcessed;
                 data.SaveStep = _appointeedetails?.SaveStep ?? 0;
@@ -552,6 +556,28 @@ namespace VERIDATA.BLL.Context
             }
 
             return passbookDetails;
+        }
+
+        public async Task PostAppointeefileUploadAsync(AppointeeFileDetailsRequest AppointeeFileDetails)
+        {
+            int appointeeId = AppointeeFileDetails.AppointeeId;
+            AppointeeDetails? _appointeedetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
+            if (_appointeedetails.IsProcessed != true)
+            {
+                bool _isSubmit = _appointeedetails?.IsSubmit ?? false;
+                if (_appointeedetails != null && !_isSubmit)
+                {
+                    await _fileContext.postappointeeUploadedFiles(AppointeeFileDetails);
+                }
+            }
+        }
+        public async Task PostAppointeeTrusUanDetailsAsync(AppointeeUpdatePfUanDetailsRequest AppointeeTrustDetails)
+        {
+            await _appointeeDalContext.UpdateAppointeeTrustnUanAvailibility(AppointeeTrustDetails.AppointeeId, AppointeeTrustDetails.TrustPassbookAvailable, AppointeeTrustDetails.IsUanAvailable);
+        }
+        public async Task PostAppointeeHandicapDetailsAsync(AppointeeHadicapFileDetailsRequest AppointeeHandicapDetails)
+        {
+            await _appointeeDalContext.UpdateAppointeeHandicapDetails(AppointeeHandicapDetails.AppointeeId, AppointeeHandicapDetails.IsHandicap, AppointeeHandicapDetails.HandicapType);
         }
     }
 }

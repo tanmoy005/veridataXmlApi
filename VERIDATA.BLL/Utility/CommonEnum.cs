@@ -274,6 +274,7 @@
             public const string Raw = "rawData";
             public const string underProcess = "underprocess";
             public const string linknotsend = "linknotsend";
+            public const string userMaster = "userMaster";
         }
         public static class CandidateIdType
         {

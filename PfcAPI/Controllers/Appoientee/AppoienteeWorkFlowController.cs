@@ -480,9 +480,22 @@ namespace PfcAPI.Controllers.Appoientee
         {
             try
             {
-                AppointeeEmployementDetailsViewResponse employementDetails = Task.Run(async () => await _candidateContext.GetGetEmployementDetailsByAppointeeId(reqObj.FileRequest.AppointeeId)).GetAwaiter().GetResult();
-                //var _Filedata = new Filedata() { FileData = fileDetails.FileData, FileName = fileDetails.FileData != null ? fileDetails.FileName : string.Empty, FileType = fileDetails.FileData != null ? fileDetails.FileExtention : string.Empty };
-                return Ok(new BaseResponse<AppointeeEmployementDetailsViewResponse>(HttpStatusCode.OK, employementDetails));
+                bool _isHandicap = reqObj?.IsHandicap?.ToString()?.ToUpper() == CheckType.yes;
+                if (_isHandicap && reqObj?.FileDetails?.Count > 0)
+                {
+                    AppointeeFileDetailsRequest fileReqObj = new()
+                    {
+                        FileDetails = reqObj.FileDetails,
+                        FileUploaded = reqObj.FileUploaded,
+                        AppointeeCode = reqObj.AppointeeCode,
+                        AppointeeId = reqObj.AppointeeId,
+                        IsSubmit = false,
+                        UserId = reqObj.UserId,
+                    };
+                    Task.Run(async () => await _candidateContext.PostAppointeefileUploadAsync(fileReqObj)).GetAwaiter().GetResult();
+                }
+                Task.Run(async () => await _candidateContext.PostAppointeeHandicapDetailsAsync(reqObj)).GetAwaiter().GetResult();
+                return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
             }
             catch (Exception)
             {
@@ -493,15 +506,25 @@ namespace PfcAPI.Controllers.Appoientee
 
         [Authorize]
         [HttpPost]
-        [Route("UploadTrustPassbookDetails")]
-        public ActionResult UploadTrustPassbookDetails(AppointeeTrustPassbookFileDetailsRequest reqObj)
+        [Route("UpdatePfUanDetails")]
+        public ActionResult UpdatePfUanDetails(AppointeeUpdatePfUanDetailsRequest reqObj)
         {
             try
             {
-                bool? _isSubmit = reqObj?.FileRequest?.IsSubmit;
-
-                //Task.Run(async () => await _fileService.postappointeeUploadedFiles(AppointeeDetails)).GetAwaiter().GetResult();
-                Task.Run(async () => await _workflowContext.PostAppointeeFileDetailsAsync(reqObj.FileRequest)).GetAwaiter().GetResult();
+                if ((reqObj?.TrustPassbookAvailable ?? false) && reqObj?.FileDetails?.Count > 0)
+                {
+                    AppointeeFileDetailsRequest fileReqObj = new()
+                    {
+                        FileDetails = reqObj.FileDetails,
+                        FileUploaded = reqObj.FileUploaded,
+                        AppointeeCode = reqObj.AppointeeCode,
+                        AppointeeId = reqObj.AppointeeId,
+                        IsSubmit = false,
+                        UserId = reqObj.UserId,
+                    };
+                    Task.Run(async () => await _candidateContext.PostAppointeefileUploadAsync(fileReqObj)).GetAwaiter().GetResult();
+                }
+                Task.Run(async () => await _candidateContext.PostAppointeeTrusUanDetailsAsync(reqObj)).GetAwaiter().GetResult();
 
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
             }

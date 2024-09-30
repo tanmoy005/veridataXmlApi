@@ -176,6 +176,19 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }
+        public async Task UpdateUserMasterCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId)
+        {
+            List<UserMaster> rawData = await _dbContextClass.UserMaster.Where(x => x.ActiveStatus.Value.Equals(true) && candidateIdList.Contains(x.CandidateId)).ToListAsync();
+            foreach (UserMaster? obj in rawData)
+            {
+                UpdatedAppointeeBasicInfo? currMasterData = _appointeeList.Find(x => x.CandidateID == obj.CandidateId);
+                obj.UserName = (!string.IsNullOrEmpty(currMasterData.AppointeeName) && (obj.UserName?.Trim() != currMasterData.AppointeeName)) ? currMasterData.AppointeeName : obj.UserName;
+                obj.ContactNo = (!string.IsNullOrEmpty(currMasterData.MobileNo) && (obj.ContactNo?.Trim() != currMasterData.MobileNo)) ? currMasterData.MobileNo : obj.ContactNo;
+                obj.UpdatedBy = UserId;
+                obj.UpdatedOn = DateTime.Now;
+            }
+            _ = await _dbContextClass.SaveChangesAsync();
+        }
         public async Task UpdateRawCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId)
         {
             List<RawFileData> rawData = await _dbContextClass.RawFileData.Where(x => x.ActiveStatus.Value.Equals(true) && candidateIdList.Contains(x.CandidateId)).ToListAsync();
