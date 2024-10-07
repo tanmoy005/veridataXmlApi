@@ -1,9 +1,15 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
+using System.Globalization;
+using System.Net;
+using VERIDATA.BLL.apiContext.karza;
+using VERIDATA.BLL.apiContext.signzy;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.Model.Configuration;
+using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.ExchangeModels;
@@ -24,14 +30,21 @@ namespace VERIDATA.BLL.Context
         private readonly IEmailSender _emailSender;
         private readonly IAppointeeDalContext _appointeeDalContext;
         private readonly IActivityDalContext _activityDalContext;
+        private readonly IkarzaApiContext _karzaApiContext;
+        private readonly IsignzyApiContext _signzyApiContext;
+        private readonly IMasterDalContext _masterContext;
 
-        public CandidateContext(ApiConfiguration apiConfig, IFileContext fileContext, IAppointeeDalContext appointeeDalContext, IEmailSender emailSender, IActivityDalContext activityDalContext)
+
+        public CandidateContext(ApiConfiguration apiConfig, IFileContext fileContext, IAppointeeDalContext appointeeDalContext, IMasterDalContext masterDalContext, IEmailSender emailSender, IActivityDalContext activityDalContext, IkarzaApiContext karzaApiContext, IsignzyApiContext signzyApiContext)
         {
             _apiConfig = apiConfig;
             _fileContext = fileContext;
             _emailSender = emailSender;
             _appointeeDalContext = appointeeDalContext;
             _activityDalContext = activityDalContext;
+            _masterContext = masterDalContext;
+            _karzaApiContext = karzaApiContext;
+            _signzyApiContext= signzyApiContext;
         }
         public async Task<AppointeeDetailsResponse> GetAppointeeDetailsAsync(int appointeeId)
         {
@@ -61,6 +74,7 @@ namespace VERIDATA.BLL.Context
                     data.isPanVarified = null;
                     data.IsUanAvailable = null;
                     data.IsUanVarified = null;
+                    data.IsEmployementVarified = null;
                     data.IsAadhaarVarified = null;
                     data.IsProcessed = false;
                     data.IsSubmit = false;
@@ -115,6 +129,7 @@ namespace VERIDATA.BLL.Context
                 data.IsPFverificationReq = _appointeedetails?.IsPFverificationReq;
                 data.IsAadhaarVarified = _appointeedetails?.IsAadhaarVarified;
                 data.IsUanVarified = _appointeedetails?.IsUanVarified;
+                data.IsEmployementVarified = _appointeedetails?.IsEmployementVarified;
                 data.IsTrustPassbook = _appointeedetails?.IsTrustPassbook;
                 data.IsUanAvailable = _appointeedetails?.IsUanAvailable;
                 //data.IsTrustPension = _appointeedetails?.IsTrustPension;
@@ -150,8 +165,8 @@ namespace VERIDATA.BLL.Context
             }
             if (validationReq.Type == RemarksType.UAN)
             {
-                string? UANNumber = !string.IsNullOrEmpty(validationReq?.UanNumber) ? CommonUtility.CustomEncryptString(key, validationReq?.UanNumber) : null;
-                validationReq.UanNumber = UANNumber;
+                string? UANNumber = !string.IsNullOrEmpty(validationReq.uanData?.UanNumber) ? CommonUtility.CustomEncryptString(key, validationReq.uanData?.UanNumber) : null;
+                validationReq.uanData.UanNumber = UANNumber;
             }
 
             await _appointeeDalContext.UpdateAppointeeVerifiedData(validationReq);
@@ -443,35 +458,187 @@ namespace VERIDATA.BLL.Context
             return passbookDetails;
         }
 
-
-        public async Task<AppointeeEmployementDetailsViewResponse> GetGetEmployementDetailsByAppointeeId(int appointeeId)
+        public async Task<AppointeeEmployementDetailsViewResponse> GetEmployementDetailsByAppointeeId(int appointeeId, int userId)
         {
             AppointeeEmployementDetailsViewResponse passbookDetails = new();
-            string filePath = string.Empty;
-            List<AppointeeUploadDetails> _UploadDetails = await _appointeeDalContext.GetAppinteeUploadDetails(appointeeId);
-            AppointeeUploadDetails? _DocList = _UploadDetails.Find(x => x.UploadTypeCode == FileTypealias.PFPassbook);
-            if (_DocList != null)
+            string? key = _apiConfig.EncriptKey;
+
+            // Get appointee details
+            AppointeeDetails appointeeDetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
+
+            // Check if UAN number is available
+            if (string.IsNullOrEmpty(appointeeDetails?.UANNumber))
             {
-                string path = _DocList.UploadPath;
-                if (File.Exists(path))
+                return new AppointeeEmployementDetailsViewResponse
                 {
-                    // Read entire text file content in one string
-                    string _passbookdata = File.ReadAllText(path);
-                    if (_DocList.UploadSubTypeCode == ApiProviderType.SurePass)
-                    {
-                        Surepass_GetUanPassbookResponse PassBookResponse = JsonConvert.DeserializeObject<Surepass_GetUanPassbookResponse>(_passbookdata);
-                        passbookDetails = ParseEmployementDetailsSurePass(PassBookResponse);
-                    }
-                    if (_DocList.UploadSubTypeCode == ApiProviderType.Karza)
-                    {
-                        UanPassbookDetails PassBookResponse1 = JsonConvert.DeserializeObject<UanPassbookDetails>(_passbookdata);
-                        passbookDetails = await ParseEmployementDetailsKarza(PassBookResponse1, appointeeId);
-                    }
-                }
+                    isEmployementDetailsAvailable = false,
+                    remarks = "No UAN available to fetch passbook details"
+                };
+            }
+
+            // Try to get the uploaded passbook file details
+            List<AppointeeUploadDetails> uploadDetails = await _appointeeDalContext.GetAppinteeUploadDetails(appointeeId);
+            AppointeeUploadDetails? docList = uploadDetails.Find(x => x.UploadTypeCode == FileTypealias.PFPassbook);
+
+            if (docList != null && File.Exists(docList.UploadPath))
+            {
+                // Read the passbook data
+                string passbookData = await File.ReadAllTextAsync(docList.UploadPath);
+
+                // Handle passbook parsing based on provider type
+                passbookDetails = await HandlePassbookParsing(docList.UploadSubTypeCode, passbookData, appointeeId);
+                passbookDetails.isEmployementDetailsAvailable = true;
+
+            }
+            else
+            {
+                // Get employment history details from database if passbook file is not found
+                passbookDetails = await GetEmploymentDetailsFromHistory(appointeeId, userId, key, appointeeDetails);
             }
             return passbookDetails;
-            //  return filePath;
         }
+
+        // Method to handle passbook parsing based on provider type
+        private async Task<AppointeeEmployementDetailsViewResponse> HandlePassbookParsing(string providerType, string passbookData, int appointeeId)
+        {
+            switch (providerType)
+            {
+                case ApiProviderType.SurePass:
+                    var surePassResponse = JsonConvert.DeserializeObject<Surepass_GetUanPassbookResponse>(passbookData);
+                    return ParseEmployementDetailsSurePass(surePassResponse);
+
+                case ApiProviderType.Karza:
+                    var karzaResponse = JsonConvert.DeserializeObject<UanPassbookDetails>(passbookData);
+                    return await ParseEmployementDetailsKarzaByPassbook(karzaResponse, appointeeId);
+
+                default:
+                    throw new ArgumentException("Invalid provider type for passbook");
+            }
+        }
+
+        // Method to get employment history details if the passbook file is not available
+        private async Task<AppointeeEmployementDetailsViewResponse> GetEmploymentDetailsFromHistory(int appointeeId, int userId, string key, AppointeeDetails appointeeDetails)
+        {
+            AppointeeEmployementDetailsViewResponse passbookDetails = new();
+            AppointeeEmployementDetails empHistDetails = await _appointeeDalContext.GetEmployementDetails(appointeeId);
+
+            if (empHistDetails?.EmploymentDetailsId == null)
+            {
+                // Decrypt UAN number
+                var decryptedUANNumber = CommonUtility.DecryptString(key, appointeeDetails?.UANNumber);
+
+                // Fetch employment history data from external API
+                GetEmployemntDetailsRequest request = new GetEmployemntDetailsRequest
+                {
+                    appointeeId = appointeeId,
+                    uanNummber = decryptedUANNumber,
+                    userId = userId,
+                };
+
+                var employmentHistData = await GetEmployementHistoryDetails(request);
+                if (employmentHistData.Provider == ApiProviderType.Karza && !string.IsNullOrEmpty(employmentHistData.EmployementData))
+                {
+                    var karzaResponse = JsonConvert.DeserializeObject<Karza_GetEmployementDetailsByUanResponse>(employmentHistData.EmployementData);
+                    return await ParseEmployementDetailsKarza(karzaResponse, appointeeId);
+                }
+                if (employmentHistData.Provider == ApiProviderType.Signzy && !string.IsNullOrEmpty(employmentHistData.EmployementData))
+                {
+                    var signzyResponse = JsonConvert.DeserializeObject<Signzy_GetEmployementDetailsByUanResponse>(employmentHistData.EmployementData);
+                    //return await ParseEmployementDetailsKarza(signzyResponse, appointeeId);
+                }
+
+
+                else
+                {
+                    passbookDetails.isEmployementDetailsAvailable = false;
+                    passbookDetails.remarks = employmentHistData.Remarks;
+
+                }
+            }
+
+            // Handle existing employment history if type is Karza
+            if (empHistDetails?.TypeCode == ApiProviderType.Karza && !string.IsNullOrEmpty(empHistDetails.DataInfo))
+            {
+                var karzaResponse = JsonConvert.DeserializeObject<Karza_GetEmployementDetailsByUanResponse>(empHistDetails.DataInfo);
+                return await ParseEmployementDetailsKarza(karzaResponse, appointeeId);
+            }
+
+            return passbookDetails;
+        }
+
+        //public async Task<AppointeeEmployementDetailsViewResponse> GetGetEmployementDetailsByAppointeeId(int appointeeId,int userId)
+        //{
+        //    AppointeeEmployementDetailsViewResponse passbookDetails = new();
+        //    string filePath = string.Empty;
+        //    string? key = _apiConfig.EncriptKey;
+        //    AppointeeDetails _appointeeDetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
+
+        //    if (string.IsNullOrEmpty(_appointeeDetails?.UANNumber))
+        //    {
+        //        passbookDetails.isUanAvailable = false;
+        //        passbookDetails.remarks = "No UAN available to fetch passbook details";
+        //    }
+        //    else
+        //    {
+        //        List<AppointeeUploadDetails> _UploadDetails = await _appointeeDalContext.GetAppinteeUploadDetails(appointeeId);
+        //        AppointeeUploadDetails? _DocList = _UploadDetails.Find(x => x.UploadTypeCode == FileTypealias.PFPassbook);
+        //        if (_DocList != null)
+        //        {
+        //            string path = _DocList.UploadPath;
+        //            if (File.Exists(path))
+        //            {
+        //                // Read entire text file content in one string
+        //                string _passbookdata = File.ReadAllText(path);
+        //                if (_DocList.UploadSubTypeCode == ApiProviderType.SurePass)
+        //                {
+        //                    Surepass_GetUanPassbookResponse PassBookResponse = JsonConvert.DeserializeObject<Surepass_GetUanPassbookResponse>(_passbookdata);
+        //                    passbookDetails = ParseEmployementDetailsSurePass(PassBookResponse);
+        //                }
+        //                if (_DocList.UploadSubTypeCode == ApiProviderType.Karza)
+        //                {
+        //                    UanPassbookDetails PassBookResponse1 = JsonConvert.DeserializeObject<UanPassbookDetails>(_passbookdata);
+        //                    passbookDetails = await ParseEmployementDetailsKarzaByPassbook(PassBookResponse1, appointeeId);
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            AppointeeEmployementDetails _empHistDetails = await _appointeeDalContext.GetEmployementDetails(appointeeId);
+        //            if (_empHistDetails?.EmploymentDetailsId == null)
+        //            {
+        //                var UANNumber = CommonUtility.DecryptString(key, _appointeeDetails?.UANNumber);
+        //                GetEmployemntDetailsRequest request = new GetEmployemntDetailsRequest
+        //                {
+        //                    appointeeId = appointeeId,
+        //                    uanNummber = UANNumber,
+        //                    userId = 1
+        //                };
+        //               var employementHistData=await _verifyContext.GetEmployementHistoryDetails(request);
+        //                if (employementHistData.Provider == ApiProviderType.Karza)
+        //                {
+        //                    if (!string.IsNullOrEmpty(employementHistData.EmployementData))
+        //                    {
+        //                        Karza_GetEmployementDetailsByUanResponse EmpHistResponse = JsonConvert.DeserializeObject<Karza_GetEmployementDetailsByUanResponse>(_empHistDetails.DataInfo);
+        //                        passbookDetails = await ParseEmployementDetailsKarza(EmpHistResponse, appointeeId);
+
+        //                    }
+        //                }
+        //            }
+
+        //            if (_empHistDetails.TypeCode == ApiProviderType.Karza)
+        //            {
+        //                if (!string.IsNullOrEmpty(_empHistDetails.DataInfo))
+        //                {
+        //                    Karza_GetEmployementDetailsByUanResponse EmpHistResponse = JsonConvert.DeserializeObject<Karza_GetEmployementDetailsByUanResponse>(_empHistDetails.DataInfo);
+        //                    passbookDetails = await ParseEmployementDetailsKarza(EmpHistResponse, appointeeId);
+
+        //                }
+        //            }
+        //        }
+
+        //    }
+        //    return passbookDetails;
+        //}
 
         private AppointeeEmployementDetailsViewResponse ParseEmployementDetailsSurePass(Surepass_GetUanPassbookResponse PassBookResponse)
         {
@@ -513,7 +680,7 @@ namespace VERIDATA.BLL.Context
 
             return passbookDetails;
         }
-        private async Task<AppointeeEmployementDetailsViewResponse> ParseEmployementDetailsKarza(UanPassbookDetails PassBookResponse, int appointeeId)
+        private async Task<AppointeeEmployementDetailsViewResponse> ParseEmployementDetailsKarzaByPassbook(UanPassbookDetails PassBookResponse, int appointeeId)
         {
             string? key = _apiConfig.EncriptKey;
             AppointeeEmployementDetailsViewResponse passbookDetails = new();
@@ -557,7 +724,60 @@ namespace VERIDATA.BLL.Context
 
             return passbookDetails;
         }
+        private async Task<AppointeeEmployementDetailsViewResponse> ParseEmployementDetailsKarza(Karza_GetEmployementDetailsByUanResponse? EmpHistResponse, int appointeeId)
+        {
+            string? key = _apiConfig.EncriptKey;
+            AppointeeEmployementDetailsViewResponse passbookDetails = new();
+            AppointeeDetails _appointeedetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
+            if (EmpHistResponse != null)
+            {
+                var EmployementData = EmpHistResponse.Result;
+                EmployeePersonalDetails PassBookResponseData = EmployementData.PersonalDetails;
+                List<PfEmployementDetails> _companyDetailsList = new();
+                passbookDetails.clientId = "NA"; //PassBookResponseData.client_id;
+                passbookDetails.fullName = PassBookResponseData?.Name;
+                passbookDetails.fatherName = PassBookResponseData?.FatherOrHusbandName;
+                passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.UANNumber));
+                passbookDetails.dob = _appointeedetails?.DateOfBirth?.ToShortDateString();
 
+                foreach (EmployerHistory obj in EmployementData?.Employers)
+                {
+                    //var _copmnyData = obj.Value;
+                    var TotalWorkMonth = GetTotalMonths(obj?.StartMonthYear, obj?.LastMonthYear);
+
+                    PfEmployementDetails _companyDetails = new()
+                    {
+                        companyName = obj?.EstablishmentName,
+                        establishmentId = obj.EstablishmentId,
+                        memberId = obj?.MemberId,
+                        FirstTransactionApprovedOn = "NA",
+                        FirstTransactionMonth = string.IsNullOrEmpty(obj?.StartMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.StartMonthYear, "month"),
+                        FirstTransactionYear = string.IsNullOrEmpty(obj?.StartMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.StartMonthYear, "year"),
+                        LastTransactionApprovedOn = "NA",
+                        LastTransactionMonth = string.IsNullOrEmpty(obj?.StartMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.LastMonthYear, "month"),
+                        LastTransactionYear = string.IsNullOrEmpty(obj?.StartMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.LastMonthYear, "year"),
+                        TotalWorkDays = 0,
+                        WorkForYear = TotalWorkMonth / 12,
+                        WorkForMonth = TotalWorkMonth,
+                    };
+                    _companyDetailsList.Add(_companyDetails);
+                }
+                passbookDetails.companies = _companyDetailsList;
+            }
+
+            return passbookDetails;
+        }
+        public static int GetTotalMonths(string startMonthYear, string lastMonthYear)
+        {
+            // Parse the input strings to DateTime objects
+            DateTime startDate = DateTime.ParseExact(startMonthYear, "MM-yyyy", CultureInfo.InvariantCulture);
+            DateTime endDate = DateTime.ParseExact(lastMonthYear, "MM-yyyy", CultureInfo.InvariantCulture);
+
+            // Calculate the difference in months
+            int totalMonths = ((endDate.Year - startDate.Year) * 12) + endDate.Month - startDate.Month + 1;
+
+            return totalMonths;
+        }
         public async Task PostAppointeefileUploadAsync(AppointeeFileDetailsRequest AppointeeFileDetails)
         {
             int appointeeId = AppointeeFileDetails.AppointeeId;
@@ -579,5 +799,59 @@ namespace VERIDATA.BLL.Context
         {
             await _appointeeDalContext.UpdateAppointeeHandicapDetails(AppointeeHandicapDetails.AppointeeId, AppointeeHandicapDetails.IsHandicap, AppointeeHandicapDetails.HandicapType);
         }
+
+        public async Task<AppointeeEmployementDetails> PostAppointeeEmployementDetailsAsync(EmployementHistoryDetails reqObj)
+        {
+            var res = new AppointeeEmployementDetails();
+            res = await _appointeeDalContext.PostEmployementDetails(reqObj);
+            return res;
+        }
+        private async Task<EmployementHistoryDetailsRespons> GetEmployementHistoryDetails(GetEmployemntDetailsRequest reqObj)
+        {
+            GetEmployemntDetailsResponse ApiResponse = new();
+            EmployementHistoryDetails empReq = new();
+            EmployementHistoryDetailsRespons Response = new();
+            empReq.AppointeeId = reqObj.appointeeId;
+            empReq.UserId = reqObj.userId;
+            empReq.SubType = JsonTypeAlias.EmployementHist;
+            var apiProvider = await _masterContext.GetApiProviderData(ApiType.UAN);
+
+            if (apiProvider?.ToLower() == ApiProviderType.Karza)
+            {
+                empReq.Provider = ApiProviderType.Karza;
+                ApiResponse = await _karzaApiContext.GetEmployementDetais(reqObj.uanNummber, reqObj.userId);
+                Response.StatusCode = ApiResponse.StatusCode;
+            }
+            if (apiProvider?.ToLower() == ApiProviderType.Signzy)
+            {
+                empReq.Provider = ApiProviderType.Signzy;
+                ApiResponse = await _signzyApiContext.GetEmploymentHistoryByUan(reqObj.uanNummber, reqObj.userId);
+                Response.StatusCode = ApiResponse.StatusCode;
+            }
+            if (ApiResponse.StatusCode == HttpStatusCode.OK)
+            {
+                empReq.EmployementData = ApiResponse.EmployementData;
+                var response = await PostAppointeeEmployementDetailsAsync(empReq);
+                Response.EmployementData = response.DataInfo;
+                Response.AppointeeId = response.AppointeeId ?? 0;
+                Response.Provider = response.TypeCode;
+                Response.SubType = response.SubTypeCode;
+
+            }
+            else
+            {
+                //await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.UANVERIFIFAILED);
+                Response.Remarks = GenarateErrorMsg((int)ApiResponse.StatusCode, ApiResponse?.ReasonPhrase?.ToString(), "EPFO");
+            }
+            return Response;
+        }
+        public string GenarateErrorMsg(int statusCode, string reasonCode, string type)
+        {
+            string msg = statusCode == (int)HttpStatusCode.InternalServerError
+                ? $"{type} {"server is currently busy! Please try again later"}"
+                : $"{reasonCode}, {"Please try again later."}";
+            return msg;
+        }
+
     }
 }

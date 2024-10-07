@@ -8,6 +8,7 @@ namespace VERIDATA.Model.DataAccess.Request
         {
             aadharData = new AadharDetailsData();
             panData = new PanData();
+            uanData = new UanData();
         }
         public int AppointeeId { get; set; }
         public string? Type { get; set; }
@@ -15,12 +16,11 @@ namespace VERIDATA.Model.DataAccess.Request
         public string? UserName { get; set; }
         public int UserId { get; set; }
         public bool? Status { get; set; }
-        public bool? IsPensionApplicable { get; set; }
         public string? PassportFileNo { get; set; }
-        public string? UanNumber { get; set; }
         public List<ReasonRemarks> Reasons { get; set; }
         public AadharDetailsData? aadharData { get; set; }
         public PanData? panData { get; set; }
+        public UanData? uanData { get; set; }
     }
     public class AadharDetailsData
     {
@@ -37,5 +37,12 @@ namespace VERIDATA.Model.DataAccess.Request
         public string? PanName { get; set; }
         public string? PanFatherName { get; set; }
 
+    }
+    public class UanData
+    {
+        public bool? IsPensionApplicable { get; set; }
+        public string? UanNumber { get; set; }
+        public bool? IsPassbookFetch { get; set; }
+        public bool? IsEmployementVarified { get; set; }
     }
 }

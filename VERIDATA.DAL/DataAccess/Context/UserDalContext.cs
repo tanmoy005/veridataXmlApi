@@ -136,6 +136,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             userDetails.IsSubmit = _userDetails?.IsSubmit ?? false;
             userDetails.IsSetProfilePassword = !string.IsNullOrEmpty(users?.UserProfilePwd);
             userDetails.IsDefaultPassword = !string.IsNullOrEmpty(users?.IsDefaultPass) && users?.IsDefaultPass == "Y";
+            userDetails.IspassbookFetch = _userDetails?.IsPassbookFetch ?? null;
             userDetails.IsPasswordExpire = (users?.u?.UserTypeId == 3) ? users?.PasswordSetDate == null && users?.IsDefaultPass == "Y" ? false : users?.PasswordSetDate.GetValueOrDefault().AddDays(_apiConfig.PasswordExpiryDays) <= DateTime.Now : false;
             userDetails.CompanyId = 1;
             userDetails.Status = status;
@@ -390,7 +391,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 UserAuthentication UsersAuth = new()
                 {
                     UserId = Users.UserId,
-                    UserPwd = !string.IsNullOrEmpty(obj.Password)? CommonUtility.hashPassword(obj.Password): obj.Password,
+                    UserPwd = !string.IsNullOrEmpty(obj.Password) ? CommonUtility.hashPassword(obj.Password) : obj.Password,
                     UserPwdTxt = obj.Password,
                     IsDefaultPass = obj.UserTypeId == 3 ? CommonEnum.CheckType.yes : CommonEnum.CheckType.no,
                     ActiveStatus = true,

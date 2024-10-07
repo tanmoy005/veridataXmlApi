@@ -94,6 +94,7 @@
             public const string PFPassbook = "EPFPSBK";
             public const string PFPassbookExcel = "EPFPSBKEXCL";
             public const string PFPassbookTrust = "EPFPSBKTRUST";
+            public const string HandicapCert = "HANDCERT";
 
         }
         public static class RemarksType
@@ -125,6 +126,7 @@
             public const string Passport = "PASSPORT";
             public const string Pan = "PAN";
             public const string EPFO = "EPFO";
+            public const string EPFOUAN = "EPFOUAN";
 
         }
         public static class ApiSubTYpeName
@@ -137,6 +139,7 @@
             public const string UANGenerateOTP = "UanGenerateOTP";
             public const string UANSubmitOTP = "UanSubmitOTP";
             public const string UanPassbook = "UanPassbook";
+            public const string UanValidation = "UanValidation";
 
         }
         public static class ApiProviderType
@@ -330,5 +333,11 @@
         //    public const string Info = "Info";
 
         //}
+        public static class JsonTypeAlias
+        {
+            public const string EmployementHist = "EMPHIST";
+          
+
+        }
     }
 }

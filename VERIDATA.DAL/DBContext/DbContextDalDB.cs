@@ -48,7 +48,7 @@ namespace VERIDATA.DAL.DBContext
         public DbSet<RejectedFileData> RejectedFileData { get; set; }
         public DbSet<AppointeeReasonMappingData> AppointeeReasonMappingData { get; set; }
         public DbSet<AppointeeConsentMapping> AppointeeConsentMapping { get; set; }
-        ////public DbSet<ApointeeDocumentData> ApointeeDocumentData { get; set; }
+        public DbSet<AppointeeEmployementDetails> AppointeeEmployementDetails { get; set; }
         #endregion
 
         #region Master

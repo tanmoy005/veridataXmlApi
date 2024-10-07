@@ -16,8 +16,6 @@ using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
 using VERIDATA.Model.Response.api.Signzy;
 using VERIDATA.Model.Response.api.surepass;
-using VERIDATA.Model.Table.Master;
-using VERIDATA.Model.Table.Public;
 using static VERIDATA.BLL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
@@ -135,10 +133,10 @@ namespace VERIDATA.BLL.Context
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = panFullName });
                     }
 
-                    if (panName?.Trim()?.ToUpper() != panFullName?.Trim()?.ToUpper())
-                    {
-                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = panName, Fetcheddata = panFullName });
-                    }
+                    //if (panName?.Trim()?.ToUpper() != panFullName?.Trim()?.ToUpper())
+                    //{
+                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = panName, Fetcheddata = panFullName });
+                    //}
 
                     if (appointeedetail?.DateOfBirth != _inptdob)
                     {
@@ -169,7 +167,6 @@ namespace VERIDATA.BLL.Context
 
             return response;
         }
-
         public async Task<AppointeePassportValidateResponse> PassportDetailsValidation(AppointeePassportValidateRequest reqObj)
         {
             PassportDetails _apiResponse = new();
@@ -285,7 +282,6 @@ namespace VERIDATA.BLL.Context
 
             return response;
         }
-
         public async Task<GetUanResponse> GetUanNumber(GetUanNumberDetailsRequest reqObj)
         {
             GetUanResponse Response = new();
@@ -296,7 +292,7 @@ namespace VERIDATA.BLL.Context
             }
             if (apiProvider?.ToLower() == ApiProviderType.Karza)
             {
-                Response = await GetPanToUan(reqObj);
+                Response = await GetPanMobileToUan(reqObj);
             }
             if (apiProvider?.ToLower() == ApiProviderType.Signzy)
             {
@@ -318,13 +314,17 @@ namespace VERIDATA.BLL.Context
                 Response.Remarks = _apiResponse.IsUanAvailable ?? false ? string.Empty : _apiResponse.ReasonPhrase;
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
+                    UanData _uanDetails = new UanData
+                    {
+                        UanNumber = _apiResponse.UanNumber,
+                    };
                     CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
                     {
                         AppointeeId = reqObj.appointeeId,
                         EmailId = string.Empty,
                         UserId = reqObj.userId,
                         UserName = string.Empty,
-                        UanNumber = Response.UanNumber,
+                        uanData = _uanDetails,
                         Type = RemarksType.UAN
 
                     };
@@ -341,7 +341,7 @@ namespace VERIDATA.BLL.Context
             }
             return Response;
         }
-        private async Task<GetUanResponse> GetPanToUan(GetUanNumberDetailsRequest reqObj)
+        private async Task<GetUanResponse> GetPanMobileToUan(GetUanNumberDetailsRequest reqObj)
         {
             GetUanResponse Response = new();
 
@@ -355,20 +355,34 @@ namespace VERIDATA.BLL.Context
                 Response.UanNumber = _apiResponse.UanNumber;
                 Response.Remarks = _apiResponse.IsUanAvailable ?? false ? string.Empty : _apiResponse.ReasonPhrase;
                 List<ReasonRemarks> ReasonList = new();
+                UanData _uanDetails = new UanData
+                {
+                    IsPassbookFetch = false,
+                    UanNumber = _apiResponse.UanNumber,
+                };
+                CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
+                {
+                    AppointeeId = reqObj.appointeeId,
+                    EmailId = string.Empty,
+                    UserId = reqObj.userId,
+                    UserName = string.Empty,
+                    Reasons = ReasonList,
+                    uanData = _uanDetails,
+                    Type = RemarksType.UAN,
 
+                };
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
-                    CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
-                    {
-                        AppointeeId = reqObj.appointeeId,
-                        EmailId = string.Empty,
-                        UserId = reqObj.userId,
-                        UserName = string.Empty,
-                        Reasons = ReasonList,
-                        UanNumber = Response.UanNumber,
-                        Type = RemarksType.UAN
+                    var VerifyResponse = await VerifyUanName(_apiResponse, reqObj.appointeeId, reqObj.userId);
+                    Response.IsVarified = VerifyResponse.IsValid;
+                    Response.Remarks = string.IsNullOrEmpty(Response.Remarks) ? VerifyResponse.Remarks : $"{Response.Remarks}, {VerifyResponse.Remarks}";
+                    candidateUpdatedDataReq.Status = VerifyResponse.IsValid;
+                    _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
 
-                    };
+                }
+                else if (_apiResponse.IsUanAvailable == false && string.IsNullOrEmpty(_apiResponse.UanNumber))
+                {
+                    candidateUpdatedDataReq.Status = true;
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
                 }
                 if (_apiResponse.IsInactiveUan ?? false)
@@ -406,6 +420,10 @@ namespace VERIDATA.BLL.Context
 
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
+                    UanData _uanDetails = new UanData
+                    {
+                        UanNumber = _apiResponse.UanNumber,
+                    };
                     CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
                     {
                         AppointeeId = reqObj.appointeeId,
@@ -413,7 +431,7 @@ namespace VERIDATA.BLL.Context
                         UserId = reqObj.userId,
                         UserName = string.Empty,
                         Reasons = ReasonList,
-                        UanNumber = Response.UanNumber,
+                        uanData = _uanDetails,
                         Type = RemarksType.UAN
 
                     };
@@ -452,6 +470,10 @@ namespace VERIDATA.BLL.Context
 
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
+                    UanData _uanDetails = new UanData
+                    {
+                        UanNumber = Response.UanNumber,
+                    };
                     CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
                     {
                         AppointeeId = reqObj.appointeeId,
@@ -459,7 +481,7 @@ namespace VERIDATA.BLL.Context
                         UserId = reqObj.userId,
                         UserName = string.Empty,
                         Reasons = ReasonList,
-                        UanNumber = Response.UanNumber,
+                        uanData = _uanDetails,
                         Type = RemarksType.UAN
 
                     };
@@ -515,10 +537,10 @@ namespace VERIDATA.BLL.Context
 
             };
             _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
-            if (apiProvider?.ToLower() == ApiProviderType.Karza)
-            {
-                _apiResponse = await _karzaApiContext.GenerateAadharOTP(reqObj.aaddharNumber, reqObj.userId);
-            }
+            //if (apiProvider?.ToLower() == ApiProviderType.Karza)
+            //{
+            //    _apiResponse = await _karzaApiContext.GenerateAadharOTP(reqObj.aaddharNumber, reqObj.userId);
+            //}
             if (apiProvider?.ToLower() == ApiProviderType.SurePass)
             {
                 _apiResponse = await _surepassApiContext.GenerateAadharOTP(reqObj.aaddharNumber, reqObj.userId);
@@ -563,7 +585,7 @@ namespace VERIDATA.BLL.Context
             {
                 AppointeeDetailsResponse appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.appointeeId);
                 string? aadharNo = appointeedetail.AadhaarNumber;
-                _apiResponse = await _karzaApiContext.SubmitAadharOTP(reqObj.client_id, aadharNo, reqObj.otp, reqObj.userId);
+                //_apiResponse = await _karzaApiContext.SubmitAadharOTP(reqObj.client_id, aadharNo, reqObj.otp, reqObj.userId);
             }
             if (apiProvider?.ToLower() == ApiProviderType.SurePass)
             {
@@ -617,33 +639,6 @@ namespace VERIDATA.BLL.Context
             }
             return response;
         }
-        public async Task<string> GetAadharDetailsFromXML(int appointeeId, string shareCode)
-        {
-
-            AadharSubmitOtpDetails Response = new();
-            AadharSubmitOtpDetails _apiResponse = new();
-            AppointeeUploadDetails _uploadDetails = await _fileService.getFiledetailsByFileType(appointeeId, FileTypealias.Adhaar);
-            string getDirectoryPath = Path.GetDirectoryName(_uploadDetails.UploadPath);
-            string getFileName = Path.GetFileName(_uploadDetails.UploadPath);
-
-
-
-
-
-            //Response.StatusCode = _apiResponse.StatusCode;
-            //if (_apiResponse.StatusCode != HttpStatusCode.OK)
-            //{
-            //    bool IsUnprocessableEntity = (int)_apiResponse.StatusCode == (int)HttpStatusCode.UnprocessableEntity;
-            //    Response.UserMessage = IsUnprocessableEntity ? "Invalid OTP, Please retry" : GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "UIDAI (Aadhar)");
-            //    Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
-            //}
-            //else
-            //{
-            //    Response = _apiResponse;
-            //}
-            return "";
-        }
-
         public async Task<CandidateValidateResponse> VerifyAadharData(AadharValidationRequest reqObj)
         {
             bool IsValid = false;
@@ -687,10 +682,10 @@ namespace VERIDATA.BLL.Context
                     else
                     {
 
-                        if (aadharName?.ToUpper() != appointeeAadhaarFullName?.ToUpper())
-                        {
-                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = aadharName, Fetcheddata = appointeeAadhaarFullName });
-                        }
+                        //if (aadharName?.ToUpper() != appointeeAadhaarFullName?.ToUpper())
+                        //{
+                        //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = aadharName, Fetcheddata = appointeeAadhaarFullName });
+                        //}
                         if (appointeedetail?.Gender?.ToUpper() != appointeeAadhaarGender?.ToUpper())
                         {
                             ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.GENDER, Inputdata = appointeedetail?.Gender, Fetcheddata = appointeeAadhaarGender });
@@ -739,13 +734,15 @@ namespace VERIDATA.BLL.Context
 
             return response;
         }
-
         public async Task<UanGenerateOtpDetails> GeneratetUANOTP(UanGenerateOtpRequest reqObj)
         {
             UanGenerateOtpDetails Response = new();
             UanGenerateOtpDetails _apiResponse = new();
             List<ReasonRemarks> ReasonList = new();
-
+            UanData _uanDetails = new UanData
+            {
+                UanNumber = reqObj.UanNumber,
+            };
             CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
             {
                 AppointeeId = reqObj.appointeeId,
@@ -753,7 +750,7 @@ namespace VERIDATA.BLL.Context
                 UserId = reqObj.userId,
                 UserName = string.Empty,
                 Reasons = ReasonList,
-                UanNumber = reqObj.UanNumber,
+                uanData = _uanDetails,
                 Type = RemarksType.UAN
 
             };
@@ -915,7 +912,6 @@ namespace VERIDATA.BLL.Context
 
             return response;
         }
-
         public async Task<GetPassbookDetailsResponse> GetPfPassbookData(GetPassbookDetailsRequest reqObj)
         {
             GetPassbookDetailsResponse Response = new();
@@ -1058,7 +1054,7 @@ namespace VERIDATA.BLL.Context
             {
 
                 string? AppointeeFullName = string.IsNullOrEmpty(appointeedetail?.NameFromAadhaar) ? appointeedetail?.AppointeeName?.Trim() : appointeedetail?.NameFromAadhaar?.Trim();
-                _ = Convert.ToDateTime(string.IsNullOrEmpty(appointeedetail?.DobFromAadhaar) ? appointeedetail?.DateOfBirth?.ToString("dd/MM/yyyy") : appointeedetail?.DobFromAadhaar);
+                //_ = Convert.ToDateTime(string.IsNullOrEmpty(appointeedetail?.DobFromAadhaar) ? appointeedetail?.DateOfBirth?.ToString("dd/MM/yyyy") : appointeedetail?.DobFromAadhaar);
 
                 string? fathersName = appointeedetail.MemberName;
 
@@ -1073,6 +1069,7 @@ namespace VERIDATA.BLL.Context
                 }
                 else
                 {
+
                     if (AppointeeFullName?.ToUpper() != UanFullName?.ToUpper())
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = AppointeeFullName, Fetcheddata = UanFullName });
@@ -1095,7 +1092,13 @@ namespace VERIDATA.BLL.Context
                 string _activityStatus = IsValid ? ActivityLog.UANVERIFICATIONCMPLTE : ActivityLog.UANDATAVERIFICATIONFAILED;
                 await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, _activityStatus);
             }
-
+            UanData _uanDetails = new UanData
+            {
+                IsPassbookFetch = reqObj.IsPassbookFetch,
+                IsPensionApplicable = _IsPensionApplicable,
+                UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? appointeedetail?.UANNumber : reqObj?.PassbookDetails?.PfUan,
+                IsEmployementVarified = IsValid,
+            };
             CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
             {
                 AppointeeId = reqObj.AppointeeId,
@@ -1104,9 +1107,8 @@ namespace VERIDATA.BLL.Context
                 Reasons = ReasonList,
                 UserId = reqObj.UserId,
                 UserName = appointeedetail?.AppointeeName,
-                IsPensionApplicable = _IsPensionApplicable,
                 Type = RemarksType.UAN,
-                UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? appointeedetail?.UANNumber : reqObj?.PassbookDetails?.PfUan,
+                uanData = _uanDetails,
             };
 
             CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
@@ -1117,11 +1119,71 @@ namespace VERIDATA.BLL.Context
             }
             return response;
         }
+        private async Task<CandidateValidateResponse> VerifyUanName(GetCandidateUanDetails reqObj, int AppointeeId, int UserId)
+        {
+            bool IsValid = false;
+            _ = new CandidateValidateResponse();
+            List<ReasonRemarks> ReasonList = new();
+            _ = new CandidateValidateUpdatedDataRequest();
+            AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(AppointeeId);
+            string? UanFullName = reqObj?.UanName;
 
+            if (reqObj?.IsInactiveUan == true)
+            {
+                ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = string.Empty, Fetcheddata = string.Empty });
+            }
+            else if (appointeedetail.AppointeeDetailsId != null)
+            {
+
+                string? AppointeeFullName = string.IsNullOrEmpty(appointeedetail?.NameFromAadhaar) ? appointeedetail?.AppointeeName?.Trim() : appointeedetail?.NameFromAadhaar?.Trim();
+                string? fathersName = appointeedetail.MemberName;
+                if (AppointeeFullName?.ToUpper() == UanFullName?.ToUpper())
+                {
+                    IsValid = true;
+                }
+                else
+                {
+                    if (AppointeeFullName?.ToUpper() != UanFullName?.ToUpper())
+                    {
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = AppointeeFullName, Fetcheddata = UanFullName });
+                    }
+                }
+
+                string _activityStatus = IsValid ? ActivityLog.UANVERIFICATIONCMPLTE : ActivityLog.UANDATAVERIFICATIONFAILED;
+                await _activityContext.PostActivityDetails(AppointeeId, UserId, _activityStatus);
+            }
+            UanData _uanDetails = new UanData
+            {
+                IsPassbookFetch = false,
+                IsPensionApplicable = null,
+                UanNumber = string.IsNullOrEmpty(reqObj?.UanNumber) ? appointeedetail?.UANNumber : reqObj?.UanNumber,
+            };
+            CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
+            {
+                AppointeeId = AppointeeId,
+                EmailId = appointeedetail.AppointeeEmailId,
+                Status = IsValid,
+                Reasons = ReasonList,
+                UserId = UserId,
+                UserName = appointeedetail?.AppointeeName,
+                Type = RemarksType.UAN,
+                uanData = _uanDetails,
+            };
+
+            CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+
+            if (IsValid)
+            {
+                await _activityContext.PostActivityDetails(AppointeeId, UserId, ActivityLog.APNTVERIFICATIONCOMPLETE);
+            }
+            return response;
+        }
         public async Task PostActivity(int appointeeId, int userId, string activityCode)
         {
             await _activityContext.PostActivityDetails(appointeeId, userId, activityCode);
 
         }
+
+        
     }
 }

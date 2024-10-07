@@ -1,6 +1,6 @@
 ﻿namespace VERIDATA.Model.Response
 {
-    public class AppointeeEmployementDetailsViewResponse
+    public class AppointeeEmployementDetailsViewResponse 
     {
         public string? clientId { get; set; }
         public string? pfUan { get; set; }
@@ -8,6 +8,8 @@
         public string? fatherName { get; set; }
         public string? dob { get; set; }
         public List<PfEmployementDetails>? companies { get; set; }
+        public bool? isEmployementDetailsAvailable { get; set; }
+        public string? remarks { get; set; }
     }
     public class PfEmployementDetails
     {

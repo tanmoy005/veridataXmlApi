@@ -3,6 +3,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Table;
 using System.ComponentModel;
 using System.Data;
+using System.Globalization;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -273,6 +274,25 @@ namespace VERIDATA.BLL.utility
             DateTime date = new(2020, month, 1);
 
             return date.ToString("MMM");
+        }
+        public static string GetMonthYearFullName(string monthYear, string type)
+        {
+            // Parse the input string to DateTime
+            DateTime date = DateTime.ParseExact(monthYear, "MM-yyyy", CultureInfo.InvariantCulture);
+            if (type.Equals("month", StringComparison.OrdinalIgnoreCase))
+            {
+                return date.ToString("MMMM");
+            }
+            // Return the year if type is "year"
+            else if (type.Equals("year", StringComparison.OrdinalIgnoreCase))
+            {
+                return date.ToString("yyyy");
+            }
+            else
+            {
+                throw new ArgumentException("Invalid type. Expected 'month' or 'year'.");
+            }
+            // Return the full month name (e.g., "May", "June")
         }
     }
 

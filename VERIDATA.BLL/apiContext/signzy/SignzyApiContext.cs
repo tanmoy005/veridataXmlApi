@@ -6,6 +6,7 @@ using VERIDATA.BLL.Services;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Request.api.Signzy;
+using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
 using VERIDATA.Model.Response.api.Signzy;
 using static VERIDATA.BLL.utility.CommonEnum;
@@ -89,7 +90,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             else
             {
                 res.StatusCode = _apiResponse.StatusCode;
-                res.ReasonPhrase = PanToUanResponse?.Error?.Message?.ToString()?? PanToUanResponse?.Message;
+                res.ReasonPhrase = PanToUanResponse?.Error?.Message?.ToString() ?? PanToUanResponse?.Message;
             }
 
             return res;
@@ -176,7 +177,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             {
 
                 Response.StatusCode = _apiResponse.StatusCode;
-                Response.ReasonPhrase = OTPResponse?.Error?.Message?.ToString()?? OTPResponse?.Message;
+                Response.ReasonPhrase = OTPResponse?.Error?.Message?.ToString() ?? OTPResponse?.Message;
             }
             return Response;
         }
@@ -238,6 +239,33 @@ namespace VERIDATA.BLL.apiContext.signzy
             return Response;
 
         }
+        public async Task<GetEmployemntDetailsResponse> GetEmploymentHistoryByUan(string Uan, int userId)
+        {
+            GetEmployemntDetailsResponse res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.EPFOUAN, ApiSubTYpeName.UanValidation, ApiProviderType.Signzy);
+            Signzy_GetEmployementDetailsByUanRequest request = new()
+            {
+                uan = Uan,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+            string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+            Signzy_GetEmployementDetailsByUanResponse employementUanResponse = JsonConvert.DeserializeObject<Signzy_GetEmployementDetailsByUanResponse>(apiResponse);
+
+            res.StatusCode = _apiResponse.StatusCode;
+            if (!_apiResponse.IsSuccessStatusCode)
+            {
+                res.StatusCode = _apiResponse.StatusCode;
+                res.EmployementData = apiResponse;
+            }
+            else
+            {
+                res.StatusCode = _apiResponse.StatusCode;
+                res.ReasonPhrase = employementUanResponse?.Error?.Message?.ToString() ?? employementUanResponse?.Message;
+            }
+
+            return res;
+        }
     }
 }

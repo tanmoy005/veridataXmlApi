@@ -6,6 +6,6 @@
         public DateTime? ToDate { get; set; }
         public string? AppointeeName { get; set; }
         public string? StatusCode { get; set; }
-        public int? EntityId { get; set; }
+        public List<int>? EntityId { get; set; }
     }
 }

@@ -1,8 +1,10 @@
 ﻿
+using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
+using VERIDATA.Model.Table.Public;
 
 namespace VERIDATA.BLL.Interfaces
 {
@@ -14,10 +16,11 @@ namespace VERIDATA.BLL.Interfaces
         public Task<string?> GetRemarksRemedy(GetRemarksRemedyRequest reqObj);
         public Task<List<AppointeeActivityDetailsResponse>> GetActivityDetails(int appointeeId);
         public Task<AppointeePassbookDetailsViewResponse> GetPassbookDetailsByAppointeeId(int appointeeId);
-        public Task<AppointeeEmployementDetailsViewResponse> GetGetEmployementDetailsByAppointeeId(int appointeeId);
+        public Task<AppointeeEmployementDetailsViewResponse> GetEmployementDetailsByAppointeeId(int appointeeId, int userId);
         public Task PostAppointeefileUploadAsync(AppointeeFileDetailsRequest AppointeeFileDetails);
         public Task PostAppointeeTrusUanDetailsAsync(AppointeeUpdatePfUanDetailsRequest AppointeeTrustDetails);
         public Task PostAppointeeHandicapDetailsAsync(AppointeeHadicapFileDetailsRequest AppointeeHandicapDetails);
+        public Task<AppointeeEmployementDetails> PostAppointeeEmployementDetailsAsync(EmployementHistoryDetails reqObj);
 
     }
 }

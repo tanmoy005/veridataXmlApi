@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json;
 using VERIDATA.Model.Response.api.Karza.Base;
 
 namespace VERIDATA.Model.Response.api.Karza
@@ -6,6 +7,7 @@ namespace VERIDATA.Model.Response.api.Karza
     public class Karza_GetUanDetailsByPanResponse : Karza_BaseResponse
     {
         public UanResult? result { get; set; }
+       
     }
     public class Employer
     {
@@ -42,9 +44,9 @@ namespace VERIDATA.Model.Response.api.Karza
 
     public class UanResult
     {
-        public List<Uan> uan { get; set; }
-        public PersonalInfo personalInfo { get; set; }
-        public Summary summary { get; set; }
+        public List<Uan>? uan { get; set; }
+        public PersonalInfo? personalInfo { get; set; }
+        public Summary? summary { get; set; }
     }
     public class Uan
     {

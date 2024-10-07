@@ -456,14 +456,21 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [Authorize]
+        //[AllowAnonymous]
         [HttpPost]
         [Route("GetEmployementDetails")]
-        public ActionResult GetEmployementDetails(int AppointeeId)
+        public ActionResult GetEmployementDetails(int AppointeeId, int userId)
         {
             try
             {
-                AppointeeEmployementDetailsViewResponse employementDetails = Task.Run(async () => await _candidateContext.GetGetEmployementDetailsByAppointeeId(AppointeeId)).GetAwaiter().GetResult();
-                //var _Filedata = new Filedata() { FileData = fileDetails.FileData, FileName = fileDetails.FileData != null ? fileDetails.FileName : string.Empty, FileType = fileDetails.FileData != null ? fileDetails.FileExtention : string.Empty };
+                AppointeeEmployementDetailsViewResponse employementDetails = Task.Run(async () => await _candidateContext.GetEmployementDetailsByAppointeeId(AppointeeId, userId)).GetAwaiter().GetResult();
+                if (!employementDetails.isEmployementDetailsAvailable ?? false)
+                {
+                    _ErrorResponse.ErrorCode = (int)HttpStatusCode.BadRequest;
+                    _ErrorResponse.UserMessage = employementDetails.remarks;
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+
+                }
                 return Ok(new BaseResponse<AppointeeEmployementDetailsViewResponse>(HttpStatusCode.OK, employementDetails));
             }
             catch (Exception)
@@ -505,13 +512,14 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [Authorize]
+        //[AllowAnonymous]
         [HttpPost]
         [Route("UpdatePfUanDetails")]
         public ActionResult UpdatePfUanDetails(AppointeeUpdatePfUanDetailsRequest reqObj)
         {
             try
             {
-                if ((reqObj?.TrustPassbookAvailable ?? false) && reqObj?.FileDetails?.Count > 0)
+                if (reqObj?.FileDetails?.Count > 0)
                 {
                     AppointeeFileDetailsRequest fileReqObj = new()
                     {

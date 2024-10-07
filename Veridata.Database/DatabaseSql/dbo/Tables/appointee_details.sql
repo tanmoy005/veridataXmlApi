@@ -39,6 +39,8 @@
     [is_aadhaarvarified]     BIT             NULL,
     [is_passportvarified]    BIT             NULL,
     [is_uanvarified]         BIT             NULL,
+    [is_passbook_fetch]      BIT             NULL,
+    [is_employmentvarified]  BIT             NULL,
     [save_step]              INT             NULL,
     [process_status]         INT             NULL,
     [active_status]          BIT             NULL,

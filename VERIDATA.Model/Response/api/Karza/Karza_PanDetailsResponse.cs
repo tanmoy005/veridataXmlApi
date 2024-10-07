@@ -3,9 +3,10 @@ using VERIDATA.Model.Response.api.Karza.Base;
 
 namespace VERIDATA.Model.Response.api.Karza
 {
-    public class Karza_PanDetailsResponse : Karza_BaseResponse
+    public class Karza_PanDetailsResponse : Karza_BaseResponsev2
     {
         public PanInfoResult? result { get; set; }
+      
     }
     public class Address
     {

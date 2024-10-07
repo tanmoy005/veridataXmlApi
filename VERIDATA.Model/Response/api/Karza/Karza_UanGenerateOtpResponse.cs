@@ -1,14 +1,10 @@
 ﻿using Newtonsoft.Json;
+using VERIDATA.Model.Response.api.Karza.Base;
 
 namespace VERIDATA.Model.Response.api.Karza
 {
-    public class Karza_UanGenerateOtpResponse 
+    public class Karza_UanGenerateOtpResponse : Karza_BaseResponse
     {
-        [JsonProperty("status-code")]
-        public int? statusCode { get; set; }
-        
-        [JsonProperty("request_id")]
-        public string? requestId { get; set; }
         public UanGenerateOtp? result { get; set; }
     }
     public class UanGenerateOtp

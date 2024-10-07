@@ -387,6 +387,11 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<string> GetApiProviderData(string? apiType)
         {
+            var response = await GetApiProviderData(apiType, 1);
+            return response;
+        } 
+        public async Task<string> GetApiProviderData(string? apiType, int prioriy)
+        {
             string response = string.Empty;
             string? _apiType = apiType?.ToLower()?.Trim();
 

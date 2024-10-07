@@ -2,7 +2,7 @@
 
 namespace VERIDATA.Model.Response.api.Karza
 {
-    public class Karza_GetPassportResponse : Karza_BaseResponse
+    public class Karza_GetPassportResponse : Karza_BaseResponsev2
     {
         public PassportData? result { get; set; }
 

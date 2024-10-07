@@ -140,5 +140,6 @@
     <Build Include="dbo\Tables\appointee_consent_maaping.sql" />
     <Build Include="master\Tables\faq_master.sql" />
     <Build Include="activity\Tables\mail_transaction.sql" />
+    <Build Include="dbo\Tables\appointee_employement_details.sql" />
   </ItemGroup>
 </Project>

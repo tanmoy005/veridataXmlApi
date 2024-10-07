@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Ocsp;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
 using VERIDATA.DAL.utility;
@@ -47,7 +46,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             if (_appointeedetails?.AppointeeDetailsId != null)
             {
-                _appointeedetails.IsPensionApplicable = validationReq?.IsPensionApplicable;
+                _appointeedetails.IsPensionApplicable = validationReq.uanData?.IsPensionApplicable;
                 if (validationReq.Type == RemarksType.Adhaar)
                 {
                     _appointeedetails.IsAadhaarVarified = validationReq.Status;
@@ -62,8 +61,10 @@ namespace VERIDATA.DAL.DataAccess.Context
                 }
                 if (validationReq.Type == RemarksType.UAN)
                 {
-                    _appointeedetails.IsUanVarified = validationReq.Status;
-                    _appointeedetails.UANNumber = validationReq?.UanNumber;
+                    _appointeedetails.IsUanVarified = validationReq.uanData?.IsEmployementVarified == null ? validationReq.Status : _appointeedetails.IsUanVarified;
+                    _appointeedetails.IsPassbookFetch = validationReq.uanData?.IsPassbookFetch;
+                    _appointeedetails.UANNumber = validationReq.uanData?.UanNumber;
+                    _appointeedetails.IsEmployementVarified = validationReq.uanData?.IsEmployementVarified;
                 }
                 if (validationReq.Type == RemarksType.Passport)
                 {
@@ -312,6 +313,30 @@ namespace VERIDATA.DAL.DataAccess.Context
                 }).ToList();
             }
             return response;
+        }
+        public async Task<AppointeeEmployementDetails> PostEmployementDetails(EmployementHistoryDetails reqObj)
+        {
+            AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(reqObj.AppointeeId);
+            var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == reqObj.AppointeeId && x.ActiveStatus == true)?.ToListAsync();
+            AppointeeEmployementDetails empHistData = new();
+            if (res.Count == 0)
+            {
+                empHistData.AppointeeId = reqObj.AppointeeId;
+                empHistData.TypeCode = reqObj.Provider?.Trim();
+                empHistData.SubTypeCode = reqObj.SubType;
+                empHistData.ActiveStatus = true;
+                empHistData.CreatedBy = reqObj.UserId;
+                empHistData.CreatedOn = DateTime.Now;
+                _dbContextClass.AppointeeEmployementDetails.Add(empHistData);
+            }
+            _ = await _dbContextClass.SaveChangesAsync();
+            return empHistData;
+        }
+
+        public async Task<AppointeeEmployementDetails> GetEmployementDetails(int appointeeId)
+        {
+            var res = await _dbContextClass.AppointeeEmployementDetails?.FirstOrDefaultAsync(x => x.AppointeeId == appointeeId && x.ActiveStatus == true);
+            return res;
         }
     }
 }

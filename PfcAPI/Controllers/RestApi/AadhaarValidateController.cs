@@ -168,6 +168,7 @@ namespace PfcAPI.Controllers.RestApi
                             {
                                 PassbookDetails = new GetPassbookDetailsResponse(),
                                 IsUanActive = false,
+                                IsPassbookFetch = false,
                                 AppointeeId = reqObj.appointeeId
                             };
 
@@ -230,6 +231,7 @@ namespace PfcAPI.Controllers.RestApi
                         {
                             PassbookDetails = GenarateOtpPassbookResponse,
                             IsUanActive = true,
+                            IsPassbookFetch = true,
                             AppointeeId = reqObj.appointeeId
                         };
 
@@ -331,5 +333,40 @@ namespace PfcAPI.Controllers.RestApi
             }
 
         }
+
+        //[Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        //[HttpPost]
+        //[Route("GenerateEmployemntDetails")]
+        //public IActionResult GenerateEmployemntDetails(GetEmployemntDetailsRequest reqobj)
+        //{
+        //    try
+        //    {
+        //        AppointeePanValidateResponse Response = new();
+        //        if (_apiConfig.IsApiCall)
+        //        {
+        //            Task.Run(async () => await _varifyCandidate.GetEmployementHistoryDetails(reqobj)).GetAwaiter().GetResult();
+        //            if (Response.StatusCode != HttpStatusCode.OK)
+        //            {
+        //                _ErrorResponse.ErrorCode = (int)Response.StatusCode;
+        //                _ErrorResponse.UserMessage = Response?.Remarks ?? string.Empty;
+        //                _ErrorResponse.InternalMessage = Response?.Remarks ?? string.Empty;
+        //                return Ok(new BaseResponse<ErrorResponse>(Response.StatusCode, _ErrorResponse));
+        //            }
+        //        }
+        //        else
+        //        {
+        //            Response.IsValid = false;
+        //            Response.Remarks = "server is temporarily shutdown by the admin;please contact with administrator";
+
+        //        }
+        //        return Ok(new BaseResponse<AppointeePanValidateResponse>(HttpStatusCode.OK, Response));
+        //    }
+        //    catch (Exception)
+        //    {
+        //        //Task.Run(async () => await _varifyCandidate.PostActivity(reqobj.appointeeId, reqobj.userId, ActivityLog.PANVERIFIFAILED)).GetAwaiter().GetResult();
+        //        throw;
+        //    }
+
+        //}
     }
 }

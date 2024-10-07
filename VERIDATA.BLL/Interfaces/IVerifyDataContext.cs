@@ -3,6 +3,7 @@ using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
+using VERIDATA.Model.Table.Public;
 
 namespace VERIDATA.BLL.Interfaces
 {
@@ -22,6 +23,6 @@ namespace VERIDATA.BLL.Interfaces
         public Task<GetPassbookDetailsResponse> GetPfPassbookData(GetPassbookDetailsRequest reqObj);
         public Task<CandidateValidateResponse> VerifyUanData(UanValidationRequest reqObj);
         public Task PostActivity(int appointeeId, int userId, string activityCode);
-
+        //public Task<EmployementHistoryDetailsRespons> GetEmployementHistoryDetails(GetEmployemntDetailsRequest reqObj);
     }
 }

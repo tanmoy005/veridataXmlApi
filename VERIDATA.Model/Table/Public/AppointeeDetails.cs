@@ -146,6 +146,11 @@ namespace VERIDATA.Model.Table.Public
         [DefaultValue(false)]
         public bool? IsUanVarified { get; set; }
 
+        [Column("is_employmentvarified", TypeName = DbDataType._boolean)]
+
+        [DefaultValue(false)]
+        public bool? IsEmployementVarified { get; set; }
+
         [Column("is_panvarified", TypeName = DbDataType._boolean)]
 
         [DefaultValue(false)]
@@ -208,5 +213,9 @@ namespace VERIDATA.Model.Table.Public
         public DateTime? UpdatedOn { get; set; }
         [Column("is_uan_available", TypeName = DbDataType._boolean)]
         public bool? IsUanAvailable { get; set; }
+
+        [Column("is_passbook_fetch", TypeName = DbDataType._boolean)]
+        [DefaultValue(false)]
+        public bool? IsPassbookFetch { get; set; }
     }
 }

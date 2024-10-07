@@ -1,5 +1,7 @@
 ﻿using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.Request;
+using VERIDATA.Model.Response;
+using VERIDATA.Model.Response.api.Karza;
 
 namespace VERIDATA.BLL.apiContext.karza
 {
@@ -9,9 +11,10 @@ namespace VERIDATA.BLL.apiContext.karza
         public Task<GetCandidateUanDetails> GetUanFromPan(string panNo, string MobileNo, int userId);
         public Task<GetCandidateUanDetails> GetUanFromMobile(string mobileNo, int userId);
         public Task<PassportDetails> GetPassportDetails(AppointeePassportValidateRequest reqObj);
-        public Task<AadharGenerateOTPDetails> GenerateAadharOTP(string aadharNumber, int userId);
-        public Task<AadharSubmitOtpDetails> SubmitAadharOTP(string clientId, string aadharNumber, string otp, int userId);
+        //public Task<AadharGenerateOTPDetails> GenerateAadharOTP(string aadharNumber, int userId);
+        //public Task<AadharSubmitOtpDetails> SubmitAadharOTP(string clientId, string aadharNumber, string otp, int userId);
         public Task<UanGenerateOtpDetails> GenerateUANOTP(string UanNumber, int userId);
         public Task<PfPassbookDetails> GetPassbookBySubmitUanOTP(string clientId, string otp, int userId);
+        public Task<GetEmployemntDetailsResponse> GetEmployementDetais(string uan, int userId);
     }
 }

@@ -69,7 +69,7 @@ namespace VERIDATA.BLL.Context
                     status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
-                    //isTrustPensionApplicable = row?.AppointeeData?.IsTrustPension ?? false,
+                    isPassbookVerified = row?.AppointeeData?.IsEmployementVarified,
                 }).ToList();
             }
             else
@@ -94,7 +94,7 @@ namespace VERIDATA.BLL.Context
                     status = row.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
-                    //isTrustPensionApplicable = row?.AppointeeData?.IsTrustPension ?? false,
+                    isPassbookVerified = row?.AppointeeData?.IsEmployementVarified,
 
                 }).ToList();
             }
@@ -530,7 +530,7 @@ namespace VERIDATA.BLL.Context
             await _dbContextActivity.PostActivityDetails(AppointeeFileDetails?.AppointeeId ?? 0, AppointeeFileDetails?.UserId ?? 0, ActivityLog.DATASBMT);
         }
 
-        
+
         private async Task DataUploadAndApproved(int? appointeeId, int userId, bool IsApproved)
         {
             int UploadDetailsId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);

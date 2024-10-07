@@ -25,6 +25,7 @@ namespace VERIDATA.Model.Response
         public bool? IsConsentProcessed { get; set; }
         public bool? IsPrerequisiteDataAvailable { get; set; }
         public bool? IsProcessed { get; set; }
+        public bool? IspassbookFetch { get; set; }
         public bool? IsSubmit { get; set; }
         //public int Createdby { get; set; }
         public int? AppointeeId { get; set; }

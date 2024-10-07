@@ -30,5 +30,8 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task PostOfflineKycStatus(OfflineAadharVarifyStatusUpdateRequest reqObj);
         public Task PostMailTransDetails(mailTransactionRequest reqObj);
         public Task<List<mailTransactionResponse>> GetMailTransDetails(int appointeeId, int userId);
+        public Task<AppointeeEmployementDetails> PostEmployementDetails(EmployementHistoryDetails reqObj);
+        public Task<AppointeeEmployementDetails> GetEmployementDetails(int appointeeId);
+
     }
 }

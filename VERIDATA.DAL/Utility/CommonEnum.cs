@@ -99,6 +99,8 @@
             public const string PFPassbook = "EPFPSBK";
             public const string PFPassbookExcel = "EPFPSBKEXCL";
             public const string PFPassbookTrust = "EPFPSBKTRUST";
+            public const string HandicapCert = "HANDCERT";
+
 
         }
         public static class RemarksType

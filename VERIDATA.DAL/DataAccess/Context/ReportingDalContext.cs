@@ -130,16 +130,39 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<List<NonProcessCandidateReportDataResponse>> GetNonProcessCandidateReport(AppointeeCountReportSearchRequest reqObj)
         {
+            //    IQueryable<NonProcessCandidateReportDataResponse> nonProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
+            //                                 .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
+            //                                    && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
+            //                                                                            join a in _dbContextClass.UnProcessedFileData
+            //                                                                            on ap.FileId equals a.FileId
+            //                                                                            join c in _dbContextClass.CompanyDetails
+            //                                                                              on a.CompanyId equals c.Id
+            //                                                                            where (reqObj.EntityId == null || reqObj.EntityId == a.CompanyId) &&
+            //                                                                            (string.IsNullOrEmpty(reqObj.AppointeeName) ||
+            //                                                                            a.AppointeeName.Contains(reqObj.AppointeeName))
+            //                                                                            select new NonProcessCandidateReportDataResponse
+            //                                                                            {
+            //                                                                                AppointeeName = a.AppointeeName,
+            //                                                                                AppointeeEmail = a.AppointeeEmailId,
+            //                                                                                CandidateId = a.CandidateId,
+            //                                                                                DateOfJoining = a.DateOfJoining,
+            //                                                                                CompanyName = c.CompanyName,
+            //                                                                                CreatedOn = ap.CreatedOn,
+            //                                                                            };
+
+            //    List<NonProcessCandidateReportDataResponse> nonProcessAppointeeList = await nonProcessQueryData.ToListAsync().ConfigureAwait(false);
+            //    return nonProcessAppointeeList;
             IQueryable<NonProcessCandidateReportDataResponse> nonProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
-                                         .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
-                                            && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
+ .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
+             && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
                                                                                     join a in _dbContextClass.UnProcessedFileData
                                                                                     on ap.FileId equals a.FileId
                                                                                     join c in _dbContextClass.CompanyDetails
-                                                                                      on a.CompanyId equals c.Id
-                                                                                    where (reqObj.EntityId == null || reqObj.EntityId == a.CompanyId) &&
-                                                                                    (string.IsNullOrEmpty(reqObj.AppointeeName) ||
-                                                                                    a.AppointeeName.Contains(reqObj.AppointeeName))
+                                                                                    on a.CompanyId equals c.Id
+                                                                                    where
+                                                                                    // Modify this line to use Contains for multiple EntityIds
+                                                                                    (reqObj.EntityId == null || !reqObj.EntityId.Any() || reqObj.EntityId.Contains(a.CompanyId)) &&
+                                                                                    (string.IsNullOrEmpty(reqObj.AppointeeName) || a.AppointeeName.Contains(reqObj.AppointeeName))
                                                                                     select new NonProcessCandidateReportDataResponse
                                                                                     {
                                                                                         AppointeeName = a.AppointeeName,
@@ -150,8 +173,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                         CreatedOn = ap.CreatedOn,
                                                                                     };
 
-            List<NonProcessCandidateReportDataResponse> nonProcessAppointeeList = await nonProcessQueryData.ToListAsync().ConfigureAwait(false);
-            return nonProcessAppointeeList;
+            return await nonProcessQueryData.ToListAsync();
         }
 
         public async Task<List<NationalityQueryDataResponse>> GetCandidateNationalityReport(GetNationalityReportRequest reqObj)
@@ -191,9 +213,49 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<List<UnderProcessCandidateReportDataResponse>> GetUnderProcessCandidateReport(AppointeeCountReportSearchRequest reqObj, string? _statusCode, bool? _intSubmitCode, int? _intSubStatusCode)
         {
+            //IQueryable<UnderProcessCandidateReportDataResponse> underProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
+            //                           .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
+            //                                                                            && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
+            //                                                                            join a in _dbContextClass.UnderProcessFileData
+            //                                                                            on ap.FileId equals a.FileId
+            //                                                                            join c in _dbContextClass.CompanyDetails
+            //                                                                            on a.CompanyId equals c.Id
+            //                                                                            join w in _dbContextClass.WorkFlowDetails
+            //                                                                            on a.AppointeeId equals w.AppointeeId
+            //                                                                            join wm in _dbContextClass.WorkflowApprovalStatusMaster
+            //                                                                            on w.AppvlStatusId equals wm.AppvlStatusId
+            //                                                                            join p in _dbContextClass.AppointeeDetails
+            //                                                                            on a.AppointeeId equals p.AppointeeId into grouping
+            //                                                                            from p in grouping.DefaultIfEmpty()
+            //                                                                            where (string.IsNullOrEmpty(reqObj.AppointeeName) ||
+            //                                                                            a.AppointeeName.ToUpper().Contains(reqObj.AppointeeName))
+            //                                                                            && (string.IsNullOrEmpty(_statusCode) || wm.AppvlStatusCode == _statusCode)
+            //                                                                            && (reqObj.EntityId == null || reqObj.EntityId == a.CompanyId)
+            //                                                                            && (_intSubmitCode == null || (p.IsSubmit == _intSubmitCode))
+            //                                                                            && (_intSubStatusCode == null || (_intSubStatusCode == 1 && p.SaveStep == _intSubStatusCode && p.IsSubmit != true)
+            //                                                                            || (_intSubStatusCode == 0 && p.SaveStep != 1 && p.IsSubmit != true))
+            //                                                                            select new UnderProcessCandidateReportDataResponse
+            //                                                                            {
+            //                                                                                AppointeeName = a.AppointeeName,
+            //                                                                                AppointeeEmail = a.AppointeeEmailId,
+            //                                                                                CandidateId = a.CandidateId,
+            //                                                                                CompanyName = c.CompanyName,
+            //                                                                                DateOfJoining = a.DateOfJoining,
+            //                                                                                CreatedOn = ap.CreatedOn,
+            //                                                                                AppvlStatusId = w.AppvlStatusId,
+            //                                                                                ActionTakenAt = w.ActionTakenAt,
+            //                                                                                AppvlStatusDesc = wm.AppvlStatusDesc,
+            //                                                                                AppvlStatusCode = wm.AppvlStatusCode,
+            //                                                                                UpdatedOn = p.UpdatedOn,
+            //                                                                                SaveStep = p.SaveStep,
+            //                                                                                IsSubmit = p.IsSubmit
+            //                                                                            };
+            //List<UnderProcessCandidateReportDataResponse> underProcessAppointeeList = await underProcessQueryData.ToListAsync().ConfigureAwait(false);
+            //return underProcessAppointeeList;
+
             IQueryable<UnderProcessCandidateReportDataResponse> underProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
-                                       .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
-                                                                                        && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
+.Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
+          && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
                                                                                         join a in _dbContextClass.UnderProcessFileData
                                                                                         on ap.FileId equals a.FileId
                                                                                         join c in _dbContextClass.CompanyDetails
@@ -205,12 +267,12 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                         join p in _dbContextClass.AppointeeDetails
                                                                                         on a.AppointeeId equals p.AppointeeId into grouping
                                                                                         from p in grouping.DefaultIfEmpty()
-                                                                                        where (string.IsNullOrEmpty(reqObj.AppointeeName) ||
-                                                                                        a.AppointeeName.ToUpper().Contains(reqObj.AppointeeName))
-                                                                                        && (string.IsNullOrEmpty(_statusCode) || wm.AppvlStatusCode == _statusCode)
-                                                                                        && (reqObj.EntityId == null || reqObj.EntityId == a.CompanyId)
-                                                                                        && (_intSubmitCode == null || (p.IsSubmit == _intSubmitCode))
-                                                                                        && (_intSubStatusCode == null || (_intSubStatusCode == 1 && p.SaveStep == _intSubStatusCode && p.IsSubmit != true)
+                                                                                        where
+                                                                                        (string.IsNullOrEmpty(reqObj.AppointeeName) || a.AppointeeName.ToUpper().Contains(reqObj.AppointeeName)) &&
+                                                                                        (string.IsNullOrEmpty(_statusCode) || wm.AppvlStatusCode == _statusCode) &&
+                                                                                        (reqObj.EntityId == null || !reqObj.EntityId.Any() || reqObj.EntityId.Contains(a.CompanyId)) && // Modify this line
+                                                                                        (_intSubmitCode == null || (p.IsSubmit == _intSubmitCode)) &&
+                                                                                        (_intSubStatusCode == null || (_intSubStatusCode == 1 && p.SaveStep == _intSubStatusCode && p.IsSubmit != true)
                                                                                         || (_intSubStatusCode == 0 && p.SaveStep != 1 && p.IsSubmit != true))
                                                                                         select new UnderProcessCandidateReportDataResponse
                                                                                         {
@@ -228,9 +290,9 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                             SaveStep = p.SaveStep,
                                                                                             IsSubmit = p.IsSubmit
                                                                                         };
-            List<UnderProcessCandidateReportDataResponse> underProcessAppointeeList = await underProcessQueryData.ToListAsync().ConfigureAwait(false);
 
-            return underProcessAppointeeList;
+            return await underProcessQueryData.ToListAsync();
+
         }
     }
 }
