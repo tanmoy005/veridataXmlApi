@@ -61,7 +61,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                 }
                 if (validationReq.Type == RemarksType.UAN)
                 {
-                    _appointeedetails.IsUanVarified = validationReq.uanData?.IsEmployementVarified == null ? validationReq.Status : _appointeedetails.IsUanVarified;
+                    var uanVerifiedStatus = _appointeedetails.IsUanVarified;
+                    _appointeedetails.IsUanVarified = (validationReq.uanData?.IsEmployementVarified == null && validationReq.Status != null) ? validationReq.Status : uanVerifiedStatus;
                     _appointeedetails.IsPassbookFetch = validationReq.uanData?.IsPassbookFetch;
                     _appointeedetails.UANNumber = validationReq.uanData?.UanNumber;
                     _appointeedetails.IsEmployementVarified = validationReq.uanData?.IsEmployementVarified;

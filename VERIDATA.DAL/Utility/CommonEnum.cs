@@ -100,6 +100,8 @@
             public const string PFPassbookExcel = "EPFPSBKEXCL";
             public const string PFPassbookTrust = "EPFPSBKTRUST";
             public const string HandicapCert = "HANDCERT";
+            public const string TenthPassCert = "10THCERT";
+            public const string OtherDocument = "OTHID ";
 
 
         }
