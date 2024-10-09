@@ -226,7 +226,7 @@ namespace VERIDATA.BLL.apiContext.karza
             Karza_GetPassportRequest request = new()
             {
                 fileNo = reqObj.passportFileNo,
-                dob = reqObj.dateOfBirth.ToString("yyyy-MM-dd")
+                dob = reqObj.dateOfBirth.ToString("dd/MM/yyyy")
             };
             StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
             HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, reqObj.userId);

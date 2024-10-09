@@ -212,7 +212,7 @@ namespace VERIDATA.BLL.Context
         private async Task<CandidateValidateResponse> VarifyPassportData(PassportDetails request, int appointeeId)
         {
             bool IsValid = false;
-            _ = new CandidateValidateResponse();
+            var response = new CandidateValidateResponse();
             List<ReasonRemarks> ReasonList = new();
             CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new();
             AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(appointeeId);
@@ -222,13 +222,9 @@ namespace VERIDATA.BLL.Context
             //string? passportValidFrom = request?.ValidFrom;
             //string? passportValidTill = request?.ValidTill;
 
-            if (appointeedetail.AppointeeDetailsId != null && request != null)
+            if (appointeedetail.AppointeeDetailsId != null && request != null && !string.IsNullOrEmpty(passportName) && !string.IsNullOrEmpty(passportDOB))
             {
                 DateTime _inptdob = Convert.ToDateTime(passportDOB);
-                // DateTime _inptValidFrom = Convert.ToDateTime(passportValidFrom);
-                //DateTime _inptValidTill = Convert.ToDateTime(passportValidTill);
-                //appointeedetail.AppointeeName?.Trim()?.ToUpper() == passportFullName?.ToUpper() &&
-                //if (appointeedetail?.DateOfBirth == _inptdob && appointeedetail?.PassportNo?.ToUpper() == passportNo?.ToUpper())
                 if (appointeedetail?.DateOfBirth == _inptdob && appointeedetail?.AppointeeName?.ToUpper() == passportName?.ToUpper())
                 {
                     IsValid = true;
@@ -276,9 +272,17 @@ namespace VERIDATA.BLL.Context
                     Type = RemarksType.Passport,
 
                 };
+                response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+            }
+            else
+            {
+                response.IsValid = false;
+                response.Remarks = "No data fetch from passport, please try again later";
+
             }
 
-            CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+
+
 
             return response;
         }
@@ -1184,6 +1188,6 @@ namespace VERIDATA.BLL.Context
 
         }
 
-        
+
     }
 }
