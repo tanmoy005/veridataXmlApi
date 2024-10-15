@@ -61,5 +61,7 @@ namespace VERIDATA.Model.Table.Public
         [Column("updated_on", TypeName = DbDataType._datetime)]
         public DateTime? UpdatedOn { get; set; }
 
+        [Column("file_content", TypeName = DbDataType._varbinary)]  // mGhosh Added new col
+        public byte[]? Content { get; set; }
     }
 }

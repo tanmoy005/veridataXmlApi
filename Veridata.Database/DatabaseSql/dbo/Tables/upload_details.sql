@@ -16,6 +16,7 @@
     [appointee_id1]    BIGINT         NULL,
     [company_id]       INT            NULL,
     [upload_type_id1]  INT            NULL,
+    [file_content] [varbinary](max) NULL,
     CONSTRAINT [PK_upload_details] PRIMARY KEY CLUSTERED ([upload_det_id] ASC),
     CONSTRAINT [FK_upload_details_appointee_master_appointee_id1] FOREIGN KEY ([appointee_id1]) REFERENCES [dbo].[appointee_master] ([appointee_id]),
     CONSTRAINT [FK_upload_details_company_company_id] FOREIGN KEY ([company_id]) REFERENCES [admin].[company] ([company_id]),

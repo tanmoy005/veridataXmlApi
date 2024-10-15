@@ -16,6 +16,7 @@
         public const string _char = "char";
         public const string _datetime = "datetime";
         public const string _bytea = "Bytea";
+        public const string _varbinary = "VARBINARY(max)";
     }
     //public static class DbDataType
     //{

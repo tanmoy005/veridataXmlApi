@@ -10,5 +10,6 @@ namespace VERIDATA.Model.DataAccess.Response
         public string? mimeType { get; set; }
         public string? UploadTypeAlias { get; set; }
         public string? FileExtention { get; set; }
+        public byte[]? file_Content { get; set; } // mGhosh new field added
     }
 }
