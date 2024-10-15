@@ -21,6 +21,9 @@ namespace VERIDATA.Model.DataAccess.Response
 
         [DisplayName("Link Not Sent Count")]
         public int? TotalLinkNotSentCount { get; set; }
+
+        [DisplayName("Compnay Id")]
+        public int? CompnayId { get; set; }
     }
     public class AppointeeCountDateWise
     {
@@ -34,7 +37,10 @@ namespace VERIDATA.Model.DataAccess.Response
 
         [DisplayName("Candidate Id")]
         public string? CandidateId { get; set; }
-        
+
+        [DisplayName("Compnay Id")]
+        public int? CompanyId { get; set; }
+
         [DisplayName("Compnay Name")]
         public string? CompanyName { get; set; }
 

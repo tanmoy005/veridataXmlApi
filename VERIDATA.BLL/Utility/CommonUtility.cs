@@ -275,10 +275,10 @@ namespace VERIDATA.BLL.utility
 
             return date.ToString("MMM");
         }
-        public static string GetMonthYearFullName(string monthYear, string type)
+        public static string GetMonthYearFullName(string monthYear, string type, string format)
         {
             // Parse the input string to DateTime
-            DateTime date = DateTime.ParseExact(monthYear, "MM-yyyy", CultureInfo.InvariantCulture);
+            DateTime date = DateTime.ParseExact(monthYear, format, CultureInfo.InvariantCulture);
             if (type.Equals("month", StringComparison.OrdinalIgnoreCase))
             {
                 return date.ToString("MMMM");

@@ -323,12 +323,13 @@ namespace VERIDATA.DAL.DataAccess.Context
         public async Task<AppointeeEmployementDetails> PostEmployementDetails(EmployementHistoryDetails reqObj)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(reqObj.AppointeeId);
-            var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == reqObj.AppointeeId && x.ActiveStatus == true)?.ToListAsync();
+            var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == reqObj.AppointeeId && x.ActiveStatus == true && !string.IsNullOrEmpty(x.DataInfo))?.ToListAsync();
             AppointeeEmployementDetails empHistData = new();
             if (res.Count == 0)
             {
                 empHistData.AppointeeId = reqObj.AppointeeId;
                 empHistData.TypeCode = reqObj.Provider?.Trim();
+                empHistData.DataInfo = reqObj.EmployementData;
                 empHistData.SubTypeCode = reqObj.SubType;
                 empHistData.ActiveStatus = true;
                 empHistData.CreatedBy = reqObj.UserId;
@@ -341,8 +342,8 @@ namespace VERIDATA.DAL.DataAccess.Context
 
         public async Task<AppointeeEmployementDetails> GetEmployementDetails(int appointeeId)
         {
-            var res = await _dbContextClass.AppointeeEmployementDetails?.FirstOrDefaultAsync(x => x.AppointeeId == appointeeId && x.ActiveStatus == true);
-            return res;
+            var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == appointeeId && x.ActiveStatus == true).ToListAsync();
+            return res?.LastOrDefault();
         }
     }
 }

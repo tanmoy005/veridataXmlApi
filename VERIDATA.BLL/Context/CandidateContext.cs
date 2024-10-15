@@ -44,7 +44,7 @@ namespace VERIDATA.BLL.Context
             _activityDalContext = activityDalContext;
             _masterContext = masterDalContext;
             _karzaApiContext = karzaApiContext;
-            _signzyApiContext= signzyApiContext;
+            _signzyApiContext = signzyApiContext;
         }
         public async Task<AppointeeDetailsResponse> GetAppointeeDetailsAsync(int appointeeId)
         {
@@ -519,51 +519,57 @@ namespace VERIDATA.BLL.Context
         // Method to get employment history details if the passbook file is not available
         private async Task<AppointeeEmployementDetailsViewResponse> GetEmploymentDetailsFromHistory(int appointeeId, int userId, string key, AppointeeDetails appointeeDetails)
         {
-            AppointeeEmployementDetailsViewResponse passbookDetails = new();
-            AppointeeEmployementDetails empHistDetails = await _appointeeDalContext.GetEmployementDetails(appointeeId);
+            var passbookDetails = new AppointeeEmployementDetailsViewResponse();
+            var empHistDetails = await _appointeeDalContext.GetEmployementDetails(appointeeId);
 
-            if (empHistDetails?.EmploymentDetailsId == null)
+            // If employment history is found, parse and return based on provider type
+            if (!string.IsNullOrEmpty(empHistDetails?.DataInfo))
             {
-                // Decrypt UAN number
-                var decryptedUANNumber = CommonUtility.DecryptString(key, appointeeDetails?.UANNumber);
-
-                // Fetch employment history data from external API
-                GetEmployemntDetailsRequest request = new GetEmployemntDetailsRequest
-                {
-                    appointeeId = appointeeId,
-                    uanNummber = decryptedUANNumber,
-                    userId = userId,
-                };
-
-                var employmentHistData = await GetEmployementHistoryDetails(request);
-                if (employmentHistData.Provider == ApiProviderType.Karza && !string.IsNullOrEmpty(employmentHistData.EmployementData))
-                {
-                    var karzaResponse = JsonConvert.DeserializeObject<Karza_GetEmployementDetailsByUanResponse>(employmentHistData.EmployementData);
-                    return await ParseEmployementDetailsKarza(karzaResponse, appointeeId);
-                }
-                if (employmentHistData.Provider == ApiProviderType.Signzy && !string.IsNullOrEmpty(employmentHistData.EmployementData))
-                {
-                    var signzyResponse = JsonConvert.DeserializeObject<Signzy_GetEmployementDetailsByUanResponse>(employmentHistData.EmployementData);
-                    //return await ParseEmployementDetailsKarza(signzyResponse, appointeeId);
-                }
-
-
-                else
-                {
-                    passbookDetails.isEmployementDetailsAvailable = false;
-                    passbookDetails.remarks = employmentHistData.Remarks;
-
-                }
+                return await ParseEmploymentDetailsBasedOnProvider(empHistDetails.TypeCode, empHistDetails.DataInfo, appointeeId);
             }
 
-            // Handle existing employment history if type is Karza
-            if (empHistDetails?.TypeCode == ApiProviderType.Karza && !string.IsNullOrEmpty(empHistDetails.DataInfo))
+            // If no employment history, decrypt UAN number and fetch external data
+            var decryptedUANNumber = CommonUtility.DecryptString(key, appointeeDetails?.UANNumber);
+
+            var employmentHistData = await GetEmployementHistoryDetails(new GetEmployemntDetailsRequest
             {
-                var karzaResponse = JsonConvert.DeserializeObject<Karza_GetEmployementDetailsByUanResponse>(empHistDetails.DataInfo);
-                return await ParseEmployementDetailsKarza(karzaResponse, appointeeId);
+                appointeeId = appointeeId,
+                uanNummber = decryptedUANNumber,
+                userId = userId,
+            });
+
+            // Parse based on provider type from external API
+            if (!string.IsNullOrEmpty(employmentHistData?.EmployementData))
+            {
+                return await ParseEmploymentDetailsBasedOnProvider(employmentHistData.Provider, employmentHistData.EmployementData, appointeeId);
             }
 
+            // If no valid data found, return failure response
+            passbookDetails.isEmployementDetailsAvailable = false;
+            passbookDetails.remarks = employmentHistData?.Remarks;
             return passbookDetails;
+        }
+
+        private async Task<AppointeeEmployementDetailsViewResponse> ParseEmploymentDetailsBasedOnProvider(string provider, string dataInfo, int appointeeId)
+        {
+            if (string.IsNullOrEmpty(dataInfo))
+            {
+                return new AppointeeEmployementDetailsViewResponse { isEmployementDetailsAvailable = false };
+            }
+
+            switch (provider)
+            {
+                case ApiProviderType.Karza:
+                    var karzaResponse = JsonConvert.DeserializeObject<Karza_GetEmployementDetailsByUanResponse>(dataInfo);
+                    return await ParseEmployementDetailsKarza(karzaResponse, appointeeId);
+
+                case ApiProviderType.Signzy:
+                    var signzyResponse = JsonConvert.DeserializeObject<Signzy_GetEmployementDetailsByUanResponse>(dataInfo);
+                    return await ParseEmployementDetailsSignzy(signzyResponse, appointeeId);
+
+                default:
+                    return new AppointeeEmployementDetailsViewResponse { isEmployementDetailsAvailable = false };
+            }
         }
 
         //public async Task<AppointeeEmployementDetailsViewResponse> GetGetEmployementDetailsByAppointeeId(int appointeeId,int userId)
@@ -735,7 +741,7 @@ namespace VERIDATA.BLL.Context
                 EmployeePersonalDetails PassBookResponseData = EmployementData.PersonalDetails;
                 List<PfEmployementDetails> _companyDetailsList = new();
                 passbookDetails.clientId = "NA"; //PassBookResponseData.client_id;
-                passbookDetails.fullName = PassBookResponseData?.Name;
+                passbookDetails.fullName = PassBookResponseData?.Name ?? _appointeedetails.AppointeeName;
                 passbookDetails.fatherName = PassBookResponseData?.FatherOrHusbandName;
                 passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.UANNumber));
                 passbookDetails.dob = _appointeedetails?.DateOfBirth?.ToShortDateString();
@@ -743,7 +749,9 @@ namespace VERIDATA.BLL.Context
                 foreach (EmployerHistory obj in EmployementData?.Employers)
                 {
                     //var _copmnyData = obj.Value;
-                    var TotalWorkMonth = GetTotalMonths(obj?.StartMonthYear, obj?.LastMonthYear);
+                    var TotalWorkMonth = 0;
+                    if (!string.IsNullOrEmpty(obj?.StartMonthYear) && !string.IsNullOrEmpty(obj?.LastMonthYear))
+                        TotalWorkMonth = GetTotalMonths(obj?.StartMonthYear, obj?.LastMonthYear, "MM-yyyy");
 
                     PfEmployementDetails _companyDetails = new()
                     {
@@ -751,13 +759,13 @@ namespace VERIDATA.BLL.Context
                         establishmentId = obj.EstablishmentId,
                         memberId = obj?.MemberId,
                         FirstTransactionApprovedOn = "NA",
-                        FirstTransactionMonth = string.IsNullOrEmpty(obj?.StartMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.StartMonthYear, "month"),
-                        FirstTransactionYear = string.IsNullOrEmpty(obj?.StartMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.StartMonthYear, "year"),
+                        FirstTransactionMonth = string.IsNullOrEmpty(obj?.StartMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.StartMonthYear, "month", "MM-yyyy"),
+                        FirstTransactionYear = string.IsNullOrEmpty(obj?.StartMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.StartMonthYear, "year", "MM-yyyy"),
                         LastTransactionApprovedOn = "NA",
-                        LastTransactionMonth = string.IsNullOrEmpty(obj?.StartMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.LastMonthYear, "month"),
-                        LastTransactionYear = string.IsNullOrEmpty(obj?.StartMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.LastMonthYear, "year"),
+                        LastTransactionMonth = string.IsNullOrEmpty(obj?.LastMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.LastMonthYear, "month", "MM-yyyy"),
+                        LastTransactionYear = string.IsNullOrEmpty(obj?.LastMonthYear) ? "NA" : CommonUtility.GetMonthYearFullName(obj.LastMonthYear, "year", "MM-yyyy"),
                         TotalWorkDays = 0,
-                        WorkForYear = TotalWorkMonth / 12,
+                        WorkForYear = TotalWorkMonth > 0 ? TotalWorkMonth / 12 : 0,
                         WorkForMonth = TotalWorkMonth,
                     };
                     _companyDetailsList.Add(_companyDetails);
@@ -767,11 +775,56 @@ namespace VERIDATA.BLL.Context
 
             return passbookDetails;
         }
-        public static int GetTotalMonths(string startMonthYear, string lastMonthYear)
+        private async Task<AppointeeEmployementDetailsViewResponse> ParseEmployementDetailsSignzy(Signzy_GetEmployementDetailsByUanResponse? EmpHistResponse, int appointeeId)
+        {
+            string? key = _apiConfig.EncriptKey;
+            AppointeeEmployementDetailsViewResponse passbookDetails = new();
+            AppointeeDetails _appointeedetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
+            if (EmpHistResponse != null)
+            {
+                var EmployementData = EmpHistResponse.Result;
+                var personalData = EmployementData.FirstOrDefault();
+                List<PfEmployementDetails> _companyDetailsList = new();
+                passbookDetails.clientId = "NA"; //PassBookResponseData.client_id;
+                passbookDetails.fullName = personalData?.Name;
+                passbookDetails.fatherName = personalData?.FatherOrHusbandName;
+                passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.UANNumber));
+                passbookDetails.dob = _appointeedetails?.DateOfBirth?.ToShortDateString();
+
+                foreach (EmploymentHistoryDetail obj in EmployementData)
+                {
+                    //var _copmnyData = obj.Value;
+                    var TotalWorkMonth = 0;
+                    if (!string.IsNullOrEmpty(obj?.DateOfJoining) && !string.IsNullOrEmpty(obj?.DateOfExit))
+                        TotalWorkMonth = GetTotalMonths(obj?.DateOfJoining, obj?.DateOfExit, "MMM-yyyy");
+
+                    PfEmployementDetails _companyDetails = new()
+                    {
+                        companyName = obj?.EstablishmentName,
+                        establishmentId = "NA",
+                        memberId = obj?.MemberId,
+                        FirstTransactionApprovedOn = "NA",
+                        FirstTransactionMonth = string.IsNullOrEmpty(obj?.DateOfJoining) ? "NA" : CommonUtility.GetMonthYearFullName(obj.DateOfJoining, "month", "MMM-yyyy"),
+                        FirstTransactionYear = string.IsNullOrEmpty(obj?.DateOfJoining) ? "NA" : CommonUtility.GetMonthYearFullName(obj.DateOfJoining, "year", "MMM-yyyy"),
+                        LastTransactionApprovedOn = "NA",
+                        LastTransactionMonth = string.IsNullOrEmpty(obj?.DateOfExit) ? "NA" : CommonUtility.GetMonthYearFullName(obj.DateOfExit, "month", "MMM-yyyy"),
+                        LastTransactionYear = string.IsNullOrEmpty(obj?.DateOfExit) ? "NA" : CommonUtility.GetMonthYearFullName(obj.DateOfExit, "year", "MMM-yyyy"),
+                        TotalWorkDays = 0,
+                        WorkForYear = TotalWorkMonth > 0 ? TotalWorkMonth / 12 : 0,
+                        WorkForMonth = TotalWorkMonth,
+                    };
+                    _companyDetailsList.Add(_companyDetails);
+                }
+                passbookDetails.companies = _companyDetailsList;
+            }
+
+            return passbookDetails;
+        }
+        public static int GetTotalMonths(string startMonthYear, string lastMonthYear, string format)
         {
             // Parse the input strings to DateTime objects
-            DateTime startDate = DateTime.ParseExact(startMonthYear, "MM-yyyy", CultureInfo.InvariantCulture);
-            DateTime endDate = DateTime.ParseExact(lastMonthYear, "MM-yyyy", CultureInfo.InvariantCulture);
+            DateTime startDate = DateTime.ParseExact(startMonthYear, format, CultureInfo.InvariantCulture);
+            DateTime endDate = DateTime.ParseExact(lastMonthYear, format, CultureInfo.InvariantCulture);
 
             // Calculate the difference in months
             int totalMonths = ((endDate.Year - startDate.Year) * 12) + endDate.Month - startDate.Month + 1;

@@ -309,7 +309,7 @@ namespace VERIDATA.BLL.Context
 
                 List<NonProcessCandidateReportDataResponse> nonProcessAppointeeList = await _reportingDalContext.GetNonProcessCandidateReport(reqObj);
 
-                List<IGrouping<string?, NonProcessCandidateReportDataResponse>>? _noProcessAppointeeCountdateWise = nonProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToString("dd-MM-yyyy"))?.ToList();
+                List<IGrouping<string?, NonProcessCandidateReportDataResponse>>? _noProcessAppointeeCountdateWise = nonProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToShortDateString())?.ToList();
 
                 foreach ((List<NonProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate,
                     AppointeeCountDateWise _currDateWiseCount, AppointeeTotalCount _currAppointeeCount) in from obj in _noProcessAppointeeCountdateWise
@@ -324,9 +324,10 @@ namespace VERIDATA.BLL.Context
                     {
                         AppointeeName = x?.AppointeeName,
                         CandidateId = x?.CandidateId,
+                        CompanyId = x?.CompanyId,
                         CompanyName = x?.CompanyName,
                         EmailId = x?.AppointeeEmail,
-                        ActionTaken = x?.CreatedOn?.ToString("dd-MM-yyyy"),
+                        ActionTaken = x?.CreatedOn?.ToShortDateString(),
                         AppointeeStatus = "Link Not Sent",
                         Date = _currDate,
                     })?.ToList();
@@ -382,16 +383,16 @@ namespace VERIDATA.BLL.Context
 
                 List<UnderProcessCandidateReportDataResponse> underProcessAppointeeList = await _reportingDalContext.GetUnderProcessCandidateReport(reqObj, _statusCode, _intSubmitCode, _intSubStatusCode);
 
-                List<IGrouping<string?, UnderProcessCandidateReportDataResponse>>? _appointeeCountdateWise = underProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToString("dd-MM-yyyy"))?.ToList();
+                List<IGrouping<string?, UnderProcessCandidateReportDataResponse>>? _appointeeCountdateWise = underProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToShortDateString())?.ToList();
                 foreach ((List<UnderProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate, AppointeeCountDateWise _currDateWiseCount,
                     AppointeeCountDateWise _nonProcessExsistingData, AppointeeTotalCount _currAppointeeCount) in from obj in _appointeeCountdateWise
-                                                                                                        let _currdata = obj?.ToList()
-                                                                                                        let _totalCount = _currdata?.Count ?? 0
-                                                                                                        let _currDate = obj?.Key
-                                                                                                        let _nonProcessExsistingData = _appointeeCountDateWises?.Where(x => x?.appointeeTotalCount?.Date == _currDate).FirstOrDefault()
-                                                                                                        let _currDateWiseCount = new AppointeeCountDateWise()
-                                                                                                        let _currAppointeeCount = new AppointeeTotalCount()
-                                                                                                        select (_currdata, _totalCount, _currDate, _currDateWiseCount, _nonProcessExsistingData, _currAppointeeCount))
+                                                                                                                 let _currdata = obj?.ToList()
+                                                                                                                 let _totalCount = _currdata?.Count ?? 0
+                                                                                                                 let _currDate = obj?.Key
+                                                                                                                 let _nonProcessExsistingData = _appointeeCountDateWises?.Where(x => x?.appointeeTotalCount?.Date == _currDate).FirstOrDefault()
+                                                                                                                 let _currDateWiseCount = new AppointeeCountDateWise()
+                                                                                                                 let _currAppointeeCount = new AppointeeTotalCount()
+                                                                                                                 select (_currdata, _totalCount, _currDate, _currDateWiseCount, _nonProcessExsistingData, _currAppointeeCount))
                 {
 
                     //var _date = _currdata;
@@ -400,10 +401,11 @@ namespace VERIDATA.BLL.Context
                     {
                         AppointeeName = x?.AppointeeName,
                         CandidateId = x?.CandidateId,
+                        CompanyId = x?.CompanyId,
                         CompanyName = x?.CompanyName,
                         EmailId = x?.AppointeeEmail,
-                        ActionTaken = (x?.AppvlStatusCode != WorkFlowType.ProcessIni?.Trim() && x?.SaveStep == 1) ? x?.UpdatedOn?.ToString("dd-MM-yyyy") ?? x?.ActionTakenAt?.ToString("dd-MM-yyyy")
-                                      : x?.ActionTakenAt?.ToString("dd-MM-yyyy"),
+                        ActionTaken = (x?.AppvlStatusCode != WorkFlowType.ProcessIni?.Trim() && x?.SaveStep == 1) ? x?.UpdatedOn?.ToShortDateString() ?? x?.ActionTakenAt?.ToShortDateString()
+                                      : x?.ActionTakenAt?.ToShortDateString(),
                         AppointeeStatus = x?.AppvlStatusCode == WorkFlowType.ProcessIni?.Trim() ?
                                       x?.AppvlStatusDesc + "(" + (x?.IsSubmit ?? false ? "Submitted" : x?.SaveStep == 1 ? "Ongoing" : "No Response") + ")"
                                       : x?.AppvlStatusDesc,
@@ -417,7 +419,7 @@ namespace VERIDATA.BLL.Context
                     }
                     else
                     {
-                        _currAppointeeCount.TotalAppointeeCount =  _totalCount;
+                        _currAppointeeCount.TotalAppointeeCount = _totalCount;
                         _currAppointeeCount.TotalLinkNotSentCount = 0;
                         _currAppointeeCount.TotalLinkSentCount = _totalCount;
                         _currAppointeeCount.Date = _currDate;
@@ -428,7 +430,7 @@ namespace VERIDATA.BLL.Context
                         _appointeeTotalCountList.Add(_currAppointeeCount);
                     }
 
-                   
+
                 }
             }
             _response.AppointeeCountDateWise = _appointeeCountDateWises;
@@ -561,7 +563,112 @@ namespace VERIDATA.BLL.Context
             {
                 ProcessedFilterRequest filterRequest = new ProcessedFilterRequest()
                 {
-                    IsFiltered=true,
+                    IsFiltered = true,
+                    FromDate = reqObj.FromDate,
+                    ToDate = reqObj.ToDate,
+                    AppointeeName = reqObj.AppointeeName,
+                    CandidateId = reqObj.CandidateId,
+                };
+
+                List<ProcessedDataDetailsResponse> list = await _workFlowDetailsContext.GetProcessedAppointeeDetailsAsync(filterRequest);
+                var _processViewdata = list?.DistinctBy(x => x.AppointeeId)?.OrderByDescending(x => x.ProcessedId)?.Select(row => new AppointeeDataFilterReportResponse
+                {
+                    candidateId = row?.CandidateId,
+                    AppointeeName = row?.AppointeeName,
+                    AppointeeId = row?.AppointeeId,
+                    EmailId = row?.AppointeeEmailId,
+                    MobileNo = row?.MobileNo,
+                    DateOfJoining = row?.DateOfJoining,
+                    Status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
+                    CreatedDate = row?.CreatedDate
+                }).ToList();
+                _response.AddRange(_processViewdata);
+            }
+
+            if (reqObj.StatusCode == FilterCode.REJECTED || _IsAllData)
+            {
+                FilterRequest filterRequest = new FilterRequest()
+                {
+                    FromDate = reqObj.FromDate,
+                    ToDate = reqObj.ToDate,
+                    AppointeeName = reqObj.AppointeeName,
+                    CandidateId = reqObj.CandidateId,
+                };
+
+                List<RejectedDataDetailsResponse> rejectedAppointeeList = await _workFlowDetailsContext.GetRejectedAppointeeDetailsAsync(filterRequest);
+                var _rejectedViewdata = rejectedAppointeeList?.DistinctBy(x => x.AppointeeId)?.OrderByDescending(x => x.RejectedId)?.Select(row => new AppointeeDataFilterReportResponse
+                {
+                    candidateId = row?.CandidateId,
+                    AppointeeName = row?.AppointeeName,
+                    AppointeeId = row?.AppointeeId,
+                    EmailId = row?.AppointeeEmailId,
+                    MobileNo = row?.MobileNo,
+                    DateOfJoining = row?.DateOfJoining,
+                    Status = "Rejected",
+                    CreatedDate = row?.CreatedDate
+                }).ToList();
+                _response.AddRange(_rejectedViewdata);
+            }
+
+            AppointeeSeacrhFilterRequest UnderProcessfilterRequest = new()
+            {
+                FromDate = reqObj.FromDate,
+                ToDate = reqObj.ToDate,
+                AppointeeName = reqObj.AppointeeName,
+                CandidateId = reqObj.CandidateId,
+
+            };
+
+            List<UnderProcessQueryDataResponse> underProcessData = await _workFlowDetailsContext.GetUnderProcessDataAsync(UnderProcessfilterRequest);
+
+            if (reqObj.StatusCode == FilterCode.LAPSED || _IsAllData)
+            {
+                List<AppointeeDataFilterReportResponse>? _lapsedViewdata = underProcessData?.Where(X => X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportResponse
+                {
+                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                    AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
+                    candidateId = row?.UnderProcess?.CandidateId,
+                    EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
+                    MobileNo = row?.UnderProcess?.MobileNo,
+                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
+                    CreatedDate = row?.UnderProcess?.CreatedOn,
+                    Status = "Lasped",
+                }).ToList();
+                _response.AddRange(_lapsedViewdata);
+            }
+            if (reqObj.StatusCode == FilterCode.UNDERPROCESS || _IsAllData)
+            {
+
+                List<AppointeeDataFilterReportResponse>? _underProcessViewdata = underProcessData?.Where(X => !X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportResponse
+                {
+                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                    AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
+                    candidateId = row?.UnderProcess?.CandidateId,
+                    EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
+                    MobileNo = row?.UnderProcess?.MobileNo,
+                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
+                    CreatedDate = row?.UnderProcess?.CreatedOn,
+                    Status = string.IsNullOrEmpty(status) ? row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response" : status,
+                }).ToList();
+                _response.AddRange(_underProcessViewdata);
+
+            }
+            var res = _response?.OrderByDescending(y => y?.DateOfJoining)?.ToList();
+            return res;
+        }
+        public async Task<List<AppointeeDataFilterReportResponse>> AppointeePfDetailsReport(AppointeeDataFilterReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
+        {
+
+            DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
+            DateTime CurrDate = Convert.ToDateTime(_currDate);
+            string status = string.Empty;
+            List<AppointeeDataFilterReportResponse> _response = new();
+            bool _IsAllData = reqObj.StatusCode?.ToLower()?.Trim() == FilterCode.All?.ToLower()?.Trim();
+            if (reqObj.StatusCode == FilterCode.VERIFIED || _IsAllData)
+            {
+                ProcessedFilterRequest filterRequest = new ProcessedFilterRequest()
+                {
+                    IsFiltered = true,
                     FromDate = reqObj.FromDate,
                     ToDate = reqObj.ToDate,
                     AppointeeName = reqObj.AppointeeName,

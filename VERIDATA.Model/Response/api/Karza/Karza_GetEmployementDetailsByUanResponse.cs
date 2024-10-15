@@ -52,7 +52,7 @@ namespace VERIDATA.Model.Response.api.Karza
 
     public class EmployeeSummary
     {
-        public int MinimumWorkExperienceInMonths { get; set; }
+        //public int MinimumWorkExperienceInMonths { get; set; }
         public LastEmployer LastEmployer { get; set; }
     }
 

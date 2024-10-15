@@ -169,6 +169,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                         AppointeeEmail = a.AppointeeEmailId,
                                                                                         CandidateId = a.CandidateId,
                                                                                         DateOfJoining = a.DateOfJoining,
+                                                                                        CompanyId = c.Id,
                                                                                         CompanyName = c.CompanyName,
                                                                                         CreatedOn = ap.CreatedOn,
                                                                                     };
@@ -254,8 +255,8 @@ namespace VERIDATA.DAL.DataAccess.Context
             //return underProcessAppointeeList;
 
             IQueryable<UnderProcessCandidateReportDataResponse> underProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
-.Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
-          && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
+                                                                                        .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
+                                                                                        && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
                                                                                         join a in _dbContextClass.UnderProcessFileData
                                                                                         on ap.FileId equals a.FileId
                                                                                         join c in _dbContextClass.CompanyDetails
@@ -279,6 +280,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                             AppointeeName = a.AppointeeName,
                                                                                             AppointeeEmail = a.AppointeeEmailId,
                                                                                             CandidateId = a.CandidateId,
+                                                                                            CompanyId = c.Id,
                                                                                             CompanyName = c.CompanyName,
                                                                                             DateOfJoining = a.DateOfJoining,
                                                                                             CreatedOn = ap.CreatedOn,
