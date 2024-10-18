@@ -339,5 +339,9 @@
           
 
         }
+        public static class Priority  // mGhosh 
+        {
+            public const string api_Priority = "1";
+        }
     }
 }

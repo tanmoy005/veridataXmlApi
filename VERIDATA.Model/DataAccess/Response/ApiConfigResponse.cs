@@ -9,5 +9,6 @@ namespace VERIDATA.Model.DataAccess.Response
         public string? apiProvider { get; set; }
         public string? typeCode { get; set; }
         public bool? activeStatus { get; set; }
+        public int? apiPrioirty { get; set; }
     }
 }

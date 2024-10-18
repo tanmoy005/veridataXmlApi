@@ -846,7 +846,7 @@ namespace VERIDATA.BLL.Context
         }
         public async Task PostAppointeeTrusUanDetailsAsync(AppointeeUpdatePfUanDetailsRequest AppointeeTrustDetails)
         {
-            await _appointeeDalContext.UpdateAppointeeTrustnUanAvailibility(AppointeeTrustDetails.AppointeeId, AppointeeTrustDetails.TrustPassbookAvailable, AppointeeTrustDetails.IsUanAvailable);
+            await _appointeeDalContext.UpdateAppointeeTrustnUanAvailibility(AppointeeTrustDetails.AppointeeId, AppointeeTrustDetails.TrustPassbookAvailable, AppointeeTrustDetails.IsUanAvailable, AppointeeTrustDetails.IsFinalSubmit);
         }
         public async Task PostAppointeeHandicapDetailsAsync(AppointeeHadicapFileDetailsRequest AppointeeHandicapDetails)
         {

@@ -50,7 +50,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 Color = row.ActivityColor,
                 CreatedOn = row.CreatedOn
 
-            }).ToList();
+            }).OrderBy(x => x.CreatedOn)?.ToList();
 
             return _activityViewdata ?? new List<AppointeeActivityDetailsResponse>();
         }
@@ -83,8 +83,8 @@ namespace VERIDATA.DAL.DataAccess.Context
             {
                 ApiCounter apiActivty = new()
                 {
-                    ApiName = req?.ApiName?? getApiName,
-                    ProviderName=req?.Provider,
+                    ApiName = req?.ApiName ?? getApiName,
+                    ProviderName = req?.Provider,
                     Url = req.Url,
                     Type = req.Type,
                     Status = req.Status,

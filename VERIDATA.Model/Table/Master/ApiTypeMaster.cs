@@ -22,6 +22,9 @@ namespace VERIDATA.Model.Table.Master
         [Column("provider", TypeName = DbDataType._text50)]
         public string? Provider { get; set; }
 
+        [Column("api_priority", TypeName = DbDataType._integer)]  // mGhosh new field
+        public int apiPriotity { get; set; }
+
         [Column("active_status", TypeName = DbDataType._boolean)]
         [DefaultValue(true)]
         public bool? ActiveStatus { get; set; }

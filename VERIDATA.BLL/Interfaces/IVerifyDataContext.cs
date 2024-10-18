@@ -24,5 +24,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<CandidateValidateResponse> VerifyUanData(UanValidationRequest reqObj);
         public Task PostActivity(int appointeeId, int userId, string activityCode);
         //public Task<EmployementHistoryDetailsRespons> GetEmployementHistoryDetails(GetEmployemntDetailsRequest reqObj);
+        public Task<GetUanResponse> GetUanNumberPriorityBase(GetUanNumberDetailsRequest reqObj);   // mGhosh
+        //public Task<CandidateValidateResponse> VerifyUanDataPriorityBase(UanValidationRequest reqObj);  // mGhosh
     }
 }

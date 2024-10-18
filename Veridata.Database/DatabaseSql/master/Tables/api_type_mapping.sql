@@ -7,6 +7,7 @@
     [active_status]   BIT            NULL,
     [created_on]      DATETIME       NULL,
     [created_by]      BIGINT         NOT NULL,
+    [api_Prioirty] INT NULL, 
     CONSTRAINT [PK_api_config] PRIMARY KEY CLUSTERED ([id] ASC)
 );
 

@@ -18,7 +18,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task UpdateRemarksStatusByType(int AppointeeId, string Type, int UserId);
         public Task uploadFilesNUpdatePrevfiles(AppointeeUploadDetails uploadDetails, AppointeeUploadDetails prevDocDetails, int userId);
         public Task UpdateAppointeeSubmit(int AppointeeId, bool IsSubmit);
-        public Task UpdateAppointeeTrustnUanAvailibility(int AppointeeId, bool? TrustPassbookAvailable, bool? IsUanAvailable);
+        public Task UpdateAppointeeTrustnUanAvailibility(int AppointeeId, bool? TrustPassbookAvailable, bool? IsUanAvailable, bool? IsFinalSubmit);
         public Task UpdateAppointeeHandicapDetails(int AppointeeId, string? IsHandicap, string? HandicapType);
         public Task<List<GetRemarksResponse>> GetRemarks(int appointeeId);
         public Task<string?> GetRemarksRemedy(int remarksId);

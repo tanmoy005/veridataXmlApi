@@ -514,8 +514,8 @@ namespace PfcAPI.Controllers.Appoientee
         [Authorize]
         //[AllowAnonymous]
         [HttpPost]
-        [Route("UpdatePfUanDetails")]
-        public ActionResult UpdatePfUanDetails(AppointeeUpdatePfUanDetailsRequest reqObj)
+        [Route("UpdateDocWithUanDetails")]
+        public ActionResult UpdateDocWithUanDetails(AppointeeUpdatePfUanDetailsRequest reqObj)
         {
             try
             {
@@ -532,6 +532,7 @@ namespace PfcAPI.Controllers.Appoientee
                     };
                     Task.Run(async () => await _candidateContext.PostAppointeefileUploadAsync(fileReqObj)).GetAwaiter().GetResult();
                 }
+
                 Task.Run(async () => await _candidateContext.PostAppointeeTrusUanDetailsAsync(reqObj)).GetAwaiter().GetResult();
 
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));

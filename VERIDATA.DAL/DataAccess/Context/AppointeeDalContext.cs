@@ -199,13 +199,15 @@ namespace VERIDATA.DAL.DataAccess.Context
             //appointeeDetails.IsTrustPension = TrustPensionAvailable;
             _ = await _dbContextClass.SaveChangesAsync();
         }
-        public async Task UpdateAppointeeTrustnUanAvailibility(int AppointeeId, bool? TrustPassbookAvailable, bool? IsUanAvailable)
+        public async Task UpdateAppointeeTrustnUanAvailibility(int AppointeeId, bool? TrustPassbookAvailable, bool? IsUanAvailable,bool? IsFinalSubmit)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
             if (appointeeDetails.IsProcessed != true)
             {
                 appointeeDetails.IsTrustPassbook = TrustPassbookAvailable;
+                if(IsFinalSubmit == true)
                 appointeeDetails.IsUanAvailable = IsUanAvailable;
+
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }

@@ -51,45 +51,7 @@ namespace VERIDATA.BLL.Context
             return msg;
         }
 
-        public async Task<AppointeePanValidateResponse> PanDetailsValidation(AppointeePanValidateRequest reqObj)
-        {
-            PanDetails _apiResponse = new();
-            AppointeePanValidateResponse Response = new();
-            var apiProvider = await _masterContext.GetApiProviderData(ApiType.Pan);
-            await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PANVERIFICATIONSTART);
-            if (apiProvider?.ToLower() == ApiProviderType.Karza)
-            {
-                _apiResponse = await _karzaApiContext.GetPanDetails(reqObj.panNummber, reqObj.userId);
-            }
-            if (apiProvider?.ToLower() == ApiProviderType.SurePass)
-            {
-                _apiResponse = await _surepassApiContext.GetPanDetails(reqObj.panNummber, reqObj.userId);
-            }
-            if (apiProvider?.ToLower() == ApiProviderType.Signzy)
-            {
-                _apiResponse = await _signzyApiContext.GetPanDetails(reqObj.panNummber, reqObj.userId);
-            }
-            Response.StatusCode = _apiResponse.StatusCode;
-
-            if (_apiResponse.StatusCode == HttpStatusCode.OK)
-            {
-                CandidateValidateResponse verifyResponse = await VarifyPanData(_apiResponse, reqObj.appointeeId, reqObj.panName);
-                Response.IsValid = verifyResponse.IsValid;
-                Response.Remarks = verifyResponse.Remarks;
-                Response.IsUanFetchCall = false;
-                string activitystate = Response?.IsValid ?? false ? ActivityLog.PANVERIFICATIONCMPLTE : ActivityLog.PANDATAVERIFICATIONFAILED;
-                await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, activitystate);
-
-            }
-            else
-            {
-                await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PANVERIFIFAILED);
-                Response.IsValid = false;
-                Response.Remarks = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "PAN");
-            }
-
-            return Response;
-        }
+        
         private async Task<CandidateValidateResponse> VarifyPanData(PanDetails request, int appointeeId, string panName)
         {
             bool IsValid = false;
@@ -167,6 +129,70 @@ namespace VERIDATA.BLL.Context
 
             return response;
         }
+
+        public async Task<AppointeePanValidateResponse> PanDetailsValidation(AppointeePanValidateRequest reqObj)
+        {
+            PanDetails _apiResponse = new();
+            AppointeePanValidateResponse Response = new();
+            int priority = 1;  // Start with highest priority
+            bool isSuccess = false;
+
+            await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PANVERIFICATIONSTART);
+
+            // Attempt provider calls based on priority
+            while (!isSuccess)
+            {
+                var apiProvider = await _masterContext.GetApiProviderDataPriorityBase(ApiType.Pan, priority);
+
+                if (string.IsNullOrEmpty(apiProvider))
+                {
+                    break;  // Exit loop if no more providers
+                }
+
+                if (apiProvider?.ToLower() == ApiProviderType.Karza)
+                {
+                    _apiResponse = await _karzaApiContext.GetPanDetails(reqObj.panNummber, reqObj.userId);
+                }
+                else if (apiProvider?.ToLower() == ApiProviderType.SurePass)
+                {
+                    _apiResponse = await _surepassApiContext.GetPanDetails(reqObj.panNummber, reqObj.userId);
+                }
+                else if (apiProvider?.ToLower() == ApiProviderType.Signzy)
+                {
+                    _apiResponse = await _signzyApiContext.GetPanDetails(reqObj.panNummber, reqObj.userId);
+                }
+
+                // Check if the call was successful
+                if (_apiResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    isSuccess = true; // Mark success and exit the loop
+                }
+                if (_apiResponse.StatusCode == HttpStatusCode.ServiceUnavailable || _apiResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    priority++;  // Increase priority to try the next provider
+                }
+            }
+
+            // Post-process response once successful or log failure
+            if (isSuccess)
+            {
+                CandidateValidateResponse verifyResponse = await VarifyPanData(_apiResponse, reqObj.appointeeId, reqObj.panName);
+                Response.IsValid = verifyResponse.IsValid;
+                Response.Remarks = verifyResponse.Remarks;
+                Response.IsUanFetchCall = false;
+                string activityState = Response?.IsValid ?? false ? ActivityLog.PANVERIFICATIONCMPLTE : ActivityLog.PANDATAVERIFICATIONFAILED;
+                await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, activityState);
+            }
+            else
+            {
+                await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PANVERIFIFAILED);
+                Response.IsValid = false;
+                Response.Remarks = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "PAN");
+            }
+
+            return Response;
+        }
+
         public async Task<AppointeePassportValidateResponse> PassportDetailsValidation(AppointeePassportValidateRequest reqObj)
         {
             PassportDetails _apiResponse = new();
@@ -375,16 +401,17 @@ namespace VERIDATA.BLL.Context
                     Type = RemarksType.UAN,
 
                 };
-                if (_apiResponse.IsUanAvailable ?? false)
-                {
-                    var VerifyResponse = await VerifyUanName(_apiResponse, reqObj.appointeeId, reqObj.userId);
-                    Response.IsVarified = VerifyResponse.IsValid;
-                    Response.Remarks = string.IsNullOrEmpty(Response.Remarks) ? VerifyResponse.Remarks : $"{Response.Remarks}, {VerifyResponse.Remarks}";
-                    candidateUpdatedDataReq.Status = VerifyResponse.IsValid;
-                    _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+                //if (_apiResponse.IsUanAvailable ?? false)
+                //{
+                //    var VerifyResponse = await VerifyUanName(_apiResponse, reqObj.appointeeId, reqObj.userId);
+                //    Response.IsVarified = VerifyResponse.IsValid;
+                //    Response.Remarks = string.IsNullOrEmpty(Response.Remarks) ? VerifyResponse.Remarks : $"{Response.Remarks}, {VerifyResponse.Remarks}";
+                //    candidateUpdatedDataReq.Status = VerifyResponse.IsValid;
+                //    _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
 
-                }
-                else if (_apiResponse.IsUanAvailable == false && string.IsNullOrEmpty(_apiResponse.UanNumber))
+                //}
+                //else 
+                if (_apiResponse.IsUanAvailable == false && string.IsNullOrEmpty(_apiResponse.UanNumber))
                 {
                     candidateUpdatedDataReq.Status = true;
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
@@ -1186,6 +1213,73 @@ namespace VERIDATA.BLL.Context
         {
             await _activityContext.PostActivityDetails(appointeeId, userId, activityCode);
 
+        }
+
+        public async Task<GetUanResponse> GetUanNumberPriorityBase(GetUanNumberDetailsRequest reqObj)
+        {
+            GetUanResponse response = new();
+            int priority = 1;
+            bool isSuccess = false;
+
+            // Fetch providers based on priority, starting with the highest priority
+            while (!isSuccess)
+            {
+                var apiProvider = await _masterContext.GetApiProviderDataPriorityBase(ApiType.UAN, priority);
+
+                if (string.IsNullOrEmpty(apiProvider))
+                {
+                    break; // No more providers available, exit the loop
+                }
+
+                //try
+                //{
+                if (apiProvider?.ToLower() == ApiProviderType.SurePass)
+                {
+                    response = await GetAadharToUan(reqObj);
+                }
+                else if (apiProvider?.ToLower() == ApiProviderType.Karza)
+                {
+                    response = await GetPanMobileToUan(reqObj);
+                    if (response.StatusCode == HttpStatusCode.ServiceUnavailable || response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        priority++;
+                    }
+                    else
+                    {
+                        isSuccess = true;
+
+                    }
+                }
+                else if (apiProvider?.ToLower() == ApiProviderType.Signzy)
+                {
+                    response = await GetMobilePanToUan(reqObj);
+                }
+
+                // If successful, break the loop
+                // isSuccess = true;
+                //}
+                //catch (HttpRequestException ex)
+                //{
+                //    // Check if the exception is related to a service issue (like 503)
+                //    if (ex.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
+                //    {
+                //        // Move to the next provider based on priority
+                //        priority++;
+                //    }
+                //    else
+                //    {
+                //        // For other exceptions, rethrow the error or handle as necessary
+                //        throw;
+                //    }
+                //}
+            }
+
+            if (!isSuccess)
+            {
+                throw new Exception("All API providers failed to return a valid response.");
+            }
+
+            return response;
         }
 
 

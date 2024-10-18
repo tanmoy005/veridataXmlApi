@@ -89,7 +89,7 @@ namespace VERIDATA.BLL.Context
                         DateTime joiningDate = new();
                         var _dateOfJoining = ((string)row["Date Of Joining"])?.Trim();
                         // Validate the date format (dd/MM/yyyy)
-                         DateTime.TryParseExact(_dateOfJoining, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out joiningDate);
+                        DateTime.TryParseExact(_dateOfJoining, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out joiningDate);
                         _rawData.CandidateID = candidateID;
                         _rawData.AppointeeName = appointeeName;
                         _rawData.AppointeeEmailId = AppointeeEmailId?.Trim();
@@ -441,7 +441,7 @@ namespace VERIDATA.BLL.Context
                     }
                     else
                     {
-                        string[] formats = {"dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy","d/M/yyyy","M/d/yyyy"};
+                        string[] formats = { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "d/M/yyyy", "M/d/yyyy" };
                         // Validate the date format (dd/MM/yyyy)
                         bool joindateValidity = DateTime.TryParseExact(DateOfJoining, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out joiningDate);
 
@@ -767,7 +767,7 @@ namespace VERIDATA.BLL.Context
                                 //    throw new Exception("File size exceeds the limit or file type is not allowed.");
                                 //}
 
-                                
+
                                 // Read the file into a byte array
                                 using (var memoryStream = new MemoryStream())
                                 {
@@ -907,25 +907,6 @@ namespace VERIDATA.BLL.Context
         }
         public async Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList)
         {
-            //List<AppointeeUploadDetails> _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
-            //if (_UploadDetails?.Count > 0)
-            //{
-            //    foreach ((AppointeeUploadDetails obj, FileDetailsResponse doc) in from obj in _UploadDetails
-            //                                                                      let doc = new FileDetailsResponse()
-            //                                                                      select (obj, doc))
-            //    {
-            //        byte[]? _FileData = await GetFileDataAsync(obj.UploadPath);
-            //        doc.FileData = _FileData;
-            //        string _fileName = $"{candidateFileName}_{obj?.UploadTypeCode}";
-            //        doc.FileName = _fileName;
-            //        doc.UploadTypeId = obj?.UploadTypeId ?? 0;
-            //        doc.mimeType = obj?.MimeType ?? string.Empty;
-            //        doc.UploadTypeAlias = obj?.UploadTypeCode ?? string.Empty;
-            //        _FileDataList.Add(doc);
-
-            //    }
-            //}
-
             List<AppointeeUploadDetails> _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
             if (_UploadDetails?.Count > 0)
             {

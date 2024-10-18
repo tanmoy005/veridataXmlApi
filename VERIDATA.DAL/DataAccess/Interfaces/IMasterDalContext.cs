@@ -30,5 +30,6 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<string> GetApiProviderData(string? apiType);
         public Task<List<FaqDetailsResponse>> GetAllFaqMaster();
         public Task<List<CompanyEntityDetailsResponse>> GetAllCompanyEntityMaster();
+        public Task<string> GetApiProviderDataPriorityBase(string? apiType, int? apiPriority); // mGhosh new method
     }
 }

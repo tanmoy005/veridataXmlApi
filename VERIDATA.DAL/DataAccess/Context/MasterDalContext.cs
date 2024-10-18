@@ -387,9 +387,9 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<string> GetApiProviderData(string? apiType)
         {
-            var response = await GetApiProviderData(apiType, 1);
+            var response = await GetApiProviderDataPriorityBase(apiType, 1);
             return response;
-        } 
+        }
         public async Task<string> GetApiProviderData(string? apiType, int prioriy)
         {
             string response = string.Empty;
@@ -401,6 +401,28 @@ namespace VERIDATA.DAL.DataAccess.Context
                 var responseData = await _dbContextClass.ApiTypeMaster?.FirstOrDefaultAsync(x => x.ActiveStatus == true && x.TypeCode.ToLower().Trim() == _apiType);
                 response = responseData.Provider;
 
+            }
+            return response;
+        }
+
+        public async Task<string> GetApiProviderDataPriorityBase(string? apiType, int? apiPriority) //mGhosh new method
+        {
+
+            string response = string.Empty;
+            string? _apiType = apiType?.ToLower()?.Trim();
+
+            if (!string.IsNullOrEmpty(_apiType) && apiPriority.HasValue)
+            {
+                var responseData = await _dbContextClass.ApiTypeMaster?.FirstOrDefaultAsync(x => x.ActiveStatus == true && x.TypeCode.ToLower().Trim() == _apiType
+                && x.apiPriotity == (apiPriority ?? 1)
+                );
+                //response = responseData.Provider;
+               
+
+                if (responseData != null)
+                {
+                    response = responseData.Provider;
+                }
             }
             return response;
         }

@@ -7,6 +7,7 @@
     [created_by]      BIGINT            NULL,
     [created_on]      DATETIME       NULL,
    
+    [api_priority] INT NULL, 
     CONSTRAINT [PK_api_type_master] PRIMARY KEY CLUSTERED ([id] ASC)
 );
 

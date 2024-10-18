@@ -9,6 +9,8 @@ namespace VERIDATA.Model.Request
         public bool? TrustPassbookAvailable { get; set; }
         [Required]
         public bool? IsUanAvailable { get; set; }
+        [Required]
+        public bool? IsFinalSubmit { get; set; }
         public int AppointeeId { get; set; }
         public string? AppointeeCode { get; set; }
         [Required]
