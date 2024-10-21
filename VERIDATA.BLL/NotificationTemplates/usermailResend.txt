@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <!--[if gte mso 9]>
+            <xml>
+                <o:OfficeDocumentSettings><o:AllowPNG /><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings>
+            </xml>
+        <![endif]-->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+        <meta content="width=device-width" name="viewport" />
+        <!--[if !mso]><!-->
+        <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+        <!--<![endif]-->
+        <title></title>
+        <!--[if !mso]><!-->
+        <!--<![endif]-->
+        <style type="text/css">
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            table,
+            td,
+            tr {
+                vertical-align: top;
+                border-collapse: collapse;
+            }
+
+            * {
+                line-height: inherit;
+            }
+
+            a[x-apple-data-detectors="true"] {
+                color: inherit !important;
+                text-decoration: none !important;
+            }
+        </style>
+        <style id="media-query" type="text/css">
+            @media (max-width: 660px) {
+                .block-grid,
+                .col {
+                    min-width: 320px !important;
+                    max-width: 100% !important;
+                    display: block !important;
+                }
+
+                .block-grid {
+                    width: 100% !important;
+                }
+
+                .col {
+                    width: 100% !important;
+                }
+
+                .col > div {
+                    margin: 0 auto;
+                }
+
+                img.fullwidth,
+                img.fullwidthOnMobile {
+                    max-width: 100% !important;
+                }
+
+                .no-stack .col {
+                    min-width: 0 !important;
+                    display: table-cell !important;
+                }
+
+                .no-stack.two-up .col {
+                    width: 50% !important;
+                }
+
+                .no-stack .col.num4 {
+                    width: 33% !important;
+                }
+
+                .no-stack .col.num8 {
+                    width: 66% !important;
+                }
+
+                .no-stack .col.num4 {
+                    width: 33% !important;
+                }
+
+                .no-stack .col.num3 {
+                    width: 25% !important;
+                }
+
+                .no-stack .col.num6 {
+                    width: 50% !important;
+                }
+
+                .no-stack .col.num9 {
+                    width: 75% !important;
+                }
+
+                .video-block {
+                    max-width: none !important;
+                }
+
+                .mobile_hide {
+                    min-height: 0px;
+                    max-height: 0px;
+                    max-width: 0px;
+                    display: none;
+                    overflow: hidden;
+                    font-size: 0px;
+                }
+
+                .desktop_hide {
+                    display: block !important;
+                    max-height: none !important;
+                }
+            }
+        </style>
+    </head>
+    <body class="clean-body" style="margin: 0; padding: 0; -webkit-text-size-adjust: 100%; background-color: #dfd2d1;">
+        <!--[if IE]><div class="ie-browser"><![endif]-->
+        <table
+            bgcolor="#dfd2d1"
+            cellpadding="0"
+            cellspacing="0"
+            class="nl-container"
+            role="presentation"
+            style="table-layout: fixed; vertical-align: top; min-width: 320px; margin: 0 auto; border-spacing: 0; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #dfd2d1; width: 100%;"
+            valign="top"
+            width="100%"
+        >
+            <tbody>
+                <tr style="vertical-align: top;" valign="top">
+                    <td style="word-break: break-word; vertical-align: top;" valign="top">
+                        <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="background-color:#dfd2d1"><![endif]-->
+                        <div style="background-color: transparent;">
+                            <div class="block-grid" style="margin: 0 auto; min-width: 320px; max-width: 640px; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; background-color: #fcfbeb;">
+                                <div
+                                    style="
+                                        border-collapse: collapse;
+                                        display: table;
+                                        width: 100%;
+                                        background-color: #fcfbeb;
+                                        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAGeCAYAAAAE+bBVAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NTc3MiwgMjAxNC8wMS8xMy0xOTo0NDowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjVBRUJCMEQ1ODA5QzExRUE4MUEwRkQ5MThCQkI0NzA0IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjVBRUJCMEQ2ODA5QzExRUE4MUEwRkQ5MThCQkI0NzA0Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NUFFQkIwRDM4MDlDMTFFQTgxQTBGRDkxOEJCQjQ3MDQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NUFFQkIwRDQ4MDlDMTFFQTgxQTBGRDkxOEJCQjQ3MDQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7/pBhqAAAcCElEQVR42uzdC5xdVX0v8DXJhIS8eCaQ8AoIBJCXDRcKgiCXl6JWtIpFrVbbSm/FWi9ir6at+LjQi9VqldtYLVJRehVEUAG9ioAICD4QeQQMEOUdQshz8prM6X/lTJA0IWQy57HPWd/v5/NjJpOZs9dZe8+HX/Y5e+2eY17954kXNCoyJ7L7EH+uFlnYgO33R5Zsxvd9IHLZf/3ijVfNsgcBgGf1moLNsjryqcEMRU9kuwaNYdJmfM8pGyuAAADPNcIUbLYvRBZUfIwvt5sAAAWwcZZGLqz4GPeK7GxXAQCb4iXgofl05JzIVhUe45GRK+wqADrdDx9/2CQ0iTOAQzM/cnnFxzjDbgIANsUZwKHLl9T+UYXHd4hdBEDJ/v5dHxvS9587a6YCyAu6MTI7sl9Fx3ewXQQA6c5IXuvu1kKe7y6pfi3A5FS/HmDHVF9BJH++TWTCYO8bHRmrAA5dXtvv85FPVnR8ea3C8al+0QoAlGqb1H0nuvLzOSDVX+2bHtknsm9k78H/9w/pgRi6SyMXREZWdHz5oPiZ3QQAHW1q5KWRo1L9Is9c/MY0qkkydE9EbogcX9Hx7aUAAsAmvTfVz6ZV6ZZoYyMnPCf7N2tDCuCW+48KF8Bd7B4A2KR8Jm1cBcaR36t3WuS1g71iTCs2qgBuuW9EPpfq9wmumql2DwBUVn6/3h9Gzkj1u3i1vI8pgFvu6VS/Ivi/K4AAwGY4PHJm5A1piBdtNJqFoIfnmoqOSwEEgGrIdw97W+T2yE8if9Lu8qcADt93KzquHe0aAGirvO7e2ZGHIl+KHFalwXkJeHjuivw21dfeq5KJdg0AtEU+u/eXkfdHdqjqIJ0BHL7vV3BMo+wWAGipfFLtf0QejJxf5fKnADbGzRUc0zi7BQBa5lWRX6X66iCTOqWt0n0FcGu7BQCablrk05HXdNrAnQEcvtmRBRUb01Z2CwA0tT+9J9XP+r2mE5+AM4DDV4vcFjmlQmNabbcAQFPsGbk4ckyjHnDVylXpvjt/nZYtXpam7btH2nm3nRTADnFXxQpgn10CAA335siFqYGrbTz1+Pz05U9/NS16ZvHaP/f0pHTUiUemk17f3PtMeAm4Me6p2HjW2CUA0DD5vfUXRS5JDV5q7YovXfVs+ctqtZR+/L1b0py7H1AAO8C9FRvPErsEABpiWuTHkbc3/H/Wi5amR+c+ttG/m/3L+5v6pLwE3J0F8Bm7BACG7ejIFalJd9iqDQxs4u9qTX1izgA2xqKKla6n7RIAGJb8fr/vpybeXnXidhPTTrtO3ujf7XPQ3gpgh3iiQmN53O4AgC32PyNfjoxu9oZe+8evTmPHj13vazOOfkmafvC+Td2ul4AbJ7+Iv39FxvKo3QEAW+RjkQ+1amNT95iSzjr3zHT3z+5Ny5bUl4HJaTYFsHGqdNbtIbsDAIbs/0Te3+qN5jOA/+3YGS3dppeAG2dhhcbygN0BAEPykXaUv3ZRABtnaYXGcq/dAQCb7ZzI35b0hBXAxllVkXHkK4C9BxAANsO5s2bmq33PL+15K4CNs7wi47jdrgCAFzZh2wk7xIcvRnpKe+4uAuk+t5kCANi0idtN3Ga3vXY5NrVgqZcqymcA81o3J0W2dTh0RZn+qV0BAM/v3Fkztzr48APPGDly5JiSS8snBj/P9yPJZ4++FflGZLZDZEjGVWAMeR/+2K4AgE06b8zYMbsvfmZxsRPw3LNW+Wzg7w/m45HrI7Mil0X6HSsvqAr/ivh5ZIFdAQAbd+6sma+ID39dpTHlRaBvv+FnaenipWnP6dPSca96WRo3YWzLCuB/ddxgPpzql0bnIlhz6DyvbSowhh/YDQDwvOVv+1Sxiz5uu/6n6TuXXvvsn596fH6ac8+D6cwPvTONHtO8tyduzlXA0yNfi/woVedWZ1W0awXG8G27AQCe1z9HplRlMGvWDKTrrrx+g68vmLcg/fymO5q67aEsA/PSyC8if5MsH7Mx7T6g5kVuthsAYEPnzpp5Ynw4o0pjWrRgUVret2Kjf/fEw082vQCuHsL353OR50WuiWzvcFrP1DZvP1+8M2A3AMAG5S+/T//Cqo1r3IRxaeTIjZ9Tm7j9xKYXwL4t+Lm8bEy+Ynhvh9Va21egEF9iNwDARn2wip1l9Jit0qFHHbLB10dtNSq9ZCNfb3QB3FIvitwUOdBxlQ5q8/bnRm60GwBgfefOmrlbfDi7quN7xeknp8OO+b00snfk2j/vuNMO6S1nvSltP2m7pm53uIsX7xS5LnJUZI4C2Db57J+XfwFgIx0wsnVVBzdqVG969VtemU45/aS0om9FmrDN+JZstxEXc0xK9fcETir44Dq0jdvOS/Nc7PcbANZ3yBEH7RUf/rgTxpqLYKvKX6MKYJZfV88XIWxV6DF2dBu3na/8nePXHADW9+IZ+78rPow0E80rgNkRkfMLnMN89e/0Nm7/Cw5jAFhfb+/IrbYet/WRZqL5BTB7b+SUwubw+DZue37k/zmMAWB9o7cenddR6TETrSmAeaIvimxX0Bye2MZt/0tkucMYAH7n3Fkz9+sdNWqsmWhdAcx2jvxDKf/AiPxBm7a9KlVwUUsAqID3mILWF8DsTyPHFDB/+eXubdq07csjjzuEAWA9+VLat5qG9hTA/FLwZ1P3X3nzxjZu+zMOXwDYwFsHS2BHeXregvTbOQ+nVStXtWR7vU187IMjf5K69yrVHSOntWnbP4zc6nccADZwZicNtm9pX/r6F65ID9770No/jxk7Jp36R6ekgw9v7o3WRjT5eX00MqGLD7B2rSx+nt9vANhAXvbl4E4a8FWXfOfZ8pflu4FccdGV6fGHn+joApgvCPmbLjzA8pnTP2vTtn8a+f9+xwFgA2d00mCXR9mbfcf9G3x9YKCW7vzJXR1dALP3RXbvsgPsTW18Tuf7/QaADeSTM2/spAGv6FuearXaxsvhsuau8taKAjimy0pLPsD+tk3bnh25wu84AGzghMjkThrwtjtsmyZuu/F3yu32ol07vgBm+YzZEV1ygL0jsm+btv3xyIDfcQDYwOmdNuCenp70yjedkkaMGLFB+Tvk95v7VsbeVj3HyCcjR0dqHXxw5TX/PtKmbec3CfyH328A2EBuUK/sxIHv/5Lp6Z3nvC397Ee/SMuWLEvTpk9Lhx87I9/LuCsKYHbUYDvv5BLzschObdp2PvvX73ccADaQX2Wc3KmD33XPXdam1Y25lT6ROnBxxucU2L9o07bnRL7q9xsANuo1pqDaBTDX27/rwHkaF/lSat+dTZz9A4Dnd6opqHYBzN4beUmHzVO+rd0+bdr2g5FLHKoAsFH5pd8DTUP1C+CoyMWRrTpkjt4WeXsbt58vOnH2DwA27rhUv9iUihfA7KDIuR0wP4dFLmzj9vO6f19xmALAJgsgHVIAs3MiJ1d4bvZI9UWXx7ZxDHnBaWf/AEAB7JoCmLed39u2dwXnZVLk+5Fd2ziGn0cud4gCwPPaPrKfaeisApjtGLlmsHBVxTaD5a/dxfRDqbMXzQaAZsvr/3n/XwcWwDRYtK6NbFeRf0nksRzc5nHcMDgOAOD5HWYKtkxvRcbxe6l+1i3fxuXJNo1ht8jVqRqXks90aALAZvWHjXrfeWeZnU0YUbGd+KPUntfy810+bqtI+cvv+7vJoQkAL+hQU9D5BTDLiy3fGnlTC5//2ZHrIztX4PmvjHzAYQkALyjfpWsP09AdBTDLF2FcGrkosm0Tt7N/qr/X7oJUX5y6Cv458oDDEgA26//jLgDpogK4ztsj90b+NDX2vYp5aZd/jdwZObpCz3d+qt/zFwB4YQeYgu4sgNnOg2Xt15H3RSYO818Kn4nc34RS2Qgfjix0SAKAAthsvR0yzmmRf4x8NPKdVL9aN798+9AmfmZMql9Y8vLIaZEZFX5++UznLIcjAGy2PU3B8ArgmA4ab74t2xsGk+UzZnMjCwY/z+8FyGv57TJYGjuh4ObFnt+d3PINAIZimikYXgEc3cHjzxeJdPol4F+JXOdQBIAhcQZwGEaYgrbKZy3PNg0AMCR5CZhJpkEB7FT/K7XvzicA0KmmmgIFsFP9JPJ50wAAQzbZFCiAnWhN5MzIgKkAgCHbyRQogJ0o333kDtMAAAqgAliGu1N90WcAYMt4CVgB7Cj5pd93RFaaCgDYYhNMgQLYSc6L3GYaAEABVADLcHvkI6YBAIZtoikYnl5T0BLLIm+JrDYVADBswz4DOGW3ndK4CWMVQJrqLyL3mwYAqEYB3PvFLyp6Ar0E3HwXRb5sGgBAfzGBZfhV5N2mAQBQAMuwMPK6SJ+pAICGGm0KFMAqyuv9nRGZYyoAoOHGmILhF8DLTEPDzYxcYxoAgKoWwNMj/2gqGmZW5HzTAABNs8QUDL8ADkTOTvWLFdaYkmG5LvIe0wAATTVgCoZfANf5XOS0yFLTskXyLd7yRR+rTAUAKICdUgCzb0WOijxoaoYkX+zxqsgiUwEATecl4AYXwCyvXXdE5HrTs1nmRk6IPGUqAKAlvNrWhAKYzY+cFLnQFG3SbyMvj/zGVABAyyw0Bc0pgNnqyF9G3hlZYao2MHew/M01FQDQUs+YguYVwHX+LfKyyMOm61n3Ro5J3isJAO3gDGALCmB2e2RG8r7AdXORy98jpgIA2sIZwBYVwCxf5HBi5FMFz9fXIsdFnnboAEDbOAPYwgKY9Ufel+r3ue0raJ5qkb+PvKmw5w0AVWTljRYXwHUuTfX1Au8vYI6WRd4Q+chgEQQA2usJU9CeApj9MtXfF/jvXTw/6977eLlDBQAq41FT0L4CmOXbxr0t8tbUXaty53si/+/ISyP3OUwAoFLyesWWqGtjAVznkshLIjd0wZzk27rl9f0+lOprIQIA1eMsYAUKYPZA5PjIWan+vrlOky/umBk5MPIjhwYAVJrl2CpSALOByGcjB0e+10Hz8PXI/pGPR1Y6LABAAVQAhy7fIePkyOtS/SXVqro+1Rd1fmOq39cXAOgMD5iC6hXAda6IvDhyTqrOqt15KZerU/19fjk3OQwAoOP82hRUtwBmqyIXRPZM9cWU57XpuS5K9ZenD4qcmtzWDgA62RxTUO0C+NwClhdT3j3yjsiPU/MXVs4XdlyZ6nfwmJLqF6jcbbcDQMe71xRsud42bDNfZHHRYPJZwdMir0z1NffGDPOxc6G8K3Jtql+Ekl/etU4QAHSffGLpschUU9EZBfC5Hop8cjC5/OW1BPOdN148WA7z2cIJkXGRiZGRqb7gdD6z99Tgjr8n1c/q3T34+SK7FQCKcLcC2JkF8LnymbpbBgMAsDkF8ETTMHQjTAEA0KHuMAUKIABQlp+bAgUQAChLvhK4zzQogABAOfojvzQNQ9d741WzzAIA0KlujRxpGobGGUAAoJPdbAoUQACgLLeaAgUQACjLI5EHTYMCCACU5QZToAACAGX5oSlQAAGAsnwvUjMNCiAAUI4nI78wDQogAFCW75kCBRAAKMu1pkABBADKkheEXmQaFEAAoByrI1ebBgUQACjL5aZAAQQAynJNZJlpUAABgHL0DZZAFEAAoCCXmQIFEAAoy7cjS0yDAggAlCO/B/AbpkEBBADK8iVToAACAGW5MTLXNCiAAEA5BiKfNw0KIABQln+LrDINCiAAUI4nI980DQogAFCWT5kCBRAAKMutg0EBBAAK4iygAggAFCYvCj3XNCiAAEA5+iMXmAYFEAAoy0WRx02DAggAlGN55BOmQQEEAMpyYeRh06AAAgDlWBH5O9OgAAIAZfly5B7ToAACAOVYE5lpGhRAAKAs+f7AtyiAAADlqEXOGfyoAAIAFOKmyKWlPvlxq1amnlqt5jAAACrnh483ddWWXSKzI+NLmMsJK5enKUueSTssW5J6B9akXocXAFCgRyMfjfxDtxe/aQvmpW1XLFvv684AAgCV1OQzgFk+EfbTyCHdNncjawNri9/UxQs2+vfeAwgAlKo/8uepvjxM18jv8Tv00Yeet/wpgABA6W6LfKZbnsz2fUvTIY8/lMauXrnJ71MAAYDSfShyX6c/iclLF6UD5j2cRg4MvOD3KoAAQOmWR96eOvil4J2WLEz7PvVovrhjs75fAQQASOnWyPmdOPAd+pakfeY/lnqG8DMKIABA3YcHi2DHyMu87Dfv0SGVPwUQAOB38lXBZ0QWd8JgR/evTgc8+XAaURsY8s8qgAAAv/NQ5J1VH2R+r9/+8x5JW63p36KfVwABANZ3WeSfqjzAac/MW/vy75ZSAAEANvSByM1VHNi2y5elXRc9PazHUAABADa0KvL6yCNVGlTvwJq07/zHhv04CiAAwMY9EXldpK8qA8r3980XfyiAAADNc3vkzyK1dg8kv+dvypJnGvJYCiAAwKZ9NfLBdg4gr/O39/zHG/Z4CiAAwAvLdwn5v+3a+JTFC9L4VSsUQACAFjsrcmWrNzpqzZq0xzNPNfQxFUAAgM2zJvLGyHWt3OjuC59ae/WvAggA0B55eZjTIre0YmNjVq9q2IUfCiAAwJbL9wp+ReS2Zm9oj4VPrb3tmwIIANBmxzx0z6L4cFKqLxPTFFuvXpUmLVvclMdWAAEAtrwEnhD5UTMef/cmnf1TAAEAhlcC8ym6UyLfa+Tj5rt9NOvsnwIIADD8EphvFffqyKWNesxdFi9o2tk/BRAAoDElMF8d/ObIJ4b7WHnJl52bcOWvAggA0PgSWIu8Pz59d6R/Sx9nyuJn0siBAQUQAKCDiuDn4sOpkSGfxhtRq6Wpixc0fYwKIABA40tgvijkyMi9Q/m5HZctTlut6W/6+BRAAIDmlMD74sPhka9t7s+04uyfAggA0NwSuDRyenz6V5GVm/re8atWpAkrlyuAAABdUgQ/Ex+OiMx+vu9p9pW/CiAAQOtL4C/jw4zIZyPrLfI3ojaQJi1dpAACAHRhCeyLnJXqt5D7zbqv77hsSept8tIvCiAAQHuL4HXx4cDIP0X6Jy9d2NLt99oFAABtKYFL48Nfz5686zXbLV92bXze06ptOwMIANBG+8175IBWlj8FEACg/d7S6g0qgAAA7TM91a8MVgABAArx5nZsVAEEAGifNyiAAADl2G8wCiAAQCH+oF0bVgABANrjNAUQAKAcUyOHK4AAAOXIL//2tGvjCiAAQOu9tp0bVwABAFpr68jLFEAAgHIcGxnTzgH02gcAQBW9fMpulR1b/0P3DOfHT273+J0BBABorZMUQACAcuTTmgcogAAA5Ti5CoNQAAEAWudEBRAAoBx54efjFEAAgHLsF5msAAIAlOOYqgxEAQQAaI1jFUAAgLI4AwgAUJA9U30NQAUQAKAQL6vSYBRAAIDmO6ZKg1EAAQCa7zAFEACgHGMjByqAAADlyGf/RiqAAABlFcBKUQABAJrrCAUQAKAshyuAAADlmBSZpgACAJRjRhUHpQACADTPQQogAEBZDlUAAQDK4gwgAEBBRkf2VwABAMqRy1+vAggAUI5DqjowBRAAoDkOVgABAMpyoAIIAFCW6QogAEA5xkZ2VwABAMqxT6RHAQQAKEeT1/+rpdqKPgUQAKBC9m1m+eu/6eq0+sovptqyxQogAEBF7NfM8rfmnttTbdHTafW3L96iEqgAAgB0SAHsv/nateXv2Tq4rgT2LVUAAQDabJ9mPOiInfeI/4xc72s9O+yUesaMVQABANpo58j4phTAvQ5Io45//bMlsP7nP4xPhlbpeu0jAICGmtbMB19b+uLjmrn3plHHnTbk8qcAAgA03l7N3kAugTlb/PP2EQBAQ02r+gAVQACAxtpTAQQAKMteVR+gAggA0Fh7KIAAAGXZVQEEACjH5MhoBRAAoBy7d8IgFUAAgMbZtRMGqQACACiAAAAogAAAbI6pCiAAQFmmKIAAAGXZWQEEACjLTgogAEA5RkV2VAABAMoxKdKjAAIAlGNKpwxUAQQAaIwdO2WgCiAAQGNMVgABAMqyvQIIAFCWHRRAAICyeA8gAIACqAACAHQz7wEEACiM9wACABRmGwUQAEABVAABABRABRAAoBuMj4xUAAEAyrFNJw1WAQQAUAABAFAAAQDYlPEKIABAWcYqgAAAZRmnAAIAlGWCAggAUJatFUAAAAVQAQQA6GITFUAAgLKMUQABAMoyWgEEAChLrwIIAFAW6wACAKAAAgB0s20UQAAAFEAAgC7mPYAAAIVxFTAAAAogAAAKIAAACiAAAAogAEAHGKMAAgCUZbQCCACAAggA0MWWKIAAAGUZUAABAFAAAQBQAAEAukWfAggAUJbVCiAAAAogAAAKIABAt1ipAAIAlGWFAggAgAIIANDFnAEEACiM9wACABRmiQIIAFCWfgUQAKAszgACABTGRSAAAIVZqgACAJTFS8AAAIVxBhAAoDCLFEAAgLI4AwgAUJjFCiAAQFmeUQABAMorgDUFEACgvBKoAAIAFGShAggAUBZnAAEACjNfAQQAKMsTCiAAQFmeVgABAMoyTwEEACjLUwogAEBZHlMAAQAUQAUQAKCLPaIAAgCUZUGkTwEEAChLR5wFVAABABrnYQUQAKAszgACACiACiAAgAKoAAIAdI1HFUAAgLK4CAQAoDAPKoAAAGVZHHlSAQQAKMscBRAAoCyVfxlYAQQAaKz7FEAAgLLcrwACAJTlnqZvoTaQaksXKoAAABWRzwD2N7P8rf7B5Wn1N7+YagvnK4AAABWwOjXrSuDB8jfw4N2p1rckrf72xVtUAhVAAIDGa8rLwP03XLW2/D3bB9eVwPioAAIAtNedzXjQEfsemlLvqPW/Nm166hk7XgEEAGizO5pSAKdOS6NOefOzJXDkAYel3qNPjc96hvQ4PbVazS4CABiC/pu/+0LfskdkbrO2P/DY3DTwm9mp98iTh1z+FEAAgOYUwOzpyPZVHL+XgAEAmuOOqg5MAQQAaI7bFEAAAAVQAQQA6GK3KIAAAGV5IvKIAggAUJYfK4AAAGW5QQEEAFAAFUAAgC52b2SeAggAUI58y7UbFUAAgLJ8t2oDUgABABRAAAAa6OHIXQogAEBZKnUWUAEEAGi+qxRAAICy3BR5UgEEACjHQORKBRAAoCzfUAABAMryg1SRu4IogAAArdEf+aoCCABQln9XAAEAyvKLyK8UQACAssxSAAEAynJxZJECCABQjqWpze8FVAABAFrvc6m+OLQCCABQiPsi31QAAQDK8vFITQEEACjHzyNXK4AAAGX5SGrDWUAFEACgfW6LfE0BBAAoywcjKxVAAIByPJjqy8IogAAABTk38qgCCABQjsWRv1IAAQDKcnnk6wogAEBZzkwteClYAQQAqI4FkbdE1iiAAADluD7Vl4ZRAAEACnJB5CsKIABAOfLt4d4RuVYBBAAox6rI6yM/UQABAMrRFzk1cosCCABQjqcjJ0S+pQACAJQjnwk8LfJ5BRAAoBx5bcB3Rd4aWaIAAgCU45LIQZGrFUAAgHL8JtUvDnl55FYFEACgHNdHjoq8IvLtSP/m/FBPrVYzdQAAQ9B/83erOrQdUv3M4PGRGZHpkVEKIABA9xbAjZkQ2T6ydaovLv3kfwowAMIGyRaJb0dmAAAAAElFTkSuQmCC);
+                                        background-position: center top;
+                                        background-repeat: no-repeat;
+                                    "
+                                >
+                                    <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:transparent;"><tr><td align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:640px"><tr class="layout-full-width" style="background-color:#fcfbeb"><![endif]-->
+                                    <!--[if (mso)|(IE)]><td align="center" width="640" style="background-color:#fcfbeb;width:640px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:20px; padding-bottom:0px;"><![endif]-->
+                                    <div class="col num12" style="min-width: 320px; max-width: 640px; display: table-cell; vertical-align: top; width: 640px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 20px;
+                                                    padding-bottom: 0px;
+                                                    padding-right: 0px;
+                                                    padding-left: 0px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: Tahoma, sans-serif"><![endif]-->
+                                                <div
+                                                    style="
+                                                        color: #555555;
+                                                        font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                        line-height: 1.2;
+                                                        padding-top: 10px;
+                                                        padding-right: 10px;
+                                                        padding-bottom: 10px;
+                                                        padding-left: 10px;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            line-height: 1.2;
+                                                            font-size: 12px;
+                                                            color: #555555;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 14px;
+                                                        "
+                                                    >
+                                                        <p style="font-size: 46px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 55px; margin: 0;">
+                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA</strong></span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 30px; padding-bottom: 0px; font-family: Tahoma, sans-serif"><![endif]-->
+                                                <div
+                                                    style="
+                                                        color: #595959;
+                                                        font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                        line-height: 2;
+                                                        padding-top: 30px;
+                                                        padding-right: 10px;
+                                                        padding-bottom: 0px;
+                                                        padding-left: 10px;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            line-height: 2;
+                                                            font-size: 12px;
+                                                            color: #595959;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 24px;
+                                                        "
+                                                    >
+                                                        <p style="font-size: 22px; line-height: 2; word-break: break-word; text-align: center; mso-line-height-alt: 44px; margin: 0;">
+                                                            <span style="font-size: 22px;"> User Creation </span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background-color: transparent;">
+                            <div class="block-grid mixed-two-up" style="margin: 0 auto; min-width: 320px; max-width: 640px; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; background-color: #fcfbeb;">
+                                <div style="border-collapse: collapse; display: table; width: 100%; background-color: #fcfbeb;">
+                                    <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:transparent;"><tr><td align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:640px"><tr class="layout-full-width" style="background-color:#fcfbeb"><![endif]-->
+                                    <!--[if (mso)|(IE)]><td align="center" width="213" style="background-color:#fcfbeb;width:213px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:5px; padding-bottom:5px;background-color:#fbc5b8;"><![endif]-->
+                                    <div class="col num4" style="display: table-cell; vertical-align: top; max-width: 320px; min-width: 212px; background-color: #fbc5b8; width: 213px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 5px;
+                                                    padding-bottom: 5px;
+                                                    padding-right: 0px;
+                                                    padding-left: 0px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 5px; padding-bottom: 5px; font-family: Tahoma, sans-serif"><![endif]-->
+                                                <div
+                                                    style="
+                                                        color: #595959;
+                                                        font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                        line-height: 2;
+                                                        padding-top: 5px;
+                                                        padding-right: 10px;
+                                                        padding-bottom: 5px;
+                                                        padding-left: 10px;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            line-height: 2;
+                                                            font-size: 12px;
+                                                            color: #595959;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 24px;
+                                                        "
+                                                    >
+                                                        <!-- <p style="font-size: 14px; line-height: 2; word-break: break-word; text-align: left; mso-line-height-alt: 28px; margin: 0;"> -->
+                                                            <!-- <strong><span style="font-size: 18px;">NEW USER ADDED</span></strong> -->
+                                                        <!-- </p> -->
+                                                    </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td><td align="center" width="426" style="background-color:#fcfbeb;width:426px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:5px; padding-bottom:5px;"><![endif]-->
+                                    <div class="col num8" style="display: table-cell; vertical-align: top; min-width: 320px; max-width: 424px; width: 426px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 5px;
+                                                    padding-bottom: 5px;
+                                                    padding-right: 0px;
+                                                    padding-left: 0px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <div class="mobile_hide">
+                                                    <table
+                                                        border="0"
+                                                        cellpadding="0"
+                                                        cellspacing="0"
+                                                        class="divider"
+                                                        role="presentation"
+                                                        style="
+                                                            table-layout: fixed;
+                                                            vertical-align: top;
+                                                            border-spacing: 0;
+                                                            border-collapse: collapse;
+                                                            mso-table-lspace: 0pt;
+                                                            mso-table-rspace: 0pt;
+                                                            min-width: 100%;
+                                                            -ms-text-size-adjust: 100%;
+                                                            -webkit-text-size-adjust: 100%;
+                                                        "
+                                                        valign="top"
+                                                        width="100%"
+                                                    >
+                                                        <tbody>
+                                                            <tr style="vertical-align: top;" valign="top">
+                                                                <td
+                                                                    class="divider_inner"
+                                                                    style="
+                                                                        word-break: break-word;
+                                                                        vertical-align: top;
+                                                                        min-width: 100%;
+                                                                        -ms-text-size-adjust: 100%;
+                                                                        -webkit-text-size-adjust: 100%;
+                                                                        padding-top: 5px;
+                                                                        padding-right: 0px;
+                                                                        padding-bottom: 0px;
+                                                                        padding-left: 0px;
+                                                                    "
+                                                                    valign="top"
+                                                                >
+                                                                    <table
+                                                                        align="center"
+                                                                        border="0"
+                                                                        cellpadding="0"
+                                                                        cellspacing="0"
+                                                                        class="divider_content"
+                                                                        role="presentation"
+                                                                        style="
+                                                                            table-layout: fixed;
+                                                                            vertical-align: top;
+                                                                            border-spacing: 0;
+                                                                            border-collapse: collapse;
+                                                                            mso-table-lspace: 0pt;
+                                                                            mso-table-rspace: 0pt;
+                                                                            border-top: 3px solid #fbc5b8;
+                                                                            width: 100%;
+                                                                        "
+                                                                        valign="top"
+                                                                        width="100%"
+                                                                    >
+                                                                        <tbody>
+                                                                            <tr style="vertical-align: top;" valign="top">
+                                                                                <td style="word-break: break-word; vertical-align: top; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" valign="top"><span></span></td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background-color: transparent;">
+                            <div class="block-grid" style="margin: 0 auto; min-width: 320px; max-width: 640px; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; background-color: #fcfbeb;">
+                                <div style="border-collapse: collapse; display: table; width: 100%; background-color: #fcfbeb;">
+                                    <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:transparent;"><tr><td align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:640px"><tr class="layout-full-width" style="background-color:#fcfbeb"><![endif]-->
+                                    <!--[if (mso)|(IE)]><td align="center" width="640" style="background-color:#fcfbeb;width:640px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 20px; padding-left: 20px; padding-top:15px; padding-bottom:15px;"><![endif]-->
+                                    <div class="col num12" style="min-width: 320px; max-width: 640px; display: table-cell; vertical-align: top; width: 640px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 15px;
+                                                    padding-bottom: 15px;
+                                                    padding-right: 20px;
+                                                    padding-left: 20px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: Tahoma, sans-serif"><![endif]-->
+                                                <div
+                                                    style="
+                                                        color: #595959;
+                                                        font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                        line-height: 1.8;
+                                                        padding-top: 10px;
+                                                        padding-right: 10px;
+                                                        padding-bottom: 10px;
+                                                        padding-left: 10px;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            line-height: 1.8;
+                                                            font-size: 12px;
+                                                            color: #595959;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 22px;
+                                                        "
+                                                    >
+                                                        <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+                                                           Hi {{Name}}
+                                                        </p>
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+                                                        Welcome to <strong> VERIDATA</strong>, the onboarding assistant of {{CompanyName}}.  You are requested to enter the details requested by following the instructions one step at a time.
+                                                        The successful completion of this process would facilitate the on-boarding.</br>
+                                                        Please log in using the following credentials</br></br></br>
+
+                                                        You can reach out to our HR representative regarding any queries
+
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background-color: transparent;">
+                            <div class="block-grid mixed-two-up" style="margin: 0 auto; min-width: 320px; max-width: 640px; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; background-color: #fcfbeb;">
+                                <div style="border-collapse: collapse; display: table; width: 100%; background-color: #fcfbeb;">
+                                    <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:transparent;"><tr><td align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:640px"><tr class="layout-full-width" style="background-color:#fcfbeb"><![endif]-->
+                                    <!--[if (mso)|(IE)]><td align="center" width="213" style="background-color:#fcfbeb;width:213px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:5px; padding-bottom:5px;background-color:#fbc5b8;"><![endif]-->
+                                    <div class="col num4" style="display: table-cell; vertical-align: top; max-width: 320px; min-width: 212px; background-color: #fbc5b8; width: 213px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 5px;
+                                                    padding-bottom: 5px;
+                                                    padding-right: 0px;
+                                                    padding-left: 0px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 5px; padding-bottom: 5px; font-family: Tahoma, sans-serif"><![endif]-->
+                                                <div
+                                                    style="
+                                                        color: #595959;
+                                                        font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                       line-height: 2;
+                                                        padding-top: 0px;
+                                                        padding-right: 3px;
+                                                        padding-bottom: 0px;
+                                                        padding-left: 42px;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            line-height: 2;
+                                                            font-size: 12px;
+                                                            color: #595959;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 24px;
+                                                        "
+                                                    >
+                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
+                                                            <strong><span style="font-size: 18px;">USER INFO</span></strong>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td><td align="center" width="426" style="background-color:#fcfbeb;width:426px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:5px; padding-bottom:5px;"><![endif]-->
+                                    <div class="col num8" style="display: table-cell; vertical-align: top; min-width: 320px; max-width: 424px; width: 426px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 5px;
+                                                    padding-bottom: 5px;
+                                                    padding-right: 0px;
+                                                    padding-left: 0px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <div class="mobile_hide">
+                                                    <table
+                                                        border="0"
+                                                        cellpadding="0"
+                                                        cellspacing="0"
+                                                        class="divider"
+                                                        role="presentation"
+                                                        style="
+                                                            table-layout: fixed;
+                                                            vertical-align: top;
+                                                            border-spacing: 0;
+                                                            border-collapse: collapse;
+                                                            mso-table-lspace: 0pt;
+                                                            mso-table-rspace: 0pt;
+                                                            min-width: 100%;
+                                                            -ms-text-size-adjust: 100%;
+                                                            -webkit-text-size-adjust: 100%;
+                                                        "
+                                                        valign="top"
+                                                        width="100%"
+                                                    >
+                                                        <tbody>
+                                                            <tr style="vertical-align: top;" valign="top">
+                                                                <td
+                                                                    class="divider_inner"
+                                                                    style="
+                                                                        word-break: break-word;
+                                                                        vertical-align: top;
+                                                                        min-width: 100%;
+                                                                        -ms-text-size-adjust: 100%;
+                                                                        -webkit-text-size-adjust: 100%;
+                                                                        padding-top: 15px;
+                                                                        padding-right: 0px;
+                                                                        padding-bottom: 0px;
+                                                                        padding-left: 0px;
+                                                                    "
+                                                                    valign="top"
+                                                                >
+                                                                    <table
+                                                                        align="center"
+                                                                        border="0"
+                                                                        cellpadding="0"
+                                                                        cellspacing="0"
+                                                                        class="divider_content"
+                                                                        role="presentation"
+                                                                        style="
+                                                                            table-layout: fixed;
+                                                                            vertical-align: top;
+                                                                            border-spacing: 0;
+                                                                            border-collapse: collapse;
+                                                                            mso-table-lspace: 0pt;
+                                                                            mso-table-rspace: 0pt;
+                                                                            border-top: 3px solid #fbc5b8;
+                                                                            width: 100%;
+                                                                        "
+                                                                        valign="top"
+                                                                        width="100%"
+                                                                    >
+                                                                        <tbody>
+                                                                            <tr style="vertical-align: top;" valign="top">
+                                                                                <td style="word-break: break-word; vertical-align: top; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" valign="top"><span></span></td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background-color: transparent;">
+                            <div class="block-grid" style="margin: 0 auto; min-width: 320px; max-width: 640px; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; background-color: #fcfbeb;">
+                                <div style="border-collapse: collapse; display: table; width: 100%; background-color: #fcfbeb;">
+                                    <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:transparent;"><tr><td align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:640px"><tr class="layout-full-width" style="background-color:#fcfbeb"><![endif]-->
+                                    <!--[if (mso)|(IE)]><td align="center" width="640" style="background-color:#fcfbeb;width:640px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 20px; padding-left: 20px; padding-top:20px; padding-bottom:20px;"><![endif]-->
+                                    <div class="col num12" style="min-width: 320px; max-width: 640px; display: table-cell; vertical-align: top; width: 640px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 20px;
+                                                    padding-bottom: 420px;
+                                                    padding-right: 20px;
+                                                    padding-left: 20px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: Tahoma, sans-serif"><![endif]-->
+                                                <div
+                                                    style="
+                                                        color: #595959;
+                                                        font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                        line-height: 2;
+                                                        padding-top: 10px;
+                                                        padding-right: 10px;
+                                                        padding-bottom: 10px;
+                                                        padding-left: 10px;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            line-height: 2;
+                                                            font-size: 12px;
+                                                            color: #595959;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 24px;
+                                                        "
+                                                    >
+                                                    	<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Your user name and password is given below <br>
+														<strong><a href={{Url}}>Click on the link to login :</a></strong></p>
+
+                                                       <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>User Name :</strong> {{UserCode}}</p>
+													   {{#if Password}}
+                                                        <p style="font-size: 14px;"><strong>Password :</strong> {{Password}}</p>
+                                                        {{/if}}
+														
+                                                       
+                                                    </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
+                                </div>
+								
+                            </div>
+                        </div>
+						
+                       
+                            <div class="block-grid" style="margin: 0 auto; min-width: 320px; max-width: 640px; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; background-color: #fcfbeb;">
+                                <div style="border-collapse: collapse; display: table; width: 100%; background-color: #fcfbeb;">
+                                    <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:transparent;"><tr><td align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:640px"><tr class="layout-full-width" style="background-color:#fcfbeb"><![endif]-->
+                                    <!--[if (mso)|(IE)]><td align="center" width="640" style="background-color:#fcfbeb;width:640px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 20px; padding-left: 20px; padding-top:15px; padding-bottom:0px;"><![endif]-->
+                                    <div class="col num12" style="min-width: 320px; max-width: 640px; display: table-cell; vertical-align: top; width: 640px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 15px;
+                                                    padding-bottom: 0px;
+                                                    padding-right: 20px;
+                                                    padding-left: 20px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 0px; padding-bottom: 10px; font-family: Tahoma, sans-serif"><![endif]-->
+                                                <div
+                                                    style="
+                                                        color: #595959;
+                                                        font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                        line-height: 1.8;
+                                                        padding-top: 0px;
+                                                        padding-right: 10px;
+                                                        padding-bottom: 10px;
+                                                        padding-left: 10px;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            line-height: 1.8;
+                                                            font-size: 12px;
+                                                            color: #595959;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 22px;
+                                                        "
+                                                    >
+													<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+													  </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background-color: transparent;">
+                            <div class="block-grid" style="margin: 0 auto; min-width: 320px; max-width: 640px; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; background-color: transparent;">
+                                <div style="border-collapse: collapse; display: table; width: 100%; background-color: transparent;">
+                                    <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:transparent;"><tr><td align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:640px"><tr class="layout-full-width" style="background-color:transparent"><![endif]-->
+                                    <!--[if (mso)|(IE)]><td align="center" width="640" style="background-color:transparent;width:640px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:5px; padding-bottom:0px;"><![endif]-->
+                                    <div class="col num12" style="min-width: 320px; max-width: 640px; display: table-cell; vertical-align: top; width: 640px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 5px;
+                                                    padding-bottom: 0px;
+                                                    padding-right: 0px;
+                                                    padding-left: 0px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: Tahoma, sans-serif"><![endif]-->
+                                                <div
+                                                    style="
+                                                        color: #555555;
+                                                        font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                        line-height: 1.2;
+                                                        padding-top: 10px;
+                                                        padding-right: 10px;
+                                                        padding-bottom: 10px;
+                                                        padding-left: 10px;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            line-height: 1.2;
+                                                            font-size: 12px;
+                                                            color: #555555;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 14px;
+                                                        "
+                                                    >
+                                                        <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">©Elogix Pvt ltd  - VERIDATA</p>
+                                                    </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                                <div align="center" class="img-container center autowidth" style="padding-right: 0px; padding-left: 0px;">
+                                                    <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 0px;padding-left: 0px;" align="center"><![endif]-->
+                                                    <img
+                                                        align="center"
+                                                        alt="Alternate text"
+                                                        border="0"
+                                                        class="center autowidth"
+                                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAnQAAABLCAYAAAD52hqeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NTc3MiwgMjAxNC8wMS8xMy0xOTo0NDowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkEzMEU2NDRGODA5QzExRUFBREE5RTJFRTg1RDI4N0Y3IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkEzMEU2NDUwODA5QzExRUFBREE5RTJFRTg1RDI4N0Y3Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QTMwRTY0NEQ4MDlDMTFFQUFEQTlFMkVFODVEMjg3RjciIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QTMwRTY0NEU4MDlDMTFFQUFEQTlFMkVFODVEMjg3RjciLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4jh8EFAAAM20lEQVR42uzd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"
+                                                        style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 628px; display: block;"
+                                                        title="Alternate text"
+                                                        width="628"
+                                                    />
+                                                    <!--[if mso]></td></tr></table><![endif]-->
+                                                </div>
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
+                                </div>
+                            </div>
+                        </div>
+                        <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                    </td>
+                </tr>
+				
+            </tbody>
+        </table>
+        <!--[if (IE)]></div><![endif]-->
+    </body>
+</html>

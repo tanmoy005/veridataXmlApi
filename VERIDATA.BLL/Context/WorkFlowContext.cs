@@ -812,5 +812,31 @@ namespace VERIDATA.BLL.Context
             return response;
         }
 
+        public async Task PostMailResend(int appointeeId, int UserId)
+        {
+            UserCredetialDetailsResponse? userCredentialDetails = await _dbContextCandiate.GetUserCredentialInfo(appointeeId);
+            if (!string.IsNullOrEmpty(userCredentialDetails?.appointeeCode))
+            {
+                mailTransactionRequest transReq = new();
+                MailDetails mailDetails = new();
+                MailBodyParseDataDetails bodyDetails = new()
+                {
+                    Name = userCredentialDetails?.UserName,
+                    UserCode = userCredentialDetails?.userCode,
+                    Email = userCredentialDetails?.EmailId,
+                    Url = _emailConfig.HostUrl
+                };
+                mailDetails.MailType = MailType.MailResend;
+                mailDetails.ParseData = bodyDetails;
+                await _emailSender.SendAppointeeMail(userCredentialDetails.EmailId, mailDetails);
+
+                transReq.AppointeeId = appointeeId;
+                transReq.UserId = UserId;
+                transReq.Type = "RESEND";
+                await _dbContextCandiate.PostMailTransDetails(transReq);
+            }
+
+        }
+
     }
 }

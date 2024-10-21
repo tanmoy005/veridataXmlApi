@@ -544,5 +544,31 @@ namespace PfcAPI.Controllers.Appoientee
             }
         }
 
+        [Authorize]
+        //[AllowAnonymous]
+        [HttpPost]
+        [Route("PostCandidateMailResend")]
+        public ActionResult PostCandidateMailResend(int AppointeeId, int UserId)
+        {
+            try
+            {
+                var validateMailRequest = Task.Run(async () => await _workflowContext.ValidateRemainderMail(AppointeeId, UserId)).GetAwaiter().GetResult();
+                if (!validateMailRequest.IsVarified)
+                {
+                    _ErrorResponse.ErrorCode = (int)HttpStatusCode.BadRequest;
+                    _ErrorResponse.UserMessage = validateMailRequest.Remarks;
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+
+                }
+                Task.Run(async () => await _workflowContext.PostMailResend(AppointeeId, UserId)).GetAwaiter().GetResult();
+                return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

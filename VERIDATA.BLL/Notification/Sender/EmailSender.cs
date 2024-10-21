@@ -120,12 +120,16 @@ namespace VERIDATA.BLL.Notification.Sender
 
             await SendMail(mailDetails);
         }
+
+       
         public async Task SendMail(MailDetails mailDetails)
         {
             MailDetails generateMailDetails = GenarateMailText(mailDetails);
             Message message = new(mailDetails.ToEmailList, mailDetails.ToCcEmailList, generateMailDetails.Subject, generateMailDetails.BodyDetails);
             await SendEmailAsync(message, null);
         }
+
+       
         private MailDetails GenarateMailText(MailDetails mailDetails)
         {
             string _filename = string.Empty;
@@ -175,6 +179,10 @@ namespace VERIDATA.BLL.Notification.Sender
                 case MailType.CandidateUpdate:
                     _filename = "updateusermailsend";
                     mailSubject = "VERIDATA: User Creation";
+                    break;
+                case MailType.MailResend:
+                    _filename = "usermailResend";
+                    mailSubject = "VERIDATA: User Info";
                     break;
                 case MailType.SendOTP:
                     _filename = "userOtpAuth";

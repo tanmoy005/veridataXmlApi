@@ -347,5 +347,27 @@ namespace VERIDATA.DAL.DataAccess.Context
             var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == appointeeId && x.ActiveStatus == true).ToListAsync();
             return res?.LastOrDefault();
         }
+
+       
+
+        public async Task<UserCredetialDetailsResponse> GetUserCredentialInfo(int RefAppointeeId)
+        {
+            var result = await (from userAuth in _dbContextClass.UserAuthentication
+                                join candidate in _dbContextClass.UserMaster
+                                on userAuth.UserId equals candidate.UserId
+                                where candidate.RefAppointeeId == RefAppointeeId
+                                && candidate.ActiveStatus == true
+                                select new UserCredetialDetailsResponse
+                                {
+                                    appointeeId = candidate.RefAppointeeId ?? 0,
+                                    userId = userAuth.UserId,
+                                    EmailId = candidate.EmailId,
+                                    userCode = candidate.UserCode,
+                                    UserName = candidate.UserName,
+                                    defaultPassword = userAuth.IsDefaultPass == "Y" ? userAuth.UserPwdTxt : null // Use null if not default password
+                                }).FirstOrDefaultAsync();
+
+            return result;
+        }
     }
 }

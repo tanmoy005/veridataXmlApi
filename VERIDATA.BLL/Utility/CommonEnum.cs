@@ -58,6 +58,7 @@
             public const string CandidateUpdate = "CNDUPDATE";
             public const string Others = "OTHERS";
             public const string AdminUserCreate = "ADMNCREATE";
+            public const string MailResend = "MAILRESEND";
 
         }
         public static class WorkFlowType

@@ -28,6 +28,7 @@
     <None Remove="NotificationTemplates\newusermailsend.txt" />
     <None Remove="NotificationTemplates\updateusermailsend.txt" />
     <None Remove="NotificationTemplates\userForcedApproved.txt" />
+    <None Remove="NotificationTemplates\usermailResend.txt" />
     <None Remove="NotificationTemplates\userOtpAuth.txt" />
     <None Remove="NotificationTemplates\userReject.txt" />
     <None Remove="NotificationTemplates\userRemainder.txt" />
@@ -57,6 +58,7 @@
     <EmbeddedResource Include="NotificationTemplates\newusermailsend.txt" />
     <EmbeddedResource Include="NotificationTemplates\updateusermailsend.txt" />
     <EmbeddedResource Include="NotificationTemplates\userForcedApproved.txt" />
+    <EmbeddedResource Include="NotificationTemplates\usermailResend.txt" />
     <EmbeddedResource Include="NotificationTemplates\userOtpAuth.txt" />
     <EmbeddedResource Include="NotificationTemplates\userReject.txt" />
     <EmbeddedResource Include="NotificationTemplates\userRemainder.txt" />
