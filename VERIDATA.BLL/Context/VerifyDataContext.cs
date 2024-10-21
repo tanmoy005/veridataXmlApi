@@ -177,6 +177,7 @@ namespace VERIDATA.BLL.Context
             if (isSuccess)
             {
                 CandidateValidateResponse verifyResponse = await VarifyPanData(_apiResponse, reqObj.appointeeId, reqObj.panName);
+                Response.StatusCode = _apiResponse.StatusCode;
                 Response.IsValid = verifyResponse.IsValid;
                 Response.Remarks = verifyResponse.Remarks;
                 Response.IsUanFetchCall = false;

@@ -100,8 +100,8 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [Authorize]
-        [HttpPost("PostAppointeeFileDetails")]
-        public ActionResult PostAppointeeFileDetails([FromForm] AppointeeFileDetailsRequest AppointeeDetails)
+        [HttpPost("PostAppointeeDetailsSubmit")]
+        public ActionResult PostAppointeeDetailsSubmit([FromForm] AppointeeFileDetailsRequest AppointeeDetails)
         {
             if (AppointeeDetails != null)
             {

@@ -74,7 +74,7 @@ namespace VERIDATA.BLL.Context
                     data.isPanVarified = null;
                     data.IsUanAvailable = null;
                     data.IsUanVarified = null;
-                    data.IsEmployementVarified = null;
+                    data.IsManualPassbook = null;
                     data.IsAadhaarVarified = null;
                     data.IsProcessed = false;
                     data.IsSubmit = false;
@@ -129,7 +129,7 @@ namespace VERIDATA.BLL.Context
                 data.IsPFverificationReq = _appointeedetails?.IsPFverificationReq;
                 data.IsAadhaarVarified = _appointeedetails?.IsAadhaarVarified;
                 data.IsUanVarified = _appointeedetails?.IsUanVarified;
-                data.IsEmployementVarified = _appointeedetails?.IsEmployementVarified;
+                data.IsManualPassbook = _appointeedetails?.IsManualPassbook;
                 data.IsTrustPassbook = _appointeedetails?.IsTrustPassbook;
                 data.IsUanAvailable = _appointeedetails?.IsUanAvailable;
                 //data.IsTrustPension = _appointeedetails?.IsTrustPension;

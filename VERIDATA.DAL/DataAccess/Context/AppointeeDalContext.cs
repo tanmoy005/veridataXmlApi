@@ -70,7 +70,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     _appointeedetails.IsUanVarified = (validationReq.uanData?.IsEmployementVarified == null && validationReq.Status != null) ? validationReq.Status : uanVerifiedStatus;
                     _appointeedetails.IsPassbookFetch = validationReq.uanData?.IsPassbookFetch;
                     _appointeedetails.UANNumber = validationReq.uanData?.UanNumber;
-                    _appointeedetails.IsEmployementVarified = validationReq.uanData?.IsEmployementVarified;
+                    //_appointeedetails.IsEmployementVarified = validationReq.uanData?.IsEmployementVarified;
                 }
                 if (validationReq.Type == RemarksType.Passport)
                 {
@@ -191,11 +191,11 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
 
         }
-        public async Task UpdateAppointeeSubmit(int AppointeeId, bool IsSubmit)
+        public async Task UpdateAppointeeSubmit(int AppointeeId, bool IsSubmit,bool? IsManualPassbookUploaded)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
             appointeeDetails.IsSubmit = IsSubmit;
-            //appointeeDetails.IsTrustPassbook = TrustPassbookAvailable;
+            appointeeDetails.IsManualPassbook = IsManualPassbookUploaded;
             //appointeeDetails.IsTrustPension = TrustPensionAvailable;
             _ = await _dbContextClass.SaveChangesAsync();
         }

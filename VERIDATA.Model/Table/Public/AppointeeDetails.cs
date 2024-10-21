@@ -146,10 +146,10 @@ namespace VERIDATA.Model.Table.Public
         [DefaultValue(false)]
         public bool? IsUanVarified { get; set; }
 
-        [Column("is_employmentvarified", TypeName = DbDataType._boolean)]
+        [Column("is_manual_passbook", TypeName = DbDataType._boolean)]
 
         [DefaultValue(false)]
-        public bool? IsEmployementVarified { get; set; }
+        public bool? IsManualPassbook { get; set; }
 
         [Column("is_panvarified", TypeName = DbDataType._boolean)]
 

@@ -69,8 +69,8 @@ namespace VERIDATA.BLL.Context
                     status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
-                    isPassbookVerified = row?.AppointeeData?.IsEmployementVarified,
-                    PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
+                    isManualPassbook = row?.AppointeeData?.IsManualPassbook,
+                    //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
                 }).ToList();
             }
             else
@@ -95,8 +95,8 @@ namespace VERIDATA.BLL.Context
                     status = row.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
-                    isPassbookVerified = row?.AppointeeData?.IsEmployementVarified,
-                    PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
+                    isManualPassbook = row?.AppointeeData?.IsManualPassbook,
+                    //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
 
                 }).ToList();
             }
@@ -514,7 +514,7 @@ namespace VERIDATA.BLL.Context
                 if (_appointeedetails != null && !_isSubmit)
                 {
                     await _fileContext.postappointeeUploadedFiles(AppointeeFileDetails);
-                    await _dbContextCandiate.UpdateAppointeeSubmit(appointeeId, AppointeeFileDetails.IsSubmit ?? false);
+                    await _dbContextCandiate.UpdateAppointeeSubmit(appointeeId, AppointeeFileDetails.IsSubmit ?? false, AppointeeFileDetails?.IsManualPassbookUploaded);
                     //_appointeedetails.IsSubmit = AppointeeFileDetails.IsSubmit ?? false;
                 }
                 if ((AppointeeFileDetails.IsSubmit ?? false) && !_isSubmit)

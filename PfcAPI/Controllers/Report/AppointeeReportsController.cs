@@ -432,5 +432,28 @@ namespace PfcAPI.Controllers.Report
 
             }
         }
+        [Authorize]
+        //[AllowAnonymous]
+        [HttpPost]
+        [Route("AppointeeDataPfFilterReport")]
+        public ActionResult AppointeeDataPfFilterReport(AppointeeDataFilterReportRequest reqObj)
+        {
+            try
+            {
+                AppointeeDataFilterReportResponse Response = new();
+                List<DataTable> _exportdt = new();
+                //string reportname = $"approved_appointee_{_currDateString}.xlsx";
+                DateTime _currDate = DateTime.Now;
+                string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
+                string reportname = $"Appointee_PF_Details_Report_{_currDateString}.xlsx";
+                List<AppointeeDataPfReportResponse>? appointeeList = Task.Run(async () => await _reportContext.AppointeePfDetailsReport(reqObj)).GetAwaiter().GetResult();
+                return Ok(new BaseResponse<AppointeeDataPfReportResponse>(HttpStatusCode.OK, appointeeList));
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
     }
 }
