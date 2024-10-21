@@ -402,16 +402,16 @@ namespace VERIDATA.BLL.Context
                     Type = RemarksType.UAN,
 
                 };
-                //if (_apiResponse.IsUanAvailable ?? false)
-                //{
-                //    var VerifyResponse = await VerifyUanName(_apiResponse, reqObj.appointeeId, reqObj.userId);
-                //    Response.IsVarified = VerifyResponse.IsValid;
-                //    Response.Remarks = string.IsNullOrEmpty(Response.Remarks) ? VerifyResponse.Remarks : $"{Response.Remarks}, {VerifyResponse.Remarks}";
-                //    candidateUpdatedDataReq.Status = VerifyResponse.IsValid;
-                //    _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+                if (_apiResponse.IsUanAvailable ?? false)
+                {
+                    //var VerifyResponse = await VerifyUanName(_apiResponse, reqObj.appointeeId, reqObj.userId);
+                    //Response.IsVarified = ;
+                    //Response.Remarks = string.IsNullOrEmpty(Response.Remarks) ? VerifyResponse.Remarks : $"{Response.Remarks}, {VerifyResponse.Remarks}";
+                    candidateUpdatedDataReq.Status = false;
+                    _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
 
-                //}
-                //else 
+                }
+                else
                 if (_apiResponse.IsUanAvailable == false && string.IsNullOrEmpty(_apiResponse.UanNumber))
                 {
                     candidateUpdatedDataReq.Status = true;

@@ -33,13 +33,13 @@ namespace VERIDATA.DAL.DataAccess.Context
         public async Task<List<AppointeeUploadDetails>> GetAppinteeUploadDetails(int appointeeId)
         {
             // List<AppointeeUploadDetails> _uploadDetails = await _dbContextClass.AppointeeUploadDetails.Where(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true).ToListAsync();
-         List<AppointeeUploadDetails> _uploadDetails = await _dbContextClass.AppointeeUploadDetails
-        .Where(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true)
-        .ToListAsync();
+            List<AppointeeUploadDetails> _uploadDetails = await _dbContextClass.AppointeeUploadDetails
+           .Where(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true)
+           .ToListAsync();
 
             return _uploadDetails;
 
-         }
+        }
         public async Task<List<ReasonMaser>> GetAllRemarksByType(string Type)
         {
             List<ReasonMaser> AllResonDetails = await _dbContextClass.ReasonMaser.Where(x => x.ReasonType.Equals(Type) && x.ActiveStatus == true).ToListAsync();
@@ -67,7 +67,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 if (validationReq.Type == RemarksType.UAN)
                 {
                     var uanVerifiedStatus = _appointeedetails.IsUanVarified;
-                    _appointeedetails.IsUanVarified = (validationReq.uanData?.IsEmployementVarified == null && validationReq.Status != null) ? validationReq.Status : uanVerifiedStatus;
+                    _appointeedetails.IsUanVarified = uanVerifiedStatus;
                     _appointeedetails.IsPassbookFetch = validationReq.uanData?.IsPassbookFetch;
                     _appointeedetails.UANNumber = validationReq.uanData?.UanNumber;
                     //_appointeedetails.IsEmployementVarified = validationReq.uanData?.IsEmployementVarified;
@@ -191,7 +191,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
 
         }
-        public async Task UpdateAppointeeSubmit(int AppointeeId, bool IsSubmit,bool? IsManualPassbookUploaded)
+        public async Task UpdateAppointeeSubmit(int AppointeeId, bool IsSubmit, bool? IsManualPassbookUploaded)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
             appointeeDetails.IsSubmit = IsSubmit;
@@ -199,14 +199,14 @@ namespace VERIDATA.DAL.DataAccess.Context
             //appointeeDetails.IsTrustPension = TrustPensionAvailable;
             _ = await _dbContextClass.SaveChangesAsync();
         }
-        public async Task UpdateAppointeeTrustnUanAvailibility(int AppointeeId, bool? TrustPassbookAvailable, bool? IsUanAvailable,bool? IsFinalSubmit)
+        public async Task UpdateAppointeeTrustnUanAvailibility(int AppointeeId, bool? TrustPassbookAvailable, bool? IsUanAvailable, bool? IsFinalSubmit)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
             if (appointeeDetails.IsProcessed != true)
             {
                 appointeeDetails.IsTrustPassbook = TrustPassbookAvailable;
-                if(IsFinalSubmit == true)
-                appointeeDetails.IsUanAvailable = IsUanAvailable;
+                if (IsFinalSubmit == true)
+                    appointeeDetails.IsUanAvailable = IsUanAvailable;
 
                 _ = await _dbContextClass.SaveChangesAsync();
             }
@@ -348,7 +348,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             return res?.LastOrDefault();
         }
 
-       
+
 
         public async Task<UserCredetialDetailsResponse> GetUserCredentialInfo(int RefAppointeeId)
         {
@@ -359,12 +359,14 @@ namespace VERIDATA.DAL.DataAccess.Context
                                 && candidate.ActiveStatus == true
                                 select new UserCredetialDetailsResponse
                                 {
-                                    appointeeId = candidate.RefAppointeeId ?? 0,
-                                    userId = userAuth.UserId,
+                                    AppointeeId = candidate.RefAppointeeId ?? 0,
+                                    UserId = userAuth.UserId,
                                     EmailId = candidate.EmailId,
                                     userCode = candidate.UserCode,
                                     UserName = candidate.UserName,
-                                    defaultPassword = userAuth.IsDefaultPass == "Y" ? userAuth.UserPwdTxt : null // Use null if not default password
+                                    CandidateId = candidate.CandidateId,
+                                    DefaultPassword = userAuth.IsDefaultPass,
+                                    Password = userAuth.UserPwdTxt 
                                 }).FirstOrDefaultAsync();
 
             return result;

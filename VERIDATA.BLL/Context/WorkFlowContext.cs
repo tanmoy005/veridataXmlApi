@@ -815,7 +815,7 @@ namespace VERIDATA.BLL.Context
         public async Task PostMailResend(int appointeeId, int UserId)
         {
             UserCredetialDetailsResponse? userCredentialDetails = await _dbContextCandiate.GetUserCredentialInfo(appointeeId);
-            if (!string.IsNullOrEmpty(userCredentialDetails?.appointeeCode))
+            if (!string.IsNullOrEmpty(userCredentialDetails?.CandidateId))
             {
                 mailTransactionRequest transReq = new();
                 MailDetails mailDetails = new();
@@ -824,6 +824,7 @@ namespace VERIDATA.BLL.Context
                     Name = userCredentialDetails?.UserName,
                     UserCode = userCredentialDetails?.userCode,
                     Email = userCredentialDetails?.EmailId,
+                    Password = userCredentialDetails?.DefaultPassword?.ToUpper() == "Y" ? userCredentialDetails?.Password : string.Empty,
                     Url = _emailConfig.HostUrl
                 };
                 mailDetails.MailType = MailType.MailResend;
