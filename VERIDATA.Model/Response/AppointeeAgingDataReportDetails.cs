@@ -10,7 +10,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Candidate Id")]
         public string? candidateId { get; set; }
 
-        [DisplayName("Appointee Name")]
+        [DisplayName("Name")]
         public string? AppointeeName { get; set; }
 
         [DisplayName("Email")]
@@ -19,7 +19,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Mobile No")]
         public string? MobileNo { get; set; }
 
-        [DisplayName("Date Of Joining")]
+        [DisplayName("Joining Date")]
         public DateTime? DateOfJoining { get; set; }
 
         //[DisplayName("Date Of Offer")]
@@ -31,10 +31,10 @@ namespace VERIDATA.Model.Response
         [DisplayName("Status")]
         public string? Status { get; set; }
 
-        [DisplayName("Activity at")]
+        [DisplayName("Last Activity at")]
         public DateTime? LastActionDate { get; set; }
 
-        [DisplayName("Activity Desc")]
+        [DisplayName("Last Activity")]
         public string? LastActivityDesc { get; set; }
 
 

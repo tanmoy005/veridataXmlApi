@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net;
+using VERIDATA.BLL.Context;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.utility;
 using VERIDATA.Model.Base;
@@ -155,6 +156,7 @@ namespace PfcAPI.Controllers.Report
             }
         }
 
+        [AllowAnonymous]
         [Authorize]
         [HttpPost]
         [Route("GetUnderProcessReport")]
@@ -192,6 +194,7 @@ namespace PfcAPI.Controllers.Report
             }
         }
 
+        [AllowAnonymous]
         [Authorize]
         [HttpPost]
         [Route("GetLapsedDataReport")]
@@ -230,7 +233,6 @@ namespace PfcAPI.Controllers.Report
         }
 
         [Authorize]
-        // [AllowAnonymous]
         [HttpPost]
         [Route("ApiCounterReport")]
         public ActionResult ApiCounterReport(DateTime? FromDate, DateTime? ToDate)
@@ -250,8 +252,19 @@ namespace PfcAPI.Controllers.Report
                     DataTable _exportdt = CommonUtility.ToDataTable<ApiCountJobResponse>(res.ApiCountList);
                     byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt, reportname, string.Empty);
                     _Filedata = new Filedata() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
+                    res.Filedata = _Filedata;
                 }
-                res.Filedata = _Filedata;
+              //  res.Filedata = _Filedata;
+
+                 else
+                {
+                    _ErrorResponse.ErrorCode = 400;
+                    _ErrorResponse.UserMessage = "No Data to Export";
+                    _ErrorResponse.InternalMessage = "No Data to Export";
+
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+                }
+
                 return Ok(new BaseResponse<ApiCountReportResponse>(HttpStatusCode.OK, res));
             }
             catch (Exception)
@@ -262,7 +275,7 @@ namespace PfcAPI.Controllers.Report
         }
 
         [Authorize]
-        //[AllowAnonymous]
+        [AllowAnonymous]
         //[Authorize(Roles = $"{RoleTypeAlias.SuperAdmin},{RoleTypeAlias.CompanyAdmin},{RoleTypeAlias.GeneralAdmin}")]
         [HttpPost]
         [Route("AppointeeCounterReport")]
@@ -294,6 +307,17 @@ namespace PfcAPI.Controllers.Report
                     Response.Filedata = _filedata;
 
                 }
+
+                
+                    else
+                    {
+                        _ErrorResponse.ErrorCode = 400;
+                        _ErrorResponse.UserMessage = "No Data to Export";
+                        _ErrorResponse.InternalMessage = "No Data to Export";
+
+                        return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+                    }
+                
                 return Ok(new BaseResponse<AppointeeCountJobResponse>(HttpStatusCode.OK, Response));
             }
             catch (Exception)
@@ -333,14 +357,24 @@ namespace PfcAPI.Controllers.Report
                     Response.Filedata = _filedata;
                     return Ok(new BaseResponse<AppointeeCountJobResponse>(HttpStatusCode.OK, Response));
                 }
+                else
+                {
+                    _ErrorResponse.ErrorCode = 400;
+                    _ErrorResponse.UserMessage = "No Data to Export";
+                    _ErrorResponse.InternalMessage = "No Data to Export";
 
-                return Ok(new BaseResponse<AppointeeCountDateWiseDetails>(HttpStatusCode.OK, apiList));
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+                }
+
+             //   return Ok(new BaseResponse<AppointeeCountDateWiseDetails>(HttpStatusCode.OK, apiList));
+
             }
             catch (Exception)
             {
                 throw;
 
             }
+            
         }
         [Authorize]
         [HttpPost]
@@ -376,38 +410,50 @@ namespace PfcAPI.Controllers.Report
             }
         }
         [Authorize]
-        // [AllowAnonymous]
+         [AllowAnonymous]
         [HttpPost]
         [Route("NationalityFilterReport")]
         public ActionResult NationalityFilterReport(GetNationalityReportRequest reqObj)
         {
             try
             {
-                AppointeeNationalityDataReportDetails Response = new();
+                GetNationalityReportResponse Response = new(); 
                 List<DataTable> _exportdt = new();
-                //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
-                string reportname = $"Appointee_Aging_Report_{_currDateString}.xlsx";
-                List<AppointeeNationalityDataReportDetails>? appointeeList = Task.Run(async () => await _reportContext.AppointeeNationalityDetailsReport(reqObj)).GetAwaiter().GetResult();
-                //if (appointeeList?.Count > 0)
-                //{
-                //    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeNationalityDataReportDetails>(appointeeList);
-                //    byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportname, string.Empty);
-                //    //var _file = file(exportbytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", reportname);
-                //    Filedata _filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
-                //    Response.AppointeeDetails = appointeeList;
-                //    Response.Filedata = _filedata;
-                //    return Ok(new BaseResponse<GetAgingReportResponse>(HttpStatusCode.OK, Response));
-                //}
+                string reportname = $"Appointee_Nationality_Report_{_currDateString}.xlsx"; 
 
-                return Ok(new BaseResponse<AppointeeNationalityDataReportDetails>(HttpStatusCode.OK, appointeeList));
+                // Fetching the appointee nationality data
+                List<AppointeeNationalityDataReportDetails>? appointeeList = Task.Run(async () => await _reportContext.AppointeeNationalityDetailsReport(reqObj)).GetAwaiter().GetResult();
+
+                if (appointeeList?.Count > 0)
+                {
+                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeNationalityDataReportDetails>(appointeeList);
+                    byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportname, string.Empty);
+
+                    Filedata _filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
+                    Response.AppointeeDetails = appointeeList; 
+                    Response.Filedata = _filedata;
+
+                    return Ok(new BaseResponse<GetNationalityReportResponse>(HttpStatusCode.OK, Response));
+                }
+                else 
+                {
+                    _ErrorResponse.ErrorCode = 400;
+                    _ErrorResponse.UserMessage = "No Data to Export";
+                    _ErrorResponse.InternalMessage = "No Data to Export";
+
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+                }
+
+                // return Ok(new BaseResponse<List<AppointeeNationalityDataReportDetails>>(HttpStatusCode.OK, appointeeList));
+
             }
             catch (Exception)
             {
                 throw;
-
             }
+           
         }
         [Authorize]
         //[AllowAnonymous]
@@ -455,5 +501,42 @@ namespace PfcAPI.Controllers.Report
 
             }
         }
+
+        //[Authorize]
+        //[HttpPost("GetUnderProcessFileData")]
+        //public ActionResult GetUnderProcessFileData(AppointeeSeacrhFilterRequest reqObj)
+        //{
+
+        //    try
+        //    {
+        //        DateTime _currDate = DateTime.Now;
+        //        string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
+        //        string reportname = $"UnderProcess_Appointee_{_currDateString}.xlsx";
+        //        reqObj.FilterType = string.IsNullOrEmpty(reqObj?.FilterType) ? string.Empty : reqObj?.FilterType;
+        //        List<UnderProcessDetailsResponse> UnderProcessAppointeeList = Task.Run(async () => await _workflowcontext.GetUnderProcessDataAsync(reqObj)).GetAwaiter().GetResult();
+        //        if (UnderProcessAppointeeList.Count > 0)
+        //        {
+        //            List<UnderProcessedDataReportDetails> appointeeList = _reportContext.GetUnderProcessDetails(UnderProcessAppointeeList);
+        //            DataTable _exportdt = CommonUtility.ToDataTable<UnderProcessedDataReportDetails>(appointeeList);
+        //            byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt, reportname, string.Empty);
+        //            Filedata _Filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
+        //            return Ok(new BaseResponse<Filedata>(HttpStatusCode.OK, _Filedata));
+        //        }
+        //        else
+        //        {
+        //            _ErrorResponse.ErrorCode = 400;
+        //            _ErrorResponse.UserMessage = "No Data to Export";
+        //            _ErrorResponse.InternalMessage = "No Data to Export";
+
+        //            return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+        //        }
+
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+
+        //    }
+        //}
     }
 }

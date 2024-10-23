@@ -95,6 +95,9 @@ namespace VERIDATA.Model.Table.Public
         [Column("handicape_type", TypeName = DbDataType._text50)]
         public string? HandicapeType { get; set; }
 
+        [Column("handicape_Name", TypeName = DbDataType._text50)]
+        public string? HandicapeName { get; set; }
+
         [Column("is_pf_verification_req", TypeName = DbDataType._boolean)]
         public bool? IsPFverificationReq { get; set; }
 

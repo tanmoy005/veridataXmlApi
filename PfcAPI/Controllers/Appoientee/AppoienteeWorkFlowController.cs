@@ -545,7 +545,7 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [Authorize]
-        //[AllowAnonymous]
+       // [AllowAnonymous]
         [HttpPost]
         [Route("PostCandidateMailResend")]
         public ActionResult PostCandidateMailResend(int AppointeeId, int UserId)

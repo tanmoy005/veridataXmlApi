@@ -1,29 +1,41 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace VERIDATA.Model.Response
 {
-    public class UnderProcessedDataReportDetails
+    public class UnderProcessDetailsReportResponse
     {
+       
+
         [DisplayName("Candidate Id")]
         public string? candidateId { get; set; }
 
-        [DisplayName("Name")]
+        [DisplayName("Appointee Name")]
         public string? AppointeeName { get; set; }
 
         [DisplayName("Email")]
         public string? EmailId { get; set; }
 
-        [DisplayName("mobile No")]
+        [DisplayName("Mobile No")]
         public string? mobileNo { get; set; }
 
-        [DisplayName("Joining Date")]
+        [DisplayName("Date Of Joining")]
         public string? dateOfJoining { get; set; }
 
-        
+        //[DisplayName("Date Of Offer")]
+        //public string? dateOfOffer { get; set; }
+
         [DisplayName("Link Sent Date")]
         public string? CreatedDate { get; set; }
 
         [DisplayName("Status")]
         public string? Status { get; set; }
+
+
+
     }
 }

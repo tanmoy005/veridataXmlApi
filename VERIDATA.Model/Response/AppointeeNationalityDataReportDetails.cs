@@ -10,7 +10,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Candidate Id")]
         public string? candidateId { get; set; }
 
-        [DisplayName("Appointee Name")]
+        [DisplayName("Name")]
         public string? AppointeeName { get; set; }
 
         [DisplayName("Email")]
@@ -22,16 +22,16 @@ namespace VERIDATA.Model.Response
         [DisplayName("Nationality")]
         public string? Nationality { get; set; } 
         
-        [DisplayName("Country Name")]
+        [DisplayName("Country")]
         public string? CountryName { get; set; } 
 
-        [DisplayName("Passport Number")]
+        [DisplayName("Passport No.")]
         public string? PassportNumber { get; set; } 
         
         [DisplayName("Start Date")]
         public string? StartDate { get; set; }
 
-        [DisplayName("expiryDate")]
+        [DisplayName("Expiry Date")]
         public string? ExpiryDate { get; set; }
     }
 }

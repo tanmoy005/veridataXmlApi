@@ -7,22 +7,22 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Date")]
         public string? Date { get; set; }
 
-        [DisplayName("Provider Name")]
+        [DisplayName("Provider")]
         public string? ProviderName { get; set; }
         
-        [DisplayName("Api Name")]
+        [DisplayName("Api")]
         public string? ApiName { get; set; }
 
-        [DisplayName("Total Api Count")]
+        [DisplayName("Total")]
         public int? TotalApiCount { get; set; }
 
-        [DisplayName("Api Failure Count")]
+        [DisplayName("Failure")]
         public int? TotalFailureCount { get; set; }
 
-        [DisplayName("Api Success Count")]
+        [DisplayName("Success")]
         public int? TotalSuccessApiCount { get; set; }
 
-        [DisplayName("Api Unprocessable Count")]
+        [DisplayName("Invalid")]
         public int? TotalUnprocessableEntityCount { get; set; }
 
        

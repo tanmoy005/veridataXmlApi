@@ -219,7 +219,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             if (appointeeDetails.IsProcessed != true)
             {
                 appointeeDetails.IsHandicap = string.IsNullOrEmpty(IsHandicap) ? null : IsHandicap.ToString()?.ToUpper();
-                appointeeDetails.HandicapeType = _isHandicap ? HandicapType?.ToString() : string.Empty;
+                appointeeDetails.HandicapeName = _isHandicap ? HandicapType?.ToString() : string.Empty;
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }

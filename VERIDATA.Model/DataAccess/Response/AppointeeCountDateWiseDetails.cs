@@ -13,13 +13,13 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Date")]
         public string? Date { get; set; }
 
-        [DisplayName("Total Appointee Count")]
+        [DisplayName("Total Appointee")]
         public int? TotalAppointeeCount { get; set; }
 
-        [DisplayName("Total Link Sent Count")]
+        [DisplayName("Total LinkSent")]
         public int? TotalLinkSentCount { get; set; }
 
-        [DisplayName("Link Not Sent Count")]
+        [DisplayName("Total Link Not Sent")]
         public int? TotalLinkNotSentCount { get; set; }
 
         [DisplayName("Compnay Id")]
@@ -35,25 +35,25 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Date")]
         public string? Date { get; set; }
 
-        [DisplayName("Candidate Id")]
+        [DisplayName("Candidate ID")]
         public string? CandidateId { get; set; }
 
         [DisplayName("Compnay Id")]
         public int? CompanyId { get; set; }
 
-        [DisplayName("Compnay Name")]
+        [DisplayName("Entity Name")]
         public string? CompanyName { get; set; }
 
-        [DisplayName("Appointee Name")]
+        [DisplayName("AppointeeName")]
         public string? AppointeeName { get; set; }
 
-        [DisplayName("Appointee Email")]
+        [DisplayName("EmailId")]
         public string? EmailId { get; set; }
 
         [DisplayName("Appointee Status")]
         public string? AppointeeStatus { get; set; }
 
-        [DisplayName("Last Action Taken")]
+        [DisplayName("Action Taken")]
         public string? ActionTaken { get; set; }
 
     }

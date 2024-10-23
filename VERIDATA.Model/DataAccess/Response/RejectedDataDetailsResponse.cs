@@ -17,6 +17,7 @@
         public string? MemberRelation { get; set; }
         public string? IsHandicap { get; set; }
         public string? HandicapeType { get; set; }
+        public string? HandicapeName { get; set; }
         public string? IsInternationalWorker { get; set; }
         public string? PassportNo { get; set; }
         public string? OriginCountry { get; set; }
