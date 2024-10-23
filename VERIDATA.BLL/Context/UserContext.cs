@@ -152,7 +152,6 @@ namespace VERIDATA.BLL.Context
                 }
                 List<UpdatedAppointeeBasicInfo>? updatedList = _appointeeList.Except(UpdateUsersList)?.ToList();
                 await _userDalContext.PostAppointeeUpdateLog(updatedList, userId);
-
             }
             return UpdateUsersList;
         }
@@ -173,6 +172,8 @@ namespace VERIDATA.BLL.Context
             if (type == CandidateUpdateTableType.underProcess && candidateIdList?.Count > 0)
             {
                 await _userDalContext.UpdateUnderProcessCandidateData(_appointeeList, candidateIdList, userId);
+                var userDetails = await _userDalContext.GetCandidateDetailsBycandidateId(candidateIdList);
+                await _emailSender.SendAppointeeLoginMail(userDetails, MailType.CandidateUpdate);
 
             }
             if (type == CandidateUpdateTableType.userMaster && candidateIdList?.Count > 0)

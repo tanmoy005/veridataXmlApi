@@ -37,5 +37,6 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task editUserProfile(EditUserProfileRequest req);
         public Task<RoleDetailsResponse> GetUserRole(int userid);
         public Task<List<MenuNodeDetails>> GetMenuLeafNodeList(int roleId);
+        public Task<List<CreateUserDetailsRequest>> GetCandidateDetailsBycandidateId(List<string> CandidateList);
     }
 }

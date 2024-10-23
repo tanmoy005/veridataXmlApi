@@ -212,7 +212,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 22px; line-height: 2; word-break: break-word; text-align: center; mso-line-height-alt: 44px; margin: 0;">
-                                                            <span style="font-size: 22px;"> User Creation </span>
+                                                            <span style="font-size: 22px;"> User Revarification </span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -420,14 +420,14 @@
                                                         "
                                                     >
                                                         <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-                                                           Hi {{Name}}
+                                                           Dear {{Name}}
                                                         </p>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-                                                        Welcome to <strong> VERIDATA</strong>, the onboarding assistant of {{CompanyName}}.  You are requested to enter the details requested by following the instructions one step at a time.
-                                                        The successful completion of this process would facilitate the on-boarding.</br>
-                                                        Please log in using the following credentials</br></br></br>
+                                                        Your Details have been updated by PwC HC.</br> 
+                                                        Please log in to the Veridta portal, and reverify your details.</br></br>
 
-                                                        You can reach out to our HR representative regarding any queries
+                                                        Regards,</br>
+														Human Capital
 
                                                         </p>
                                                     </div>
@@ -635,12 +635,11 @@
                                                             mso-line-height-alt: 24px;
                                                         "
                                                     >
-                                                    	<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Your user name and password is given below <br>
+                                                    	<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Your user name is given below <br>
 														<strong><a href={{Url}}>Click on the link to login :</a></strong></p>
 
                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>User Name :</strong> {{UserCode}}</p>
-													   
-                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>Password :</strong> {{Password}}</p>
+													                                                           
 														
                                                        
                                                     </div>
@@ -654,7 +653,7 @@
                                     <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
                                     <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
                                 </div>
-								
+								 <p style="font-size: 14px; color: #595959; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; padding-left: 10px; font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; margin: 0;">This is an auto-generated system notification. Please do not respond to this email.</p>
                             </div>
                         </div>
 						

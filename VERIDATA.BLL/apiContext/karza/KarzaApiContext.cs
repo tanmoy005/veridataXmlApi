@@ -444,6 +444,12 @@ namespace VERIDATA.BLL.apiContext.karza
             {
                 string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
                 Karza_UanSubmitOtpResponse OTPResponse = JsonConvert.DeserializeObject<Karza_UanSubmitOtpResponse>(apiResponse);
+                if (OTPResponse.statusCode == (int)KarzaStatusCode.Invalid || OTPResponse.statusCode == (int)KarzaStatusCode.NotFound)
+                {
+                    Response.StatusCode = HttpStatusCode.BadRequest;
+                    Response.ReasonPhrase = "Invalid OTP File Number or Combination of Inputs";
+                    return Response;
+                }
                 Response.StatusCode = _apiResponse.StatusCode;
                 Response.KarzaPassbkdata = OTPResponse?.result;
             }

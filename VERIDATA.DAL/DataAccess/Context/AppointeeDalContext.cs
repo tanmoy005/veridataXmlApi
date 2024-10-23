@@ -219,7 +219,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             if (appointeeDetails.IsProcessed != true)
             {
                 appointeeDetails.IsHandicap = string.IsNullOrEmpty(IsHandicap) ? null : IsHandicap.ToString()?.ToUpper();
-                appointeeDetails.HandicapeName = _isHandicap ? HandicapType?.ToString() : string.Empty;
+                appointeeDetails.HandicapeType = _isHandicap ? HandicapType?.ToString() : string.Empty;
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }
@@ -337,23 +337,24 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             AppointeeEmployementDetails empHistData = new();
 
-            if (res.Count == 0)
+            if (res.Count > 0)
             {
-                empHistData.AppointeeId = reqObj.AppointeeId;
-                empHistData.TypeCode = reqObj.Provider?.Trim();
-                // Convert the string to a byte array before storing it in varbinary field
-                empHistData.DataInfo = string.IsNullOrEmpty(reqObj.EmpData)
-                    ? null
-                    : System.Text.Encoding.UTF8.GetBytes(reqObj.EmpData);
-
-                empHistData.SubTypeCode = reqObj.SubType?.Trim();
-                empHistData.ActiveStatus = true;
-                empHistData.CreatedBy = reqObj.UserId;
-                empHistData.CreatedOn = DateTime.Now;
-
-                // Add the new entry to the context
-                _dbContextClass.AppointeeEmployementDetails.Add(empHistData);
+                res.ForEach(x => x.ActiveStatus = false);
             }
+            empHistData.AppointeeId = reqObj.AppointeeId;
+            empHistData.TypeCode = reqObj.Provider?.Trim();
+            // Convert the string to a byte array before storing it in varbinary field
+            empHistData.DataInfo = string.IsNullOrEmpty(reqObj.EmpData)
+                ? null
+                : System.Text.Encoding.UTF8.GetBytes(reqObj.EmpData);
+
+            empHistData.SubTypeCode = reqObj.SubType?.Trim();
+            empHistData.ActiveStatus = true;
+            empHistData.CreatedBy = reqObj.UserId;
+            empHistData.CreatedOn = DateTime.Now;
+
+            // Add the new entry to the context
+            _dbContextClass.AppointeeEmployementDetails.Add(empHistData);
 
             // Save changes to the database
             _ = await _dbContextClass.SaveChangesAsync();
@@ -362,9 +363,9 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
 
 
-        public async Task<AppointeeEmployementDetails> GetEmployementDetails(int appointeeId , string type)
+        public async Task<AppointeeEmployementDetails> GetEmployementDetails(int appointeeId, string type)
         {
-            var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == appointeeId && x.SubTypeCode==type && x.ActiveStatus == true).ToListAsync();
+            var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == appointeeId && x.SubTypeCode == type && x.ActiveStatus == true).ToListAsync();
             return res?.LastOrDefault();
         }
 

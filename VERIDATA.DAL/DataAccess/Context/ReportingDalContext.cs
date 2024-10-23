@@ -37,8 +37,11 @@ namespace VERIDATA.DAL.DataAccess.Context
                             join y in _dbContextClass.GenderMaster
                                     on p.AppointeeData.Gender equals y.GenderCode into GGrouping
                             from g in GGrouping.DefaultIfEmpty()
+                            join z in _dbContextClass.DisabilityMaster
+                                   on p.AppointeeData.HandicapeType equals z.DisabilityCode into DGrouping
+                            from h in DGrouping.DefaultIfEmpty()
 
-                            select new { p, m.MStatusName, q.QualificationName, g.GenderName };
+                            select new { p, m.MStatusName, q.QualificationName, g.GenderName, h.DisabilityName };
 
             var appointeelist = querydata.ToList();
             var remarksquerydata = from a in appointeelist
@@ -53,6 +56,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                        MStatusName = a?.MStatusName,
                                        QualificationName = a?.QualificationName,
                                        GenderName = a?.GenderName,
+                                       HandiCapName = a?.DisabilityName,
                                        Remarks = r?.Remarks,
                                        ReasonId = r?.ReasonId
                                    };
@@ -74,8 +78,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                 MemberName = r.FirstOrDefault()?.data?.AppointeeData?.MemberName,
                 MemberRelationName = r.FirstOrDefault()?.data?.AppointeeData?.MemberRelation == "F" ? "Father" : r.FirstOrDefault()?.data?.AppointeeData?.MemberRelation == "H" ? "Husband" : string.Empty,
                 IsHandicap = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.IsHandicap) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.IsHandicap?.ToUpper() == "N" ? "No" : "Yes",
-                // HandicapeType = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.HandicapeType) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.HandicapeType,
-                HandicapeName = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.HandicapeName) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.HandicapeName,
+                HandicapeType = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.HandicapeType) ? "NA" : r.FirstOrDefault()?.HandiCapName,
+                //HandicapeName = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.HandicapeName) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.HandicapeName,
                 IsInternationalWorker = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.IsInternationalWorker) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.IsInternationalWorker?.ToUpper() == "N" ? "No" : "Yes",
                 PassportNo = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.PassportNo) ? "NA" : CommonUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.PassportNo),
                 PassportValidFrom = r.FirstOrDefault()?.data?.AppointeeData?.PassportValidFrom == null ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.PassportValidFrom?.ToShortDateString(),
@@ -131,7 +135,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<List<NonProcessCandidateReportDataResponse>> GetNonProcessCandidateReport(AppointeeCountReportSearchRequest reqObj)
         {
-           
+
             IQueryable<NonProcessCandidateReportDataResponse> nonProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
  .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
              && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
@@ -248,7 +252,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<List<UnderProcessCandidateReportDataResponse>> GetUnderProcessCandidateReport(AppointeeCountReportSearchRequest reqObj, string? _statusCode, bool? _intSubmitCode, int? _intSubStatusCode)
         {
-            
+
 
             IQueryable<UnderProcessCandidateReportDataResponse> underProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
                                                                                         .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)

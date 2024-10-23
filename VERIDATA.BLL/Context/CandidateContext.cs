@@ -602,6 +602,15 @@ namespace VERIDATA.BLL.Context
         private async Task<AppointeeEmployementDetailsViewResponse> GetEmploymentDetailsFromHistory(int appointeeId, int userId, string key, AppointeeDetails appointeeDetails)
         {
             var passbookDetails = new AppointeeEmployementDetailsViewResponse();
+            var empPassbookDetails = await _appointeeDalContext.GetEmployementDetails(appointeeId, JsonTypeAlias.EmployeePassBook);
+            if (empPassbookDetails?.DataInfo != null)
+            {
+                var passbookData = System.Text.Encoding.UTF8.GetString(empPassbookDetails.DataInfo);
+                if (!string.IsNullOrEmpty(passbookData))
+                {
+                    return passbookDetails = await HandlePassbookParsing(empPassbookDetails.TypeCode, passbookData, appointeeId);
+                }
+            }
             var empHistDetails = await _appointeeDalContext.GetEmployementDetails(appointeeId, JsonTypeAlias.EmployementHist);
 
             // If employment history is found, parse and return based on provider type
