@@ -6,7 +6,7 @@ namespace VERIDATA.Model.Response
     {
         public HttpStatusCode StatusCode { get; set; }
         public string? Remarks { get; set; }
-        public string? EmployementData { get; set; }
+        public byte[]? EmployementData { get; set; }
         public int AppointeeId { get; set; }
         public int UserId { get; set; }
         public string? Provider { get; set; }

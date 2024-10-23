@@ -6,6 +6,7 @@
         public DateTime? ToDate { get; set; }
         public int? CompanyId { get; set; }
         public bool? IsFiltered { get; set; }
+        public bool? IsManualPassbook { get; set; }
         public int? NoOfDays { get; set; }
         public string? FilterType { get; set; }
         public string? AppointeeName { get; set; }

@@ -3,7 +3,7 @@
     [appointee_id]          BIGINT         NOT NULL,
     [type_code]             NVARCHAR (50)  NULL,
     [subtype]               NVARCHAR (50)  NULL,
-    [data_info]             NVARCHAR(MAX)  NULL,
+    [data_info]             VARBINARY(MAX)  NULL,
     [active_status]         BIT            NULL,
     [created_by]            INT            NULL,
     [created_on]            DATETIME       NULL,

@@ -74,6 +74,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                     && (string.IsNullOrEmpty(filter.ProcessStatus) || w.AppvlStatusId == _filteredStatus.AppvlStatusId)
                                                                     && (string.IsNullOrEmpty(filter.AppointeeName) || u.AppointeeName.Contains(filter.AppointeeName))
                                                                     && (string.IsNullOrEmpty(filter.CandidateId) || u.CandidateId.Contains(filter.CandidateId))
+                                                                    && (filter.IsManualPassbook == null || a.IsManualPassbook == filter.IsManualPassbook)
                                                                  select new ProcessedDataDetailsResponse
                                                                  {
 
@@ -179,6 +180,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                   && (string.IsNullOrEmpty(reqObj.CandidateId) || b.CandidateId.Contains(reqObj.CandidateId))
                                                                   && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate) && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
                                                                   && b.ActiveStatus == true
+                                                                  && (reqObj.IsManualPassbook == null || p.IsManualPassbook == reqObj.IsManualPassbook)
+
                                                                   orderby p.IsSubmit
                                                                   select new UnderProcessQueryDataResponse
                                                                   {

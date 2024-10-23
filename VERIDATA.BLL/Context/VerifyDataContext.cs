@@ -51,7 +51,7 @@ namespace VERIDATA.BLL.Context
             return msg;
         }
 
-        
+
         private async Task<CandidateValidateResponse> VarifyPanData(PanDetails request, int appointeeId, string panName)
         {
             bool IsValid = false;
@@ -129,7 +129,6 @@ namespace VERIDATA.BLL.Context
 
             return response;
         }
-
         public async Task<AppointeePanValidateResponse> PanDetailsValidation(AppointeePanValidateRequest reqObj)
         {
             PanDetails _apiResponse = new();
@@ -171,6 +170,10 @@ namespace VERIDATA.BLL.Context
                 {
                     priority++;  // Increase priority to try the next provider
                 }
+                else
+                {
+                    break;
+                }
             }
 
             // Post-process response once successful or log failure
@@ -193,7 +196,6 @@ namespace VERIDATA.BLL.Context
 
             return Response;
         }
-
         public async Task<AppointeePassportValidateResponse> PassportDetailsValidation(AppointeePassportValidateRequest reqObj)
         {
             PassportDetails _apiResponse = new();
@@ -1016,7 +1018,8 @@ namespace VERIDATA.BLL.Context
                 else
                 {
 
-                    await PostPfPassbookData(reqObj, passbookJsonData, apiProvider?.ToLower());
+                    //await PostPfPassbookData(reqObj, passbookJsonData, apiProvider?.ToLower());
+                    await SavePfPassbookData(reqObj, passbookJsonData, apiProvider?.ToLower());
                     if (apiProvider?.ToLower() == ApiProviderType.SurePass)
                     {
                         PassbookData? _passBookData = _apiResponse.Passbkdata;
@@ -1065,6 +1068,18 @@ namespace VERIDATA.BLL.Context
             };
 
             await _fileService.postAppointeePassbookUpload(uploadreq);
+        }
+        private async Task SavePfPassbookData(GetPassbookDetailsRequest reqObj, string apiResponse, string apiProvider)
+        {
+            EmployementHistoryDetails uploadReq = new()
+            {
+                AppointeeId = reqObj.AppointeeId,
+                Provider = apiProvider,
+                SubType = JsonTypeAlias.EmployeePassBook,
+                EmpData = apiResponse,
+                UserId = reqObj.UserId,
+            };
+            await _candidateContext.PostAppointeeEmployementDetailsAsync(uploadReq);
         }
         public async Task<CandidateValidateResponse> VerifyUanData(UanValidationRequest reqObj)
         {
@@ -1241,38 +1256,25 @@ namespace VERIDATA.BLL.Context
                 else if (apiProvider?.ToLower() == ApiProviderType.Karza)
                 {
                     response = await GetPanMobileToUan(reqObj);
-                    if (response.StatusCode == HttpStatusCode.ServiceUnavailable || response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        priority++;
-                    }
-                    else
-                    {
-                        isSuccess = true;
 
-                    }
                 }
                 else if (apiProvider?.ToLower() == ApiProviderType.Signzy)
                 {
                     response = await GetMobilePanToUan(reqObj);
                 }
 
-                // If successful, break the loop
-                // isSuccess = true;
-                //}
-                //catch (HttpRequestException ex)
-                //{
-                //    // Check if the exception is related to a service issue (like 503)
-                //    if (ex.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
-                //    {
-                //        // Move to the next provider based on priority
-                //        priority++;
-                //    }
-                //    else
-                //    {
-                //        // For other exceptions, rethrow the error or handle as necessary
-                //        throw;
-                //    }
-                //}
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    isSuccess = true; // Mark success and exit the loop
+                }
+                if (response.StatusCode == HttpStatusCode.ServiceUnavailable || response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    priority++;  // Increase priority to try the next provider
+                }
+                else
+                {
+                    break;
+                }
             }
 
             if (!isSuccess)

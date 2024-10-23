@@ -24,8 +24,8 @@ namespace VERIDATA.Model.Table.Public
         [Column("subtype", TypeName = DbDataType._text50)]
         public string? SubTypeCode { get; set; }
         
-        [Column("data_info", TypeName = DbDataType._textmax)]
-        public string? DataInfo { get; set; }
+        [Column("data_info", TypeName = DbDataType._varbinary)]
+        public byte[]? DataInfo { get; set; }
 
         [Column("active_status", TypeName = DbDataType._boolean)]
         [DefaultValue(true)]

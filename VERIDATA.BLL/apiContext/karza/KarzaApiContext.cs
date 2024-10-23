@@ -40,12 +40,20 @@ namespace VERIDATA.BLL.apiContext.karza
             {
                 string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
                 Karza_PanDetailsResponse PanResponse = JsonConvert.DeserializeObject<Karza_PanDetailsResponse>(apiResponse);
-                PanInfoResult? personalInfo = PanResponse?.result;
-                res.StatusCode = _apiResponse.StatusCode;
-                res.PanNumber = personalInfo?.pan?.Trim();
-                res.Name = personalInfo?.name?.Trim();
-                res.MobileNumber = personalInfo?.mobileNo?.Trim();
-                res.DateOfBirth = personalInfo?.dob?.Trim();
+                if (PanResponse.statusCode == (int)KarzaStatusCode.Invalid || PanResponse.statusCode == (int)KarzaStatusCode.NotFound)
+                {
+                    res.StatusCode = HttpStatusCode.BadRequest;
+                    res.ReasonPhrase = "Invalid PAN Number or PAN number not found";
+                }
+                else
+                {
+                    PanInfoResult? personalInfo = PanResponse?.result;
+                    res.StatusCode = _apiResponse.StatusCode;
+                    res.PanNumber = personalInfo?.pan?.Trim();
+                    res.Name = personalInfo?.name?.Trim();
+                    res.MobileNumber = personalInfo?.mobileNo?.Trim();
+                    res.DateOfBirth = personalInfo?.dob?.Trim();
+                }
             }
             else
             {
@@ -147,6 +155,13 @@ namespace VERIDATA.BLL.apiContext.karza
                 List<Employer> activeUanList = new();
                 string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
                 Karza_GetUanDetailsByPanResponse PanToUanResponse = JsonConvert.DeserializeObject<Karza_GetUanDetailsByPanResponse>(apiResponse);
+                //if (PanToUanResponse.statusCode == ((int)KarzaStatusCode.Invalid).ToString() || PanToUanResponse.statusCode == (((int)KarzaStatusCode.NotFound).ToString()))
+                //{
+                //    res.StatusCode = HttpStatusCode.BadRequest;
+                //    res.ReasonPhrase = "Invalid Mobile Number or Combination of Inputs";
+                //}
+                //else
+                //{
                 res.StatusCode = _apiResponse.StatusCode;
                 string? uan = string.Empty;
                 bool multiActiveUanData = false;
@@ -235,14 +250,22 @@ namespace VERIDATA.BLL.apiContext.karza
             {
                 string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
                 Karza_GetPassportResponse? PassportResponse = JsonConvert.DeserializeObject<Karza_GetPassportResponse>(apiResponse);
-                PassportData? passportData = PassportResponse?.result;
+                if (PassportResponse.statusCode == (int)KarzaStatusCode.Invalid || PassportResponse.statusCode == (int)KarzaStatusCode.NotFound)
+                {
+                    res.StatusCode = HttpStatusCode.BadRequest;
+                    res.ReasonPhrase = "Invalid Passport File Number or Combination of Inputs";
+                }
+                else
+                {
+                    PassportData? passportData = PassportResponse?.result;
 
-                Name? _name = passportData?.name;
-                res.StatusCode = _apiResponse.StatusCode;
-                res.Name = $"{_name?.nameFromPassport?.Trim()} {_name?.surnameFromPassport?.Trim()}";
-                res.PassportNumber = passportData?.passportNumber?.passportNumberFromSource?.Trim();
-                res.DateOfBirth = reqObj.dateOfBirth.ToString("yyyy-MM-dd");
-                res.FileNumber = reqObj.passportFileNo;
+                    Name? _name = passportData?.name;
+                    res.StatusCode = _apiResponse.StatusCode;
+                    res.Name = $"{_name?.nameFromPassport?.Trim()} {_name?.surnameFromPassport?.Trim()}";
+                    res.PassportNumber = passportData?.passportNumber?.passportNumberFromSource?.Trim();
+                    res.DateOfBirth = reqObj.dateOfBirth.ToString("yyyy-MM-dd");
+                    res.FileNumber = reqObj.passportFileNo;
+                }
 
             }
             else

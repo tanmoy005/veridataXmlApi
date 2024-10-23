@@ -337,6 +337,7 @@
         public static class JsonTypeAlias
         {
             public const string EmployementHist = "EMPHIST";
+            public const string EmployeePassBook = "EMPPSBK";
           
 
         }

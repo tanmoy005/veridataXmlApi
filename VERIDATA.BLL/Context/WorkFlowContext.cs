@@ -69,7 +69,7 @@ namespace VERIDATA.BLL.Context
                     status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
-                    isManualPassbook = row?.AppointeeData?.IsManualPassbook,
+                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
                 }).ToList();
             }
@@ -95,7 +95,7 @@ namespace VERIDATA.BLL.Context
                     status = row.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
-                    isManualPassbook = row?.AppointeeData?.IsManualPassbook,
+                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
 
                 }).ToList();
@@ -166,7 +166,7 @@ namespace VERIDATA.BLL.Context
                         Status = row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         StatusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         ConsentStatusCode = row.ConsentStatusId ?? 0,
-                        //ConsentStatusCode = row.ConsentStatusId != null ? row.ConsentStatusId == (Int32)ConsentStatus.Agree ? "Given" : row.ConsentStatusId == 2 ? "Declined" : "Revoked" : "Pending",
+                        passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
                         CreatedDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
 
@@ -195,6 +195,7 @@ namespace VERIDATA.BLL.Context
                         Status = row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         StatusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         ConsentStatusCode = row.ConsentStatusId ?? 0,
+                        passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
                         CreatedDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
                 }

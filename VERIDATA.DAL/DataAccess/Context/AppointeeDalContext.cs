@@ -66,8 +66,9 @@ namespace VERIDATA.DAL.DataAccess.Context
                 }
                 if (validationReq.Type == RemarksType.UAN)
                 {
-                    var uanVerifiedStatus = _appointeedetails.IsUanVarified;
-                    _appointeedetails.IsUanVarified = uanVerifiedStatus;
+                    //var uanVerifiedStatus = _appointeedetails.IsUanVarified;
+                    _appointeedetails.IsUanVarified = validationReq.Status;
+                    //_appointeedetails.IsUanAvailable = validationReq.Status;
                     _appointeedetails.IsPassbookFetch = validationReq.uanData?.IsPassbookFetch;
                     _appointeedetails.UANNumber = validationReq.uanData?.UanNumber;
                     //_appointeedetails.IsEmployementVarified = validationReq.uanData?.IsEmployementVarified;
@@ -325,26 +326,45 @@ namespace VERIDATA.DAL.DataAccess.Context
         public async Task<AppointeeEmployementDetails> PostEmployementDetails(EmployementHistoryDetails reqObj)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(reqObj.AppointeeId);
-            var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == reqObj.AppointeeId && x.ActiveStatus == true && !string.IsNullOrEmpty(x.DataInfo))?.ToListAsync();
+
+            // Check if there are existing records for the appointee
+            var res = await _dbContextClass.AppointeeEmployementDetails?
+                .Where(x => x.AppointeeId == reqObj.AppointeeId
+                            && x.ActiveStatus == true
+                            && x.DataInfo != null
+                            && x.SubTypeCode == reqObj.SubType)
+                .ToListAsync();
+
             AppointeeEmployementDetails empHistData = new();
+
             if (res.Count == 0)
             {
                 empHistData.AppointeeId = reqObj.AppointeeId;
                 empHistData.TypeCode = reqObj.Provider?.Trim();
-                empHistData.DataInfo = reqObj.EmployementData;
-                empHistData.SubTypeCode = reqObj.SubType;
+                // Convert the string to a byte array before storing it in varbinary field
+                empHistData.DataInfo = string.IsNullOrEmpty(reqObj.EmpData)
+                    ? null
+                    : System.Text.Encoding.UTF8.GetBytes(reqObj.EmpData);
+
+                empHistData.SubTypeCode = reqObj.SubType?.Trim();
                 empHistData.ActiveStatus = true;
                 empHistData.CreatedBy = reqObj.UserId;
                 empHistData.CreatedOn = DateTime.Now;
+
+                // Add the new entry to the context
                 _dbContextClass.AppointeeEmployementDetails.Add(empHistData);
             }
+
+            // Save changes to the database
             _ = await _dbContextClass.SaveChangesAsync();
+
             return empHistData;
         }
 
-        public async Task<AppointeeEmployementDetails> GetEmployementDetails(int appointeeId)
+
+        public async Task<AppointeeEmployementDetails> GetEmployementDetails(int appointeeId , string type)
         {
-            var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == appointeeId && x.ActiveStatus == true).ToListAsync();
+            var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == appointeeId && x.SubTypeCode==type && x.ActiveStatus == true).ToListAsync();
             return res?.LastOrDefault();
         }
 
@@ -366,7 +386,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                     UserName = candidate.UserName,
                                     CandidateId = candidate.CandidateId,
                                     DefaultPassword = userAuth.IsDefaultPass,
-                                    Password = userAuth.UserPwdTxt 
+                                    Password = userAuth.UserPwdTxt
                                 }).FirstOrDefaultAsync();
 
             return result;

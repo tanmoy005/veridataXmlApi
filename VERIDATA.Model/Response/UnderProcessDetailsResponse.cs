@@ -20,6 +20,7 @@
         public DateTime? CreatedDate { get; set; }
         public int? ConsentStatusCode { get; set; }
         public string? Status { get; set; }
+        public string? passbookStatus { get; set; }
         public int StatusCode { get; set; }
         public string? lvl1Email { get; set; }
         public string? lvl2Email { get; set; }
