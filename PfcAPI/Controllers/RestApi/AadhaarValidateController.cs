@@ -235,6 +235,14 @@ namespace PfcAPI.Controllers.RestApi
                             AppointeeId = reqObj.appointeeId
                         };
 
+                        if(string.IsNullOrEmpty(GenarateOtpPassbookResponse.Name) && string.IsNullOrEmpty(GenarateOtpPassbookResponse.DateOfBirth))
+                        {
+                            _ErrorResponse.ErrorCode =  (int)HttpStatusCode.NotFound;
+                            _ErrorResponse.UserMessage = "EPFO server is currently busy!Please try again later";
+                            _ErrorResponse.InternalMessage = "EPFO server is currently busy!Please try again later";
+                            return Ok(new BaseResponse<ErrorResponse>(GenarateOtpPassbookResponse.StatusCode, _ErrorResponse));
+                        }
+
                         CandidateValidateResponse VerifyUan = Task.Run(async () => await _varifyCandidate.VerifyUanData(VarifyReq)).GetAwaiter().GetResult();
                         response = new()
                         {
