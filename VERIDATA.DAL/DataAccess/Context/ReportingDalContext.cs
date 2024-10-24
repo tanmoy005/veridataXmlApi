@@ -41,7 +41,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                    on p.AppointeeData.HandicapeType equals z.DisabilityCode into DGrouping
                             from h in DGrouping.DefaultIfEmpty()
 
-                            select new { p, m.MStatusName, q.QualificationName, g.GenderName, h.DisabilityName };
+                            select new { p, m.MStatusName, q.QualificationName, g.GenderName, h?.DisabilityName };
 
             var appointeelist = querydata.ToList();
             var remarksquerydata = from a in appointeelist
