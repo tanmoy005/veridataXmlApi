@@ -97,12 +97,12 @@ namespace VERIDATA.BLL.Context
                     appointeeEmailId = row?.AppointeeData?.AppointeeEmailId,
                     mobileNo = row?.AppointeeData?.MobileNo,
                     adhaarNo = row?.AppointeeData?.AadhaarNumberView,
-                    panNo = string.IsNullOrEmpty(row?.AppointeeData?.PANNumber) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.PANNumber)),
+                    panNo = string.IsNullOrEmpty(row?.AppointeeData?.PANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.PANNumber)),
                     dateOfJoining = row?.AppointeeData?.DateOfJoining,
                     epfWages = row?.AppointeeData?.EPFWages,
-                    uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
-                    status = row?.ProcessData?.DataUploaded ?? false ? "Downloaded" : string.Empty,
-                    isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? string.Empty : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
+                    uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
+                    status = row?.ProcessData?.DataUploaded ?? false ? "Downloaded" : "NA",
+                    isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                 })?.ToList();
             }
             return response;
