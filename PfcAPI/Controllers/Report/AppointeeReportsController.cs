@@ -156,7 +156,6 @@ namespace PfcAPI.Controllers.Report
             }
         }
 
-        [AllowAnonymous]
         [Authorize]
         [HttpPost]
         [Route("GetUnderProcessReport")]
@@ -194,7 +193,6 @@ namespace PfcAPI.Controllers.Report
             }
         }
 
-        [AllowAnonymous]
         [Authorize]
         [HttpPost]
         [Route("GetLapsedDataReport")]
@@ -264,11 +262,8 @@ namespace PfcAPI.Controllers.Report
         }
 
         [Authorize]
-        [AllowAnonymous]
-        //[Authorize(Roles = $"{RoleTypeAlias.SuperAdmin},{RoleTypeAlias.CompanyAdmin},{RoleTypeAlias.GeneralAdmin}")]
         [HttpPost]
         [Route("AppointeeCounterReport")]
-        // public ActionResult AppointeeCounterReport(DateTime? FromDate, DateTime? ToDate)
         public ActionResult AppointeeCounterReport(AppointeeCountReportSearchRequest reqObj)
         {
             try
@@ -305,8 +300,6 @@ namespace PfcAPI.Controllers.Report
         }
 
         [Authorize]
-        //[AllowAnonymous]
-        //[Authorize(Roles = $"{RoleTypeAlias.SuperAdmin},{RoleTypeAlias.CompanyAdmin},{RoleTypeAlias.GeneralAdmin}")]
         [HttpPost]
         [Route("AdminAppointeeCounterReport")]
         public ActionResult AdminAppointeeCounterReport(AppointeeCountReportSearchRequest reqObj)
@@ -378,7 +371,6 @@ namespace PfcAPI.Controllers.Report
             }
         }
         [Authorize]
-        [AllowAnonymous]
         [HttpPost]
         [Route("NationalityFilterReport")]
         public ActionResult NationalityFilterReport(GetNationalityReportRequest reqObj)
@@ -412,7 +404,6 @@ namespace PfcAPI.Controllers.Report
 
         }
         [Authorize]
-        //[AllowAnonymous]
         [HttpPost]
         [Route("AppointeeDataFilterReport")]
         public ActionResult AppointeeDataFilterReport(AppointeeDataFilterReportRequest reqObj)
@@ -445,7 +436,6 @@ namespace PfcAPI.Controllers.Report
             }
         }
         [Authorize]
-        //[AllowAnonymous]
         [HttpPost]
         [Route("AppointeeDataPfFilterReport")]
         public ActionResult AppointeeDataPfFilterReport(AppointeeDataFilterReportRequest reqObj)
