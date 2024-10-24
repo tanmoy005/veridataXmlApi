@@ -66,8 +66,8 @@ namespace VERIDATA.Model.Response
         [DisplayName("Handicape Type")]
         public string? HandicapeType { get; set; }
         
-        [DisplayName("Handicape Name")]
-        public string? HandicapeName { get; set; }
+        //[DisplayName("Handicape Name")]
+        //public string? HandicapeName { get; set; }
 
         [DisplayName("Aadhaar Name")]
         public string? AadhaarName { get; set; } //Varified with aadhar

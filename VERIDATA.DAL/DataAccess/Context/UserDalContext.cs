@@ -244,6 +244,14 @@ namespace VERIDATA.DAL.DataAccess.Context
                         obj.IsUanVarified = null;
                     }
                 }
+                if (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.MobileNo?.Trim() != currRawdata.MobileNo))
+                {
+                    obj.UANNumber = null;
+                    if (obj.IsUanVarified ?? false)
+                    {
+                        obj.IsUanVarified = null;
+                    }
+                }
 
                 //obj.AppointeeEmailId = (!string.IsNullOrEmpty(currRawdata.AppointeeEmailId) && (obj.AppointeeEmailId?.Trim() != currRawdata.AppointeeEmailId)) ? currRawdata.AppointeeEmailId : obj.AppointeeEmailId?.Trim();
                 //obj.CompanyName = (!string.IsNullOrEmpty(currRawdata.CompanyName) && (obj.CompanyName?.Trim() != currRawdata.CompanyName)) ? currRawdata.CompanyName : obj.CompanyName;
@@ -257,7 +265,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 obj.UserName = (!string.IsNullOrEmpty(currRawdata.AppointeeName) && (obj.UserName?.Trim() != currRawdata.AppointeeName)) ? currRawdata.AppointeeName : obj.UserName;
 
                 //obj.EmailId = (!string.IsNullOrEmpty(currRawdata.AppointeeEmailId) && (obj.EmailId?.Trim() != currRawdata.AppointeeEmailId)) ? currRawdata.AppointeeEmailId : obj.EmailId?.Trim();
-                //obj.ContactNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.ContactNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.ContactNo;
+                obj.ContactNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.ContactNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.ContactNo;
                 obj.UpdatedBy = UserId;
                 obj.UpdatedOn = DateTime.Now;
 
@@ -628,6 +636,23 @@ namespace VERIDATA.DAL.DataAccess.Context
             return menudata;
         }
 
+        public async Task<List<CreateUserDetailsRequest>> GetCandidateDetailsBycandidateId(List<string> CandidateList)
+        {
+            List<CreateUserDetailsRequest> response = new();
 
+            List<UserMaster> usersauthdata = await _dbContextClass.UserMaster.Where(m => CandidateList.Contains(m.CandidateId) && m.ActiveStatus == true).ToListAsync();
+
+            response = usersauthdata.Select(m => new CreateUserDetailsRequest
+            {
+                UserCode = m.UserCode,
+                UserName = m.UserName,
+                EmailId = m.EmailId,
+                ContactNo = m.ContactNo,
+                CandidateId = m.CandidateId,
+
+            })?.ToList();
+
+            return response;
+        }
     }
 }
