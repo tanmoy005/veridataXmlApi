@@ -1,4 +1,5 @@
-﻿using VERIDATA.Model.DataAccess.Response;
+﻿using VERIDATA.Model.DataAccess;
+using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
 
@@ -15,7 +16,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<AppointeeCountDateWiseDetails> AppointeeCountReport(AppointeeCountReportSearchRequest reqObj);// DateTime? FromDate, DateTime? ToDate);
         public Task<List<AppointeeAgingDataReportDetails>> AppointeeDetailsAgingReport(GetAgingReportRequest reqObj);
         public Task<List<AppointeeNationalityDataReportDetails>> AppointeeNationalityDetailsReport(GetNationalityReportRequest reqObj);//DateTime? FromDate, DateTime? ToDate)
-        public Task<List<AppointeeDataFilterReportResponse>> AppointeeDetailsReport(AppointeeDataFilterReportRequest reqObj);
+        public Task<List<AppointeeDataFilterReportDetails>> AppointeeDetailsReport(AppointeeDataFilterReportRequest reqObj);
         public Task<List<AppointeeDataPfReportResponse>> AppointeePfDetailsReport(AppointeeDataFilterReportRequest reqObj);
 
     }

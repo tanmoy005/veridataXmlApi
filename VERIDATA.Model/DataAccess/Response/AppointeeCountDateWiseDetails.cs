@@ -38,8 +38,8 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Candidate ID")]
         public string? CandidateId { get; set; }
 
-        [DisplayName("Compnay Id")]
-        public int? CompanyId { get; set; }
+        //[DisplayName("Compnay Id")]
+        //public int? CompanyId { get; set; }
 
         [DisplayName("Entity Name")]
         public string? CompanyName { get; set; }

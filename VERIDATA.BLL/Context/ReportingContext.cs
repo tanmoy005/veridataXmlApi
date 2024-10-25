@@ -3,6 +3,7 @@ using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.Model.Configuration;
+using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
@@ -96,12 +97,12 @@ namespace VERIDATA.BLL.Context
                     appointeeEmailId = row?.AppointeeData?.AppointeeEmailId,
                     mobileNo = row?.AppointeeData?.MobileNo,
                     adhaarNo = row?.AppointeeData?.AadhaarNumberView,
-                    panNo = string.IsNullOrEmpty(row?.AppointeeData?.PANNumber) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.PANNumber)),
+                    panNo = string.IsNullOrEmpty(row?.AppointeeData?.PANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.PANNumber)),
                     dateOfJoining = row?.AppointeeData?.DateOfJoining,
                     epfWages = row?.AppointeeData?.EPFWages,
-                    uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
-                    status = row?.ProcessData?.DataUploaded ?? false ? "Downloaded" : string.Empty,
-                    isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? string.Empty : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
+                    uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
+                    status = row?.ProcessData?.DataUploaded ?? false ? "Downloaded" : "NA",
+                    isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                 })?.ToList();
             }
             return response;
@@ -324,7 +325,7 @@ namespace VERIDATA.BLL.Context
                     {
                         AppointeeName = x?.AppointeeName,
                         CandidateId = x?.CandidateId,
-                        CompanyId = x?.CompanyId,
+                        //CompanyId = x?.CompanyId,
                         CompanyName = x?.CompanyName,
                         EmailId = x?.AppointeeEmail,
                         ActionTaken = x?.CreatedOn?.ToShortDateString(),
@@ -401,7 +402,7 @@ namespace VERIDATA.BLL.Context
                     {
                         AppointeeName = x?.AppointeeName,
                         CandidateId = x?.CandidateId,
-                        CompanyId = x?.CompanyId,
+                        //CompanyId = x?.CompanyId,
                         CompanyName = x?.CompanyName,
                         EmailId = x?.AppointeeEmail,
                         ActionTaken = (x?.AppvlStatusCode != WorkFlowType.ProcessIni?.Trim() && x?.SaveStep == 1) ? x?.UpdatedOn?.ToShortDateString() ?? x?.ActionTakenAt?.ToShortDateString()
@@ -551,13 +552,13 @@ namespace VERIDATA.BLL.Context
             }).OrderByDescending(y => y.AppointeeId).ToList();
         }
 
-        public async Task<List<AppointeeDataFilterReportResponse>> AppointeeDetailsReport(AppointeeDataFilterReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
+        public async Task<List<AppointeeDataFilterReportDetails>> AppointeeDetailsReport(AppointeeDataFilterReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
         {
 
             DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
             DateTime CurrDate = Convert.ToDateTime(_currDate);
             string status = string.Empty;
-            List<AppointeeDataFilterReportResponse> _response = new();
+            List<AppointeeDataFilterReportDetails> _response = new();
             bool _IsAllData = reqObj.StatusCode?.ToLower()?.Trim() == FilterCode.All?.ToLower()?.Trim();
             if (reqObj.StatusCode == FilterCode.VERIFIED || _IsAllData)
             {
@@ -571,7 +572,7 @@ namespace VERIDATA.BLL.Context
                 };
 
                 List<ProcessedDataDetailsResponse> list = await _workFlowDetailsContext.GetProcessedAppointeeDetailsAsync(filterRequest);
-                var _processViewdata = list?.DistinctBy(x => x.AppointeeId)?.OrderByDescending(x => x.ProcessedId)?.Select(row => new AppointeeDataFilterReportResponse
+                var _processViewdata = list?.DistinctBy(x => x.AppointeeId)?.OrderByDescending(x => x.ProcessedId)?.Select(row => new AppointeeDataFilterReportDetails
                 {
                     candidateId = row?.CandidateId,
                     AppointeeName = row?.AppointeeName,
@@ -596,7 +597,7 @@ namespace VERIDATA.BLL.Context
                 };
 
                 List<RejectedDataDetailsResponse> rejectedAppointeeList = await _workFlowDetailsContext.GetRejectedAppointeeDetailsAsync(filterRequest);
-                var _rejectedViewdata = rejectedAppointeeList?.DistinctBy(x => x.AppointeeId)?.OrderByDescending(x => x.RejectedId)?.Select(row => new AppointeeDataFilterReportResponse
+                var _rejectedViewdata = rejectedAppointeeList?.DistinctBy(x => x.AppointeeId)?.OrderByDescending(x => x.RejectedId)?.Select(row => new AppointeeDataFilterReportDetails
                 {
                     candidateId = row?.CandidateId,
                     AppointeeName = row?.AppointeeName,
@@ -623,7 +624,7 @@ namespace VERIDATA.BLL.Context
 
             if (reqObj.StatusCode == FilterCode.LAPSED || _IsAllData)
             {
-                List<AppointeeDataFilterReportResponse>? _lapsedViewdata = underProcessData?.Where(X => X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportResponse
+                List<AppointeeDataFilterReportDetails>? _lapsedViewdata = underProcessData?.Where(X => X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportDetails
                 {
                     AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
@@ -639,7 +640,7 @@ namespace VERIDATA.BLL.Context
             if (reqObj.StatusCode == FilterCode.UNDERPROCESS || _IsAllData)
             {
 
-                List<AppointeeDataFilterReportResponse>? _underProcessViewdata = underProcessData?.Where(X => !X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportResponse
+                List<AppointeeDataFilterReportDetails>? _underProcessViewdata = underProcessData?.Where(X => !X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportDetails
                 {
                     AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
