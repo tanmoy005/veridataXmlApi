@@ -121,6 +121,21 @@ namespace VERIDATA.BLL.Notification.Sender
             await SendMail(mailDetails);
         }
 
+        //public async Task SendFileSubmitSuccesMail(string emailId, MailDetails mailDetails) //mGhosh added
+        //{
+        //    mailDetails.ToEmailList = new List<EmailAddress?>();
+        //    mailDetails.ToCcEmailList = new List<EmailAddress?>();
+        //    EmailAddress _emailadd = new()
+        //    {
+        //        DisplayName = mailDetails.ParseData?.Name,
+        //        Address = emailId
+        //    };
+        //    mailDetails.ToEmailList.Add(_emailadd);
+
+        //    await SendMail(mailDetails);
+
+        //}
+
        
         public async Task SendMail(MailDetails mailDetails)
         {
@@ -187,6 +202,14 @@ namespace VERIDATA.BLL.Notification.Sender
                 case MailType.SendOTP:
                     _filename = "userOtpAuth";
                     mailSubject = "VERIDATA: User Authentication ";
+                    break;
+                case MailType.AutoSubmit:
+                    _filename = "autoFileUploaded";
+                    mailSubject = "VERIDATA: Congratulation! File Submitted";
+                    break;
+                case MailType.ManualApprove:
+                    _filename = "userForcedApproved";
+                    mailSubject = "VERIDATA: Congratulation! You Are Approved";
                     break;
 
             }

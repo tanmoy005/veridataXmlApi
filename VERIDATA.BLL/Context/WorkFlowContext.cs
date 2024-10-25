@@ -840,5 +840,37 @@ namespace VERIDATA.BLL.Context
 
         }
 
+        public async Task PostMailFileSubmisstionSuccess(int appointeeId, int UserId)
+        {
+            var appointeeDetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
+            if (!string.IsNullOrEmpty(appointeeDetails?.AppointeeEmailId))
+            {
+                MailDetails mailDetails = new();
+                MailBodyParseDataDetails bodyDetails = new()
+                {
+                    Name = appointeeDetails?.AppointeeName,
+                    CompanyName = appointeeDetails?.CompanyName,
+                    Url = _emailConfig.HostUrl
+                };
+
+                // Setting the mail type for success notification
+                mailDetails.MailType = MailType.AutoSubmit;
+                mailDetails.ParseData = bodyDetails;
+
+                // Use existing SendAppointeeMail function
+                await _emailSender.SendAppointeeMail(appointeeDetails.AppointeeEmailId, mailDetails);
+
+                // Log mail transaction if needed
+                mailTransactionRequest transReq = new()
+                {
+                    AppointeeId = appointeeId,
+                    UserId = UserId,
+                    Type = "SUBMISSION_SUCCESS"
+                };
+                await _dbContextCandiate.PostMailTransDetails(transReq);
+            }
+
+        }
+
     }
 }

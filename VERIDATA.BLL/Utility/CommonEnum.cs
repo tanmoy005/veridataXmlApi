@@ -59,7 +59,9 @@
             public const string Others = "OTHERS";
             public const string AdminUserCreate = "ADMNCREATE";
             public const string MailResend = "MAILRESEND";
-
+            public const string AutoSubmit = "AUTOSUBMIT";
+            public const string ManualApprove = "MANUALAPPROVE";
+            
         }
         public static class WorkFlowType
         {

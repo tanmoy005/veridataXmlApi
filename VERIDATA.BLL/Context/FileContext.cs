@@ -667,74 +667,6 @@ namespace VERIDATA.BLL.Context
         public async Task postappointeeUploadedFiles(AppointeeFileDetailsRequest AppointeeDetails)
         {
 
-            ////if (AppointeeDetails != null)
-            ////{
-            ////    List<IFormFile>? fileUploaded = AppointeeDetails.FileDetails;
-            ////    int _appointeeId = AppointeeDetails?.AppointeeId ?? 0;
-            ////    if (fileUploaded?.Count > 0 && _appointeeId != 0)
-            ////    {
-            ////        List<AppointeeUploadDetails>? _prevDocList = await _appointeeContext.GetAppinteeUploadDetails(_appointeeId);
-            ////        if (!string.IsNullOrEmpty(AppointeeDetails?.FileUploaded ?? string.Empty))
-            ////        {
-
-            ////            List<FileUploadDataModel>? _Uploadedfiledetails = JsonConvert.DeserializeObject<List<FileUploadDataModel>>(AppointeeDetails?.FileUploaded).ToList() ?? new List<FileUploadDataModel>();
-
-            ////            foreach (IFormFile obj in fileUploaded)
-            ////            {
-            ////                //IFormFile obj = fileobj;
-            ////                string fileName = $"{DateTime.Now.Ticks}_{obj?.FileName}";
-            ////                long? fileLength = obj?.Length;
-            ////                string? mimetype = obj?.ContentType?.ToLower();
-            ////                string Cuurentpath = Directory.GetCurrentDirectory();
-            ////                FileUploadDataModel? fileDetails = _Uploadedfiledetails?.Find(x => x.fileName == obj?.FileName && x.fileLength == fileLength && x.isFileUploaded);
-            ////                if (fileDetails != null)
-            ////                {
-            ////                    string path = Path.Combine(Cuurentpath, "AppointeeUploads", AppointeeDetails.AppointeeCode, fileDetails?.uploadTypeAlias ?? "");
-
-            ////                    if (!Directory.Exists(path))
-            ////                    {
-            ////                        _ = Directory.CreateDirectory(path);
-            ////                    }
-            ////                    //Save the uploaded file.
-            ////                    string _filePath = Path.Combine(path, fileName);
-            ////                    using (FileStream stream = new(_filePath, FileMode.Create))
-            ////                    {
-            ////                        obj?.CopyTo(stream);
-            ////                    }
-            ////                    if (Path.Exists(_filePath))
-            ////                    {
-            ////                        AppointeeUploadDetails uploaddata = new()
-            ////                        {
-            ////                            AppointeeId = AppointeeDetails.AppointeeId,
-            ////                            UploadTypeId = fileDetails.uploadTypeId,
-            ////                            UploadTypeCode = fileDetails.uploadTypeAlias,
-            ////                            FileName = fileName,
-            ////                            UploadPath = _filePath,
-            ////                            IsPathRefered = CheckType.yes,
-            ////                            MimeType = mimetype,
-            ////                            ActiveStatus = true,
-            ////                            CreatedBy = AppointeeDetails.UserId,
-            ////                            CreatedOn = DateTime.Now
-
-
-            ////                        };
-
-            ////                        // start remove prev file
-            ////                        AppointeeUploadDetails? _prevdocDetails = _prevDocList?.Where(x => x.UploadTypeId == fileDetails.uploadTypeId)?.FirstOrDefault();
-
-            ////                        await _appointeeContext.uploadFilesNUpdatePrevfiles(uploaddata, _prevdocDetails, AppointeeDetails.UserId);
-            ////                        if (_prevdocDetails != null)
-            ////                        {
-            ////                            bool file_removed = RemoveDocFile(_prevdocDetails.UploadPath);
-            ////                        }
-
-            ////                        // end remove prev file
-            ////                    }
-            ////                }
-            ////            }
-            ////        }
-            ////    }
-            ////}
 
             // mGhosh new code
 
@@ -758,14 +690,7 @@ namespace VERIDATA.BLL.Context
 
                             if (fileDetails != null)
                             {
-                                // Check file size/type if needed
-                                //const long maxFileSize = 5 * 1024 * 1024; // 5 MB, for example
-                                //var allowedMimeTypes = new List<string> { "image/jpeg", "image/png", "application/pdf" }; // Add your allowed mime types here
-
-                                //if (fileLength > maxFileSize || !allowedMimeTypes.Contains(mimetype))
-                                //{
-                                //    throw new Exception("File size exceeds the limit or file type is not allowed.");
-                                //}
+                                
 
 
                                 // Read the file into a byte array

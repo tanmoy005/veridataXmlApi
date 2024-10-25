@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="NotificationTemplates\autoFileUploaded.txt" />
     <None Remove="NotificationTemplates\newAdminUserCreate.txt" />
     <None Remove="NotificationTemplates\newusermailsend.txt" />
     <None Remove="NotificationTemplates\updateusermailsend.txt" />
@@ -57,6 +58,7 @@
     <EmbeddedResource Include="NotificationTemplates\newAdminUserCreate.txt" />
     <EmbeddedResource Include="NotificationTemplates\newusermailsend.txt" />
     <EmbeddedResource Include="NotificationTemplates\updateusermailsend.txt" />
+    <EmbeddedResource Include="NotificationTemplates\autoFileUploaded.txt" />
     <EmbeddedResource Include="NotificationTemplates\userForcedApproved.txt" />
     <EmbeddedResource Include="NotificationTemplates\usermailResend.txt" />
     <EmbeddedResource Include="NotificationTemplates\userOtpAuth.txt" />
