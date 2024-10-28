@@ -35,5 +35,6 @@ namespace VERIDATA.BLL.Interfaces
         public Task<AppointeeUploadDetails> getFiledetailsByFileType(int appointeeId, string fileTypeCode);
         public Task postAppointeePassbookUpload(AppointeeDataSaveInFilesRequset UploadDetails);
         public Task<UnzipAadharDataResponse> unzipAdharzipFiles(AppointeeAadhaarAadharXmlVarifyRequest AppointeeAdharUploadFileDetails);
+        public Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList,string uploadtypecode);
     }
 }

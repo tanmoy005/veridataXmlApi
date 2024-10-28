@@ -861,6 +861,45 @@ namespace VERIDATA.BLL.Context
                 }
             }
         }
+
+        //mGhosh new code
+        public async Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList, string? uploadTypeCode = null)
+        {
+            List<AppointeeUploadDetails> _UploadDetails;
+
+            // Filter data by UploadTypeCode if provided
+            if (!string.IsNullOrEmpty(uploadTypeCode))
+            {
+                _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId, uploadTypeCode);
+            }
+            else
+            {
+                _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
+            }
+
+            if (_UploadDetails?.Count > 0)
+            {
+                foreach (var obj in _UploadDetails)
+                {
+                    var doc = new FileDetailsResponse();
+
+                    // Retrieving binary data from Content column or the file path
+                    byte[]? _FileData = obj.Content;
+                    if (_FileData == null && !string.IsNullOrEmpty(obj.UploadPath))
+                    {
+                        _FileData = await GetFileDataAsync(obj.UploadPath);
+                    }
+
+                    doc.FileData = _FileData;
+                    doc.FileName = $"{candidateFileName}_{obj?.UploadTypeCode}";
+                    doc.UploadTypeId = obj?.UploadTypeId ?? 0;
+                    doc.mimeType = obj?.MimeType ?? string.Empty;
+                    doc.UploadTypeAlias = obj?.UploadTypeCode ?? string.Empty;
+
+                    _FileDataList.Add(doc);
+                }
+            }
+        }
         public async Task<AppointeeUploadDetails> getFiledetailsByFileType(int appointeeId, string fileTypeCode)
         {
             AppointeeUploadDetails FileDetailsResponse = new();

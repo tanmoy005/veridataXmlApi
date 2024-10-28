@@ -32,13 +32,25 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<List<AppointeeUploadDetails>> GetAppinteeUploadDetails(int appointeeId)
         {
-            // List<AppointeeUploadDetails> _uploadDetails = await _dbContextClass.AppointeeUploadDetails.Where(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true).ToListAsync();
             List<AppointeeUploadDetails> _uploadDetails = await _dbContextClass.AppointeeUploadDetails
            .Where(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true)
            .ToListAsync();
 
             return _uploadDetails;
 
+        }
+        // mGhosh New code
+        public async Task<List<AppointeeUploadDetails>> GetAppinteeUploadDetails(int appointeeId, string? uploadTypeCode = null)
+        {
+            IQueryable<AppointeeUploadDetails> query = _dbContextClass.AppointeeUploadDetails
+                .Where(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true);
+
+            if (!string.IsNullOrEmpty(uploadTypeCode))
+            {
+                query = query.Where(x => x.UploadTypeCode == uploadTypeCode);
+            }
+
+            return await query.ToListAsync();
         }
         public async Task<List<ReasonMaser>> GetAllRemarksByType(string Type)
         {

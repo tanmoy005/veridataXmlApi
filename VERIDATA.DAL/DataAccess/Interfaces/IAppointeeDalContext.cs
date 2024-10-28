@@ -35,6 +35,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<UserCredetialDetailsResponse> GetUserCredentialInfo(int RefAppointeeId);
 
         public Task<AppointeeEmployementDetails> GetEmployementDetails(int appointeeId, string type);
+        public Task<List<AppointeeUploadDetails>> GetAppinteeUploadDetails(int appointeeId, string uploadTypeCode);
 
 
     }
