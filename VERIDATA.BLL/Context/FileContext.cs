@@ -968,12 +968,7 @@ namespace VERIDATA.BLL.Context
                     messeege = messeege + " share code can not be null";
                 }
             }
-            //if (isValid)
-            //{
-            //    var isSigValid = await OfflineKycDigitalSignatureCheck(unzipFileContent);
-            //    messeege = isSigValid ? messeege : "Invalid Kyc File, xml is corrupted, or file has been edited, please don't edit xml, reupload the xml";
-            //    isValid = isSigValid;
-            //}
+           
             response.FileContent = unzipFileContent;
             response.IsValid = isValid;
             response.Message = messeege;
