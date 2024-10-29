@@ -21,7 +21,8 @@ namespace VERIDATA.BLL.Interfaces
         public Task PostAppointeeTrusUanDetailsAsync(AppointeeUpdatePfUanDetailsRequest AppointeeTrustDetails);
         public Task PostAppointeeHandicapDetailsAsync(AppointeeHadicapFileDetailsRequest AppointeeHandicapDetails);
         public Task<AppointeeEmployementDetails> PostAppointeeEmployementDetailsAsync(EmployementHistoryDetails reqObj);
-        public Task<AppointeeDetailsResponse> getAppointeePensionAsync(int appointeeID);
+        public Task<AppointeeDetails> PostAppointeepensionAsync(AppointeeApprovePensionRequest reqObj);
+
 
     }
 }

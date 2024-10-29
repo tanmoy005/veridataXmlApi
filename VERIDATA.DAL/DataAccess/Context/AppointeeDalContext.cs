@@ -4,6 +4,7 @@ using VERIDATA.DAL.DBContext;
 using VERIDATA.DAL.utility;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Request;
+using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Table.Activity;
@@ -403,6 +404,34 @@ namespace VERIDATA.DAL.DataAccess.Context
                                 }).FirstOrDefaultAsync();
 
             return result;
+        }
+
+        public async Task<AppointeeDetails> UpdateAppinteePensionById(AppointeeApprovePensionRequest reqObj)
+        {
+          
+            var updatePension = await _dbContextClass.AppointeeDetails
+         .Where(x => x.AppointeeId == reqObj.appointeeId && x.ActiveStatus == true)
+         .Select(appointee => new AppointeeDetails
+         {
+             AppointeeDetailsId = appointee.AppointeeDetailsId,
+             AppointeeId = appointee.AppointeeId,
+             IsPensionApplicable = reqObj.IsManualPassbook,
+             UpdatedBy = reqObj.userId,
+             UpdatedOn = DateTime.UtcNow
+         })
+         .ToListAsync();
+
+           
+            if (!updatePension.Any())
+            {
+                return null;
+            }
+
+            // Save changes to the database
+            await _dbContextClass.SaveChangesAsync();
+
+            // Return the updated record
+            return updatePension.First();
         }
     }
 }

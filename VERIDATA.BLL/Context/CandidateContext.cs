@@ -998,37 +998,17 @@ namespace VERIDATA.BLL.Context
             return msg;
         }
 
-        public async Task<AppointeeDetailsResponse> getAppointeePensionAsync(int appointeeID)
+        public async Task<AppointeeDetails> PostAppointeepensionAsync(AppointeeApprovePensionRequest reqObj)
         {
-            var appointeeDetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeID);
+            var updatedAppointeeDetails = await _appointeeDalContext.UpdateAppinteePensionById(reqObj);
 
-          
-            if (appointeeDetails == null)
+           
+            if (updatedAppointeeDetails == null)
             {
                 throw new Exception("Appointee not found.");
             }
 
-           
-            var response = new AppointeeDetailsResponse
-            {
-                AppointeeId = appointeeDetails.AppointeeId,
-                AppointeeName = appointeeDetails.AppointeeName,
-                CompanyName = appointeeDetails.CompanyName,
-                DateOfJoining = appointeeDetails.DateOfJoining,
-                IsPensionApplicable = appointeeDetails.IsPensionApplicable
-            };
-
-            
-            if (response.IsPensionApplicable.HasValue && response.IsPensionApplicable.Value)
-            {
-                
-            }
-            else
-            {
-                response.IsPensionApplicable = false; 
-            }
-
-            return response;
+            return updatedAppointeeDetails;
         }
     }
 }

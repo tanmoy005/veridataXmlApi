@@ -6,6 +6,8 @@ using VERIDATA.Model.Base;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
+using VERIDATA.Model.Table.Public;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using static VERIDATA.BLL.utility.CommonEnum;
 
 namespace PfcAPI.Controllers.Appoientee
@@ -572,20 +574,27 @@ namespace PfcAPI.Controllers.Appoientee
 
         [AllowAnonymous]
         [Authorize]
-        [HttpGet]
-        [Route("getAppointeePensionVerification")]
-        public ActionResult GetAppointeePensionVerification(int AppointeeId)
+        [HttpPost]
+        [Route("PostAppointeePensionVerification")]
+        public async Task<ActionResult> PostAppointeePensionVerification(AppointeeApprovePensionRequest reqObj)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
-             
-                AppointeeDetailsResponse appointeePension = Task.Run(async () => await _candidateContext.getAppointeePensionAsync(AppointeeId)).GetAwaiter().GetResult();
+                
+                var updatedAppointeeDetails = await _candidateContext.PostAppointeepensionAsync(reqObj);
 
-                return Ok(new BaseResponse<AppointeeDetailsResponse>(HttpStatusCode.OK, appointeePension));
+                
+                return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, new BaseResponse<string>(HttpStatusCode.InternalServerError, ex.Message));
+               
+                return StatusCode(500, new { Message = "An error occurred while updating pension status.", Error = ex.Message });
             }
         }
 
