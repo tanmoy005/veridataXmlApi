@@ -262,7 +262,8 @@ namespace VERIDATA.BLL.apiContext.signzy
             else
             {
                 res.StatusCode = _apiResponse.StatusCode;
-                res.ReasonPhrase = employementUanResponse?.Error?.Message?.ToString() ?? employementUanResponse?.Message;
+                res.ReasonPhrase = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
+               // res.ReasonPhrase = employementUanResponse?.Error?.Message?.ToString() ?? employementUanResponse?.Message;
             }
 
             return res;

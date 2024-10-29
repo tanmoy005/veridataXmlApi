@@ -509,6 +509,7 @@ namespace VERIDATA.BLL.Context
             _ = _aadhaarConfig.EncriptKey;
             int appointeeId = AppointeeFileDetails.AppointeeId;
             AppointeeDetails? _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
+            string mailType = string.Empty;
             if (_appointeedetails.IsProcessed != true)
             {
                 bool _isSubmit = _appointeedetails?.IsSubmit ?? false;
@@ -517,17 +518,20 @@ namespace VERIDATA.BLL.Context
                     await _fileContext.postappointeeUploadedFiles(AppointeeFileDetails);
                     var isManual = string.IsNullOrEmpty(_appointeedetails.UANNumber) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
                     await _dbContextCandiate.UpdateAppointeeSubmit(appointeeId, AppointeeFileDetails.IsSubmit ?? false, isManual);
-                    //_appointeedetails.IsSubmit = AppointeeFileDetails.IsSubmit ?? false;
+                    mailType = MailType.Submit;
                 }
                 if ((AppointeeFileDetails.IsSubmit ?? false) && !_isSubmit)
                 {
 
                     if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsPanVarified ?? false))
                     {
+                        mailType = MailType.AutoApprove;
                         await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeFileDetails?.UserId ?? 0, true);//isapprove set true
 
                     }
                 }
+
+                await PostMailFileSubmisstionSuccess(_appointeedetails.AppointeeId ?? 0, AppointeeFileDetails?.UserId ?? 0, mailType);
 
             }
 
@@ -841,7 +845,7 @@ namespace VERIDATA.BLL.Context
 
         }
 
-        public async Task PostMailFileSubmisstionSuccess(int appointeeId, int UserId)
+        private async Task PostMailFileSubmisstionSuccess(int appointeeId, int UserId,string type)
         {
             var appointeeDetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
             if (!string.IsNullOrEmpty(appointeeDetails?.AppointeeEmailId))
@@ -851,24 +855,17 @@ namespace VERIDATA.BLL.Context
                 {
                     Name = appointeeDetails?.AppointeeName,
                     CompanyName = appointeeDetails?.CompanyName,
+                    CandidateId = appointeeDetails?.CandidateId,
                     Url = _emailConfig.HostUrl
                 };
 
                 // Setting the mail type for success notification
-                mailDetails.MailType = MailType.AutoSubmit;
+                mailDetails.MailType = type;
                 mailDetails.ParseData = bodyDetails;
 
                 // Use existing SendAppointeeMail function
                 await _emailSender.SendAppointeeMail(appointeeDetails.AppointeeEmailId, mailDetails);
 
-                // Log mail transaction if needed
-                mailTransactionRequest transReq = new()
-                {
-                    AppointeeId = appointeeId,
-                    UserId = UserId,
-                    Type = "SUBMISSION_SUCCESS"
-                };
-                await _dbContextCandiate.PostMailTransDetails(transReq);
             }
 
         }

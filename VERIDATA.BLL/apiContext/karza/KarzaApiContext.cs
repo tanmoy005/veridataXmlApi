@@ -423,7 +423,8 @@ namespace VERIDATA.BLL.apiContext.karza
             else
             {
                 Response.StatusCode = _apiResponse.StatusCode;
-                Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
+                Response.ReasonPhrase = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
+                //Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
             }
             return Response;
         }
@@ -456,7 +457,8 @@ namespace VERIDATA.BLL.apiContext.karza
             else
             {
                 Response.StatusCode = _apiResponse.StatusCode;
-                Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
+                Response.ReasonPhrase = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
+                //Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
             }
 
             return Response;

@@ -52,11 +52,11 @@ namespace VERIDATA.Model.DataAccess.Response
         public bool? IsUanVarified { get; set; }
         public bool? IsManualPassbook { get; set; }
         public bool? IsTrustPassbook { get; set; }
-        //public bool? IsTrustPension { get; set; }
         public bool? IsProcessed { get; set; }
         public int SaveStep { get; set; }
         public bool IsSubmit { get; set; }
         public int UserId { get; set; }
+        //public List<string>? UploadedFileType { get; set; }
         public List<FileDetailsResponse>? FileUploaded { get; set; }
     }
 }

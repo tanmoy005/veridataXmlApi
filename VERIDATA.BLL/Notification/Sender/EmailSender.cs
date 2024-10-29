@@ -203,12 +203,12 @@ namespace VERIDATA.BLL.Notification.Sender
                     _filename = "userOtpAuth";
                     mailSubject = "VERIDATA: User Authentication ";
                     break;
-                case MailType.AutoSubmit:
-                    _filename = "autoFileUploaded";
+                case MailType.Submit:
+                    _filename = "deatilsSubmitted";
                     mailSubject = "VERIDATA: Congratulation! File Submitted";
                     break;
-                case MailType.ManualApprove:
-                    _filename = "userForcedApproved";
+                case MailType.AutoApprove:
+                    _filename = "autoVerified";
                     mailSubject = "VERIDATA: Congratulation! You Are Approved";
                     break;
 

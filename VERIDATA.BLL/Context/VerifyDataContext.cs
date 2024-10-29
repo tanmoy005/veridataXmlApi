@@ -1013,7 +1013,7 @@ namespace VERIDATA.BLL.Context
                 {
                     await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.UANVERIFIFAILED);
                     Response.StatusCode = HttpStatusCode.UnprocessableEntity;
-                    Response.UserMessage = "No Data from UAN,Please Try Again";
+                    Response.UserMessage = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
                 }
                 else
                 {
@@ -1032,20 +1032,27 @@ namespace VERIDATA.BLL.Context
                     if (apiProvider?.ToLower() == ApiProviderType.Karza)
                     {
                         EmployeeDetails _passBookData = _apiResponse.KarzaPassbkdata?.employee_details;
-                        Response.FathersName = _passBookData?.father_name;
-                        Response.Name = _passBookData?.member_name;
-                        Response.DateOfBirth = _passBookData?.dob;
+                        Response.FathersName = _passBookData?.father_name??string.Empty;
+                        Response.Name = _passBookData?.member_name ?? string.Empty;
+                        Response.DateOfBirth = _passBookData?.dob ?? string.Empty;
                         Response.IsPensionApplicable = isPensionApplicable;
                         //Response.PfUan = _passBookData.pf_uan;
                     }
                     if (apiProvider?.ToLower() == ApiProviderType.Signzy)
                     {
                         SignzyUanPassbookDetails _passBookData = _apiResponse.SignzyPassbkdata;
-                        Response.FathersName = _passBookData?.FatherName;
+                        Response.FathersName = _passBookData?.FatherName ?? string.Empty;
                         Response.Name = _passBookData?.FullName;
-                        Response.DateOfBirth = _passBookData?.Dob.ToShortDateString();
+                        Response.DateOfBirth = _passBookData?.Dob.ToShortDateString() ?? string.Empty;
                         Response.IsPensionApplicable = isPensionApplicable;
                         Response.PfUan = _passBookData.Uan;
+                    }
+
+                    if (string.IsNullOrEmpty(Response.Name) || string.IsNullOrEmpty(Response.DateOfBirth))
+                    {
+                        await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.UANVERIFIFAILED);
+                        Response.StatusCode = HttpStatusCode.UnprocessableEntity;
+                        Response.UserMessage = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
                     }
                 }
             }
