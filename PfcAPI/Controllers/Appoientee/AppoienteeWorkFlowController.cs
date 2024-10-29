@@ -570,5 +570,24 @@ namespace PfcAPI.Controllers.Appoientee
             }
         }
 
+        [AllowAnonymous]
+        [Authorize]
+        [HttpGet]
+        [Route("getAppointeePensionVerification")]
+        public ActionResult GetAppointeePensionVerification(int AppointeeId)
+        {
+            try
+            {
+             
+                AppointeeDetailsResponse appointeePension = Task.Run(async () => await _candidateContext.getAppointeePensionAsync(AppointeeId)).GetAwaiter().GetResult();
+
+                return Ok(new BaseResponse<AppointeeDetailsResponse>(HttpStatusCode.OK, appointeePension));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new BaseResponse<string>(HttpStatusCode.InternalServerError, ex.Message));
+            }
+        }
+
     }
 }
