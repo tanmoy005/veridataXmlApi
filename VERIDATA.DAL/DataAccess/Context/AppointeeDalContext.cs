@@ -408,30 +408,23 @@ namespace VERIDATA.DAL.DataAccess.Context
 
         public async Task<AppointeeDetails> UpdateAppinteePensionById(AppointeeApprovePensionRequest reqObj)
         {
-          
-            var updatePension = await _dbContextClass.AppointeeDetails
-         .Where(x => x.AppointeeId == reqObj.appointeeId && x.ActiveStatus == true)
-         .Select(appointee => new AppointeeDetails
-         {
-             AppointeeDetailsId = appointee.AppointeeDetailsId,
-             AppointeeId = appointee.AppointeeId,
-             IsPensionApplicable = reqObj.IsManualPassbook,
-             UpdatedBy = reqObj.userId,
-             UpdatedOn = DateTime.UtcNow
-         })
-         .ToListAsync();
 
-           
-            if (!updatePension.Any())
+            var updatePension = await _dbContextClass.AppointeeDetails
+         .FirstOrDefaultAsync(x => x.AppointeeId == reqObj.appointeeId && x.ActiveStatus == true && x.IsManualPassbook == true);
+
+            if (updatePension.AppointeeDetailsId > 0)
             {
-                return null;
+                updatePension.IsPensionApplicable = reqObj.IsPensionApplicable;
+                updatePension.UpdatedBy = reqObj.userId;
+                updatePension.UpdatedOn=DateTime.Now;
+                _ = await _dbContextClass.SaveChangesAsync();
             }
 
             // Save changes to the database
-            await _dbContextClass.SaveChangesAsync();
+            //await _dbContextClass.SaveChangesAsync();
 
             // Return the updated record
-            return updatePension.First();
+            return updatePension;
         }
     }
 }

@@ -547,7 +547,7 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [Authorize]
-       // [AllowAnonymous]
+        // [AllowAnonymous]
         [HttpPost]
         [Route("PostCandidateMailResend")]
         public ActionResult PostCandidateMailResend(int AppointeeId, int UserId)
@@ -572,11 +572,11 @@ namespace PfcAPI.Controllers.Appoientee
             }
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [Authorize]
         [HttpPost]
         [Route("PostAppointeePensionVerification")]
-        public async Task<ActionResult> PostAppointeePensionVerification(AppointeeApprovePensionRequest reqObj)
+        public ActionResult PostAppointeePensionVerification(AppointeeApprovePensionRequest reqObj)
         {
             if (!ModelState.IsValid)
             {
@@ -585,16 +585,14 @@ namespace PfcAPI.Controllers.Appoientee
 
             try
             {
-                
-                var updatedAppointeeDetails = await _candidateContext.PostAppointeepensionAsync(reqObj);
+                var updatedAppointeeDetails = Task.Run(async () => await _candidateContext.PostAppointeepensionAsync(reqObj)).GetAwaiter().GetResult();
 
-                
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
             }
             catch (Exception ex)
             {
-               
-                return StatusCode(500, new { Message = "An error occurred while updating pension status.", Error = ex.Message });
+
+                throw;
             }
         }
 
