@@ -13,7 +13,7 @@ namespace VERIDATA.Model.Request
         public int appointeeId { get; set; }
 
         [Required]
-        public bool IsManualPassbook { get; set; }
+        public bool IsPensionApplicable { get; set; }
         [Required]
         public int userId { get; set; }
     }
