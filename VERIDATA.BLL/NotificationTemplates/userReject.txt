@@ -185,7 +185,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 46px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 55px; margin: 0;">
-                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA</strong></span>
+                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA<sup>®</sup></strong></span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -421,14 +421,15 @@
                                                     >
                                                         <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
                                                            Hi
-                                                        </p>
+                                                        </p></br>
 														 <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>Candidate Name :</strong> {{Name}}
                                                         </p>											   
-                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong> Candidate Id : :</strong> {{CandidateId}}</p>
-														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-                                                         This Profile data has been rejected by the admin.</br>
-                                                        
-                                                          The issues encountered has been given below </p>
+                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong> Candidate Id :</strong> {{CandidateId}}</p><t-alt: 25px; margin: 0;"></br>
+                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
+														Your profile data has been reviewed and, unfortunately, it has been rejected by PwC admin.</br></br>
+														The issues encountered has been given in the Remarks below:
+														</p>
+														</p>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -637,6 +638,26 @@
                                                     >
                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">{{Reason}}</p>
 													    
+                                                    </div></br></br>
+													<div
+                                                        style="
+                                                            line-height: 2;
+                                                            font-size: 12px;
+                                                            color: #595959;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 24px;
+                                                        "
+                                                    >
+                                                       <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
+													   <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														You can reach out to your HC representative regarding any queries.</p></br>
+                                                     <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														Regards,</br>
+                                                        Human Capital</p></br></br>
+													    <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														This is an auto-generated system notification.Please do not respond to this email.</p>
+														</p>
+													    
                                                     </div>
                                                 </div>
                                                 <!--[if mso]></td></tr></table><![endif]-->
@@ -750,7 +771,10 @@
                                                             mso-line-height-alt: 14px;
                                                         "
                                                     >
-                                                        <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">©Elogix Pvt ltd  - VERIDATA</p>
+                                                        
+                                                       <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">
+														©Elogix Software Pvt. Ltd. - VERIDATA<sup>®</sup>
+														</p>
                                                     </div>
                                                 </div>
                                                 <!--[if mso]></td></tr></table><![endif]-->

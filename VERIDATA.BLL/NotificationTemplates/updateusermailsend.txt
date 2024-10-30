@@ -185,7 +185,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 46px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 55px; margin: 0;">
-                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA</strong></span>
+                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA<sup>®</sup></strong></span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -212,7 +212,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 22px; line-height: 2; word-break: break-word; text-align: center; mso-line-height-alt: 44px; margin: 0;">
-                                                            <span style="font-size: 22px;"> User Revarification </span>
+                                                            <span style="font-size: 22px;"> User Reverification </span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -421,13 +421,12 @@
                                                     >
                                                         <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
                                                            Dear {{Name}}
-                                                        </p>
+                                                        </p></br>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-                                                        Your Details have been updated by PwC HC.</br> 
-                                                        Please log in to the Veridta portal, and reverify your details.</br></br>
+                                                        Your Details have been updated by PwC HC.</br></br>
+                                                       Please re-login to the Veridta portal to review and reverify your details.</br></br>
 
-                                                        Regards,</br>
-														Human Capital
+                                                        
 
                                                         </p>
                                                     </div>
@@ -638,9 +637,15 @@
                                                     	<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Your user name is given below <br>
 														<strong><a href={{Url}}>Click on the link to login :</a></strong></p>
 
-                                                       <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>User Name :</strong> {{UserCode}}</p>
+                                                       <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>User Name :</strong> {{UserCode}}</p></br>
 													                                                           
-														
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														You can reach out to your HC representative regarding any queries.</p></br>
+                                                     <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														Regards,</br>
+                                                        Human Capital</p></br></br>
+													    <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														This is an auto-generated system notification. Please do not respond to this email.</p>
                                                        
                                                     </div>
                                                 </div>
@@ -653,7 +658,7 @@
                                     <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
                                     <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
                                 </div>
-								 <p style="font-size: 14px; color: #595959; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; padding-left: 10px; font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; margin: 0;">This is an auto-generated system notification. Please do not respond to this email.</p>
+								
                             </div>
                         </div>
 						
@@ -755,7 +760,10 @@
                                                             mso-line-height-alt: 14px;
                                                         "
                                                     >
-                                                        <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">©Elogix Pvt ltd  - VERIDATA</p>
+                                                       
+                                                       <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">
+														©Elogix Software Pvt. Ltd. - VERIDATA<sup>®</sup>
+														</p>
                                                     </div>
                                                 </div>
                                                 <!--[if mso]></td></tr></table><![endif]-->

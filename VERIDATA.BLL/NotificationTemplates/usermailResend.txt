@@ -185,7 +185,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 46px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 55px; margin: 0;">
-                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA</strong></span>
+                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA<sup>®</sup></strong></span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -212,7 +212,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 22px; line-height: 2; word-break: break-word; text-align: center; mso-line-height-alt: 44px; margin: 0;">
-                                                            <span style="font-size: 22px;"> User Creation </span>
+                                                            <span style="font-size: 22px;">User Mail Resend </span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -420,16 +420,21 @@
                                                         "
                                                     >
                                                         <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-                                                           Hi {{Name}}
-                                                        </p>
+                                                           Dear {{Name}},
+                                                        </p></br>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-                                                        Welcome to <strong> VERIDATA</strong>, the onboarding assistant of {{CompanyName}}.  You are requested to enter the details requested by following the instructions one step at a time.
-                                                        The successful completion of this process would facilitate the on-boarding.</br>
-                                                        Please log in using the following credentials</br></br></br>
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">Hope you are doing well. </p></br>
+                                                        <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">Welcome to <strong> VERIDATA<sup>®</sup></strong> Your Onboarding Compliance Ally,</br> Please enter the requested details by following the instructions, one step at a time.</br>Successful completion of this process will facilitate your onboarding.</p></br>
+														
+												
+													
 
-                                                        You can reach out to our HR representative regarding any queries
-
-                                                        </p>
+                                                         <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"> <strong>Before verification there are some prerequisites, that you must possess:</strong></p></br>
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>1. Aadhar Number</strong></br>Please have your Aadhar number and PAN number before you start the verification process — If you don’t have an Aadhar, please contact PwC HC.</p>
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>2. Mobile Number</strong></br>Make sure that the mobile number you have provided to PwC, is pinned with Aadhar — Else, contact with your HC representative to update mobile number.</p>
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>3. UAN </strong></br>If you have a UAN account, please make sure you have activated it — Please login to the EPFO portal at least once to activate it.</p>
+                                                        <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>4. Verify</strong></br>All verifications are mandatory —<strong> Please complete all of them</strong>. Don’t leave out any information asked for.</p>
+														</p>
                                                     </div>
                                                 </div>
                                                 <!--[if mso]></td></tr></table><![endif]-->
@@ -486,7 +491,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
-                                                            <strong><span style="font-size: 18px;">USER INFO</span></strong>
+                                                            <strong><span style="font-size: 18px;">Documents </span></strong>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -635,14 +640,29 @@
                                                             mso-line-height-alt: 24px;
                                                         "
                                                     >
-                                                    	<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Your user name and password is given below <br>
+													<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
+													Please have the following documents with you, before you start the verification process:</p></br></br>
+
+                                                    	<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
+														1. 10th Pass certificate + another official document to provide your father’s name.<br>
+														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
+														2. Your visa image, if you are an international passport holder.</br>
+														3. Current year PF Passbook, downloaded from EPFO portal</br>
+                                                          (required if you opt for manual UAN verification in the Veridata portal).</br>
+														4. Trust PF Passbook softcopy, if you are / have been a Trust or Private PF holder.</br></br>
+
+														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Your user name and password is given below <br>
 														<strong><a href={{Url}}>Click on the link to login :</a></strong></p>
 
                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>User Name :</strong> {{UserCode}}</p>
 													   {{#if Password}}
                                                         <p style="font-size: 14px;"><strong>Password :</strong> {{Password}}</p>
-                                                        {{/if}}
-														
+                                                         <p style="font-size: 14px;">{{/if}}</p>
+														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">You can reach out to your HC representative regarding any queries.</p>
+														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Regards,</br>
+                                                           Human Capital</p></br>
+														<P  style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
+														This is an auto-generated system notification. Please do not respond to this email.</p>
                                                        
                                                     </div>
                                                 </div>
@@ -757,7 +777,9 @@
                                                             mso-line-height-alt: 14px;
                                                         "
                                                     >
-                                                        <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">©Elogix Pvt ltd  - VERIDATA</p>
+                                                       <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">
+														©Elogix Software Pvt. Ltd. - VERIDATA<sup>®</sup>
+														</p>
                                                     </div>
                                                 </div>
                                                 <!--[if mso]></td></tr></table><![endif]-->

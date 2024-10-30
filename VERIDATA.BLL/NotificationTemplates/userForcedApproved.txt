@@ -187,7 +187,7 @@
 													
 
                                                         <p style="font-size: 46px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 55px; margin: 0;">
-                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA</strong></span>
+                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA<sup>®</sup></strong></span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -214,7 +214,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 22px; line-height: 2; word-break: break-word; text-align: center; mso-line-height-alt: 44px; margin: 0;">
-                                                            <span style="font-size: 22px;"> User Details Verified (Forced)  </span>
+                                                            <span style="font-size: 22px;">Verification Details Manually Approved  </span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -423,25 +423,15 @@
                                                     >
                                                         <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
                                                            Hi
-                                                        </p>
+                                                        </p></br>
 														 <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>Candidate Name :</strong> {{Name}}
                                                         </p>											   
                                                         <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>Candidate Id : :</strong> {{CandidateId}}</p></br></br>
+														 <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>Congratulation!!!</strong></p>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-                                                         This profile data has been Force Approved by Admin.</br>
-                                                        The issues encountered has been given below .</p></br>
-														
-														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">{{Reason}}</p></br>
-
-														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-														
-														You can reach out to Your HC representative regarding any queries.</p></br>
-														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-														Regards,</br>
-                                                        Human Capital</p></br>
-														
-													<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-													This is an auto-generated system notification. Please do not respond to this email.</p>
+                                                         Your verification details has been approved by PwC.</br></br>
+                                                       <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+													   Your Remarks have been given below:</p>
                                                     </div>
                                                 </div>
                                                 <!--[if mso]></td></tr></table><![endif]-->
@@ -461,7 +451,54 @@
                                 <div style="border-collapse: collapse; display: table; width: 100%; background-color: #fcfbeb;">
                                     <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:transparent;"><tr><td align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:640px"><tr class="layout-full-width" style="background-color:#fcfbeb"><![endif]-->
                                     <!--[if (mso)|(IE)]><td align="center" width="213" style="background-color:#fcfbeb;width:213px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:5px; padding-bottom:5px;background-color:#fbc5b8;"><![endif]-->
-                                   
+                                    <div class="col num4" style="display: table-cell; vertical-align: top; max-width: 320px; min-width: 212px; background-color: #fbc5b8; width: 213px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 5px;
+                                                    padding-bottom: 5px;
+                                                    padding-right: 0px;
+                                                    padding-left: 0px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 5px; padding-bottom: 5px; font-family: Tahoma, sans-serif"><![endif]-->
+                                                <div
+                                                    style="
+                                                        color: #595959;
+                                                        font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                       line-height: 2;
+                                                        padding-top: 0px;
+                                                        padding-right: 3px;
+                                                        padding-bottom: 0px;
+                                                        padding-left: 42px;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            line-height: 2;
+                                                            font-size: 12px;
+                                                            color: #595959;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 24px;
+                                                        "
+                                                    >
+                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
+                                                            <strong><span style="font-size: 18px;">Remarks</span></strong>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
                                     <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
                                     <!--[if (mso)|(IE)]></td><td align="center" width="426" style="background-color:#fcfbeb;width:426px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:5px; padding-bottom:5px;"><![endif]-->
                                     <div class="col num8" style="display: table-cell; vertical-align: top; min-width: 320px; max-width: 424px; width: 426px;">
@@ -501,7 +538,7 @@
                                                         valign="top"
                                                         width="100%"
                                                     >
-                                                      <tbody>
+                                                        <tbody>
                                                             <tr style="vertical-align: top;" valign="top">
                                                                 <td
                                                                     class="divider_inner"
@@ -601,7 +638,27 @@
                                                             mso-line-height-alt: 24px;
                                                         "
                                                     >
-                                                     
+                                                       <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">{{Reason}}</p>
+													    
+                                                    </div></br></br>
+													<div
+                                                        style="
+                                                            line-height: 2;
+                                                            font-size: 12px;
+                                                            color: #595959;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 24px;
+                                                        "
+                                                    >
+                                                       <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
+													   <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														You can reach out to your HC representative regarding any queries.</p></br>
+                                                     <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														Regards,</br>
+                                                        Human Capital</p></br></br>
+													    <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														This is an auto-generated system notification.Please do not respond to this email.</p>
+														</p>
 													    
                                                     </div>
                                                 </div>
@@ -716,7 +773,10 @@
                                                             mso-line-height-alt: 14px;
                                                         "
                                                     >
-                                                        <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">©Elogix Software Pvt. Ltd. - VERIDATA</p>
+                                                        
+                                                       <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">
+														©Elogix Software Pvt. Ltd. - VERIDATA<sup>®</sup>
+														</p>
                                                     </div>
                                                 </div>
                                                 <!--[if mso]></td></tr></table><![endif]-->

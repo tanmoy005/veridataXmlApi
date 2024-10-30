@@ -154,50 +154,50 @@ namespace VERIDATA.BLL.Notification.Sender
             {
                 case MailType.Reprocess:
                     _filename = "userReprocess";
-                    mailSubject = "VERIDATA: Candidate Reprocessed";
+                    mailSubject = "VERIDATA: PFC User Reprocess";
                     break;
                 case MailType.AdhrValidation:
                     _filename = "userValidityRemarks";
                     validtionType = "Aadhaar";
-                    mailSubject = "VERIDATA: Aadhaar Verification";
+                    mailSubject = "VERIDATA: User Details Verification Failed";
                     break;
                 case MailType.UANValidation:
                     _filename = "userValidityRemarks";
                     validtionType = "UAN";
-                    mailSubject = "VERIDATA: UAN Verification";
+                    mailSubject = "VERIDATA:User Details Verification Failed";
                     break;
                 case MailType.Passport:
                     _filename = "userValidityRemarks";
                     validtionType = "Passport";
-                    mailSubject = "VERIDATA: Passport Verification";
+                    mailSubject = "VERIDATA: User Details Verification Failed";
                     break;
                 case MailType.Remainder:
                     _filename = "userRemainder";
-                    mailSubject = "VERIDATA: Reminder Alert";
+                    mailSubject = "VERIDATA: Verification Process Incomplete";
                     break;
                 case MailType.ForceApprove:
                     _filename = "userForcedApproved";
-                    mailSubject = "VERIDATA: Forced Approval";
+                    mailSubject = "VERIDATA: Verification Details Manually Approved";
                     break;
                 case MailType.Reject:
                     _filename = "userReject";
-                    mailSubject = "VERIDATA: Verification Application Rejected ";
+                    mailSubject = "VERIDATA: Verification Rejected";
                     break;
                 case MailType.CandidateCreate:
                     _filename = "newusermailsend";
-                    mailSubject = "VERIDATA: User Creation";
+                    mailSubject = "VERIDATA: New User Creation";
                     break;
                 case MailType.AdminUserCreate:
                     _filename = "newAdminUserCreate";
-                    mailSubject = "VERIDATA: User Creation";
+                    mailSubject = "VERIDATA: Account Creation Successful";
                     break;
                 case MailType.CandidateUpdate:
                     _filename = "updateusermailsend";
-                    mailSubject = "VERIDATA: User Creation";
+                    mailSubject = "VERIDATA: User Reverification";
                     break;
                 case MailType.MailResend:
                     _filename = "usermailResend";
-                    mailSubject = "VERIDATA: User Info";
+                    mailSubject = "VERIDATA: User Mail Resend";
                     break;
                 case MailType.SendOTP:
                     _filename = "userOtpAuth";
@@ -205,11 +205,11 @@ namespace VERIDATA.BLL.Notification.Sender
                     break;
                 case MailType.Submit:
                     _filename = "deatilsSubmitted";
-                    mailSubject = "VERIDATA: Congratulation! File Submitted";
+                    mailSubject = "VERIDATA: Pre-onboarding Details Submitted successfully";
                     break;
                 case MailType.AutoApprove:
                     _filename = "autoVerified";
-                    mailSubject = "VERIDATA: Congratulation! You Are Approved";
+                    mailSubject = "VERIDATA: Verification Successful";
                     break;
 
             }

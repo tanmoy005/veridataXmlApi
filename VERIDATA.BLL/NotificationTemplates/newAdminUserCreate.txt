@@ -185,7 +185,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 46px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 55px; margin: 0;">
-                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA</strong></span>
+                                                            <span style="font-size: 46px; color: #377a95;"><strong>VERIDATA<sup>®</sup></strong></span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -423,7 +423,7 @@
                                                            Hi {{Name}}
                                                         </p>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-                                                        Welcome to <strong> VERIDATA</strong>, the onboarding assistant of {{CompanyName}}. Your are added as a Admin user.</br> 
+                                                        Welcome to <strong> VERIDATA<sup>®</sup></strong>, the onboarding assistant of {{CompanyName}}. Your are added as a Admin user.</br> 
                                                         Please log in using the following credentials</br></br></br>
 
                                                         You can reach out to our HR representative regarding any queries
@@ -752,7 +752,7 @@
                                                             mso-line-height-alt: 14px;
                                                         "
                                                     >
-                                                        <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">©Elogix Pvt ltd  - VERIDATA</p>
+                                                        <p style="font-size: 14px; line-height: 1.2; word-break: break-word; text-align: center; mso-line-height-alt: 17px; margin: 0;">©Elogix Software Pvt. Ltd. - VERIDATA<sup>®</sup>			</p>
                                                     </div>
                                                 </div>
                                                 <!--[if mso]></td></tr></table><![endif]-->
