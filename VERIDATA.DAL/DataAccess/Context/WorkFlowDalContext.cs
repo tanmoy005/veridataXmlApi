@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Mustache;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
 using VERIDATA.Model.DataAccess;
@@ -1061,101 +1062,80 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return list;
         }
-        //public async Task<List<UnderProcessWithActionQueryDataResponse>> GetAppointeeDataWithActionAsync(AppointeeDataFilterReportRequest reqObj)
-        //{
-        //    string CurrDate = DateTime.Now.ToShortDateString();
-        //    DateTime _CurrDate = Convert.ToDateTime(CurrDate);
-        //    DateTime? _ToDate = reqObj.ToDate != null ? reqObj.ToDate?.AddDays(1) : null;
-        //    WorkflowApprovalStatusMaster? StatusFilterState = new WorkflowApprovalStatusMaster();
-        //    WorkflowApprovalStatusMaster? ForeceApproveState = new WorkflowApprovalStatusMaster();
-        //    List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
 
-        //    if (reqObj.StatusCode == FilterCode.VERIFIED)
-        //    {
-        //        StatusFilterState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Approved?.Trim());
-        //        ForeceApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ForcedApproved?.Trim());
-        //    }
-        //    if (reqObj.StatusCode == FilterCode.REJECTED)
-        //    {
-        //        StatusFilterState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
-        //    }
-        //    //WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Reprocess?.Trim());
-        //    //WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ProcessClose?.Trim());
-        //    //WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
+        public async Task<List<AppointeeDataPfReportResponse>> GetAppointeeDetailsPfDataAsync(AppointeePfDataFilterReportRequest reqObj)
+        {
+            var query = from ad in _dbContextClass.AppointeeDetails
+                        join pf in _dbContextClass.ProcessedFileData on ad.AppointeeId equals pf.AppointeeId into pfGroup
+                        from pfData in pfGroup.DefaultIfEmpty()
+                        join upf in _dbContextClass.UnderProcessFileData on ad.AppointeeId equals upf.AppointeeId into upfGroup
+                        from upfData in upfGroup.DefaultIfEmpty()
+                        select new AppointeePfStatusDataFilterReportResponse
+                        {
+                            AppointeeId = ad.AppointeeId,
+                            CandidateId = ad.CandidateId,
+                            AppointeeName = ad.AppointeeName,
+                            EmailId = ad.AppointeeEmailId,
+                            MobileNo = ad.MobileNo,
+                            DateOfJoining = ad.DateOfJoining,
+                            CreatedDate = ad.CreatedOn,
+                            Status = upfData?.ActiveStatus == true ? "Under Process" : (pfData?.ActiveStatus == true ? "Processed" : "Inactive"),
+                            TrustPassBookStatus = ad.IsTrustPassbook ?? false,
+                            EPFOPassBookStatus = ad.IsPensionApplicable ? "Manual" : "Auto",
+                            isManual = ad.IsManualPassbook ?? false
+                        };
 
+            // Apply Filters
+            if (!string.IsNullOrEmpty(reqObj.StatusCode))
+                query = query.Where(x => x.Status == reqObj.StatusCode);
 
-        //    // Step 1: Retrieve the data from the database
-        //    var activityQuery = from ac in _dbContextClass.ActivityMaster
-        //                        join at in _dbContextClass.ActivityTransaction
-        //                            on ac.ActivityId equals at.ActivityId
-        //                        where ac.ActiveStatus == true && at.ActiveStatus == true
-        //                        select new { ac, at };
+            if (!string.IsNullOrEmpty(reqObj.PfType))
+                query = query.Where(x => x.EPFOPassBookStatus == reqObj.PfType);
 
-        //    var activityData = await activityQuery.ToListAsync().ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(reqObj.IsManual))
+                query = query.Where(x => x.isManual == (reqObj.IsManual.ToLower() == "y"));
 
-        //    // Step 2: Perform the grouping and selection on the client side
-        //    var activityList = activityData?.GroupBy(x => x.at.AppointeeId)?.Select(g => g.OrderByDescending(x => x.at.CreatedOn)
-        //    ?.FirstOrDefault())?.Where(latestActivity => latestActivity != null)?.Select(latestActivity => new AppointeeLastActivityDetailsResponse
-        //    {
-        //        Id = latestActivity.at.ActivityTransId,
-        //        ActivityType = latestActivity.ac.ActivityType,
-        //        ActivityName = latestActivity.ac.ActivityName,
-        //        ActivityInfo = latestActivity.ac.ActivityInfo,
-        //        ActivityDesc = latestActivity.ac.ActivityDesc,
-        //        Color = latestActivity.ac.ActivityColor,
-        //        CreatedOn = latestActivity.at.CreatedOn,
-        //        AppointeeId = latestActivity.at.AppointeeId ?? 0
-        //    })?.ToList();
+            if (reqObj.FromDate.HasValue)
+                query = query.Where(x => x.DateOfJoining >= reqObj.FromDate.Value);
 
+            if (reqObj.ToDate.HasValue)
+                query = query.Where(x => x.DateOfJoining <= reqObj.ToDate.Value);
 
-        //    // Main query with the prepared activityList
-        //    IQueryable<UnderProcessWithActionQueryDataResponse> mainQueryData = from b in _dbContextClass.UnderProcessFileData
-        //                                                                        join w in _dbContextClass.WorkFlowDetails
-        //                                                                        on b.AppointeeId equals w.AppointeeId
-        //                                                                        join p in _dbContextClass.AppointeeDetails
-        //                                                                        on b.AppointeeId equals p.AppointeeId into grouping
-        //                                                                        from p in grouping.DefaultIfEmpty()
-        //                                                                        where
-        //                                                                         (StatusFilterState.AppvlStatusId == 0 || (w.AppvlStatusId == StatusFilterState.AppvlStatusId) ||
-        //                                                                         (reqObj.StatusCode == FilterCode.VERIFIED ? w.AppvlStatusId == ForeceApproveState.AppvlStatusId
-        //                                                                         : (w.AppvlStatusId == StatusFilterState.AppvlStatusId)))
-        //                                                                        //&& (p.IsProcessed.Equals(false) || p.IsProcessed == null)
-        //                                                                        && (string.IsNullOrEmpty(reqObj.AppointeeName) || b.AppointeeName.Contains(reqObj.AppointeeName))
-        //                                                                        && (string.IsNullOrEmpty(reqObj.CandidateId) || b.CandidateId.Contains(reqObj.CandidateId))
-        //                                                                        && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate)
-        //                                                                        && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
-        //                                                                        && b.ActiveStatus == true
-        //                                                                        orderby p.IsSubmit
-        //                                                                        select new UnderProcessWithActionQueryDataResponse
-        //                                                                        {
-        //                                                                            UnderProcess = b,
-        //                                                                            AppointeeDetails = p,
-        //                                                                            AppvlStatusId = w.AppvlStatusId,
-        //                                                                            AppointeeId = b.AppointeeId,
-        //                                                                            IsJoiningDateLapsed = b.DateOfJoining < _CurrDate
-        //                                                                        };
+            return await query.ToListAsync();
+        }
 
-        //    List<UnderProcessWithActionQueryDataResponse> appointeeList = await mainQueryData.ToListAsync().ConfigureAwait(false);
+        public async Task<List<AppointeePfStatusDataFilterReportResponse>> GetAppointeePfdetailsAsync(AppointeePfDataFilterReportRequest reqObj)
+        {
+            var query = from appointee in _dbContextClass.AppointeeDetails
+                        join processed in _dbContextClass.ProcessedFileData on appointee.AppointeeId equals processed.AppointeeId into processedJoin
+                        from processedData in processedJoin.DefaultIfEmpty()
+                        join underProcess in _dbContextClass.UnderProcessFileData on appointee.AppointeeId equals underProcess.AppointeeId into underProcessJoin
+                        from underProcessData in underProcessJoin.DefaultIfEmpty()
+                        where (reqObj.StatusCode == null || appointee.ProcessStatus.ToString() == reqObj.StatusCode)
+                            && (reqObj.PfType == null || appointee.IsTrustPassbook.ToString() == reqObj.PfType)
+                            && (reqObj.IsManual == null || appointee.IsManualPassbook.ToString() == reqObj.IsManual)
+                            && (!reqObj.FromDate.HasValue || appointee.CreatedOn >= reqObj.FromDate)
+                            && (!reqObj.ToDate.HasValue || appointee.CreatedOn <= reqObj.ToDate)
+                        select new AppointeePfStatusDataFilterReportResponse
+                        {
+                            AppointeeId = appointee.AppointeeId,
+                            candidateId = appointee.CandidateId,
+                            AppointeeName = appointee.AppointeeName,
+                            EmailId = appointee.AppointeeEmailId,
+                            MobileNo = appointee.MobileNo,
+                            DateOfJoining = appointee.DateOfJoining,
+                            CreatedDate = appointee.CreatedOn,
+                            Status = appointee.ProcessStatus.ToString(),
+                            TrustPassBookStatus = appointee.IsTrustPassbook ?? false,
+                            isManual = appointee.IsManualPassbook ?? false
+                        };
 
-        //    var list = (from m in appointeeList
-        //                join c in activityList
-        //                on m.AppointeeId equals c.AppointeeId into ActivityGrouping
-        //                from c in ActivityGrouping.DefaultIfEmpty()
-        //                select new UnderProcessWithActionQueryDataResponse
-        //                {
-        //                    UnderProcess = m.UnderProcess,
-        //                    AppointeeDetails = m.AppointeeDetails,
-        //                    LastActionDate = c != null ? c.CreatedOn : (DateTime?)null,
-        //                    ActivityType = c != null ? c.ActivityType : "NA",
-        //                    ActivityInfo = c != null ? c.ActivityInfo : "NA",
-        //                    ActivityDesc = c != null ? c.ActivityDesc : "NA",
-        //                    AppvlStatusId = m.AppvlStatusId,
-        //                    AppointeeId = m.AppointeeId,
-        //                    IsJoiningDateLapsed = m.IsJoiningDateLapsed
-        //                }).ToList();
+            return await query.ToListAsync();
+        }
 
 
-        //    return list;
-        //}
+        }
     }
-}
+    
+
+

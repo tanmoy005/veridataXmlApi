@@ -42,7 +42,11 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<List<GlobalSearchAppointeeData>> GetUnderProcessAppointeeSearch(string Name);
         public Task<List<GlobalSearchAppointeeData>> GetAppointeeSearchDetails(string name, string type);
         public Task<List<UnderProcessWithActionQueryDataResponse>> GetUnderProcessDataWithActionAsync(AppointeeSeacrhFilterRequest reqObj);
-        //public Task<List<UnderProcessWithActionQueryDataResponse>> GetAppointeeDataWithActionAsync(AppointeeDataFilterReportRequest reqObj);
+
+        public Task<List<AppointeeDataPfReportResponse>> GetAppointeeDetailsPfDataAsync(AppointeePfDataFilterReportRequest filter);
+
+        public Task<List<AppointeePfStatusDataFilterReportResponse>> GetAppointeePfdetailsAsync(AppointeePfDataFilterReportRequest reqObj);
+        // public Task<List<UnderProcessWithActionQueryDataResponse>> GetAppointeeDataWithActionAsync(AppointeeDataFilterReportRequest reqObj);
 
 
     }
