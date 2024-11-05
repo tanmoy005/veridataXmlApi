@@ -19,6 +19,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<List<AppointeeDataFilterReportDetails>> AppointeeDetailsReport(AppointeeDataFilterReportRequest reqObj);
         public Task<List<AppointeeDataPfReportResponse>> AppointeePfDetailsReport(AppointeeDataFilterReportRequest reqObj);
         public Task<List<AppointeePfStatusDataFilterReportResponse>> AppointeePfDetailsFileterReport(AppointeePfDataFilterReportRequest reqObj);
+        public Task<List<AppointeePfDataExcelRespopnse>> GetAppointeePfDataExcelReport(AppointeePfDataFilterReportRequest reqObj);
 
     }
 }

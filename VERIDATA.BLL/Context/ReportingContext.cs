@@ -790,6 +790,26 @@ namespace VERIDATA.BLL.Context
 
 
         }
+        public async Task<List<AppointeePfDataExcelRespopnse>> GetAppointeePfDataExcelReport(AppointeePfDataFilterReportRequest reqObj)
+        {
+            List<AppointeePfStatusDataFilterReportResponse> appointeeStatusList = await AppointeePfDetailsFileterReport(reqObj);
+            var excelDataList = appointeeStatusList.Select(x => new AppointeePfDataExcelRespopnse
+            {
+                CandidateId = x.candidateId,
+                AppointeeName = x.AppointeeName,
+                AppointeeEmailId = x.EmailId,
+                MobileNo = x.MobileNo,
+                DateOfJoining = x.DateOfJoining,
+                Status = x.EPFOPassBookStatus,
+                IsTrustPassbook = x.TrustPassBookStatus == "Trust",
+                Uan = x.UAN,
+                AadhaarNumberView = x.AadharNumber,
+                IsManualPassbook = x.IsManual == "Manual Upload",
+                PensionGapIdentified = x.PensionStatus == "Yes"
+            }).ToList();
+
+            return excelDataList;
+        }
 
     }
 }

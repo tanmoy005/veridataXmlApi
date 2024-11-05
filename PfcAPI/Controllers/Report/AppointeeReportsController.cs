@@ -436,7 +436,7 @@ namespace PfcAPI.Controllers.Report
             }
         }
 
-        // [AllowAnonymous]
+         //[AllowAnonymous]
         [Authorize]
         [HttpPost]
         [Route("AppointeeDataPfFilterReport")]
@@ -453,7 +453,9 @@ namespace PfcAPI.Controllers.Report
                 List<AppointeePfStatusDataFilterReportResponse>? appointeeList = Task.Run(async () => await _reportContext.AppointeePfDetailsFileterReport(reqObj)).GetAwaiter().GetResult();
                 if (appointeeList?.Count > 0)
                 {
-                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeePfStatusDataFilterReportResponse>(appointeeList);
+                    List<AppointeePfDataExcelRespopnse>? appointeeExcelList = Task.Run(async () => await _reportContext.GetAppointeePfDataExcelReport(reqObj)).GetAwaiter().GetResult();
+
+                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeePfDataExcelRespopnse>(appointeeExcelList);
                     byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportname, string.Empty);
 
                     Filedata _filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };

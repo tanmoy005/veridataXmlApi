@@ -11,5 +11,6 @@ namespace VERIDATA.Model.Response
     {
         public List<AppointeePfStatusDataFilterReportResponse>? AppointeeDetails { get; set; }
         public Filedata? Filedata { get; set; }
+        public List<AppointeePfDataExcelRespopnse> appointeeExcelList { get; set; }
     }
 }
