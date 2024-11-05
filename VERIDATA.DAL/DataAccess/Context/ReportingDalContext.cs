@@ -88,8 +88,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                 PANName = r.FirstOrDefault()?.data?.AppointeeData?.PANName,
                 PANNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.PANNumber) ? null : CommonUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.PANNumber),
                 AadhaarName = r.FirstOrDefault()?.data?.AppointeeData?.AadhaarName,
-                AadhaarNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView,
-                //AadhaarNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumber) ? "NA" : CommonUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumber),
+                //AadhaarNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView,
+                AadhaarNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView) ? "NA" : CommonUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumber)?? r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView,
                 Remarks = r?.Where(x => x.ReasonId == othRsnCatgry.ReasonId)?.Select(y => y.Remarks)?.Aggregate("", (current, s) => current + s + ",")
             }).ToList();
 

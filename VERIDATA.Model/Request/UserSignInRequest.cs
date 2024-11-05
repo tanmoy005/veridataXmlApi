@@ -9,7 +9,7 @@ namespace VERIDATA.Model.Request
         public string? UserCode { get; set; }
 
         [Required]
-        [StringLength(10)]
+        [StringLength(12)]
         public string? Password { get; set; }
 
         //[StringLength(50)]

@@ -336,6 +336,18 @@
         //    public const string Info = "Info";
 
         //}
+        public enum StatusType
+        {
+            Yes = 1,
+            No = 2,
+            NA = 3
+        }
+        public enum PfType
+        {
+            TrustPassbook = 1,
+            EpfoPassBook = 2,
+            Na = 3,
+        }
         public static class JsonTypeAlias
         {
             public const string EmployementHist = "EMPHIST";

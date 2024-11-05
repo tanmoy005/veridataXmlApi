@@ -1062,80 +1062,45 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return list;
         }
-
-        public async Task<List<AppointeeDataPfReportResponse>> GetAppointeeDetailsPfDataAsync(AppointeePfDataFilterReportRequest reqObj)
-        {
-            var query = from ad in _dbContextClass.AppointeeDetails
-                        join pf in _dbContextClass.ProcessedFileData on ad.AppointeeId equals pf.AppointeeId into pfGroup
-                        from pfData in pfGroup.DefaultIfEmpty()
-                        join upf in _dbContextClass.UnderProcessFileData on ad.AppointeeId equals upf.AppointeeId into upfGroup
-                        from upfData in upfGroup.DefaultIfEmpty()
-                        select new AppointeePfStatusDataFilterReportResponse
-                        {
-                            AppointeeId = ad.AppointeeId,
-                            CandidateId = ad.CandidateId,
-                            AppointeeName = ad.AppointeeName,
-                            EmailId = ad.AppointeeEmailId,
-                            MobileNo = ad.MobileNo,
-                            DateOfJoining = ad.DateOfJoining,
-                            CreatedDate = ad.CreatedOn,
-                            Status = upfData?.ActiveStatus == true ? "Under Process" : (pfData?.ActiveStatus == true ? "Processed" : "Inactive"),
-                            TrustPassBookStatus = ad.IsTrustPassbook ?? false,
-                            EPFOPassBookStatus = ad.IsPensionApplicable ? "Manual" : "Auto",
-                            isManual = ad.IsManualPassbook ?? false
-                        };
-
-            // Apply Filters
-            if (!string.IsNullOrEmpty(reqObj.StatusCode))
-                query = query.Where(x => x.Status == reqObj.StatusCode);
-
-            if (!string.IsNullOrEmpty(reqObj.PfType))
-                query = query.Where(x => x.EPFOPassBookStatus == reqObj.PfType);
-
-            if (!string.IsNullOrEmpty(reqObj.IsManual))
-                query = query.Where(x => x.isManual == (reqObj.IsManual.ToLower() == "y"));
-
-            if (reqObj.FromDate.HasValue)
-                query = query.Where(x => x.DateOfJoining >= reqObj.FromDate.Value);
-
-            if (reqObj.ToDate.HasValue)
-                query = query.Where(x => x.DateOfJoining <= reqObj.ToDate.Value);
-
-            return await query.ToListAsync();
-        }
-
-        public async Task<List<AppointeePfStatusDataFilterReportResponse>> GetAppointeePfdetailsAsync(AppointeePfDataFilterReportRequest reqObj)
+      
+        public async Task<List<PfStatusDataFilterQueryResponse>> GetAppointeePfdetailsAsync(PfDataFilterReportRequest reqObj)
         {
             var query = from appointee in _dbContextClass.AppointeeDetails
                         join processed in _dbContextClass.ProcessedFileData on appointee.AppointeeId equals processed.AppointeeId into processedJoin
                         from processedData in processedJoin.DefaultIfEmpty()
                         join underProcess in _dbContextClass.UnderProcessFileData on appointee.AppointeeId equals underProcess.AppointeeId into underProcessJoin
                         from underProcessData in underProcessJoin.DefaultIfEmpty()
-                        where (reqObj.StatusCode == null || appointee.ProcessStatus.ToString() == reqObj.StatusCode)
-                            && (reqObj.PfType == null || appointee.IsTrustPassbook.ToString() == reqObj.PfType)
-                            && (reqObj.IsManual == null || appointee.IsManualPassbook.ToString() == reqObj.IsManual)
+                        where
+                            (reqObj.IsTrustPassbook == null || appointee.IsTrustPassbook == reqObj.IsTrustPassbook)
+                            && (reqObj.IsEpfoPassbook == null || (reqObj.IsEpfoPassbook != false ? !string.IsNullOrEmpty(appointee.UANNumber) : string.IsNullOrEmpty(appointee.UANNumber)))
+                            && (reqObj.IsManual == null || appointee.IsManualPassbook == reqObj.IsManual)
+                            && (reqObj.IsPensionGapIdentified == null || appointee.IsPensionGap == reqObj.IsPensionGapIdentified)
                             && (!reqObj.FromDate.HasValue || appointee.CreatedOn >= reqObj.FromDate)
                             && (!reqObj.ToDate.HasValue || appointee.CreatedOn <= reqObj.ToDate)
-                        select new AppointeePfStatusDataFilterReportResponse
+                        select new PfStatusDataFilterQueryResponse
                         {
                             AppointeeId = appointee.AppointeeId,
-                            candidateId = appointee.CandidateId,
+                            CandidateId = appointee.CandidateId,
                             AppointeeName = appointee.AppointeeName,
-                            EmailId = appointee.AppointeeEmailId,
+                            AppointeeEmailId = appointee.AppointeeEmailId,
                             MobileNo = appointee.MobileNo,
                             DateOfJoining = appointee.DateOfJoining,
                             CreatedDate = appointee.CreatedOn,
                             Status = appointee.ProcessStatus.ToString(),
-                            TrustPassBookStatus = appointee.IsTrustPassbook ?? false,
-                            isManual = appointee.IsManualPassbook ?? false
+                            IsTrustPassbook = appointee.IsTrustPassbook,
+                            IsManualPassbook = appointee.IsManualPassbook,
+                            PensionGapIdentified = appointee.IsPensionGap,
+                            Uan = appointee.UANNumber,
+                            AadhaarNumberView = appointee.AadhaarNumberView,
                         };
 
             return await query.ToListAsync();
         }
 
 
-        }
+
     }
-    
+}
+
 
 

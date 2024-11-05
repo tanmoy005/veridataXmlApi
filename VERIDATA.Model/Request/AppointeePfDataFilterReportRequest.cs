@@ -10,9 +10,9 @@ namespace VERIDATA.Model.Request
     {
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
-        public string? StatusCode { get; set; }
-        public string? PfType { get; set; }
-        public string? IsManual { get; set; }
+        public int? PfType { get; set; }
+        public int? IsManual { get; set; }
+        public bool? PensionStatus { get; set; }
 
     }
 }

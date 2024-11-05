@@ -136,6 +136,10 @@ namespace VERIDATA.Model.Table.Public
         [DefaultValue(false)]
         public bool? IsPensionApplicable { get; set; }
 
+        [Column("is_pensiongap", TypeName = DbDataType._boolean)]
+        [DefaultValue(false)]
+        public bool? IsPensionGap { get; set; }
+
         [Column("is_aadhaarvarified", TypeName = DbDataType._boolean)]
         [DefaultValue(false)]
         public bool? IsAadhaarVarified { get; set; }

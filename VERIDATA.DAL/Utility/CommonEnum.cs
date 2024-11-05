@@ -101,7 +101,8 @@
             public const string PFPassbookTrust = "EPFPSBKTRUST";
             public const string HandicapCert = "HANDCERT";
             public const string TenthPassCert = "10THCERT";
-            public const string OtherDocument = "OTHID ";
+            public const string OtherDocument = "OTHID";
+            public const string ServiceHistory = "EPFPSHF";
 
 
         }

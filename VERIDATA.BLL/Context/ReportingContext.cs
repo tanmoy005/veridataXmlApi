@@ -1,11 +1,10 @@
 ﻿using System.Net;
-using System.Runtime.InteropServices;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.utility;
-using VERIDATA.DAL.DataAccess.Context;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.Model.Configuration;
 using VERIDATA.Model.DataAccess;
+using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
@@ -15,7 +14,7 @@ using static VERIDATA.BLL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
 {
-    public class ReportingContext : IReportinContext
+    public class ReportingContext : IReportingContext
     {
         private readonly IWorkFlowDalContext _workFlowDetailsContext;
         private readonly IReportingDalContext _reportingDalContext;
@@ -703,98 +702,92 @@ namespace VERIDATA.BLL.Context
 
         public async Task<List<AppointeePfStatusDataFilterReportResponse>> AppointeePfDetailsFileterReport(AppointeePfDataFilterReportRequest reqObj)
         {
-            //    DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
-            //    DateTime CurrDate = Convert.ToDateTime(_currDate);
-            //    string status = string.Empty;
-            //    List<AppointeeDataPfReportResponse> _response = new();
-            //    bool _IsAllData = reqObj.StatusCode?.ToLower()?.Trim() == FilterCode.All?.ToLower()?.Trim();
-            //    if (reqObj.StatusCode == FilterCode.VERIFIED || _IsAllData)
-            //    {
-            //        ProcessedFilterRequest filterRequest = new ProcessedFilterRequest()
-            //        {
-            //            IsFiltered = true,
-            //            FromDate = reqObj.FromDate,
-            //            ToDate = reqObj.ToDate,
-
-            //        };
-
-            //        List<ProcessedDataDetailsResponse> list = await _workFlowDetailsContext.GetProcessedAppointeeDetailsAsync(filterRequest);
-            //        var _processPfViewdata = list?.DistinctBy(x => x.AppointeeId)?.OrderByDescending(x => x.ProcessedId)?.Select(row => new AppointeePfStatusDataFilterReportResponse
-            //        {
-            //            candidateId = row?.CandidateId,
-            //            AppointeeName = row?.AppointeeName,
-            //            AppointeeId = row?.AppointeeId,
-            //            EmailId = row?.AppointeeEmailId,
-            //            MobileNo = row?.MobileNo,
-            //            DateOfJoining = row?.DateOfJoining,
-            //            Status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
-            //            TrustPassBookStatus = row?.AppointeeData?.IsTrustPassbook == null ? "NA" : row?.AppointeeData?.IsTrustPassbook ?? false ? "Yes " : "No",
-            //            EPFOPassBookStatus = row?.AppointeeData?.IsUanAvailable == false && string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "No" : row?.AppointeeData?.IsPassbookFetch ?? false ? "Yes " : "NA",
-            //            CreatedDate = row?.CreatedDate
-            //        }).ToList();
-            //        _response.AddRange(_processPfViewdata);
-            //    }
-
-
-            //    var response = _response?.OrderByDescending(y => y?.DateOfJoining)?.ToList();
-            //    return response;
 
             List<AppointeePfStatusDataFilterReportResponse> responseList = new();
 
             try
             {
-                // Check if we need to fetch all data or only verified entries
-                bool isAllData = reqObj.StatusCode?.Equals(FilterCode.All, StringComparison.OrdinalIgnoreCase) == true;
-                bool isVerifiedData = reqObj.StatusCode?.Equals(FilterCode.VERIFIED, StringComparison.OrdinalIgnoreCase) == true;
 
-                if (isVerifiedData || isAllData)
+                bool? isTrusPassbook = null;
+                bool? EpfoPassbook = null;
+                bool? manualPassbook = reqObj.IsManual switch
                 {
-                    // Create the filter request with the provided date range
-                    var filterRequest = new AppointeePfDataFilterReportRequest
-                    {
-                        IsFiltered = true,
-                        FromDate = reqObj.FromDate,
-                        ToDate = reqObj.ToDate,
-                        
-                    };
+                    (int)CommonEnum.StatusType.Yes => true,
+                    (int)CommonEnum.StatusType.No => false,
 
-                    // Fetch the processed data based on the filter
-                    var processedDataList = await _workFlowDetailsContext.GetAppointeePfdetailsAsync(filterRequest);
+                    _ => null,
+                };
+                switch (reqObj.PfType)
+                {
+                    case (int)CommonEnum.PfType.TrustPassbook:
+                        isTrusPassbook = true;
+                        break;
 
-                    // Filter and transform the processed data into the required response format
-                    var filteredData = processedDataList?
-                        .DistinctBy(x => x.AppointeeId)
-                        .OrderByDescending(x => x.ProcessedId)
-                        .Select(row => new AppointeePfStatusDataFilterReportResponse
-                        {
-                            candidateId = row?.CandidateId,
-                            AppointeeName = row?.AppointeeName,
-                            AppointeeId = row?.AppointeeId,
-                            EmailId = row?.AppointeeEmailId,
-                            MobileNo = row?.MobileNo,
-                            DateOfJoining = row?.DateOfJoining,
-                            Status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
-                            TrustPassBookStatus = row?.AppointeeData?.IsTrustPassbook == null ? "NA" : (row?.AppointeeData.IsTrustPassbook == true ? "Yes" : "No"),
-                           isManual = row ?.AppointeeData.IsManualPassbook == null ? "NA": (row?.AppointeeData.IsManualPassbook == true ? "Yes": "No"),
-                           CreatedDate = row?.CreatedDate
-                        })
-                        .ToList();
+                    case (int)CommonEnum.PfType.EpfoPassBook:
+                        EpfoPassbook = true;
+                        break;
 
-                    if (filteredData != null)
-                    {
-                        responseList.AddRange(filteredData);
-                    }
+                    case (int)CommonEnum.PfType.Na:
+                        isTrusPassbook = false;
+                        EpfoPassbook = false;
+                        break;
+
+                    default:
+                        isTrusPassbook = null;
+                        EpfoPassbook = null;
+                        break;
                 }
 
-                // Order final response by Date of Joining
+
+                var filterRequest = new PfDataFilterReportRequest
+                {
+                    IsManual = manualPassbook,
+                    IsTrustPassbook = isTrusPassbook,
+                    IsEpfoPassbook = EpfoPassbook,
+                    IsPensionGapIdentified = reqObj.PensionStatus,
+                    FromDate = reqObj.FromDate,
+                    ToDate = reqObj.ToDate,
+
+                };
+
+                // Fetch the processed data based on the filter
+                var processedDataList = await _workFlowDetailsContext.GetAppointeePfdetailsAsync(filterRequest);
+
+                // Filter and transform the processed data into the required response format
+                var filteredData = processedDataList?
+                    .DistinctBy(x => x.AppointeeId)
+                    .OrderByDescending(x => x.ProcessedId)
+                    .Select(row => new AppointeePfStatusDataFilterReportResponse
+                    {
+                        candidateId = row?.CandidateId,
+                        AppointeeName = row?.AppointeeName,
+                        AppointeeId = row?.AppointeeId,
+                        EmailId = row?.AppointeeEmailId,
+                        MobileNo = row?.MobileNo,
+                        DateOfJoining = row?.DateOfJoining,
+                        PensionStatus = row?.PensionGapIdentified == null ? "NA" : row?.PensionGapIdentified == true ? "Yes" : "No",
+                        EPFOPassBookStatus = !string.IsNullOrEmpty(row?.Uan) ? "Epfo" : string.Empty,
+                        TrustPassBookStatus = row?.IsTrustPassbook == null ? string.Empty : (row?.IsTrustPassbook == true ? "Trust" : string.Empty),
+                        IsManual = row?.IsManualPassbook == null ? "NA" : (row?.IsManualPassbook == true ? "Manual Upload" : "Auto Fetch"),
+                        UAN = string.IsNullOrEmpty(row?.Uan) ? "NA" : CommonUtility.DecryptString(key,row?.Uan),
+                        AadharNumber = string.IsNullOrEmpty(row?.AadhaarNumberView) ? "NA" : row?.AadhaarNumberView,
+                        CreatedDate = row?.CreatedDate
+                    })
+                    .ToList();
+
+                if (filteredData != null)
+                {
+                    responseList.AddRange(filteredData);
+                }
+
                 return responseList.OrderByDescending(y => y?.DateOfJoining).ToList();
             }
             catch (Exception ex)
             {
-                
+
                 return new List<AppointeePfStatusDataFilterReportResponse>();
             }
-         
+
 
         }
 

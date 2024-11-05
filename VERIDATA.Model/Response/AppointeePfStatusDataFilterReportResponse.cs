@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace VERIDATA.Model.Response
 {
-    public  class AppointeePfStatusDataFilterReportResponse
+    public class AppointeePfStatusDataFilterReportResponse
     {
         [DisplayName("Appointee Id")]
         public int? AppointeeId { get; set; }
@@ -30,8 +25,8 @@ namespace VERIDATA.Model.Response
         [DisplayName("Link Sent Date")]
         public DateTime? CreatedDate { get; set; }
 
-        [DisplayName("Status")]
-        public string? Status { get; set; }
+        [DisplayName("Pension Gap")]
+        public string? PensionStatus { get; set; }
 
         [DisplayName("Trust Passbook Status")]
         public string? TrustPassBookStatus { get; set; }
@@ -39,19 +34,14 @@ namespace VERIDATA.Model.Response
         [DisplayName("EPFO Passbook Status")]
         public string? EPFOPassBookStatus { get; set; }
 
-        [DisplayName("Manual Y/N")]
-        public string isManual { get; set; }
+        [DisplayName("Manual Passbook")]
+        public string? IsManual { get; set; }
 
-        //public int? AppointeeId { get; set; }
-        //public string? CandidateId { get; set; }
-        //public string? AppointeeName { get; set; }
-        //public string? EmailId { get; set; }
-        //public string? MobileNo { get; set; }
-        //public DateTime? DateOfJoining { get; set; }
-        //public DateTime? CreatedDate { get; set; }
-        //public string? Status { get; set; }
-        //public bool TrustPassBookStatus { get; set; }
-        //public string? EPFOPassBookStatus { get; set; }
-        //public bool isManual { get; set; }
+        [DisplayName("UAN")]
+        public string? UAN { get; set; }
+
+        [DisplayName("Aadhar Number")]
+        public string? AadharNumber { get; set; }
+
     }
 }

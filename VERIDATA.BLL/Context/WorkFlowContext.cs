@@ -205,6 +205,13 @@ namespace VERIDATA.BLL.Context
 
                 _underProcessViewdata = (reqObj.StatusCode == null || reqObj.StatusCode?.ToUpper() == "ALL") ? _underProcessViewdata
                          : _underProcessdata.Where(x => x.StatusCode == Convert.ToInt32(reqObj.StatusCode ?? "0"))?.ToList();
+
+                if (reqObj.IssueFilter != null)
+                {
+                    _underProcessViewdata = reqObj.IssueFilter == true ? _underProcessViewdata?.Where(x => x.isNoIsuueinVerification == false)?.ToList() : _underProcessViewdata?.Where(x => x.isNoIsuueinVerification == true)?.ToList();
+                }
+
+
             }
             return _underProcessViewdata;
         }
@@ -845,7 +852,7 @@ namespace VERIDATA.BLL.Context
 
         }
 
-        private async Task PostMailFileSubmisstionSuccess(int appointeeId, int UserId,string type)
+        private async Task PostMailFileSubmisstionSuccess(int appointeeId, int UserId, string type)
         {
             var appointeeDetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
             if (!string.IsNullOrEmpty(appointeeDetails?.AppointeeEmailId))

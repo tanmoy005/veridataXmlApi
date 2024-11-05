@@ -435,44 +435,33 @@ namespace PfcAPI.Controllers.Report
 
             }
         }
+
+        // [AllowAnonymous]
         [Authorize]
         [HttpPost]
         [Route("AppointeeDataPfFilterReport")]
-        public ActionResult AppointeeDataPfFilterReport(AppointeeDataFilterReportRequest reqObj)
+        public ActionResult AppointeeDataPfFilterReport(AppointeePfDataFilterReportRequest reqObj)
         {
             try
             {
-                AppointeeDataFilterReportResponse Response = new();
-                List<DataTable> _exportdt = new();
-                //string reportname = $"approved_appointee_{_currDateString}.xlsx";
-                DateTime _currDate = DateTime.Now;
-                string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
-                string reportname = $"Appointee_PF_Details_Report_{_currDateString}.xlsx";
-                List<AppointeeDataPfReportResponse>? appointeeList = Task.Run(async () => await _reportContext.AppointeePfDetailsReport(reqObj)).GetAwaiter().GetResult();
-                return Ok(new BaseResponse<AppointeeDataPfReportResponse>(HttpStatusCode.OK, appointeeList));
-            }
-            catch (Exception)
-            {
-                throw;
-
-            }
-        }
-
-        [Authorize]
-        [HttpPost]
-        [Route("AppointeeDataPfFilterReport1")]
-        public ActionResult AppointeeDataPfFilterReport1(AppointeePfDataFilterReportRequest reqObj)
-        {
-            try
-            {
-                AppointeeDataFilterReportResponse Response = new();
+                AppointeePfPensionFilterReportResponse Response = new();
                 List<DataTable> _exportdt = new();
                 //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
                 string reportname = $"Appointee_PF_Details_Report_{_currDateString}.xlsx";
                 List<AppointeePfStatusDataFilterReportResponse>? appointeeList = Task.Run(async () => await _reportContext.AppointeePfDetailsFileterReport(reqObj)).GetAwaiter().GetResult();
-                return Ok(new BaseResponse<AppointeePfStatusDataFilterReportResponse>(HttpStatusCode.OK, appointeeList));
+                if (appointeeList?.Count > 0)
+                {
+                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeePfStatusDataFilterReportResponse>(appointeeList);
+                    byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportname, string.Empty);
+
+                    Filedata _filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
+                    Response.AppointeeDetails = appointeeList;
+                    Response.Filedata = _filedata;
+                }
+
+                return Ok(new BaseResponse<AppointeePfPensionFilterReportResponse>(HttpStatusCode.OK, Response));
             }
             catch (Exception)
             {

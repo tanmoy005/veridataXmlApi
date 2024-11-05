@@ -62,6 +62,7 @@
     [level2_email]           NVARCHAR (50)   NULL,
     [level3_email]           NVARCHAR (50)   NULL,
     [is_uan_available] BIT NULL, 
+    [is_pensiongap] BIT NULL, 
     CONSTRAINT [PK_appointee_details] PRIMARY KEY CLUSTERED ([appointee_details_id] ASC),
     CONSTRAINT [FK_appointee_details_appointee_master_appointee_id1] FOREIGN KEY ([appointee_id1]) REFERENCES [dbo].[appointee_master] ([appointee_id]),
     CONSTRAINT [FK_appointee_details_company_company_id1] FOREIGN KEY ([company_id1]) REFERENCES [admin].[company] ([company_id])

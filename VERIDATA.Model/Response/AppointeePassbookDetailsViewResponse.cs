@@ -18,6 +18,7 @@
         public string? LastTransactionApprovedOn { get; set; }
         public string? memberId { get; set; }
         public string? IsPensionApplicable { get; set; }
+        public string? IsPensionGap { get; set; }
         public string? LastPensionDate { get; set; }
         public List<CompanyPassbookDetails>? passbook { get; set; }
     }
@@ -28,5 +29,6 @@
         public string? year { get; set; }
         public string? month { get; set; }
         public string? description { get; set; }
+        public string? ispensionContributed { get; set; }
     }
 }
