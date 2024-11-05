@@ -212,7 +212,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 22px; line-height: 2; word-break: break-word; text-align: center; mso-line-height-alt: 44px; margin: 0;">
-                                                            <span style="font-size: 22px;">User Mail Resend </span>
+                                                            <span style="font-size: 22px;">User Info Resend </span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -651,14 +651,15 @@
                                                           (required if you opt for manual UAN verification in the Veridata portal).</br>
 														4. Trust PF Passbook softcopy, if you are / have been a Trust or Private PF holder.</br></br>
 
-														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Your user name and password is given below <br>
-														<strong><a href={{Url}}>Click on the link to login :</a></strong></p>
+														<strong><a href={{Url}}>Click on the login link:</a></strong></p>
+														
 
                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>User Name :</strong> {{UserCode}}</p>
-													   {{#if Password}}
-                                                        <p style="font-size: 14px;"><strong>Password :</strong> {{Password}}</p>
-                                                         <p style="font-size: 14px;">{{/if}}</p>
-														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">You can reach out to your HC representative regarding any queries.</p>
+													    {{#if Password}}
+                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>Password :</strong> {{Password}}</p>
+														   {{/if}}
+                                                        
+                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">You can reach out to your HC representative regarding any queries.</p>
 														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Regards,</br>
                                                            Human Capital</p></br>
 														<P  style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">

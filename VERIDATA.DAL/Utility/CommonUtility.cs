@@ -43,18 +43,27 @@ namespace VERIDATA.DAL.utility
         }
         public static string DecryptString(string key, string cipherText)
         {
-            byte[] iv = new byte[16];
-            byte[] buffer = Convert.FromBase64String(string.IsNullOrEmpty(cipherText) ? string.Empty : cipherText);
+            string data = string.Empty;
+            try
+            {
+                byte[] iv = new byte[16];
+                byte[] buffer = Convert.FromBase64String(string.IsNullOrEmpty(cipherText) ? string.Empty : cipherText);
 
-            using Aes aes = Aes.Create();
-            aes.Key = Encoding.UTF8.GetBytes(key);
-            aes.IV = iv;
-            ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+                using Aes aes = Aes.Create();
+                aes.Key = Encoding.UTF8.GetBytes(key);
+                aes.IV = iv;
+                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
 
-            using MemoryStream memoryStream = new(buffer);
-            using CryptoStream cryptoStream = new(memoryStream, decryptor, CryptoStreamMode.Read);
-            using StreamReader streamReader = new(cryptoStream);
-            return streamReader.ReadToEnd();
+                using MemoryStream memoryStream = new(buffer);
+                using CryptoStream cryptoStream = new(memoryStream, decryptor, CryptoStreamMode.Read);
+                using StreamReader streamReader = new(cryptoStream);
+                data = streamReader.ReadToEnd();
+            }
+            catch (Exception ex)
+            {
+                return data;
+            }
+            return data;
         }
     }
 

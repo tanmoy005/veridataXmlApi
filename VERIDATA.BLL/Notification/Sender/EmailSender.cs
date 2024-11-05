@@ -166,6 +166,11 @@ namespace VERIDATA.BLL.Notification.Sender
                     validtionType = "UAN";
                     mailSubject = "VERIDATA:User Details Verification Failed";
                     break;
+                case MailType.Pan:
+                    _filename = "userValidityRemarks";
+                    validtionType = "PAN";
+                    mailSubject = "VERIDATA:User Details Verification Failed";
+                    break;
                 case MailType.Passport:
                     _filename = "userValidityRemarks";
                     validtionType = "Passport";

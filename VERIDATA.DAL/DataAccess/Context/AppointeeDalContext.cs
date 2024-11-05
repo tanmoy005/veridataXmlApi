@@ -69,8 +69,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                 {
                     _appointeedetails.IsAadhaarVarified = validationReq.Status;
                     _appointeedetails.AadhaarName = validationReq?.aadharData?.AadhaarName;
-                    //_appointeedetails.AadhaarNumber = validationReq?.aadharData?.AadhaarNumber;
-                    _appointeedetails.AadhaarNumber = validationReq?.aadharData?.AadhaarNumberView;
+                    _appointeedetails.AadhaarNumber = validationReq?.aadharData?.AadhaarNumber;
+                    //_appointeedetails.AadhaarNumber = validationReq?.aadharData?.AadhaarNumberView;
                     _appointeedetails.AadhaarNumberView = validationReq?.aadharData?.AadhaarNumberView;
                     _appointeedetails.NameFromAadhaar = validationReq?.aadharData?.NameFromAadhaar;
                     _appointeedetails.GenderFromAadhaar = validationReq?.aadharData?.GenderFromAadhaar;
@@ -416,7 +416,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             {
                 updatePension.IsPensionApplicable = reqObj.IsPensionApplicable;
                 updatePension.UpdatedBy = reqObj.userId;
-                updatePension.UpdatedOn=DateTime.Now;
+                updatePension.UpdatedOn = DateTime.Now;
                 _ = await _dbContextClass.SaveChangesAsync();
             }
 
