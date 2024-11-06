@@ -766,10 +766,10 @@ namespace VERIDATA.BLL.Context
                         MobileNo = row?.MobileNo,
                         DateOfJoining = row?.DateOfJoining,
                         PensionStatus = row?.PensionGapIdentified == null ? "NA" : row?.PensionGapIdentified == true ? "Yes" : "No",
-                        EPFOPassBookStatus = !string.IsNullOrEmpty(row?.Uan) ? "Epfo" : string.Empty,
+                        EPFOPassBookStatus = !string.IsNullOrEmpty(row?.Uan) ? "Epfo" : "No UAN",
                         TrustPassBookStatus = row?.IsTrustPassbook == null ? string.Empty : (row?.IsTrustPassbook == true ? "Trust" : string.Empty),
                         IsManual = row?.IsManualPassbook == null ? "NA" : (row?.IsManualPassbook == true ? "Manual Upload" : "Auto Fetch"),
-                        UAN = string.IsNullOrEmpty(row?.Uan) ? "NA" : CommonUtility.DecryptString(key,row?.Uan),
+                        UAN = string.IsNullOrEmpty(row?.Uan) ? "NA" : CommonUtility.DecryptString(key, row?.Uan),
                         AadharNumber = string.IsNullOrEmpty(row?.AadhaarNumberView) ? "NA" : row?.AadhaarNumberView,
                         CreatedDate = row?.CreatedDate
                     })
@@ -790,22 +790,21 @@ namespace VERIDATA.BLL.Context
 
 
         }
-        public async Task<List<AppointeePfDataExcelRespopnse>> GetAppointeePfDataExcelReport(AppointeePfDataFilterReportRequest reqObj)
+        public async Task<List<AppointeePfDataExcelRespopnse>> GetAppointeePfDataExcelReport(List<AppointeePfStatusDataFilterReportResponse> appointeeStatusList)
         {
-            List<AppointeePfStatusDataFilterReportResponse> appointeeStatusList = await AppointeePfDetailsFileterReport(reqObj);
             var excelDataList = appointeeStatusList.Select(x => new AppointeePfDataExcelRespopnse
             {
                 CandidateId = x.candidateId,
                 AppointeeName = x.AppointeeName,
                 AppointeeEmailId = x.EmailId,
                 MobileNo = x.MobileNo,
-                DateOfJoining = x.DateOfJoining,
+                DateOfJoining = x.DateOfJoining?.ToShortDateString(),
                 Status = x.EPFOPassBookStatus,
-                IsTrustPassbook = x.TrustPassBookStatus == "Trust",
+                IsTrustPassbook = string.IsNullOrEmpty(x.TrustPassBookStatus) ? "NA" : x.TrustPassBookStatus,
                 Uan = x.UAN,
                 AadhaarNumberView = x.AadharNumber,
-                IsManualPassbook = x.IsManual == "Manual Upload",
-                PensionGapIdentified = x.PensionStatus == "Yes"
+                IsManualPassbook = x.IsManual,
+                PensionGapIdentified = x.PensionStatus
             }).ToList();
 
             return excelDataList;

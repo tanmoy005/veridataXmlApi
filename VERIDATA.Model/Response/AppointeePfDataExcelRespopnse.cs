@@ -18,18 +18,18 @@ namespace VERIDATA.Model.Response
         [DisplayName("Mobile No")]
         public string? MobileNo { get; set; }
         [DisplayName("Date of Joining")]
-        public DateTime? DateOfJoining { get; set; }
-        [DisplayName("EPFO")]
-        public string? Status { get; set; }
+        public string? DateOfJoining { get; set; }
         [DisplayName("Trust Passbook")]
-        public bool? IsTrustPassbook { get; set; }
+        public string? IsTrustPassbook { get; set; }
+        [DisplayName("EPFO Passbook")]
+        public string? Status { get; set; }
+        [DisplayName("Manual Passbook")]
+        public string? IsManualPassbook { get; set; }
         [DisplayName("UAN")]
         public string? Uan { get; set; }
         [DisplayName("Aadhaar No")]
         public string? AadhaarNumberView { get; set; }
-        [DisplayName("Manual Passbook")]
-        public bool? IsManualPassbook { get; set; }
         [DisplayName("Pension Gap")]
-        public bool? PensionGapIdentified { get; set; }
+        public string? PensionGapIdentified { get; set; }
     }
 }
