@@ -189,6 +189,7 @@
             public const string PANMOBILE = "118";
             public const string PANMOBILENOTAVAIL = "119";
             public const string INVDADHAR = "120";
+            public const string PENSIONGAPFIND = "121";
             //public const string MANUALOVERRIDE = "121";
             //public const string REJECT = "122";
             //public const string QUALIFICATION = "QUA";

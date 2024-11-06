@@ -14,6 +14,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<List<AppointeeUploadDetails>> GetAppinteeUploadDetails(int appointeeId);
         public Task<List<ReasonMaser>> GetAllRemarksByType(string Type);
         public Task UpdateAppointeeVerifiedData(CandidateValidateUpdatedDataRequest validationReq);
+        public Task UpdateAppointeeUanNumber(int appointeeId, string uanNumber);
         public Task<string> UpdateRemarksByType(int AppointeeId, List<ReasonRemarks> Reasons, string Type, int UserId);
         public Task UpdateRemarksStatusByType(int AppointeeId, string Type, int UserId);
         public Task uploadFilesNUpdatePrevfiles(AppointeeUploadDetails uploadDetails, AppointeeUploadDetails prevDocDetails, int userId);

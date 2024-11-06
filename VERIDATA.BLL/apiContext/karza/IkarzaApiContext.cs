@@ -16,5 +16,7 @@ namespace VERIDATA.BLL.apiContext.karza
         public Task<UanGenerateOtpDetails> GenerateUANOTP(string UanNumber, int userId);
         public Task<PfPassbookDetails> GetPassbookBySubmitUanOTP(string clientId, string otp, int userId);
         public Task<GetEmployemntDetailsResponse> GetEmployementDetais(string uan, int userId);
+        public Task<List<EpsContributionCheckResult>> CheckEpsContributionConsistencyForkarza(UanPassbookDetails uanPassbookDetails);
+
     }
 }

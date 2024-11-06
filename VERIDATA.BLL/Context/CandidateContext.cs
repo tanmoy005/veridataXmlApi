@@ -322,63 +322,13 @@ namespace VERIDATA.BLL.Context
             return passbookDetails;
         }
 
-        //public async Task<AppointeePassbookDetailsViewResponse> GetPassbookDetailsByAppointeeId(int appointeeId)
-        //{
-        //    AppointeePassbookDetailsViewResponse passbookDetails = new();
-        //    string filePath = string.Empty;
-        //    string _passbookdata = string.Empty;
-        //    List<AppointeeUploadDetails> _UploadDetails = await _appointeeDalContext.GetAppinteeUploadDetails(appointeeId);
-        //    AppointeeUploadDetails? _DocList = _UploadDetails.Find(x => x.UploadTypeCode == FileTypealias.PFPassbook);
-        //    if (_DocList != null)
-        //    {
-        //        string path = _DocList.UploadPath;
-        //        if (File.Exists(path))
-        //        {
-        //            // Read entire text file content in one string
-        //            _passbookdata = File.ReadAllText(path);
-        //            if (_DocList.UploadSubTypeCode == ApiProviderType.SurePass)
-        //            {
-        //                Surepass_GetUanPassbookResponse PassBookResponse = JsonConvert.DeserializeObject<Surepass_GetUanPassbookResponse>(_passbookdata);
-        //                passbookDetails = ParsePassbookDetailsSurePass(PassBookResponse);
-        //            }
-        //            if (_DocList.UploadSubTypeCode == ApiProviderType.Karza)
-        //            {
-        //                UanPassbookDetails PassBookResponse1 = JsonConvert.DeserializeObject<UanPassbookDetails>(_passbookdata);
-        //                passbookDetails = await ParsePassbookDetailsKarza(PassBookResponse1, appointeeId);
-        //            }
-        //            if (_DocList.UploadSubTypeCode == ApiProviderType.Signzy)
-        //            {
-        //                SignzyUanPassbookDetails PassBookResponse1 = JsonConvert.DeserializeObject<SignzyUanPassbookDetails>(_passbookdata);
-        //                passbookDetails = await ParsePassbookDetailsSignzy(PassBookResponse1, appointeeId);
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        var empDetails = await _appointeeDalContext.GetEmployementDetails(appointeeId, JsonTypeAlias.EmployeePassBook);
-        //        _passbookdata = empDetails.DataInfo != null ? System.Text.Encoding.UTF8.GetString(empDetails.DataInfo) : null;
-        //        if (!string.IsNullOrEmpty(_passbookdata))
-        //        {
-        //            if (empDetails.TypeCode == ApiProviderType.SurePass)
-        //            {
-        //                Surepass_GetUanPassbookResponse PassBookResponse = JsonConvert.DeserializeObject<Surepass_GetUanPassbookResponse>(_passbookdata);
-        //                passbookDetails = ParsePassbookDetailsSurePass(PassBookResponse);
-        //            }
-        //            if (empDetails.TypeCode == ApiProviderType.Karza)
-        //            {
-        //                UanPassbookDetails PassBookResponse1 = JsonConvert.DeserializeObject<UanPassbookDetails>(_passbookdata);
-        //                passbookDetails = await ParsePassbookDetailsKarza(PassBookResponse1, appointeeId);
-        //            }
-        //            if (empDetails.TypeCode == ApiProviderType.Signzy)
-        //            {
-        //                SignzyUanPassbookDetails PassBookResponse1 = JsonConvert.DeserializeObject<SignzyUanPassbookDetails>(_passbookdata);
-        //                passbookDetails = await ParsePassbookDetailsSignzy(PassBookResponse1, appointeeId);
-        //            }
-        //        }
-        //    }
-        //    return passbookDetails;
-        //    //  return filePath;
-        //}
+        public async Task UpdateCandidateUANData(int appointeeId, string UanNumber)
+        {
+            string? key = _apiConfig.EncriptKey;
+            string? UAN = !string.IsNullOrEmpty(UanNumber) ? CommonUtility.CustomEncryptString(key, UanNumber) : null;
+            await _appointeeDalContext.UpdateAppointeeUanNumber(appointeeId, UAN);
+
+        }
 
         private AppointeePassbookDetailsViewResponse ParsePassbookDetailsSurePass(Surepass_GetUanPassbookResponse PassBookResponse)
         {
@@ -436,32 +386,43 @@ namespace VERIDATA.BLL.Context
                 passbookDetails.fatherName = PassBookResponseData?.father_name;
                 passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.UANNumber));
                 passbookDetails.dob = PassBookResponseData?.dob;
+                var sortedEstDetails = PassBookResponse.est_details.OrderByDescending(estDetail => DateTime.TryParse(estDetail.doj_epf, out var dojDate) ? dojDate : DateTime.MinValue).ToList();
 
-                foreach (EstDetail obj in PassBookResponse?.est_details ?? new List<EstDetail>())
+                foreach (EstDetail obj in sortedEstDetails)
                 {
                     bool? isPensionApplicable = null;
+                    bool? isPensionGapIdentified = null;
                     DateTime? LastPensionDate = null;
-                    DateTime transMonth = Convert.ToDateTime(obj.doe_epf);
+                    string LastApprovedOn = obj?.passbook?.LastOrDefault().approved_on;
+                    string LastPensionApprovedOn = obj?.passbook?.LastOrDefault(x => Convert.ToInt32(x.cr_pen_bal ?? "0") > 0 && x.particular.ToLower().Contains("cont.")).approved_on;
+                    DateTime transMonth = string.IsNullOrEmpty(LastApprovedOn) ? Convert.ToDateTime(obj.doe_epf) : Convert.ToDateTime(LastApprovedOn);
                     List<CompanyPassbookDetails> passbookDetailsList = new();
 
                     int index = 0;
                     foreach (var x in obj.passbook ?? new List<Passbook>())
                     {
+                        bool? penstionContribution = x.particular.ToLower().Contains("cont.") ? Convert.ToInt32(x?.cr_pen_bal) > 0 ? true : false : null;
                         CompanyPassbookDetails pssbkData = new()
                         {
                             id = index + 1, // Set id as the index value (1-based index)
-                            approvedOn = x.approved_on,
-                            description = x.particular,
-                            month = CommonUtility.getMonthName(Convert.ToDateTime(x.approved_on).Month),
-                            year = Convert.ToDateTime(x.approved_on).Year.ToString()
+                            approvedOn = x?.approved_on,
+                            description = x?.particular,
+                            month = string.IsNullOrEmpty(x?.approved_on?.Trim()) ? "NA" : CommonUtility.getMonthName(Convert.ToDateTime(x.approved_on?.Trim()).Month),
+                            year = string.IsNullOrEmpty(x?.approved_on?.Trim()) ? "NA" : Convert.ToDateTime(x.approved_on?.Trim()).Year.ToString(),
+                            ispensionContributed = penstionContribution == null ? "NA" : penstionContribution == true ? "Yes" : "No"
                         };
 
                         passbookDetailsList.Add(pssbkData);
-
-                        if (Convert.ToInt32(x?.cr_pen_bal) > 0 && (LastPensionDate == null || Convert.ToDateTime(x?.approved_on) > LastPensionDate))
+                        if (penstionContribution == true)
                         {
+                            isPensionGapIdentified = false;
                             isPensionApplicable = true;
-                            LastPensionDate = Convert.ToDateTime(x?.approved_on);
+                        }
+                        if (penstionContribution == false)
+                        {
+                            if (isPensionGapIdentified == false)
+                                isPensionGapIdentified = true;
+
                         }
 
                         index++;
@@ -478,7 +439,9 @@ namespace VERIDATA.BLL.Context
                         LastTransactionMonth = CommonUtility.getMonthName(transMonth.Month),
                         LastTransactionYear = transMonth.Year.ToString(),
                         IsPensionApplicable = isPensionApplicable == null ? "NA" : isPensionApplicable ?? false ? "Yes" : "No",
-                        LastPensionDate = LastPensionDate?.ToString("dd-MM-yyyy") ?? "NA",
+                        IsPensionGap = isPensionGapIdentified == null ? "NA" : isPensionGapIdentified ?? false ? "Yes" : "No",
+                        //LastPensionDate = LastPensionDate?.ToString("dd-MM-yyyy") ?? "NA",
+                        LastPensionDate = !string.IsNullOrEmpty(LastPensionApprovedOn) ? LastPensionApprovedOn : "NA",
                     };
 
                     _companyDetailsList.Add(_companyDetails);
@@ -1002,7 +965,7 @@ namespace VERIDATA.BLL.Context
         {
             var updatedAppointeeDetails = await _appointeeDalContext.UpdateAppinteePensionById(reqObj);
 
-           
+
             if (updatedAppointeeDetails == null)
             {
                 throw new Exception("Appointee not found.");

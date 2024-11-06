@@ -64,7 +64,6 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             if (_appointeedetails?.AppointeeDetailsId != null)
             {
-                _appointeedetails.IsPensionApplicable = validationReq.uanData?.IsPensionApplicable;
                 if (validationReq.Type == RemarksType.Adhaar)
                 {
                     _appointeedetails.IsAadhaarVarified = validationReq.Status;
@@ -79,6 +78,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                 }
                 if (validationReq.Type == RemarksType.UAN)
                 {
+                    _appointeedetails.IsPensionApplicable = validationReq.uanData?.IsPensionApplicable;
+                    _appointeedetails.IsPensionGap = validationReq.uanData?.IsPensionGap;
                     //var uanVerifiedStatus = _appointeedetails.IsUanVarified;
                     _appointeedetails.IsUanVarified = validationReq.Status;
                     //_appointeedetails.IsUanAvailable = validationReq.Status;
@@ -98,6 +99,18 @@ namespace VERIDATA.DAL.DataAccess.Context
                     _appointeedetails.PANName = validationReq?.panData?.PanName;
                     _appointeedetails.FathersNameFromPan = validationReq?.panData?.PanFatherName;
                 }
+
+            }
+            _ = await _dbContextClass.SaveChangesAsync();
+
+        }
+        public async Task UpdateAppointeeUanNumber(int appointeeId, string uanNumber)
+        {
+            AppointeeDetails _appointeedetails = await GetAppinteeDetailsById(appointeeId);
+
+            if (_appointeedetails?.AppointeeDetailsId != null)
+            {
+                _appointeedetails.UANNumber = uanNumber;
 
             }
             _ = await _dbContextClass.SaveChangesAsync();

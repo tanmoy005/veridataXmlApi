@@ -8,7 +8,6 @@ using VERIDATA.Model.Request;
 using VERIDATA.Model.Request.api.Karza;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
-using static System.Net.WebRequestMethods;
 using static VERIDATA.BLL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.apiContext.karza
@@ -451,8 +450,9 @@ namespace VERIDATA.BLL.apiContext.karza
                     Response.ReasonPhrase = "Invalid OTP File Number or Combination of Inputs";
                     return Response;
                 }
+
                 Response.StatusCode = _apiResponse.StatusCode;
-                Response.KarzaPassbkdata = OTPResponse?.result;
+                Response.KarzaPassbkdata = UpdateEpsContribution(OTPResponse?.result ?? new UanPassbookDetails());
             }
             else
             {
@@ -491,5 +491,115 @@ namespace VERIDATA.BLL.apiContext.karza
 
             return Response;
         }
+
+        public UanPassbookDetails UpdateEpsContribution(UanPassbookDetails uanPassbookDetails)
+        {
+            if (uanPassbookDetails?.est_details == null)
+            {
+                return uanPassbookDetails; // Return the object as-is if there are no establishment details
+            }
+
+            foreach (var estDetail in uanPassbookDetails.est_details)
+            {
+                if (estDetail?.passbook == null)
+                {
+                    continue; // Skip if passbook entries are null
+                }
+
+                foreach (var entry in estDetail.passbook)
+                {
+                    if (entry?.db_cr_flag == "C")
+                    {
+                        // Parse "cr_pen_bal" as an integer
+                        int crPenBal = int.TryParse(entry.cr_pen_bal, out int result) ? result : 0;
+
+                        // Update "cr_pen_bal" to "1" if it is greater than zero
+                        if (crPenBal > 0)
+                        {
+                            entry.cr_pen_bal = "1";
+                        }
+                    }
+                }
+            }
+
+            return uanPassbookDetails; // Return the modified object
+        }
+
+        public async Task<List<EpsContributionCheckResult>> CheckEpsContributionConsistencyForkarza(UanPassbookDetails uanPassbookDetails)
+        {
+            var result = new List<EpsContributionCheckResult>();
+            DateTime? lastCompanyEndDate = null;
+
+            if (uanPassbookDetails?.est_details == null)
+            {
+                return result; // Return an empty list if there are no establishment details
+            }
+            var sortedEstDetails = uanPassbookDetails.est_details.OrderBy(estDetail => DateTime.TryParse(estDetail.doj_epf, out var dojDate) ? dojDate : DateTime.MinValue).ToList();
+            foreach (var estDetail in sortedEstDetails)
+            {
+                string companyName = estDetail?.est_name;
+                var passbookEntries = estDetail?.passbook;
+
+                if (passbookEntries != null && passbookEntries.Count > 0)
+                {
+                    // Sort passbook entries by "approved_on" date in ascending order with null check
+                    var sortedEntries = passbookEntries
+                        .OrderBy(entry => DateTime.TryParse(entry.approved_on, out var date) ? date : DateTime.MinValue)
+                        .ToList();
+
+                    bool hasEpsContribution = false;
+                    bool gapDetected = false;
+                    DateTime? startDate = null;
+
+                    foreach (var entry in sortedEntries)
+                    {
+                        if (entry?.db_cr_flag == "C" && (entry?.particular.ToLower().Contains("cont.") ?? false))
+                        {
+                            int crPenBal = int.TryParse(entry.cr_pen_bal, out var balance) ? balance : 0;
+
+                            if (crPenBal >= 1)
+                            {
+                                if (startDate == null && DateTime.TryParse(entry.approved_on, out var approvedDate))
+                                {
+                                    startDate = approvedDate;
+                                }
+                                hasEpsContribution = true;
+                            }
+                            else if (hasEpsContribution)
+                            {
+                                // If we encounter a 0 after starting contributions, mark as a gap
+                                gapDetected = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Check if this company has consistent EPS contribution from the start date
+                    if (hasEpsContribution && lastCompanyEndDate.HasValue && startDate < lastCompanyEndDate)
+                    {
+                        gapDetected = true;
+                    }
+
+                    // Record the response for this company
+                    result.Add(new EpsContributionCheckResult
+                    {
+                        Company = companyName,
+                        StartDate = startDate?.ToString("dd/MM/yyyy"),
+                        EpsGapfind = gapDetected,
+                        HasEpsContribution= hasEpsContribution
+                    });
+
+                    // Update last company's end date for comparison with the next company, with null check
+                    if (sortedEntries.LastOrDefault()?.approved_on != null &&
+                        DateTime.TryParse(sortedEntries.Last().approved_on, out var lastApprovedDate))
+                    {
+                        lastCompanyEndDate = lastApprovedDate;
+                    }
+                }
+            }
+
+            return result;
+        }
+
     }
 }

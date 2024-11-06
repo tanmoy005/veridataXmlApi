@@ -41,6 +41,7 @@ namespace VERIDATA.Model.DataAccess.Request
     public class UanData
     {
         public bool? IsPensionApplicable { get; set; }
+        public bool? IsPensionGap { get; set; }
         public string? UanNumber { get; set; }
         public bool? IsPassbookFetch { get; set; }
         public bool? IsEmployementVarified { get; set; }

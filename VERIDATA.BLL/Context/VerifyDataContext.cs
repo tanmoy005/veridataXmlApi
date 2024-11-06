@@ -777,18 +777,18 @@ namespace VERIDATA.BLL.Context
             {
                 UanNumber = reqObj.UanNumber,
             };
-            CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
-            {
-                AppointeeId = reqObj.appointeeId,
-                EmailId = string.Empty,
-                UserId = reqObj.userId,
-                UserName = string.Empty,
-                Reasons = ReasonList,
-                uanData = _uanDetails,
-                Type = RemarksType.UAN
+            //CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
+            //{
+            //    AppointeeId = reqObj.appointeeId,
+            //    EmailId = string.Empty,
+            //    UserId = reqObj.userId,
+            //    UserName = string.Empty,
+            //    Reasons = ReasonList,
+            //    uanData = _uanDetails,
+            //    Type = RemarksType.UAN
 
-            };
-            _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+            //};
+             await _candidateContext.UpdateCandidateUANData(reqObj.appointeeId, reqObj.UanNumber);
 
             var apiProvider = await _masterContext.GetApiProviderData(ApiType.EPFO);
             await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.UANVERIFICATIONSTART);
@@ -950,6 +950,7 @@ namespace VERIDATA.BLL.Context
         {
             GetPassbookDetailsResponse Response = new();
             PfPassbookDetails _apiResponse = new();
+            List<EpsContributionCheckResult>? epsContributionDetails = new();
             var apiProvider = await _masterContext.GetApiProviderData(ApiType.EPFO);
             bool isPensionApplicable = false;
             string passbookJsonData = string.Empty;
@@ -972,15 +973,17 @@ namespace VERIDATA.BLL.Context
             {
                 _apiResponse = await _karzaApiContext.GetPassbookBySubmitUanOTP(reqObj.OtpDetails.ClientId, reqObj.Otp, reqObj.UserId);
                 UanPassbookDetails? _passBookData = _apiResponse?.KarzaPassbkdata;
-                if (_passBookData?.overall_pf_balance != null)
-                {
-                    int _pensionshare = _passBookData?.overall_pf_balance?.pension_balance ?? 0;
-                    if (_pensionshare > 0)
-                    {
-                        isPensionApplicable = Convert.ToInt32(_pensionshare) > 0;
-                        _passBookData.overall_pf_balance.pension_balance = 1;
-                    }
-                }
+                epsContributionDetails = await _karzaApiContext.CheckEpsContributionConsistencyForkarza(_passBookData);
+
+                //if (_passBookData?.overall_pf_balance != null)
+                //{
+                //    int _pensionshare = _passBookData?.overall_pf_balance?.pension_balance ?? 0;
+                //    if (_pensionshare > 0)
+                //    {
+                //        isPensionApplicable = Convert.ToInt32(_pensionshare) > 0;
+                //        _passBookData.overall_pf_balance.pension_balance = 1;
+                //    }
+                //}
                 passbookJsonData = JsonConvert.SerializeObject(_passBookData);
 
             }
@@ -1032,10 +1035,11 @@ namespace VERIDATA.BLL.Context
                     if (apiProvider?.ToLower() == ApiProviderType.Karza)
                     {
                         EmployeeDetails _passBookData = _apiResponse.KarzaPassbkdata?.employee_details;
-                        Response.FathersName = _passBookData?.father_name??string.Empty;
+                        Response.FathersName = _passBookData?.father_name ?? string.Empty;
                         Response.Name = _passBookData?.member_name ?? string.Empty;
                         Response.DateOfBirth = _passBookData?.dob ?? string.Empty;
-                        Response.IsPensionApplicable = isPensionApplicable;
+                        Response.IsPensionApplicable = HasEpsContribution(epsContributionDetails);
+                        Response.EpsContributionDetails = epsContributionDetails;
                         //Response.PfUan = _passBookData.pf_uan;
                     }
                     if (apiProvider?.ToLower() == ApiProviderType.Signzy)
@@ -1060,6 +1064,7 @@ namespace VERIDATA.BLL.Context
 
             return Response;
         }
+
         private async Task PostPfPassbookData(GetPassbookDetailsRequest reqObj, string apiResponse, string apiProvider)
         {
 
@@ -1099,6 +1104,7 @@ namespace VERIDATA.BLL.Context
             string? UanFatherName = reqObj?.PassbookDetails?.FathersName;
             string? UanDob = reqObj?.PassbookDetails?.DateOfBirth;
             bool _IsPensionApplicable = reqObj?.PassbookDetails?.IsPensionApplicable ?? false;
+            bool _IsPensionGapIdentified = HasEpsGap(reqObj?.PassbookDetails?.EpsContributionDetails);
 
             if (!reqObj.IsUanActive)
             {
@@ -1117,7 +1123,7 @@ namespace VERIDATA.BLL.Context
 
                 bool _isFatherNameValidate = !string.IsNullOrEmpty(fathersName) && fathersName.ToUpper() == UanFatherName?.ToUpper();
                 if (AppointeeFullName?.ToUpper() == UanFullName?.ToUpper()
-                    && appointeedetail?.DateOfBirth == _inptdob && _isFatherNameValidate)
+                    && appointeedetail?.DateOfBirth == _inptdob && _isFatherNameValidate && !_IsPensionGapIdentified)
                 {
                     IsValid = true;
                 }
@@ -1136,6 +1142,10 @@ namespace VERIDATA.BLL.Context
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.DOB, Inputdata = appointeedetail?.DateOfBirth?.ToShortDateString(), Fetcheddata = UanDob });
                     }
+                    if (_IsPensionGapIdentified)
+                    {
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PENSIONGAPFIND, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                    }
                 }
 
                 if (!(appointeedetail.IsPFverificationReq ?? true))
@@ -1150,6 +1160,7 @@ namespace VERIDATA.BLL.Context
             {
                 IsPassbookFetch = reqObj.IsPassbookFetch,
                 IsPensionApplicable = _IsPensionApplicable,
+                IsPensionGap = _IsPensionGapIdentified,
                 UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? appointeedetail?.UANNumber : reqObj?.PassbookDetails?.PfUan,
                 IsEmployementVarified = IsValid,
             };
@@ -1173,65 +1184,7 @@ namespace VERIDATA.BLL.Context
             }
             return response;
         }
-        private async Task<CandidateValidateResponse> VerifyUanName(GetCandidateUanDetails reqObj, int AppointeeId, int UserId)
-        {
-            bool IsValid = false;
-            _ = new CandidateValidateResponse();
-            List<ReasonRemarks> ReasonList = new();
-            _ = new CandidateValidateUpdatedDataRequest();
-            AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(AppointeeId);
-            string? UanFullName = reqObj?.UanName;
 
-            if (reqObj?.IsInactiveUan == true)
-            {
-                ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = string.Empty, Fetcheddata = string.Empty });
-            }
-            else if (appointeedetail.AppointeeDetailsId != null)
-            {
-
-                string? AppointeeFullName = string.IsNullOrEmpty(appointeedetail?.NameFromAadhaar) ? appointeedetail?.AppointeeName?.Trim() : appointeedetail?.NameFromAadhaar?.Trim();
-                string? fathersName = appointeedetail.MemberName;
-                if (AppointeeFullName?.ToUpper() == UanFullName?.ToUpper())
-                {
-                    IsValid = true;
-                }
-                else
-                {
-                    if (AppointeeFullName?.ToUpper() != UanFullName?.ToUpper())
-                    {
-                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = AppointeeFullName, Fetcheddata = UanFullName });
-                    }
-                }
-
-                string _activityStatus = IsValid ? ActivityLog.UANVERIFICATIONCMPLTE : ActivityLog.UANDATAVERIFICATIONFAILED;
-                await _activityContext.PostActivityDetails(AppointeeId, UserId, _activityStatus);
-            }
-            UanData _uanDetails = new UanData
-            {
-                IsPassbookFetch = false,
-                IsPensionApplicable = null,
-                UanNumber = string.IsNullOrEmpty(reqObj?.UanNumber) ? appointeedetail?.UANNumber : reqObj?.UanNumber,
-            };
-            CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
-            {
-                AppointeeId = AppointeeId,
-                EmailId = appointeedetail.AppointeeEmailId,
-                Status = IsValid,
-                Reasons = ReasonList,
-                UserId = UserId,
-                UserName = appointeedetail?.AppointeeName,
-                Type = RemarksType.UAN,
-                uanData = _uanDetails,
-            };
-
-            CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
-
-            if (IsValid)
-            {
-                await _activityContext.PostActivityDetails(AppointeeId, UserId, ActivityLog.APNTVERIFICATIONCOMPLETE);
-            }
-            return response;
-        }
         public async Task PostActivity(int appointeeId, int userId, string activityCode)
         {
             await _activityContext.PostActivityDetails(appointeeId, userId, activityCode);
@@ -1292,6 +1245,14 @@ namespace VERIDATA.BLL.Context
             return response;
         }
 
+        public bool HasEpsGap(List<EpsContributionCheckResult> epsResults)
+        {
+            return epsResults?.Any(result => result.EpsGapfind) ?? false;
+        }
+        public bool HasEpsContribution(List<EpsContributionCheckResult> epsResults)
+        {
+            return epsResults?.Any(result => result.HasEpsContribution) ?? false;
+        }
 
     }
 }

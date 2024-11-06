@@ -17,6 +17,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<List<AppointeeActivityDetailsResponse>> GetActivityDetails(int appointeeId);
         public Task<AppointeePassbookDetailsViewResponse> GetPassbookDetailsByAppointeeId(int appointeeId);
         public Task<AppointeeEmployementDetailsViewResponse> GetEmployementDetailsByAppointeeId(int appointeeId, int userId);
+        public Task UpdateCandidateUANData(int appointeeId, string UanNumber);
         public Task PostAppointeefileUploadAsync(AppointeeFileDetailsRequest AppointeeFileDetails);
         public Task PostAppointeeTrusUanDetailsAsync(AppointeeUpdatePfUanDetailsRequest AppointeeTrustDetails);
         public Task PostAppointeeHandicapDetailsAsync(AppointeeHadicapFileDetailsRequest AppointeeHandicapDetails);
