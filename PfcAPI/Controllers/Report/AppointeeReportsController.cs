@@ -453,7 +453,7 @@ namespace PfcAPI.Controllers.Report
                 List<AppointeePfStatusDataFilterReportResponse>? appointeeList = Task.Run(async () => await _reportContext.AppointeePfDetailsFileterReport(reqObj)).GetAwaiter().GetResult();
                 if (appointeeList?.Count > 0)
                 {
-                    List<AppointeePfDataExcelRespopnse>? appointeeExcelList = Task.Run(async () => await _reportContext.GetAppointeePfDataExcelReport(reqObj)).GetAwaiter().GetResult();
+                    List<AppointeePfDataExcelRespopnse>? appointeeExcelList = Task.Run(async () => await _reportContext.GetAppointeePfDataExcelReport(appointeeList)).GetAwaiter().GetResult();
 
                     DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeePfDataExcelRespopnse>(appointeeExcelList);
                     byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportname, string.Empty);
