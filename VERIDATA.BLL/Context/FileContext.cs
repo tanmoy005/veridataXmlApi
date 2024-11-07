@@ -690,7 +690,7 @@ namespace VERIDATA.BLL.Context
 
                             if (fileDetails != null)
                             {
-                                
+
 
 
                                 // Read the file into a byte array
@@ -830,7 +830,7 @@ namespace VERIDATA.BLL.Context
             await _appointeeContext.PostOfflineKycStatus(reqObj);
 
         }
-        public async Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList)
+        public async Task getFiledetailsByAppointeeId(int appointeeId, List<FileDetailsResponse> _FileDataList)
         {
             List<AppointeeUploadDetails> _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
             if (_UploadDetails?.Count > 0)
@@ -851,8 +851,9 @@ namespace VERIDATA.BLL.Context
                     doc.FileData = _FileData;
 
                     // Prepare the filename
-                    string _fileName = $"{candidateFileName}_{obj?.UploadTypeCode}";
+                    string _fileName = $"{obj?.UploadTypeCode}_{obj?.FileName}";
                     doc.FileName = _fileName;
+                    doc.UploadDetailsId = obj?.UploadDetailsId ?? 0;
                     doc.UploadTypeId = obj?.UploadTypeId ?? 0;
                     doc.mimeType = obj?.MimeType ?? string.Empty;
                     doc.UploadTypeAlias = obj?.UploadTypeCode ?? string.Empty;
@@ -863,53 +864,87 @@ namespace VERIDATA.BLL.Context
         }
 
         //mGhosh new code
-        public async Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList, string? uploadTypeCode = null)
+        //public async Task<List<FileDetailsResponse>> getFiledetailsByAppointeeId(int appointeeId, string? uploadTypeCode = null)
+        //{
+        //    List<AppointeeUploadDetails> _UploadDetails;
+        //    List<FileDetailsResponse> _FileDataList = new();
+        //    // Filter data by UploadTypeCode if provided
+        //    if (!string.IsNullOrEmpty(uploadTypeCode))
+        //    {
+        //        _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId, uploadTypeCode);
+        //    }
+        //    else
+        //    {
+        //        _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
+        //    }
+
+        //    if (_UploadDetails?.Count > 0)
+        //    {
+        //        foreach (var obj in _UploadDetails)
+        //        {
+        //            var doc = new FileDetailsResponse();
+
+        //            // Retrieving binary data from Content column or the file path
+        //            byte[]? _FileData = obj.Content;
+        //            if (_FileData == null && !string.IsNullOrEmpty(obj.UploadPath))
+        //            {
+        //                _FileData = await GetFileDataAsync(obj.UploadPath);
+        //            }
+
+        //            doc.FileData = _FileData;
+        //            doc.FileName = $"{obj?.FileName}_{obj?.UploadTypeCode}";
+        //            doc.UploadTypeId = obj?.UploadTypeId ?? 0;
+        //            doc.mimeType = obj?.MimeType ?? string.Empty;
+        //            doc.UploadTypeAlias = obj?.UploadTypeCode ?? string.Empty;
+
+        //            _FileDataList.Add(doc);
+        //        }
+        //    }
+        //    return _FileDataList;
+        //}
+        //public async Task<AppointeeUploadDetails> getFiledetailsByFileType(int appointeeId, string fileTypeCode)
+        //{
+        //    AppointeeUploadDetails FileDetailsResponse = new();
+        //    List<AppointeeUploadDetails> _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
+        //    if (_UploadDetails?.Count > 0)
+        //    {
+        //        FileDetailsResponse = _UploadDetails?.LastOrDefault(x => x.UploadTypeCode == fileTypeCode);
+        //    }
+        //    return FileDetailsResponse;
+        //}
+
+        public async Task<FileDetailsResponse> getFiledetailsByFileUploadId(int appointeeId, int? uploadId)
         {
-            List<AppointeeUploadDetails> _UploadDetails;
+            AppointeeUploadDetails _UploadDetails;
+            FileDetailsResponse _FileDataList = new();
 
-            // Filter data by UploadTypeCode if provided
-            if (!string.IsNullOrEmpty(uploadTypeCode))
-            {
-                _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId, uploadTypeCode);
-            }
-            else
-            {
-                _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
-            }
+            _UploadDetails = await _appointeeContext.GetAppinteeUploadDetailsById(appointeeId, uploadId);
 
-            if (_UploadDetails?.Count > 0)
+            if ((_UploadDetails?.UploadDetailsId ?? 0) > 0)
             {
-                foreach (var obj in _UploadDetails)
+
+                var doc = new FileDetailsResponse();
+                // Retrieving binary data from Content column or the file path
+                byte[]? _FileData = _UploadDetails?.Content;
+                if (_FileData == null && !string.IsNullOrEmpty(_UploadDetails?.UploadPath))
                 {
-                    var doc = new FileDetailsResponse();
-
-                    // Retrieving binary data from Content column or the file path
-                    byte[]? _FileData = obj.Content;
-                    if (_FileData == null && !string.IsNullOrEmpty(obj.UploadPath))
-                    {
-                        _FileData = await GetFileDataAsync(obj.UploadPath);
-                    }
-
-                    doc.FileData = _FileData;
-                    doc.FileName = $"{candidateFileName}_{obj?.UploadTypeCode}";
-                    doc.UploadTypeId = obj?.UploadTypeId ?? 0;
-                    doc.mimeType = obj?.MimeType ?? string.Empty;
-                    doc.UploadTypeAlias = obj?.UploadTypeCode ?? string.Empty;
-
-                    _FileDataList.Add(doc);
+                    _FileData = await GetFileDataAsync(_UploadDetails?.UploadPath);
                 }
+
+                doc.FileData = _FileData;
+                doc.FileName = $"{_UploadDetails?.UploadTypeCode}_{_UploadDetails?.FileName}";
+                doc.UploadTypeId = _UploadDetails?.UploadDetailsId ?? 0;
+                doc.UploadTypeId = _UploadDetails?.UploadTypeId ?? 0;
+                doc.mimeType = _UploadDetails?.MimeType ?? string.Empty;
+                doc.UploadTypeAlias = _UploadDetails?.UploadTypeCode ?? string.Empty;
+
+                _FileDataList = doc;
+
             }
+            return _FileDataList;
         }
-        public async Task<AppointeeUploadDetails> getFiledetailsByFileType(int appointeeId, string fileTypeCode)
-        {
-            AppointeeUploadDetails FileDetailsResponse = new();
-            List<AppointeeUploadDetails> _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
-            if (_UploadDetails?.Count > 0)
-            {
-                FileDetailsResponse = _UploadDetails?.LastOrDefault(x => x.UploadTypeCode == fileTypeCode);
-            }
-            return FileDetailsResponse;
-        }
+
+
         public async Task<UnzipAadharDataResponse> unzipAdharzipFiles(AppointeeAadhaarAadharXmlVarifyRequest AppointeeAdharUploadFileDetails)
         {
             UnzipAadharDataResponse response = new();
@@ -968,7 +1003,7 @@ namespace VERIDATA.BLL.Context
                     messeege = messeege + " share code can not be null";
                 }
             }
-           
+
             response.FileContent = unzipFileContent;
             response.IsValid = isValid;
             response.Message = messeege;

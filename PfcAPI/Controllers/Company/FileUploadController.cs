@@ -73,7 +73,7 @@ namespace PfcAPI.Controllers.Company
             try
             {
                 FileDetailsResponse fileDetails = new();
-                
+
                 if (reqobj.Type == FileTypealias.PFPassbookTrust)
                 {
                     fileDetails = Task.Run(async () => await _fileService.DownloadTrustPassbook(reqobj.AppointeeId, reqobj.UserId)).GetAwaiter().GetResult();
@@ -156,7 +156,7 @@ namespace PfcAPI.Controllers.Company
                 throw;
             }
         }
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [Authorize]
         [HttpGet("getUploadFileData")]
         public ActionResult getUploadFileData(int appointeeId)
@@ -183,5 +183,21 @@ namespace PfcAPI.Controllers.Company
             }
         }
 
+        //[AllowAnonymous]
+        [Authorize]
+        [HttpPost("GetUploadedFileDetailsById")]
+        public ActionResult GetAppointeeFileDataByName(GetUploadedFileDetailsByIdRequest reqObj)
+        {
+            try
+            {
+                FileDetailsResponse _fileData = new();
+                _fileData = Task.Run(async () => await _fileService.getFiledetailsByFileUploadId(reqObj.AppointeeId, reqObj.FileId)).GetAwaiter().GetResult();
+                return Ok(new BaseResponse<FileDetailsResponse>(HttpStatusCode.OK, _fileData));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

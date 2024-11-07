@@ -140,7 +140,7 @@ namespace VERIDATA.BLL.Context
                 //GetFileDataModel
                 string? _paddedName = _appointeedetails?.AppointeeName?.Length > 4 ? _appointeedetails.AppointeeName?[..3] : _appointeedetails?.AppointeeName?.PadRight(3, '0');
                 string candidateFileName = $"{_appointeedetails?.CandidateId}_{_paddedName}";
-                await _fileContext.getFiledetailsByAppointeeId(appointeeId, candidateFileName, _FileDataList);
+                await _fileContext.getFiledetailsByAppointeeId(appointeeId, _FileDataList);
                 data.FileUploaded = _FileDataList;
 
             }

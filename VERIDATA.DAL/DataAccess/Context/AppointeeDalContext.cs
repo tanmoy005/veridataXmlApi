@@ -53,6 +53,14 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return await query.ToListAsync();
         }
+        public async Task<AppointeeUploadDetails> GetAppinteeUploadDetailsById(int appointeeId, int? uploadFileId)
+        {
+            AppointeeUploadDetails _fileDetails = new();
+            IQueryable<AppointeeUploadDetails> query = _dbContextClass.AppointeeUploadDetails
+                .Where(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true && x.UploadDetailsId == uploadFileId);
+            _fileDetails = await query.FirstOrDefaultAsync();
+            return _fileDetails;
+        }
         public async Task<List<ReasonMaser>> GetAllRemarksByType(string Type)
         {
             List<ReasonMaser> AllResonDetails = await _dbContextClass.ReasonMaser.Where(x => x.ReasonType.Equals(Type) && x.ActiveStatus == true).ToListAsync();

@@ -31,10 +31,11 @@ namespace VERIDATA.BLL.Interfaces
         public Task postappointeeUploadedFiles(AppointeeFileDetailsRequest AppointeeDetails);
         public Task OfflineKycStatusUpdate(OfflineAadharVarifyStatusUpdateRequest reqObj);
         public Task<FileDetailsResponse> DownloadTrustPassbook(int appointeeId, int userId);
-        public Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList);
-        public Task<AppointeeUploadDetails> getFiledetailsByFileType(int appointeeId, string fileTypeCode);
+        public Task getFiledetailsByAppointeeId(int appointeeId, List<FileDetailsResponse> _FileDataList);
+        //public Task<AppointeeUploadDetails> getFiledetailsByFileType(int appointeeId, string fileTypeCode);
         public Task postAppointeePassbookUpload(AppointeeDataSaveInFilesRequset UploadDetails);
         public Task<UnzipAadharDataResponse> unzipAdharzipFiles(AppointeeAadhaarAadharXmlVarifyRequest AppointeeAdharUploadFileDetails);
-        public Task getFiledetailsByAppointeeId(int appointeeId, string candidateFileName, List<FileDetailsResponse> _FileDataList,string uploadtypecode);
+        //public Task<List<FileDetailsResponse>> getFiledetailsByAppointeeId(int appointeeId,string uploadtypecode);
+        public Task<FileDetailsResponse> getFiledetailsByFileUploadId(int appointeeId, int? uploadId);
     }
 }

@@ -1062,7 +1062,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return list;
         }
-      
+
         public async Task<List<PfStatusDataFilterQueryResponse>> GetAppointeePfdetailsAsync(PfDataFilterReportRequest reqObj)
         {
             var query = from appointee in _dbContextClass.AppointeeDetails
@@ -1098,7 +1098,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
 
 
-        
+
         public async Task<List<FileCategoryResponse>> getFileTypeCode(int appointeeId)
         {
             var fileList = await (from details in _dbContextClass.AppointeeUploadDetails
@@ -1110,6 +1110,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                   select new
                                   {
                                       master.UploadDocType,
+                                      master.UploadTypeName,
                                       master.UploadTypeCode,
                                       details.UploadDetailsId,
                                       details.FileName
@@ -1122,16 +1123,16 @@ namespace VERIDATA.DAL.DataAccess.Context
                 {
                     FileCategory = g.Key,
                     Files = g
-                        .GroupBy(x => x.UploadTypeCode)
-                        .Select(subGroup => new FileTypeResponse
-                        {
-                            FileType = subGroup.Key,
-                            FilesInfo = subGroup.Select(file => new FileInfoResponse
-                            {
-                                UploadDetailId = file.UploadDetailsId,
-                                FileName = file.FileName
-                            }).ToList()
-                        }).ToList()
+                .GroupBy(x => new { x.UploadTypeCode, x.UploadTypeName })
+                .Select(subGroup => new FileTypeResponse
+                {
+                    FileType = subGroup.Key.UploadTypeName,
+                    FilesInfo = subGroup.Select(file => new FileInfoResponse
+                    {
+                        UploadDetailId = file.UploadDetailsId,
+                        FileName = file.FileName
+                    }).ToList()
+                }).ToList()
                 }).ToList();
 
             return groupedData;
