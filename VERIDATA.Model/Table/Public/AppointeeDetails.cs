@@ -148,6 +148,11 @@ namespace VERIDATA.Model.Table.Public
         [DefaultValue(false)]
         public bool? IsPasssportVarified { get; set; }
 
+        [Column("is_fnamevarified", TypeName = DbDataType._boolean)]
+
+        [DefaultValue(false)]
+        public bool? IsFNaemeVarified { get; set; }
+
         [Column("is_uanvarified", TypeName = DbDataType._boolean)]
 
         [DefaultValue(false)]
@@ -168,10 +173,7 @@ namespace VERIDATA.Model.Table.Public
         [DefaultValue(false)]
         public bool? IsTrustPassbook { get; set; }
 
-        [Column("is_trustpension", TypeName = DbDataType._boolean)]
-
-        [DefaultValue(false)]
-        public bool? IsTrustPension { get; set; }
+      
 
 
         [Column("save_step", TypeName = DbDataType._integer)]

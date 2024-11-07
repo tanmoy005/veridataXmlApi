@@ -39,6 +39,7 @@
     [is_aadhaarvarified]     BIT             NULL,
     [is_passportvarified]    BIT             NULL,
     [is_uanvarified]         BIT             NULL,
+    [is_fnamevarified]       BIT             NULL,
     [is_passbook_fetch]      BIT             NULL,
     [is_manual_passbook]     BIT             NULL,
     [save_step]              INT             NULL,
@@ -57,7 +58,7 @@
     [is_panvarified]         BIT             NULL,
     [company_name]           NVARCHAR (50)   NULL,
     [is_trustpassbook]       BIT             NULL,
-    [is_trustpension]        BIT             NULL,
+  
     [level1_email]           NVARCHAR (50)   NULL,
     [level2_email]           NVARCHAR (50)   NULL,
     [level3_email]           NVARCHAR (50)   NULL,
