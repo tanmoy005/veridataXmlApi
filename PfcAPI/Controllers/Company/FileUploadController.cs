@@ -156,6 +156,32 @@ namespace PfcAPI.Controllers.Company
                 throw;
             }
         }
+        [AllowAnonymous]
+        [Authorize]
+        [HttpGet("getUploadFileData")]
+        public ActionResult getUploadFileData(int appointeeId)
+        {
+            try
+            {
+                if (appointeeId <= 0)
+                {
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, new ErrorResponse
+                    {
+                        ErrorCode = 500,
+                        InternalMessage = "Invalid appointeeId entered.",
+                        UserMessage = "Appointee not found"
+                    }));
+                }
+
+                List<FileCategoryResponse> fileCategories = Task.Run(async () => await _workflowcontext.getFileType(appointeeId)).GetAwaiter().GetResult();
+
+                return Ok(new BaseResponse<List<FileCategoryResponse>>(HttpStatusCode.OK, fileCategories));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
     }
 }

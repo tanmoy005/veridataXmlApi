@@ -43,6 +43,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<List<GlobalSearchAppointeeData>> GetAppointeeSearchDetails(string name, string type);
         public Task<List<UnderProcessWithActionQueryDataResponse>> GetUnderProcessDataWithActionAsync(AppointeeSeacrhFilterRequest reqObj);
         public Task<List<PfStatusDataFilterQueryResponse>> GetAppointeePfdetailsAsync(PfDataFilterReportRequest reqObj);
+        public Task<List<FileCategoryResponse>> getFileTypeCode(int appointeeId);
 
 
     }

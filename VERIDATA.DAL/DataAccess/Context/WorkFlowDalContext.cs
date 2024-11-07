@@ -1098,6 +1098,44 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
 
 
+        
+        public async Task<List<FileCategoryResponse>> getFileTypeCode(int appointeeId)
+        {
+            var fileList = await (from details in _dbContextClass.AppointeeUploadDetails
+                                  join master in _dbContextClass.UploadTypeMaster
+                                  on details.UploadTypeId equals master.UploadTypeId
+                                  where details.AppointeeId == appointeeId
+                                        && details.ActiveStatus == true
+                                  orderby master.UploadDocType, master.UploadTypeCode
+                                  select new
+                                  {
+                                      master.UploadDocType,
+                                      master.UploadTypeCode,
+                                      details.UploadDetailsId,
+                                      details.FileName
+                                  }).ToListAsync();
+
+            // Group data by `upload_doc_type`, then by `upload_type_code`
+            var groupedData = fileList
+                .GroupBy(f => f.UploadDocType)
+                .Select(g => new FileCategoryResponse
+                {
+                    FileCategory = g.Key,
+                    Files = g
+                        .GroupBy(x => x.UploadTypeCode)
+                        .Select(subGroup => new FileTypeResponse
+                        {
+                            FileType = subGroup.Key,
+                            FilesInfo = subGroup.Select(file => new FileInfoResponse
+                            {
+                                UploadDetailId = file.UploadDetailsId,
+                                FileName = file.FileName
+                            }).ToList()
+                        }).ToList()
+                }).ToList();
+
+            return groupedData;
+        }
 
     }
 }

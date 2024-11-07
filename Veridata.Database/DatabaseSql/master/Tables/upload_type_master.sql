@@ -8,6 +8,7 @@
     [created_on]       DATETIME       NULL,
     [updated_by]       INT            NULL,
     [updated_on]       DATETIME       NULL,
+    [upload_doc_type] NVARCHAR(50) NULL, 
     CONSTRAINT [PK_upload_type_master] PRIMARY KEY CLUSTERED ([upload_type_id] ASC)
 );
 

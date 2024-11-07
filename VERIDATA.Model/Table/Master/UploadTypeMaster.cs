@@ -40,6 +40,9 @@ namespace VERIDATA.Model.Table.Master
         [Column("updated_on", TypeName = DbDataType._datetime)]
         public DateTime? UpdatedOn { get; set; }
 
+        [Column("upload_doc_type", TypeName = DbDataType._text50)]
+        public string? UploadDocType { get; set; }
+
         [ForeignKey("upload_type_id")]
         public ICollection<AppointeeUploadDetails> AppointeeUploadDetails { get; set; }
     }

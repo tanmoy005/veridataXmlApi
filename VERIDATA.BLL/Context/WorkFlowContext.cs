@@ -1,4 +1,5 @@
-﻿using VERIDATA.BLL.Interfaces;
+﻿
+using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
@@ -877,5 +878,19 @@ namespace VERIDATA.BLL.Context
 
         }
 
+        public async Task<List<FileCategoryResponse>> getFileType(int appointeeId)
+        {
+            //  throw new NotImplementedException();
+
+            if (appointeeId <= 0)
+            {
+                return null;
+            }
+
+            return await _dbContextWorkflow.getFileTypeCode(appointeeId);
+        }
+
+
     }
+    
 }
