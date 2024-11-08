@@ -447,5 +447,44 @@ namespace VERIDATA.DAL.DataAccess.Context
             // Return the updated record
             return updatePension;
         }
+
+        public async Task<AppointeeDetails> VefifyAppinteeManualById(AppointeeApproveVerificationRequest reqObj)
+        {
+             var appointeeDetails = await _dbContextClass.AppointeeDetails
+        .FirstOrDefaultAsync(x => x.AppointeeId == reqObj.AppointeeId && x.ActiveStatus == true);
+
+            if (appointeeDetails == null)
+            {
+                throw new Exception("Appointee not found.");
+            }
+
+            // Dynamically update each field specified in the request
+            foreach (var update in reqObj.VerificationUpdates)
+            {
+                switch (update.FieldName.ToLower())
+                {
+                    case "isfnamevarified":
+                        appointeeDetails.IsFNaemeVarified = update.IsVerified;
+                        break;
+                    case "ispasssportvarified":
+                        appointeeDetails.IsPasssportVarified = update.IsVerified;
+                        break;
+                    case "isaadhaarvarified":
+                        appointeeDetails.IsAadhaarVarified = update.IsVerified;
+                        break;
+                    default:
+                        throw new Exception($"Unknown field name: {update.FieldName}");
+                }
+            }
+
+            // Set the updated metadata fields
+            appointeeDetails.UpdatedBy = reqObj.UserId;
+            appointeeDetails.UpdatedOn = DateTime.Now;
+
+            // Save the changes to the database
+            await _dbContextClass.SaveChangesAsync();
+
+            return appointeeDetails;
+        }
     }
 }

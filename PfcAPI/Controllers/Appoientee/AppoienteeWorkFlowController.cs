@@ -596,5 +596,29 @@ namespace PfcAPI.Controllers.Appoientee
             }
         }
 
+        [AllowAnonymous]
+        [Authorize]
+        [HttpPost]
+        [Route("UpdateAppointeeManualVerification")]
+        public ActionResult UpdateAppointeeManualVerification(AppointeeApproveVerificationRequest reqObj)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var updatedAppointeeDetails = Task.Run(async () => await _candidateContext.VerifyAppointeeManualAsync(reqObj)).GetAwaiter().GetResult();
+
+                return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
     }
 }

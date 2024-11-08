@@ -974,5 +974,36 @@ namespace VERIDATA.BLL.Context
 
             return updatedAppointeeDetails;
         }
+
+        public async Task<AppointeeDetails> VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj)
+        {
+            var updatedAppointeeDetails = await _appointeeDalContext.VefifyAppinteeManualById(reqObj);
+
+            if (updatedAppointeeDetails == null)
+            {
+                throw new Exception("Appointee not found.");
+            }
+
+            // Apply the verification updates
+            foreach (var update in reqObj.VerificationUpdates)
+            {
+                switch (update.FieldName.ToLower())
+                {
+                    case "isfnamevarified":
+                        updatedAppointeeDetails.IsFNaemeVarified = update.IsVerified;
+                        break;
+                    case "ispasssportvarified":
+                        updatedAppointeeDetails.IsPasssportVarified = update.IsVerified;
+                        break;
+                    case "isaadhaarvarified":
+                        updatedAppointeeDetails.IsAadhaarVarified = update.IsVerified;
+                        break;
+                    default:
+                        throw new Exception($"Unknown field name: {update.FieldName}");
+                }
+            }
+
+            return updatedAppointeeDetails;
+        }
     }
 }
