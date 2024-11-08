@@ -1106,10 +1106,10 @@ namespace VERIDATA.DAL.DataAccess.Context
                                   on details.UploadTypeId equals master.UploadTypeId
                                   where details.AppointeeId == appointeeId
                                         && details.ActiveStatus == true
-                                  orderby master.UploadDocType, master.UploadTypeCode
+                                  orderby master.UploadTypeCategory, master.UploadTypeCategory
                                   select new
                                   {
-                                      master.UploadDocType,
+                                      master.UploadTypeCategory,
                                       master.UploadTypeName,
                                       master.UploadTypeCode,
                                       details.UploadDetailsId,
@@ -1118,7 +1118,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             // Group data by `upload_doc_type`, then by `upload_type_code`
             var groupedData = fileList
-                .GroupBy(f => f.UploadDocType)
+                .GroupBy(f => f.UploadTypeCategory)
                 .Select(g => new FileCategoryResponse
                 {
                     FileCategory = g.Key,
