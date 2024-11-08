@@ -531,7 +531,7 @@ namespace VERIDATA.BLL.Context
                 if ((AppointeeFileDetails.IsSubmit ?? false) && !_isSubmit)
                 {
 
-                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsPanVarified ?? false))
+                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsPanVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false))
                     {
                         mailType = MailType.AutoApprove;
                         await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeFileDetails?.UserId ?? 0, true);//isapprove set true

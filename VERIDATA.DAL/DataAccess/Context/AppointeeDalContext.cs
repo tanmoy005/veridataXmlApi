@@ -93,7 +93,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     //_appointeedetails.IsUanAvailable = validationReq.Status;
                     _appointeedetails.IsPassbookFetch = validationReq.uanData?.IsPassbookFetch;
                     _appointeedetails.UANNumber = validationReq.uanData?.UanNumber;
-                    //_appointeedetails.IsEmployementVarified = validationReq.uanData?.IsEmployementVarified;
+                    _appointeedetails.IsFNameVarified = validationReq.uanData?.IsFNameVarified;
                 }
                 if (validationReq.Type == RemarksType.Passport)
                 {

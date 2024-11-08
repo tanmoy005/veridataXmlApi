@@ -1105,7 +1105,7 @@ namespace VERIDATA.BLL.Context
             string? UanDob = reqObj?.PassbookDetails?.DateOfBirth;
             bool _IsPensionApplicable = reqObj?.PassbookDetails?.IsPensionApplicable ?? false;
             bool _IsPensionGapIdentified = HasEpsGap(reqObj?.PassbookDetails?.EpsContributionDetails);
-
+            bool _isFatherNameValidate = false;
             if (!reqObj.IsUanActive)
             {
                 ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = string.Empty, Fetcheddata = string.Empty });
@@ -1121,7 +1121,7 @@ namespace VERIDATA.BLL.Context
                 DateTime _inptdob = Convert.ToDateTime(UanDob);
 
 
-                bool _isFatherNameValidate = !string.IsNullOrEmpty(fathersName) && fathersName.ToUpper() == UanFatherName?.ToUpper();
+                _isFatherNameValidate = !string.IsNullOrEmpty(fathersName) && fathersName.ToUpper() == UanFatherName?.ToUpper();
                 if (AppointeeFullName?.ToUpper() == UanFullName?.ToUpper()
                     && appointeedetail?.DateOfBirth == _inptdob && _isFatherNameValidate && !_IsPensionGapIdentified)
                 {
@@ -1163,6 +1163,7 @@ namespace VERIDATA.BLL.Context
                 IsPensionGap = _IsPensionGapIdentified,
                 UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? appointeedetail?.UANNumber : reqObj?.PassbookDetails?.PfUan,
                 IsEmployementVarified = IsValid,
+                IsFNameVarified= _isFatherNameValidate,
             };
             CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
             {

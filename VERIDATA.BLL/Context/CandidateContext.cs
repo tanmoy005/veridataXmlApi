@@ -76,6 +76,7 @@ namespace VERIDATA.BLL.Context
                     data.IsUanVarified = null;
                     data.IsManualPassbook = null;
                     data.IsAadhaarVarified = null;
+                    data.IsFnameVarified = null;
                     data.IsProcessed = false;
                     data.IsSubmit = false;
                     data.FileUploaded = _FileDataList;
@@ -132,7 +133,7 @@ namespace VERIDATA.BLL.Context
                 data.IsManualPassbook = _appointeedetails?.IsManualPassbook;
                 data.IsTrustPassbook = _appointeedetails?.IsTrustPassbook;
                 data.IsUanAvailable = _appointeedetails?.IsUanAvailable;
-                //data.IsTrustPension = _appointeedetails?.IsTrustPension;
+                data.IsFnameVarified = _appointeedetails?.IsFNameVarified;
                 data.IsProcessed = _appointeedetails?.IsProcessed;
                 data.SaveStep = _appointeedetails?.SaveStep ?? 0;
                 data.IsSubmit = _appointeedetails?.IsSubmit ?? false;

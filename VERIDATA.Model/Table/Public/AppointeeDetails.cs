@@ -151,7 +151,7 @@ namespace VERIDATA.Model.Table.Public
         [Column("is_fnamevarified", TypeName = DbDataType._boolean)]
 
         [DefaultValue(false)]
-        public bool? IsFNaemeVarified { get; set; }
+        public bool? IsFNameVarified { get; set; }
 
         [Column("is_uanvarified", TypeName = DbDataType._boolean)]
 

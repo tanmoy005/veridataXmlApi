@@ -45,5 +45,6 @@ namespace VERIDATA.Model.DataAccess.Request
         public string? UanNumber { get; set; }
         public bool? IsPassbookFetch { get; set; }
         public bool? IsEmployementVarified { get; set; }
+        public bool? IsFNameVarified { get; set; }
     }
 }
