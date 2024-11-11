@@ -40,7 +40,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<AppointeeUploadDetails> GetAppinteeUploadDetailsById(int appointeeId, int? uploadFileId);
         public Task<AppointeeDetails> UpdateAppinteePensionById(AppointeeApprovePensionRequest reqObj);
 
-        public Task<AppointeeDetails> VefifyAppinteeManualById(AppointeeApproveVerificationRequest reqObj);
+        public Task<AppointeeDetails> VefifyAppinteeManualById(int appointeeId,bool? isValid ,string type, int userId);
 
     }
 }

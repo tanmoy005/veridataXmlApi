@@ -2,6 +2,7 @@
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
+using VERIDATA.DAL.utility;
 using VERIDATA.Model.Configuration;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Request;
@@ -10,7 +11,7 @@ using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Table.Config;
 using VERIDATA.Model.Table.Public;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
 {
@@ -355,25 +356,25 @@ namespace VERIDATA.BLL.Context
                     switch (reqObj.StatusCode)
                     {
                         case ReportFilterStatus.ProcessIniNoResponse:
-                            _statusCode = WorkFlowType.ProcessIni?.Trim();
+                            _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
                             _intSubStatusCode = 0;
                             break;
                         case ReportFilterStatus.ProcessIniOnGoing:
-                            _statusCode = WorkFlowType.ProcessIni?.Trim();
+                            _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
                             _intSubStatusCode = 1;
                             break;
                         case ReportFilterStatus.ProcessIniSubmit:
-                            _statusCode = WorkFlowType.ProcessIni?.Trim();
+                            _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
                             _intSubmitCode = true;
                             break;
                         case ReportFilterStatus.Approved:
-                            _statusCode = WorkFlowType.Approved?.Trim();
+                            _statusCode = WorkFlowStatusType.Approved?.Trim();
                             break;
                         case ReportFilterStatus.Rejected:
-                            _statusCode = WorkFlowType.Rejected?.Trim();
+                            _statusCode = WorkFlowStatusType.Rejected?.Trim();
                             break;
                         case ReportFilterStatus.ForcedApproved:
-                            _statusCode = WorkFlowType.ForcedApproved?.Trim();
+                            _statusCode = WorkFlowStatusType.ForcedApproved?.Trim();
                             break;
                         default:
                             _statusCode = reqObj.StatusCode;
@@ -406,9 +407,9 @@ namespace VERIDATA.BLL.Context
                         //CompanyId = x?.CompanyId,
                         CompanyName = x?.CompanyName,
                         EmailId = x?.AppointeeEmail,
-                        ActionTaken = (x?.AppvlStatusCode != WorkFlowType.ProcessIni?.Trim() && x?.SaveStep == 1) ? x?.UpdatedOn?.ToShortDateString() ?? x?.ActionTakenAt?.ToShortDateString()
+                        ActionTaken = (x?.AppvlStatusCode != WorkFlowStatusType.ProcessIni?.Trim() && x?.SaveStep == 1) ? x?.UpdatedOn?.ToShortDateString() ?? x?.ActionTakenAt?.ToShortDateString()
                                       : x?.ActionTakenAt?.ToShortDateString(),
-                        AppointeeStatus = x?.AppvlStatusCode == WorkFlowType.ProcessIni?.Trim() ?
+                        AppointeeStatus = x?.AppvlStatusCode == WorkFlowStatusType.ProcessIni?.Trim() ?
                                       x?.AppvlStatusDesc + "(" + (x?.IsSubmit ?? false ? "Submitted" : x?.SaveStep == 1 ? "Ongoing" : "No Response") + ")"
                                       : x?.AppvlStatusDesc,
                         Date = _currDate,
@@ -581,7 +582,7 @@ namespace VERIDATA.BLL.Context
                     EmailId = row?.AppointeeEmailId,
                     MobileNo = row?.MobileNo,
                     DateOfJoining = row?.DateOfJoining,
-                    Status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
+                    Status = row?.StateAlias == WorkFlowStatusType.ForcedApproved ? "Manual Override" : "Verified",
                     CreatedDate = row?.CreatedDate
                 }).ToList();
                 _response.AddRange(_processViewdata);
@@ -686,7 +687,7 @@ namespace VERIDATA.BLL.Context
                 EmailId = row?.AppointeeEmailId,
                 MobileNo = row?.MobileNo,
                 DateOfJoining = row?.DateOfJoining,
-                Status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
+                Status = row?.StateAlias == WorkFlowStatusType.ForcedApproved ? "Manual Override" : "Verified",
                 TrustPassBookStatus = row?.AppointeeData?.IsTrustPassbook == null ? "NA" : row?.AppointeeData?.IsTrustPassbook ?? false ? "Yes " : "No",
                 EPFOPassBookStatus = row?.AppointeeData?.IsUanAvailable == false && string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "No" : row?.AppointeeData?.IsPassbookFetch ?? false ? "Yes " : "NA",
                 CreatedDate = row?.CreatedDate

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net;
-using VERIDATA.BLL.Context;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.utility;
 using VERIDATA.Model.Base;
@@ -436,7 +435,7 @@ namespace PfcAPI.Controllers.Report
             }
         }
 
-         //[AllowAnonymous]
+        //[AllowAnonymous]
         [Authorize]
         [HttpPost]
         [Route("AppointeeDataPfFilterReport")]

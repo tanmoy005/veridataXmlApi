@@ -11,7 +11,7 @@ using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.ExchangeModels;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Table.Public;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 //using System.Xml;
 
 namespace VERIDATA.BLL.Notification.Sender
@@ -215,6 +215,11 @@ namespace VERIDATA.BLL.Notification.Sender
                 case MailType.AutoApprove:
                     _filename = "autoVerified";
                     mailSubject = "VERIDATA: Verification Successful";
+                    break;
+                    case MailType.Manual:
+                    _filename = "userValidityRemarks";
+                    validtionType = "MANUAL";
+                    mailSubject = "VERIDATA:User Details Manual Verification";
                     break;
 
             }

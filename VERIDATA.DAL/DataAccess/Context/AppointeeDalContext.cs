@@ -4,7 +4,6 @@ using VERIDATA.DAL.DBContext;
 using VERIDATA.DAL.utility;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Request;
-using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Table.Activity;
@@ -147,7 +146,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     {
                         AppointeeId = AppointeeId,
                         ReasonId = x.ReasonId,
-                        Remarks = x.ReasonCode != ReasonCode.OTHER ? CommonUtility.ParseMessage(x.ReasonName, new { x.Inputdata, x.Fetcheddata }) : x.Remarks,
+                        Remarks = x.ReasonCode != ReasonCode.OTHER ? CommonDalUtility.ParseMessage(x.ReasonName, new { x.Inputdata, x.Fetcheddata }) : x.Remarks,
                         CreatedBy = UserId,
                         ActiveStatus = true,
                         CreatedOn = DateTime.Now,
@@ -448,10 +447,9 @@ namespace VERIDATA.DAL.DataAccess.Context
             return updatePension;
         }
 
-        public async Task<AppointeeDetails> VefifyAppinteeManualById(AppointeeApproveVerificationRequest reqObj)
+        public async Task<AppointeeDetails> VefifyAppinteeManualById(int appointeeId, bool? isValid, string type, int userId)
         {
-             var appointeeDetails = await _dbContextClass.AppointeeDetails
-        .FirstOrDefaultAsync(x => x.AppointeeId == reqObj.AppointeeId && x.ActiveStatus == true);
+            var appointeeDetails = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.AppointeeId == appointeeId && x.ActiveStatus == true);
 
             if (appointeeDetails == null)
             {
@@ -459,26 +457,20 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
 
             // Dynamically update each field specified in the request
-            foreach (var update in reqObj.VerificationUpdates)
+
+            switch (type)
             {
-                switch (update.FieldName.ToLower())
-                {
-                    case "isfnamevarified":
-                        appointeeDetails.IsFNaemeVarified = update.IsVerified;
-                        break;
-                    case "ispasssportvarified":
-                        appointeeDetails.IsPasssportVarified = update.IsVerified;
-                        break;
-                    case "isaadhaarvarified":
-                        appointeeDetails.IsAadhaarVarified = update.IsVerified;
-                        break;
-                    default:
-                        throw new Exception($"Unknown field name: {update.FieldName}");
-                }
+                case ManualVerificationType.FathersName:
+                    appointeeDetails.IsFNameVarified = isValid;
+                    break;
+                case ManualVerificationType.EpfoPassbook:
+                    appointeeDetails.IsUanVarified = isValid;
+                    break;
+                   
             }
 
             // Set the updated metadata fields
-            appointeeDetails.UpdatedBy = reqObj.UserId;
+            appointeeDetails.UpdatedBy = userId;
             appointeeDetails.UpdatedOn = DateTime.Now;
 
             // Save the changes to the database
@@ -486,5 +478,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return appointeeDetails;
         }
+
+
     }
 }

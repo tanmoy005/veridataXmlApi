@@ -71,7 +71,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 DateOfJoining = r.FirstOrDefault()?.data?.DateOfJoining?.ToShortDateString(),
                 Nationality = r.FirstOrDefault()?.data?.AppointeeData?.Nationality,
                 QualificationName = r.FirstOrDefault()?.QualificationName,
-                UANNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.UANNumber),
+                UANNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.UANNumber) ? "NA" : CommonDalUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.UANNumber),
                 PensionAvailable = r.FirstOrDefault()?.data?.AppointeeData?.IsPensionApplicable == null ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                 GenderName = r.FirstOrDefault()?.GenderName,
                 MaratialStatusName = r.FirstOrDefault()?.MStatusName,
@@ -81,15 +81,15 @@ namespace VERIDATA.DAL.DataAccess.Context
                 HandicapeType = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.HandicapeType) ? "NA" : r.FirstOrDefault()?.HandiCapName,
                 //HandicapeName = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.HandicapeName) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.HandicapeName,
                 IsInternationalWorker = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.IsInternationalWorker) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.IsInternationalWorker?.ToUpper() == "N" ? "No" : "Yes",
-                PassportNo = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.PassportNo) ? "NA" : CommonUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.PassportNo),
+                PassportNo = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.PassportNo) ? "NA" : CommonDalUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.PassportNo),
                 PassportValidFrom = r.FirstOrDefault()?.data?.AppointeeData?.PassportValidFrom == null ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.PassportValidFrom?.ToShortDateString(),
                 PassportValidTill = r.FirstOrDefault()?.data?.AppointeeData?.PassportValidTill == null ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.PassportValidTill?.ToShortDateString(),
                 OriginCountry = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.OriginCountry) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.OriginCountry,
                 PANName = r.FirstOrDefault()?.data?.AppointeeData?.PANName,
-                PANNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.PANNumber) ? null : CommonUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.PANNumber),
+                PANNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.PANNumber) ? null : CommonDalUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.PANNumber),
                 AadhaarName = r.FirstOrDefault()?.data?.AppointeeData?.AadhaarName,
                 //AadhaarNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView,
-                AadhaarNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView) ? "NA" : CommonUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumber)?? r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView,
+                AadhaarNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView) ? "NA" : CommonDalUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumber)?? r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView,
                 Remarks = r?.Where(x => x.ReasonId == othRsnCatgry.ReasonId)?.Select(y => y.Remarks)?.Aggregate("", (current, s) => current + s + ",")
             }).ToList();
 
@@ -174,13 +174,13 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             // Get required states
             WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus
-                .FirstOrDefault(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Reprocess?.Trim());
+                .FirstOrDefault(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Reprocess?.Trim());
             WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus
-                .FirstOrDefault(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ProcessClose?.Trim());
+                .FirstOrDefault(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
             WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus
-                .FirstOrDefault(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
+                .FirstOrDefault(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
             WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus
-                .FirstOrDefault(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Approved?.Trim());
+                .FirstOrDefault(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
 
             if (ReprocessState == null || CloseState == null || RejectState == null || ApproveState == null)
             {

@@ -11,7 +11,7 @@ using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Table.Config;
 using VERIDATA.Model.Table.Public;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Services
 {

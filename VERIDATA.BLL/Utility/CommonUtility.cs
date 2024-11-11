@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using VERIDATA.Model.Configuration;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.utility
 {
@@ -293,6 +294,24 @@ namespace VERIDATA.BLL.utility
                 throw new ArgumentException("Invalid type. Expected 'month' or 'year'.");
             }
             // Return the full month name (e.g., "May", "June")
+        }
+        public static string GetMailType(string Type)
+        {
+            string mailtype = string.Empty;
+            if (!string.IsNullOrEmpty(Type))
+            {
+                mailtype = Type switch
+                {
+                    RemarksType.Adhaar => MailType.AdhrValidation,
+                    RemarksType.UAN => MailType.UANValidation,
+                    RemarksType.Passport => MailType.Passport,
+                    RemarksType.Pan => MailType.Pan,
+                    RemarksType.Others => MailType.Others,
+                    RemarksType.Manual => MailType.Manual,
+                    _ => string.Empty,
+                };
+            }
+            return mailtype;
         }
     }
 

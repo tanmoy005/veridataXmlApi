@@ -5,7 +5,7 @@ using System.Text;
 
 namespace VERIDATA.DAL.utility
 {
-    public static class CommonUtility
+    public static class CommonDalUtility
     {
         public static string hashPassword(string password)
         {

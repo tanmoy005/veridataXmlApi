@@ -8,7 +8,7 @@ using VERIDATA.Model.Request;
 using VERIDATA.Model.Request.api.Karza;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.apiContext.karza
 {

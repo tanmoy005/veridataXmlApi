@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Mustache;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
 using VERIDATA.Model.DataAccess;
@@ -45,7 +44,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<List<ProcessedDataDetailsResponse>> GetProcessedAppointeeDetailsAsync(ProcessedFilterRequest filter)
         {
-            WorkflowApprovalStatusMaster _processClosed = await GetApprovalState(WorkFlowType.ProcessClose);
+            WorkflowApprovalStatusMaster _processClosed = await GetApprovalState(WorkFlowStatusType.ProcessClose);
             WorkflowApprovalStatusMaster _filteredStatus = new();
             DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
             DateTime? _ToDate = filter.ToDate != null ? filter.ToDate?.AddDays(1) : null;
@@ -160,10 +159,10 @@ namespace VERIDATA.DAL.DataAccess.Context
             DateTime _CurrDate = Convert.ToDateTime(CurrDate);
             DateTime? _ToDate = reqObj.ToDate != null ? reqObj.ToDate?.AddDays(1) : null;
             List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
-            WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Reprocess?.Trim());
-            WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ProcessClose?.Trim());
-            WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
-            WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Approved?.Trim());
+            WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Reprocess?.Trim());
+            WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
+            WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
+            WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
 
 
             IQueryable<UnderProcessQueryDataResponse> querydata = from b in _dbContextClass.UnderProcessFileData
@@ -201,10 +200,10 @@ namespace VERIDATA.DAL.DataAccess.Context
         public async Task<List<UnderProcessQueryDataResponse>> GetUnderProcessDataByDOJAsync(DateTime? startDate, DateTime? endDate, DateTime? FromDate, DateTime? ToDate)
         {
             List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
-            WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Reprocess?.Trim());
-            WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ProcessClose?.Trim());
-            WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
-            WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Approved?.Trim());
+            WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Reprocess?.Trim());
+            WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
+            WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
+            WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
 
 
             IQueryable<UnderProcessQueryDataResponse> querydata = from b in _dbContextClass.UnderProcessFileData
@@ -575,7 +574,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task AppointeeWorkflowIniAsync(List<int?> appointeeList, int workflowState, int userId)
         {
-            WorkflowApprovalStatusMaster approvalState = await GetApprovalState(WorkFlowType.ProcessIni);
+            WorkflowApprovalStatusMaster approvalState = await GetApprovalState(WorkFlowStatusType.ProcessIni);
 
             if (appointeeList?.Count() > 0)
             {
@@ -596,7 +595,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     ActiveStatus = true,
                     CreatedBy = userId,
                     CreatedOn = DateTime.Now,
-                    StateAlias = WorkFlowType.ProcessIni
+                    StateAlias = WorkFlowStatusType.ProcessIni
                     //IsChecked = null,
                 }).ToList();
 
@@ -611,7 +610,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     ActiveStatus = false,
                     CreatedBy = userId,
                     CreatedOn = DateTime.Now,
-                    StateAlias = WorkFlowType.ProcessIni
+                    StateAlias = WorkFlowStatusType.ProcessIni
                 }).ToList();
 
                 _dbContextClass.WorkFlowDetails.AddRange(_genarateWorkflowdata);
@@ -809,14 +808,14 @@ namespace VERIDATA.DAL.DataAccess.Context
             {
                 approvalState = getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowRequest.approvalStatus?.Trim());
 
-                if (WorkFlowRequest.approvalStatus is WorkFlowType.Approved or WorkFlowType.ForcedApproved or
-                 WorkFlowType.Rejected or WorkFlowType.ProcessClose)
+                if (WorkFlowRequest.approvalStatus is WorkFlowStatusType.Approved or WorkFlowStatusType.ForcedApproved or
+                 WorkFlowStatusType.Rejected or WorkFlowStatusType.ProcessClose)
                 {
                     await AppointeeWorkflowProcessdAsync(WorkFlowRequest, approvalState.AppvlStatusId);
 
                 }
 
-                if (WorkFlowRequest.approvalStatus == WorkFlowType.Reprocess)
+                if (WorkFlowRequest.approvalStatus == WorkFlowStatusType.Reprocess)
                 {
                     await AppointeeWorkflowReProcessdAsync(WorkFlowRequest.appointeeId, approvalState.AppvlStatusId, WorkFlowRequest.userId);
                 }
@@ -831,7 +830,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     approvalState = getapprovalStatus.Find(x => x.AppvlStatusId == _workFlow_det.AppvlStatusId);
                 }
 
-                if (WorkFlowRequest.approvalStatus == WorkFlowType.Reprocess)
+                if (WorkFlowRequest.approvalStatus == WorkFlowStatusType.Reprocess)
                 {
                     _reprocessCount = _workFlow_det?.ReprocessCount ?? 0 + 1;
                 }
@@ -869,7 +868,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _appointeedetails.IsProcessed = true;
                 _appointeedetails.ProcessStatus = StatusId;
             }
-            if (workFlowRequest.approvalStatus is WorkFlowType.Approved or WorkFlowType.ForcedApproved)
+            if (workFlowRequest.approvalStatus is WorkFlowStatusType.Approved or WorkFlowStatusType.ForcedApproved)
             {
                 ProcessedFileData _processeddata = new()
                 {
@@ -883,12 +882,12 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             }
 
-            if (workFlowRequest.approvalStatus == WorkFlowType.Rejected)
+            if (workFlowRequest.approvalStatus == WorkFlowStatusType.Rejected)
             {
                 RejectedFileData _rejecteddata = new()
                 {
                     AppointeeId = workFlowRequest.appointeeId,
-                    RejectReason = workFlowRequest.Remarks,
+                    RejectReason = workFlowRequest.remarks,
                     RejectState = (int)RejectState.ApprovalReject,
                     ActiveStatus = true,
                     CreatedBy = workFlowRequest.userId,
@@ -896,8 +895,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                 };
                 _ = _dbContextClass.RejectedFileData.Add(_rejecteddata);
             }
-            _userdata.ActiveStatus = workFlowRequest.approvalStatus == WorkFlowType.ProcessClose ? false : _userdata.ActiveStatus;
-            _userdata.CurrStatus = workFlowRequest.approvalStatus == WorkFlowType.Rejected ? false : _userdata.CurrStatus;
+            _userdata.ActiveStatus = workFlowRequest.approvalStatus == WorkFlowStatusType.ProcessClose ? false : _userdata.ActiveStatus;
+            _userdata.CurrStatus = workFlowRequest.approvalStatus == WorkFlowStatusType.Rejected ? false : _userdata.CurrStatus;
             _userdata.UpdatedOn = DateTime.Now;
             _userdata.UpdatedBy = workFlowRequest.userId;
             _ = await _dbContextClass.SaveChangesAsync();
@@ -909,7 +908,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 AppointeeId = WorkFlowRequest.appointeeId,
                 StateId = WorkFlowRequest.workflowState ?? 0,
                 AppvlStatusId = approvalState.AppvlStatusId,
-                Remarks = WorkFlowRequest.Remarks,
+                Remarks = WorkFlowRequest.remarks,
                 ReprocessCount = _reprocessCount,
                 StateAlias = WorkFlowRequest.approvalStatus,
                 ActionTakenAt = DateTime.Now,
@@ -923,7 +922,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 AppointeeId = WorkFlowRequest.appointeeId,
                 StateId = WorkFlowRequest.workflowState ?? 0,
                 AppvlStatusId = approvalState.AppvlStatusId,
-                Remarks = WorkFlowRequest.Remarks,
+                Remarks = WorkFlowRequest.remarks,
                 ReprocessCount = _reprocessCount,
                 StateAlias = WorkFlowRequest.approvalStatus,
                 ActiveStatus = false,
@@ -940,7 +939,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         public async Task<List<GlobalSearchAppointeeData>> GetUnderProcessAppointeeSearch(string Name)
         {
             List<GlobalSearchAppointeeData> appointeeList = new();
-            WorkflowApprovalStatusMaster closeState = await GetApprovalState(WorkFlowType.ProcessClose?.Trim());
+            WorkflowApprovalStatusMaster closeState = await GetApprovalState(WorkFlowStatusType.ProcessClose?.Trim());
 
             IQueryable<GlobalSearchAppointeeData> querydata = from b in _dbContextClass.UnderProcessFileData.Where(m => m.AppointeeName.ToLower().Contains(Name.ToLower()) || m.CandidateId.ToLower().Contains(Name.ToLower()) && m.ActiveStatus == true)
                                                               join w in _dbContextClass.WorkFlowDetails
@@ -988,10 +987,10 @@ namespace VERIDATA.DAL.DataAccess.Context
             DateTime _CurrDate = Convert.ToDateTime(CurrDate);
             DateTime? _ToDate = reqObj.ToDate != null ? reqObj.ToDate?.AddDays(1) : null;
             List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
-            WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Reprocess?.Trim());
-            WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ProcessClose?.Trim());
-            WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
-            WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Approved?.Trim());
+            WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Reprocess?.Trim());
+            WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
+            WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
+            WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
 
             // Step 1: Retrieve the data from the database
             var activityQuery = from ac in _dbContextClass.ActivityMaster

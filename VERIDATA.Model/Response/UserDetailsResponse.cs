@@ -30,6 +30,7 @@ namespace VERIDATA.Model.Response
         //public int Createdby { get; set; }
         public int? AppointeeId { get; set; }
         public string? Status { get; set; }
+        public string? StatusCode { get; set; }
         public bool? IsSetProfilePassword { get; set; }
         public bool? IsDefaultPassword { get; set; }
         public bool IsPasswordExpire { get; set; }

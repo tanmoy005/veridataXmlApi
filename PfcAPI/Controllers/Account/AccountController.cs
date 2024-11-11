@@ -8,7 +8,7 @@ using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace PfcAPI.Controllers.Account
 {

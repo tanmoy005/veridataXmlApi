@@ -185,7 +185,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler(new ExceptionHandlerOptions()
     {
         AllowStatusCode404Response = true,
-        ExceptionHandlingPath="/error"
+        ExceptionHandlingPath = "/error"
     });
     app.UseHsts(); // Enable HSTS in non-development environments
 }

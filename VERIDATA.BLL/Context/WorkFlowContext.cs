@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.BLL.Interfaces;
+﻿using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
@@ -13,7 +12,7 @@ using VERIDATA.Model.Response;
 using VERIDATA.Model.Table.Admin;
 using VERIDATA.Model.Table.Master;
 using VERIDATA.Model.Table.Public;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
 {
@@ -67,7 +66,7 @@ namespace VERIDATA.BLL.Context
                     dateOfJoining = row?.DateOfJoining,
                     epfWages = row?.AppointeeData?.EPFWages,
                     uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
-                    status = row?.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
+                    status = row?.StateAlias == WorkFlowStatusType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
                     passbookStatus = row?.AppointeeData?.IsManualPassbook == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
@@ -93,7 +92,7 @@ namespace VERIDATA.BLL.Context
                     dateOfJoining = row?.DateOfJoining,
                     epfWages = row?.AppointeeData?.EPFWages,
                     uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
-                    status = row.StateAlias == WorkFlowType.ForcedApproved ? "Manual Override" : "Verified",
+                    status = row.StateAlias == WorkFlowStatusType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
                     passbookStatus = row?.AppointeeData?.IsManualPassbook == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
@@ -556,7 +555,7 @@ namespace VERIDATA.BLL.Context
                 appointeeId = appointeeId ?? 0,
                 workflowState = UploadDetailsId,
                 approvalStatus = string.Empty,
-                Remarks = string.Empty,
+                remarks = string.Empty,
                 userId = userId
 
             };
@@ -569,8 +568,8 @@ namespace VERIDATA.BLL.Context
                 {
                     appointeeId = appointeeId ?? 0,
                     workflowState = _stateId,
-                    approvalStatus = WorkFlowType.Approved,
-                    Remarks = string.Empty,
+                    approvalStatus = WorkFlowStatusType.Approved,
+                    remarks = string.Empty,
                     userId = userId
                 };
                 await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(workFlowApproveDataRequest);
@@ -584,10 +583,10 @@ namespace VERIDATA.BLL.Context
             DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
             DateTime maxDate = _currDate.AddDays(filterdaysrange);
             List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextMaster.GetAllApprovalStateMaster();
-            WorkflowApprovalStatusMaster? closeState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ProcessClose?.Trim());
-            WorkflowApprovalStatusMaster? verifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Approved?.Trim());
-            WorkflowApprovalStatusMaster? forcedVerifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ForcedApproved?.Trim());
-            WorkflowApprovalStatusMaster? rejectedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
+            WorkflowApprovalStatusMaster? closeState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
+            WorkflowApprovalStatusMaster? verifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
+            WorkflowApprovalStatusMaster? forcedVerifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ForcedApproved?.Trim());
+            WorkflowApprovalStatusMaster? rejectedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
 
             List<MenuMaster> menuDataList = await _dbContextMaster.GetMasterMenuData();
             MenuMaster? verifiedMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.VERIFIED);
@@ -665,8 +664,8 @@ namespace VERIDATA.BLL.Context
             List<DropDownDetailsResponse> dataList = new();
             List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextMaster.GetAllApprovalStateMaster();
             //var _getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToArrayAsync();
-            WorkflowApprovalStatusMaster? processIni = _getapprovalStatus.Find(x => x.AppvlStatusCode.Equals(WorkFlowType.ProcessIni));
-            List<DropDownDetailsResponse>? resultSet = _getapprovalStatus?.Where(y => y.AppvlStatusCode != WorkFlowType.ProcessIni).Select(x => new DropDownDetailsResponse
+            WorkflowApprovalStatusMaster? processIni = _getapprovalStatus.Find(x => x.AppvlStatusCode.Equals(WorkFlowStatusType.ProcessIni));
+            List<DropDownDetailsResponse>? resultSet = _getapprovalStatus?.Where(y => y.AppvlStatusCode != WorkFlowStatusType.ProcessIni).Select(x => new DropDownDetailsResponse
             {
                 Id = x.AppvlStatusId,
                 Code = x.AppvlStatusCode,
@@ -728,8 +727,8 @@ namespace VERIDATA.BLL.Context
             {
                 appointeeId = request.appointeeId,
                 workflowState = _stateId,
-                approvalStatus = WorkFlowType.ForcedApproved,
-                Remarks = request.Remarks,
+                approvalStatus = WorkFlowStatusType.ForcedApproved,
+                remarks = request.Remarks,
                 userId = request.userId
             };
             await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
@@ -758,9 +757,9 @@ namespace VERIDATA.BLL.Context
             int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.DataVarified);
 
             _WorkFlowDataRequest.appointeeId = request.appointeeId;
-            _WorkFlowDataRequest.Remarks = request.Remarks;
+            _WorkFlowDataRequest.remarks = request.Remarks;
             _WorkFlowDataRequest.workflowState = _stateId;
-            _WorkFlowDataRequest.approvalStatus = WorkFlowType.Rejected;
+            _WorkFlowDataRequest.approvalStatus = WorkFlowStatusType.Rejected;
             _WorkFlowDataRequest.userId = request.userId;
 
             await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
@@ -773,8 +772,8 @@ namespace VERIDATA.BLL.Context
 
             _WorkFlowDataRequest.appointeeId = request.appointeeId;
             _WorkFlowDataRequest.workflowState = _stateId;
-            _WorkFlowDataRequest.approvalStatus = WorkFlowType.ProcessClose;
-            _WorkFlowDataRequest.Remarks = request.Remarks;
+            _WorkFlowDataRequest.approvalStatus = WorkFlowStatusType.ProcessClose;
+            _WorkFlowDataRequest.remarks = request.Remarks;
             _WorkFlowDataRequest.userId = request.userId;
 
             await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
@@ -890,7 +889,130 @@ namespace VERIDATA.BLL.Context
             return await _dbContextWorkflow.getFileTypeCode(appointeeId);
         }
 
+        public async Task VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj)
+        {
+            bool? isDataValid = false;
+            var isDataVerificationReq = await VefifyDocValidityManual(reqObj.AppointeeId, reqObj.VerificationUpdates, reqObj.UserId);
 
+            if (isDataVerificationReq)
+            {
+                switch (reqObj.VerificationCategory)
+                {
+                    case ManualVerificationType.FathersName:
+                        isDataValid = await VefifyFNameValidityManual(reqObj.AppointeeId, reqObj.VerificationUpdates, reqObj.UserId);
+                        break;
+                    case ManualVerificationType.EpfoPassbook:
+                        isDataValid = await VefifyFNameValidityManual(reqObj.AppointeeId, reqObj.VerificationUpdates, reqObj.UserId);
+                        break;
+                }
+
+
+                var updatedAppointeeDetails = await _dbContextCandiate.VefifyAppinteeManualById(reqObj.AppointeeId, isDataValid, reqObj.VerificationCategory, reqObj.UserId);
+
+                if ((updatedAppointeeDetails?.IsUanVarified ?? false) && (updatedAppointeeDetails.IsAadhaarVarified ?? false) && (updatedAppointeeDetails.IsPanVarified ?? false) && (updatedAppointeeDetails.IsFNameVarified ?? false))
+                {
+                    await DataUploadAndApproved(updatedAppointeeDetails.AppointeeId, reqObj?.UserId ?? 0, true);//isapprove set true
+
+                    await PostMailFileSubmisstionSuccess(updatedAppointeeDetails.AppointeeId ?? 0, reqObj?.UserId ?? 0, MailType.AutoApprove);
+                }
+
+            }
+        }
+        private async Task<bool> VefifyDocValidityManual(int appointeeId, List<VerificationUpdate>? docValidity, int userId)
+        {
+            List<ReasonRemarks> reasonList = new();
+            bool isVerificationRequired = true;
+            // Dynamically update each field specified in the request
+            foreach (var update in docValidity)
+            {
+                switch (update.FieldName.ToLower())
+                {
+                    case "isDocComplete":
+                        if (!update.IsValid)
+                        {
+                            reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INCMPLTDOC, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                            isVerificationRequired = false;
+                        }
+                        break;
+                    case "isDocValid":
+                        if (!update.IsValid)
+                        {
+                            reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDDOC, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                            isVerificationRequired = false;
+
+                        }
+                        break;
+                    default:
+                        throw new Exception($"Unknown field name: {update.FieldName}");
+                }
+            }
+            // Save the changes to the database
+            if (!isVerificationRequired)
+            {
+                string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId);
+                WorkFlowDataRequest _WorkFlowDataRequest = new();
+                int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
+
+                _WorkFlowDataRequest.appointeeId = appointeeId;
+                _WorkFlowDataRequest.remarks = remarks;
+                _WorkFlowDataRequest.workflowState = _stateId;
+                _WorkFlowDataRequest.approvalStatus = WorkFlowStatusType.ReuploadDocument;
+                _WorkFlowDataRequest.userId = userId;
+
+                await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
+                await RemarksMailSend(appointeeId, remarks, RemarksType.Manual, userId);
+            }
+
+            return isVerificationRequired;
+        }
+        private async Task<bool> VefifyFNameValidityManual(int AppointeeId, List<VerificationUpdate>? DocValidity, int userId)
+        {
+            List<ReasonRemarks> ReasonList = new();
+            bool isDataValid = true;
+            // Dynamically update each field specified in the request
+            foreach (var update in DocValidity)
+            {
+                switch (update.FieldName.ToLower())
+                {
+                    case "isFnameVarified":
+                        if (!update.IsValid)
+                        {
+                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.CAREOFNAME, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                            isDataValid = false;
+                        }
+                        break;
+                    default:
+                        throw new Exception($"Unknown field name: {update.FieldName}");
+                }
+            }
+            string Remarks = await _dbContextCandiate.UpdateRemarksByType(AppointeeId, ReasonList, RemarksType.Manual, userId);
+            // Save the changes to the database
+            if (!isDataValid)
+            {
+                await RemarksMailSend(AppointeeId, Remarks, RemarksType.Manual, userId);
+            }
+
+            return isDataValid;
+        }
+        private async Task RemarksMailSend(int appointeeId, string Remarks, string type, int? userId)
+        {
+            AppointeeDetails _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
+
+            string mailtype = CommonUtility.GetMailType(type);
+            if (!string.IsNullOrEmpty(_appointeedetails?.AppointeeEmailId))
+            {
+                MailDetails mailDetails = new();
+                MailBodyParseDataDetails bodyDetails = new()
+                {
+                    Name = _appointeedetails.AppointeeName,
+                    Reason = Remarks,
+                };
+                mailDetails.MailType = mailtype;
+                mailDetails.ParseData = bodyDetails;
+                await _emailSender.SendAppointeeMail(_appointeedetails?.AppointeeEmailId, mailDetails);
+            }
+
+        }
     }
-    
+
 }

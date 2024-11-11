@@ -6,9 +6,7 @@ using VERIDATA.Model.Base;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
-using VERIDATA.Model.Table.Public;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace PfcAPI.Controllers.Appoientee
 {
@@ -221,8 +219,8 @@ namespace PfcAPI.Controllers.Appoientee
             try
             {
                 string? appointeeCurrentState = Task.Run(async () => await _workflowContext.AppointeeWorkflowCurrentState(request.appointeeId)).GetAwaiter().GetResult();
-                if (appointeeCurrentState is WorkFlowType.Approved or WorkFlowType.Rejected or
-                   WorkFlowType.ProcessClose or WorkFlowType.ForcedApproved)
+                if (appointeeCurrentState is WorkFlowStatusType.Approved or WorkFlowStatusType.Rejected or
+                   WorkFlowStatusType.ProcessClose or WorkFlowStatusType.ForcedApproved)
                 {
                     _ErrorResponse.ErrorCode = (int)HttpStatusCode.BadRequest;
                     _ErrorResponse.UserMessage = "can not Appoved,this Appointee already processed";
@@ -248,8 +246,8 @@ namespace PfcAPI.Controllers.Appoientee
             {
                 string Remarks = string.Empty;
                 string? appointeeCurrentState = Task.Run(async () => await _workflowContext.AppointeeWorkflowCurrentState(request.appointeeId)).GetAwaiter().GetResult();
-                if (appointeeCurrentState is WorkFlowType.Approved or WorkFlowType.Rejected or
-                   WorkFlowType.ProcessClose or WorkFlowType.ForcedApproved)
+                if (appointeeCurrentState is WorkFlowStatusType.Approved or WorkFlowStatusType.Rejected or
+                   WorkFlowStatusType.ProcessClose or WorkFlowStatusType.ForcedApproved)
                 {
                     _ErrorResponse.ErrorCode = (int)HttpStatusCode.BadRequest;
                     _ErrorResponse.UserMessage = "can not Reject,this Appointee already processed";
@@ -589,7 +587,7 @@ namespace PfcAPI.Controllers.Appoientee
 
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 throw;
@@ -597,7 +595,7 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [AllowAnonymous]
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         [Route("UpdateAppointeeManualVerification")]
         public ActionResult UpdateAppointeeManualVerification(AppointeeApproveVerificationRequest reqObj)
@@ -606,14 +604,13 @@ namespace PfcAPI.Controllers.Appoientee
             {
                 return BadRequest(ModelState);
             }
-
             try
             {
-                var updatedAppointeeDetails = Task.Run(async () => await _candidateContext.VerifyAppointeeManualAsync(reqObj)).GetAwaiter().GetResult();
+                Task.Run(async () => await _workflowContext.VerifyAppointeeManualAsync(reqObj)).GetAwaiter().GetResult();
 
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 throw;

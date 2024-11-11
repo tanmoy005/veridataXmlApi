@@ -16,7 +16,7 @@ using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
 using VERIDATA.Model.Response.api.Signzy;
 using VERIDATA.Model.Response.api.surepass;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
 {

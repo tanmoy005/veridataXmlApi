@@ -14,6 +14,7 @@ namespace VERIDATA.Model.Request
 
         [Required]
         public int UserId { get; set; }
+        public string? VerificationCategory { get; set; }
 
         [Required]
         public List<VerificationUpdate>? VerificationUpdates { get; set; }
@@ -22,9 +23,8 @@ namespace VERIDATA.Model.Request
     public class VerificationUpdate
     {
         [Required]
-        public string? FieldName { get; set; } 
-
+        public string? FieldName { get; set; }
         [Required]
-        public bool IsVerified { get; set; }
+        public bool IsValid { get; set; }
     }
 }

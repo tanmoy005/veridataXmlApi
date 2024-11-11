@@ -9,7 +9,7 @@ using VERIDATA.Model.Request;
 using VERIDATA.Model.Request.api.surepass;
 using VERIDATA.Model.Response.api.surepass;
 using static VERIDATA.BLL.apiContext.Common.ApiRoute;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.apiContext.surepass
 {

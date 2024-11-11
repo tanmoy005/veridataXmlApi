@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Globalization;
 using System.Net;
 using VERIDATA.BLL.apiContext.karza;
@@ -19,7 +18,7 @@ using VERIDATA.Model.Response.api.Karza;
 using VERIDATA.Model.Response.api.Signzy;
 using VERIDATA.Model.Response.api.surepass;
 using VERIDATA.Model.Table.Public;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
 {
@@ -177,7 +176,7 @@ namespace VERIDATA.BLL.Context
                 Remarks = await _appointeeDalContext.UpdateRemarksByType(validationReq.AppointeeId, validationReq.Reasons, validationReq?.Type ?? "", validationReq?.UserId ?? 0);
                 if (!validationReq?.Status ?? false)
                 {
-                    string mailtype = GetMailType(validationReq.Type);
+                    string mailtype =CommonUtility.GetMailType(validationReq.Type);
                     if (!string.IsNullOrEmpty(validationReq?.EmailId))
                     {
                         MailDetails mailDetails = new();
@@ -201,23 +200,7 @@ namespace VERIDATA.BLL.Context
 
             return Response;
         }
-        private static string GetMailType(string Type)
-        {
-            string mailtype = string.Empty;
-            if (!string.IsNullOrEmpty(Type))
-            {
-                mailtype = Type switch
-                {
-                    RemarksType.Adhaar => MailType.AdhrValidation,
-                    RemarksType.UAN => MailType.UANValidation,
-                    RemarksType.Passport => MailType.Passport,
-                    RemarksType.Pan => MailType.Pan,
-                    RemarksType.Others => MailType.Others,
-                    _ => string.Empty,
-                };
-            }
-            return mailtype;
-        }
+      
         public async Task<List<GetRemarksResponse>> GetRemarks(int appointeeId)
         {
             List<GetRemarksResponse> remarks = await _appointeeDalContext.GetRemarks(appointeeId);
@@ -975,35 +958,6 @@ namespace VERIDATA.BLL.Context
             return updatedAppointeeDetails;
         }
 
-        public async Task<AppointeeDetails> VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj)
-        {
-            var updatedAppointeeDetails = await _appointeeDalContext.VefifyAppinteeManualById(reqObj);
-
-            if (updatedAppointeeDetails == null)
-            {
-                throw new Exception("Appointee not found.");
-            }
-
-            // Apply the verification updates
-            foreach (var update in reqObj.VerificationUpdates)
-            {
-                switch (update.FieldName.ToLower())
-                {
-                    case "isfnamevarified":
-                        updatedAppointeeDetails.IsFNaemeVarified = update.IsVerified;
-                        break;
-                    case "ispasssportvarified":
-                        updatedAppointeeDetails.IsPasssportVarified = update.IsVerified;
-                        break;
-                    case "isaadhaarvarified":
-                        updatedAppointeeDetails.IsAadhaarVarified = update.IsVerified;
-                        break;
-                    default:
-                        throw new Exception($"Unknown field name: {update.FieldName}");
-                }
-            }
-
-            return updatedAppointeeDetails;
-        }
+      
     }
 }

@@ -1,7 +1,7 @@
 ﻿using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.ExchangeModels;
 using VERIDATA.Model.Request;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Notification.Provider
 {

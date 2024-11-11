@@ -71,10 +71,11 @@ namespace VERIDATA.DAL.DataAccess.Context
         {
 
             List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextMaster.GetAllApprovalStateMaster();
-            WorkflowApprovalStatusMaster? closeState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ProcessClose?.Trim());
-            WorkflowApprovalStatusMaster? verifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Approved?.Trim());
-            WorkflowApprovalStatusMaster? forcedVerifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.ForcedApproved?.Trim());
-            WorkflowApprovalStatusMaster? rejectedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowType.Rejected?.Trim());
+            WorkflowApprovalStatusMaster? closeState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
+            WorkflowApprovalStatusMaster? verifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
+            WorkflowApprovalStatusMaster? forcedVerifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ForcedApproved?.Trim());
+            WorkflowApprovalStatusMaster? rejectedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
+            WorkflowApprovalStatusMaster? reuploadDocument = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
 
             UserDetailsResponse userDetails = new();
             var userDetailsQuery = from u in _dbContextClass.UserMaster
@@ -99,6 +100,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             var _userStatusDetails = await _dbContextClass.WorkFlowDetails.FirstOrDefaultAsync(x => x.ActiveStatus == true && x.AppointeeId == users.u.RefAppointeeId);
             string status = "No Response";
+            string statusCode = "NORES";
 
             if (_userStatusDetails != null)
             {
@@ -106,15 +108,27 @@ namespace VERIDATA.DAL.DataAccess.Context
                 {
                     case bool _ when _userStatusDetails.AppvlStatusId == verifiedState.AppvlStatusId || _userStatusDetails.AppvlStatusId == forcedVerifiedState.AppvlStatusId:
                         status = "Approved";
+                        statusCode = "APPRVD";
                         break;
                     case bool _ when _userStatusDetails.AppvlStatusId == rejectedState.AppvlStatusId:
                         status = "Rejected";
+                        statusCode = "REJCT";
+
+                        break;
+                    case bool _ when _userStatusDetails.AppvlStatusId == reuploadDocument.AppvlStatusId:
+                        status = "Doc Reupload";
+                        statusCode = "DCRUPLD";
+
                         break;
                     case bool _ when _userDetails?.IsSubmit ?? false:
                         status = "Submitted";
+                        statusCode = "SUBMT";
+
                         break;
                     case bool _ when _userDetails?.SaveStep == 1:
                         status = "Ongoing";
+                        statusCode = "ONGNG";
+
                         break;
                 }
             }
@@ -140,6 +154,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             userDetails.IsPasswordExpire = (users?.u?.UserTypeId == 3) ? users?.PasswordSetDate == null && users?.IsDefaultPass == "Y" ? false : users?.PasswordSetDate.GetValueOrDefault().AddDays(_apiConfig.PasswordExpiryDays) <= DateTime.Now : false;
             userDetails.CompanyId = 1;
             userDetails.Status = status;
+            userDetails.StatusCode = statusCode;
 
             return userDetails;
         }
@@ -333,7 +348,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task<UserAuthentication?> getAuthUserDetailsByPassword(int userId, string password)
         {
-            string _password = CommonUtility.hashPassword(password: password);
+            string _password = CommonDalUtility.hashPassword(password: password);
 
             UserAuthentication? authDbUser = await _dbContextClass.UserAuthentication.FirstOrDefaultAsync(m => m.UserId.Equals(userId) && m.UserPwd == _password && m.ActiveStatus == true);
 
@@ -399,7 +414,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 UserAuthentication UsersAuth = new()
                 {
                     UserId = Users.UserId,
-                    UserPwd = !string.IsNullOrEmpty(obj.Password) ? CommonUtility.hashPassword(obj.Password) : obj.Password,
+                    UserPwd = !string.IsNullOrEmpty(obj.Password) ? CommonDalUtility.hashPassword(obj.Password) : obj.Password,
                     UserPwdTxt = obj.Password,
                     IsDefaultPass = obj.UserTypeId == 3 ? CommonEnum.CheckType.yes : CommonEnum.CheckType.no,
                     ActiveStatus = true,
@@ -442,7 +457,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             if (_userAuthDetails != null && _userAuthDetails.UserPwdTxt != userDetails.Password?.Trim())
             {
                 _userAuthDetails.UserPwdTxt = userDetails.Password?.Trim();
-                _userAuthDetails.UserPwd = CommonUtility.hashPassword(userDetails.Password?.Trim());
+                _userAuthDetails.UserPwd = CommonDalUtility.hashPassword(userDetails.Password?.Trim());
             }
             if (_userRoleDetails != null && _userRoleDetails.RoleId != userDetails.RoleId && userDetails.RoleId != null)
             {
@@ -538,7 +553,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             if (usersauthdata?.UserAuthoId != null)
             {
                 usersauthdata.IsDefaultPass = "N";
-                usersauthdata.UserPwd = CommonUtility.hashPassword(password);
+                usersauthdata.UserPwd = CommonDalUtility.hashPassword(password);
                 usersauthdata.UserPwdTxt = password;
                 usersauthdata.PasswordSetDate = DateTime.Now;
                 usersauthdata.UpdatedOn = DateTime.Now;
@@ -549,7 +564,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         }
         public async Task editUserProfile(EditUserProfileRequest req)
         {
-            string _password = CommonUtility.hashPassword(password: req.ProfilePassword);
+            string _password = CommonDalUtility.hashPassword(password: req.ProfilePassword);
 
             UserAuthentication? _authenticatedUserDatails = await getAuthUserDetailsById(req.UserId);
             if (_authenticatedUserDatails != null)
@@ -563,7 +578,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                         UserId = _authenticatedUserDatails.UserId,
                         UserPwd = _authenticatedUserDatails.UserPwd,
                         UserPwdTxt = _authenticatedUserDatails.UserPwdTxt,
-                        UserProfilePwd = CommonUtility.hashPassword(_password),
+                        UserProfilePwd = CommonDalUtility.hashPassword(_password),
                         IsDefaultPass = CommonEnum.CheckType.yes,
                         ActiveStatus = true,
                         CreatedBy = req.UserId,

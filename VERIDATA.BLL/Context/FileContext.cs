@@ -5,17 +5,13 @@ using Newtonsoft.Json;
 using OfficeOpenXml;
 using System.Data;
 using System.Globalization;
-using System.IO;
-
-//using System.Security.Cryptography.X509Certificates;
-//using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
+using VERIDATA.DAL.utility;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
@@ -23,7 +19,7 @@ using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Table.Master;
 using VERIDATA.Model.Table.Public;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
 {
@@ -1009,6 +1005,8 @@ namespace VERIDATA.BLL.Context
             response.Message = messeege;
             return response;
         }
+
+       
         //private async Task<bool> OfflineKycDigitalSignatureCheck(string? xmlFileData)
         //{
         //    bool isValid = false;

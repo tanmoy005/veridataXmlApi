@@ -23,7 +23,6 @@ namespace VERIDATA.BLL.Interfaces
         public Task PostAppointeeHandicapDetailsAsync(AppointeeHadicapFileDetailsRequest AppointeeHandicapDetails);
         public Task<AppointeeEmployementDetails> PostAppointeeEmployementDetailsAsync(EmployementHistoryDetails reqObj);
         public Task<AppointeeDetails> PostAppointeepensionAsync(AppointeeApprovePensionRequest reqObj);
-        public Task<AppointeeDetails> VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj);
 
 
     }

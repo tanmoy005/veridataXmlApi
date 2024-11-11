@@ -4,7 +4,7 @@ using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.Model.Configuration;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.apiContext.Common
 {

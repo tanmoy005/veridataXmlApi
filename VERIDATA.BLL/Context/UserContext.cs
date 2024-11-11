@@ -1,11 +1,11 @@
-﻿using Org.BouncyCastle.Ocsp;
-using System.Net;
+﻿using System.Net;
 using System.Security.Claims;
 using VERIDATA.BLL.Authentication;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
+using VERIDATA.DAL.utility;
 using VERIDATA.Model.Configuration;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Request;
@@ -15,7 +15,7 @@ using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Table.Admin;
 using VERIDATA.Model.Table.Public;
-using static VERIDATA.BLL.utility.CommonEnum;
+using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
 {
