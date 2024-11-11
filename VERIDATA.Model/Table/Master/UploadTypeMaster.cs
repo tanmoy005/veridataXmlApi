@@ -24,6 +24,13 @@ namespace VERIDATA.Model.Table.Master
         [Column("upload_type_desc", TypeName = DbDataType._text200)]
         public string? UploadTypeDesc { get; set; }  //COMMENT 'Detail descrintion of the upload context. Example- addhar upload or pan upload etc.',
 
+        [Column("upload_type_category", TypeName = DbDataType._text50)]
+        public string? UploadTypeCategory { get; set; }
+
+        [Column("category_name", TypeName = DbDataType._text50)]
+        public string? CategoryName { get; set; }
+
+
         [Column("active_status", TypeName = DbDataType._boolean)]
         [DefaultValue(true)]
         public bool? ActiveStatus { get; set; }
@@ -40,8 +47,8 @@ namespace VERIDATA.Model.Table.Master
         [Column("updated_on", TypeName = DbDataType._datetime)]
         public DateTime? UpdatedOn { get; set; }
 
-        [Column("upload_doc_type", TypeName = DbDataType._text50)]
-        public string? UploadDocType { get; set; }
+        //[Column("upload_doc_type", TypeName = DbDataType._text50)]
+      //  public string? UploadDocType { get; set; }
 
         [ForeignKey("upload_type_id")]
         public ICollection<AppointeeUploadDetails> AppointeeUploadDetails { get; set; }
