@@ -616,7 +616,7 @@ namespace PfcAPI.Controllers.Appoientee
                 throw;
             }
         }
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [Authorize]
         [HttpPost("GetAppointeeUploadedUnverifiedFiles")]
         public ActionResult GetAppointeeUploadedUnverifiedFiles(int AppointeeId)
@@ -640,6 +640,25 @@ namespace PfcAPI.Controllers.Appoientee
 
             }
             
+        }
+
+        //[AllowAnonymous]
+        [Authorize]
+        [HttpPost("GetManualVeificationProcessData")]
+        public ActionResult GetManualVeificationProcessData(ManualVeificationProcessDataRequest reqObj)
+        {
+            try
+            {
+
+                //reqObj.FilterType = string.IsNullOrEmpty(reqObj?.FilterType) ? string.Empty : reqObj?.FilterType;
+                List<ManualVerificationProcessDetailsResponse> _getunderProcessData = Task.Run(async () => await _workflowContext.GetManualVeificationProcessData(reqObj)).GetAwaiter().GetResult();
+                return Ok(new BaseResponse<ManualVerificationProcessDetailsResponse>(HttpStatusCode.OK, _getunderProcessData));
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
         }
 
     }

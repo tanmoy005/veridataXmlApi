@@ -10,6 +10,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<List<ProcessDataResponse>> GetProcessDataAsync(ProcessedFilterRequest filter);
         public Task<List<RejectedDataResponse>> GetRejectedDataAsync(FilterRequest filter);
         public Task<List<UnderProcessDetailsResponse>> GetUnderProcessDataAsync(AppointeeSeacrhFilterRequest reqObj);
+        public Task<List<ManualVerificationProcessDetailsResponse>> GetManualVeificationProcessData(ManualVeificationProcessDataRequest reqObj);
         public Task<List<UnderProcessDetailsResponse>> GetExpiredProcessDataAsync(AppointeeSeacrhFilterRequest reqObj);
         public Task<List<CriticalAppointeeResponse>> GetCriticalAppointeeList(CriticalFilterDataRequest reqObj);
         public Task<List<RawFileDataDetailsResponse>> GetNonProcessDataAsync(AppointeeSeacrhFilterRequest reqObj);

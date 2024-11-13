@@ -81,6 +81,8 @@
             public const string Reprocess = "RE";
             public const string ProcessIni = "PI";
             public const string ProcessClose = "CL";
+            public const string ManualVerification = "MV";
+            public const string ManualReVerification = "MRV";
             public const string ReuploadDocument = "RD";
         }
         public static class MasterDataType
@@ -214,6 +216,11 @@
             public const string VERIFIED = "003";
             public const string REJECTED = "004";
             public const string LAPSED = "005";
+            public const string NORESPONSE = "006";
+            public const string ONGOING = "007";
+            public const string SUBMITTED = "008";
+            public const string MANUALVERFICATIONREQ = "009";
+            public const string REUPLOADREQUEST = "010";
         }
         public static class EscalationLevel
         {
@@ -383,8 +390,14 @@
         {
             public const string FathersName = "FTHR";
             public const string EpfoPassbook = "EPFO";
-
-
+        }
+        public static class ManualVerificationFieldType
+        {
+            public const string FathersName = "isFnameVarified";
+            public const string PensionApplicable = "isPensionApplicable";
+            public const string PensionGap = "isPensionGapFound";
+            public const string DocIncomplete = "isDocComplete";
+            public const string DocInvalid = "isDocValid";
         }
     }
 }

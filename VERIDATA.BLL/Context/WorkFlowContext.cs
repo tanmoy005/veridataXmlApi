@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using VERIDATA.BLL.Interfaces;
+﻿using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
@@ -69,6 +68,7 @@ namespace VERIDATA.BLL.Context
                     uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
                     status = row?.StateAlias == WorkFlowStatusType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
+                    isPensionGap = row?.AppointeeData?.IsPensionGap == null ? "NA" : row?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
                     passbookStatus = row?.AppointeeData?.IsManualPassbook == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
@@ -95,6 +95,7 @@ namespace VERIDATA.BLL.Context
                     uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
                     status = row.StateAlias == WorkFlowStatusType.ForcedApproved ? "Manual Override" : "Verified",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
+                    isPensionGap = row?.AppointeeData?.IsPensionGap == null ? "NA" : row?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
                     passbookStatus = row?.AppointeeData?.IsManualPassbook == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
@@ -141,7 +142,7 @@ namespace VERIDATA.BLL.Context
         {
             List<UnderProcessDetailsResponse>? _underProcessViewdata = new();
             List<UnderProcessDetailsResponse>? _underProcessdata = new();
-            int? FilterCode = reqObj.FilterType == "UNDPRCS" ? 1 : reqObj.FilterType == "NORES" ? 0 : null;
+            int? typeFilterCode = reqObj.FilterType == "UNDPRCS" ? 1 : reqObj.FilterType == "NORES" ? 0 : null;
             List<UnderProcessQueryDataResponse> UnderProcessAppointeeList = await _dbContextWorkflow.GetUnderProcessDataAsync(reqObj);
             if (UnderProcessAppointeeList.Count > 0)
             {
@@ -164,8 +165,8 @@ namespace VERIDATA.BLL.Context
                         isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                         isReprocess = false,
                         isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
-                        Status = row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                        StatusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
+                        Status = row?.IsReupload ?? false ? "Reupload Requested" : row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
+                        StatusCode = row?.IsReupload ?? false ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         ConsentStatusCode = row.ConsentStatusId ?? 0,
                         passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
                         CreatedDate = row.UnderProcess?.CreatedOn
@@ -193,15 +194,15 @@ namespace VERIDATA.BLL.Context
                         isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                         isReprocess = false,
                         isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
-                        Status = row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                        StatusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
+                        Status = row?.IsReupload ?? false ? "Reupload Requested" : row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
+                        StatusCode = row?.IsReupload ?? false ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         ConsentStatusCode = row.ConsentStatusId ?? 0,
                         passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
                         CreatedDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
                 }
 
-                _underProcessViewdata = (FilterCode != null) ? (FilterCode == 0) ? _underProcessdata.Where(x => x.StatusCode == FilterCode).ToList()
+                _underProcessViewdata = (typeFilterCode != null) ? (typeFilterCode == 0) ? _underProcessdata.Where(x => x.StatusCode == typeFilterCode).ToList()
                          : _underProcessdata.Where(x => x.StatusCode != 0).ToList() : _underProcessdata;
 
                 _underProcessViewdata = (reqObj.StatusCode == null || reqObj.StatusCode?.ToUpper() == "ALL") ? _underProcessViewdata
@@ -524,9 +525,21 @@ namespace VERIDATA.BLL.Context
                 if (_appointeedetails != null && !_isSubmit)
                 {
                     await _fileContext.postappointeeUploadedFiles(AppointeeFileDetails);
-                    var isManual = string.IsNullOrEmpty(_appointeedetails.UANNumber) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
+                    var isManual = _appointeedetails?.IsPassbookFetch == true || string.IsNullOrEmpty(_appointeedetails.UANNumber) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
                     await _dbContextCandiate.UpdateAppointeeSubmit(appointeeId, AppointeeFileDetails.IsSubmit ?? false, isManual);
                     mailType = MailType.Submit;
+                    if (isManual ?? false)
+                    {
+                        WorkFlowDataRequest _WorkFlowDataRequest = new();
+                        int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
+                        _WorkFlowDataRequest.appointeeId = appointeeId;
+                        _WorkFlowDataRequest.remarks = string.Empty;
+                        _WorkFlowDataRequest.workflowState = _stateId;
+                        _WorkFlowDataRequest.approvalStatus = WorkFlowStatusType.ManualVerification;
+                        _WorkFlowDataRequest.userId = AppointeeFileDetails.UserId;
+
+                        await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
+                    }
                 }
                 if ((AppointeeFileDetails.IsSubmit ?? false) && !_isSubmit)
                 {
@@ -894,21 +907,38 @@ namespace VERIDATA.BLL.Context
         {
             bool? isDataValid = false;
             var isDataVerificationReq = await VefifyDocValidityManual(reqObj.AppointeeId, reqObj.VerificationUpdates, reqObj.UserId);
-
+            if (!string.IsNullOrEmpty(reqObj.Remarks))
+            {
+                List<ReasonRemarks> Remarks = new();
+                Remarks.Add(new ReasonRemarks { ReasonCode = ReasonCode.OTHER, Remarks = reqObj.Remarks });
+                string _remarks = await _dbContextCandiate.UpdateRemarksByType(reqObj.AppointeeId, Remarks, RemarksType.Others, reqObj.UserId);
+            }
+            var isPensionApplicable = false;
+            var updatedAppointeeDetails = new AppointeeDetails();
             if (isDataVerificationReq)
             {
                 switch (reqObj.VerificationCategory)
                 {
                     case ManualVerificationType.FathersName:
                         isDataValid = await VefifyFNameValidityManual(reqObj.AppointeeId, reqObj.VerificationUpdates, reqObj.UserId);
+                        updatedAppointeeDetails = await _dbContextCandiate.VefifyAppinteeFathersNameManualById(reqObj.AppointeeId, isDataValid, reqObj.VerificationCategory, reqObj.UserId);
                         break;
                     case ManualVerificationType.EpfoPassbook:
-                        isDataValid = await VefifyFNameValidityManual(reqObj.AppointeeId, reqObj.VerificationUpdates, reqObj.UserId);
+                        isPensionApplicable = reqObj.VerificationUpdates?.FirstOrDefault(x => x.FieldName == ManualVerificationFieldType.PensionApplicable)?.Value ?? false;
+                        isDataValid = await VefifyPassBookValidityManual(reqObj.AppointeeId, reqObj.VerificationUpdates, isPensionApplicable, reqObj.UserId);
+                        var pfVerificationReqObj = new AppointeePfVerificationRequest
+                        {
+                            AppointeeId = reqObj.AppointeeId,
+                            IsValid = isDataValid,
+                            Type = reqObj.VerificationCategory,
+                            IsPensionApplicable = isPensionApplicable,
+                            IsPensionGapFind = !(isDataValid ?? true),
+                            UserId = reqObj.UserId
+                        };
+                        updatedAppointeeDetails = await _dbContextCandiate.VefifyAppinteePfDetailsManualById(pfVerificationReqObj);
+
                         break;
                 }
-
-
-                var updatedAppointeeDetails = await _dbContextCandiate.VefifyAppinteeManualById(reqObj.AppointeeId, isDataValid, reqObj.VerificationCategory, reqObj.UserId);
 
                 if ((updatedAppointeeDetails?.IsUanVarified ?? false) && (updatedAppointeeDetails.IsAadhaarVarified ?? false) && (updatedAppointeeDetails.IsPanVarified ?? false) && (updatedAppointeeDetails.IsFNameVarified ?? false))
                 {
@@ -926,17 +956,17 @@ namespace VERIDATA.BLL.Context
             // Dynamically update each field specified in the request
             foreach (var update in docValidity)
             {
-                switch (update.FieldName.ToLower())
+                switch (update.FieldName)
                 {
-                    case "isDocComplete":
-                        if (!update.IsValid)
+                    case ManualVerificationFieldType.DocIncomplete:
+                        if (!update.Value)
                         {
                             reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INCMPLTDOC, Inputdata = string.Empty, Fetcheddata = string.Empty });
                             isVerificationRequired = false;
                         }
                         break;
-                    case "isDocValid":
-                        if (!update.IsValid)
+                    case ManualVerificationFieldType.DocInvalid:
+                        if (!update.Value)
                         {
                             reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDDOC, Inputdata = string.Empty, Fetcheddata = string.Empty });
                             isVerificationRequired = false;
@@ -947,7 +977,7 @@ namespace VERIDATA.BLL.Context
                         throw new Exception($"Unknown field name: {update.FieldName}");
                 }
             }
-            
+
             if (!isVerificationRequired)
             {
                 string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId);
@@ -965,7 +995,7 @@ namespace VERIDATA.BLL.Context
             }
 
             return isVerificationRequired;
-            
+
         }
         private async Task<bool> VefifyFNameValidityManual(int AppointeeId, List<VerificationUpdate>? DocValidity, int userId)
         {
@@ -976,8 +1006,8 @@ namespace VERIDATA.BLL.Context
             {
                 switch (update.FieldName.ToLower())
                 {
-                    case "isFnameVarified":
-                        if (!update.IsValid)
+                    case ManualVerificationFieldType.FathersName:
+                        if (!update.Value)
                         {
                             ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.CAREOFNAME, Inputdata = string.Empty, Fetcheddata = string.Empty });
                             isDataValid = false;
@@ -987,16 +1017,45 @@ namespace VERIDATA.BLL.Context
                         throw new Exception($"Unknown field name: {update.FieldName}");
                 }
             }
-            string Remarks = await _dbContextCandiate.UpdateRemarksByType(AppointeeId, ReasonList, RemarksType.Manual, userId);
             // Save the changes to the database
             if (!isDataValid)
             {
+                string Remarks = await _dbContextCandiate.UpdateRemarksByType(AppointeeId, ReasonList, RemarksType.Manual, userId);
+                await RemarksMailSend(AppointeeId, Remarks, RemarksType.Manual, userId);
+            }
+
+            return isDataValid;
+        }
+
+        private async Task<bool> VefifyPassBookValidityManual(int AppointeeId, List<VerificationUpdate>? DocValidity, bool isPensionApplicable, int userId)
+        {
+            List<ReasonRemarks> ReasonList = new();
+            bool isDataValid = true;
+            foreach (var update in DocValidity)
+            {
+                switch (update.FieldName.ToLower())
+                {
+                    case ManualVerificationFieldType.PensionGap:
+                        if (isPensionApplicable && update.Value)
+                        {
+                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PENSIONGAPFIND, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                            isDataValid = false;
+                        }
+                        break;
+                    default:
+                        throw new Exception($"Unknown field name: {update.FieldName}");
+                }
+            }
+            // Save the changes to the database
+            if (!isDataValid)
+            {
+                string Remarks = await _dbContextCandiate.UpdateRemarksByType(AppointeeId, ReasonList, RemarksType.Manual, userId);
                 await RemarksMailSend(AppointeeId, Remarks, RemarksType.Manual, userId);
             }
 
             return isDataValid;
 
-         
+
         }
         private async Task RemarksMailSend(int appointeeId, string Remarks, string type, int? userId)
         {
@@ -1018,7 +1077,7 @@ namespace VERIDATA.BLL.Context
 
         }
 
-       public async Task<List<FileCategoryResponse>> GetNotVeriedfileView(int appointeeId)
+        public async Task<List<FileCategoryResponse>> GetNotVeriedfileView(int appointeeId)
         {
             // First, verify the conditions based on `AppointeeDetails` table
             var result = await _dbContextWorkflow.CheckVerifyDetails(appointeeId);
@@ -1034,7 +1093,31 @@ namespace VERIDATA.BLL.Context
             return fileData;
         }
 
-       
+        public async Task<List<ManualVerificationProcessDetailsResponse>> GetManualVeificationProcessData(ManualVeificationProcessDataRequest reqObj)
+        {
+            List<ManualVerificationProcessQueryDataResponse> UnderProcessAppointeeList = await _dbContextWorkflow.GetManualVerificationProcessDataAsync(reqObj);
+            //if (UnderProcessAppointeeList.Count > 0)
+            //{
+
+            var _underProcessdata = UnderProcessAppointeeList?.Where(z => z.IsJoiningDateLapsed.Equals(false))?.Select(row => new ManualVerificationProcessDetailsResponse
+            {
+                id = row.UnderProcess.UnderProcessId,
+                companyId = row.UnderProcess?.CompanyId ?? 0,
+                candidateId = row.AppointeeDetails?.CandidateId ?? row.UnderProcess?.CandidateId,
+                appointeeName = row.AppointeeDetails?.AppointeeName ?? row.UnderProcess?.AppointeeName,
+                appointeeId = row.UnderProcess?.AppointeeId,
+                appointeeEmailId = row.AppointeeDetails?.AppointeeEmailId ?? row.UnderProcess?.AppointeeEmailId,
+                mobileNo = row.UnderProcess?.MobileNo,
+                dateOfOffer = row.UnderProcess?.DateOfOffer,
+                dateOfJoining = row.AppointeeDetails?.DateOfJoining ?? row.UnderProcess?.DateOfJoining,
+                isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
+                isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
+                //ConsentStatusCode = row.ConsentStatusId ?? 0,
+                CreatedDate = row.WorkflowCreatedDate
+            }).OrderByDescending(x => x.CreatedDate).ThenBy(y => y.dateOfJoining).ToList();
+
+            return _underProcessdata;
+        }
     }
 
 }

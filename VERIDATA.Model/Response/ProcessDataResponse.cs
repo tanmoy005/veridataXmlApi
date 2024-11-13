@@ -14,6 +14,7 @@
         public string? uanNo { get; set; }
         public string? status { get; set; }
         public string? isPensionApplicable { get; set; }
+        public string? isPensionGap { get; set; }
         public bool? isTrustPFApplicable { get; set; }
         public string? passbookStatus { get; set; }
         public DateTime? dateOfJoining { get; set; }

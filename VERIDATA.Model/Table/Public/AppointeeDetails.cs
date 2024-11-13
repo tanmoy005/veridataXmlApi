@@ -173,7 +173,6 @@ namespace VERIDATA.Model.Table.Public
         [DefaultValue(false)]
         public bool? IsTrustPassbook { get; set; }
 
-      
         [Column("save_step", TypeName = DbDataType._integer)]
         public int? SaveStep { get; set; }
 

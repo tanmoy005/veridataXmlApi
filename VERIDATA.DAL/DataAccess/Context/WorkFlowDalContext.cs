@@ -163,6 +163,8 @@ namespace VERIDATA.DAL.DataAccess.Context
             WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
             WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
             WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
+            WorkflowApprovalStatusMaster? ReuploadState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
+            WorkflowApprovalStatusMaster? ManualVerificationState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
 
 
             IQueryable<UnderProcessQueryDataResponse> querydata = from b in _dbContextClass.UnderProcessFileData
@@ -190,7 +192,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                       AppvlStatusId = w.AppvlStatusId,
                                                                       AppointeeId = b.AppointeeId,
                                                                       ConsentStatusId = c.ConsentStatus,
-                                                                      IsJoiningDateLapsed = b.DateOfJoining < _CurrDate
+                                                                      IsJoiningDateLapsed = b.DateOfJoining < _CurrDate,
+                                                                      IsReupload = w.AppvlStatusId == ReuploadState.AppvlStatusId
                                                                   };
 
             List<UnderProcessQueryDataResponse> list = await querydata.ToListAsync().ConfigureAwait(false);
@@ -1144,6 +1147,42 @@ namespace VERIDATA.DAL.DataAccess.Context
                                      details.IsSubmit == true &&
                                      details.ActiveStatus == true &&
                                      (details.IsUanVarified != true || details.IsFNameVarified != true));
+        }
+
+        public async Task<List<ManualVerificationProcessQueryDataResponse>> GetManualVerificationProcessDataAsync(ManualVeificationProcessDataRequest reqObj)
+        {
+            string CurrDate = DateTime.Now.ToShortDateString();
+            DateTime _CurrDate = Convert.ToDateTime(CurrDate);
+            DateTime? _ToDate = reqObj.ToDate != null ? reqObj.ToDate?.AddDays(1) : null;
+
+            IQueryable<ManualVerificationProcessQueryDataResponse> querydata = from b in _dbContextClass.UnderProcessFileData
+                                                                               join w in _dbContextClass.WorkFlowDetails
+                                                                               on b.AppointeeId equals w.AppointeeId
+                                                                               join wm in _dbContextClass.WorkflowApprovalStatusMaster
+                                                                               on w.AppvlStatusId equals wm.AppvlStatusId
+                                                                               join p in _dbContextClass.AppointeeDetails
+                                                                               on b.AppointeeId equals p.AppointeeId into grouping
+                                                                               from p in grouping.DefaultIfEmpty()
+                                                                               join c in _dbContextClass.AppointeeConsentMapping
+                                                                               on b.AppointeeId equals c.AppointeeId into consentgrouping
+                                                                               from c in consentgrouping.Where(x => x.ActiveStatus == true).DefaultIfEmpty()
+                                                                               where wm.AppvlStatusCode == reqObj.FilterType
+                                                                               && (p.IsProcessed.Equals(false) || p.IsProcessed == null)
+                                                                               && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate) && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
+                                                                               && b.ActiveStatus == true
+                                                                               orderby p.IsSubmit
+                                                                               select new ManualVerificationProcessQueryDataResponse
+                                                                               {
+                                                                                   UnderProcess = b,
+                                                                                   AppointeeDetails = p,
+                                                                                   AppointeeId = b.AppointeeId,
+                                                                                   IsJoiningDateLapsed = b.DateOfJoining < _CurrDate,
+                                                                                   WorkflowCreatedDate = w.CreatedOn
+                                                                               };
+
+            List<ManualVerificationProcessQueryDataResponse> list = await querydata.ToListAsync().ConfigureAwait(false);
+
+            return list;
         }
     }
 }

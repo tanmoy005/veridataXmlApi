@@ -958,60 +958,60 @@ namespace VERIDATA.BLL.Context
             return updatedAppointeeDetails;
         }
 
-        public async Task<AppointeeDetails> VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj)
-        {
-            var updatedAppointeeDetails = await _appointeeDalContext.VefifyAppinteeManualById(reqObj);
+        //public async Task<AppointeeDetails> VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj)
+        //{
+        //    var updatedAppointeeDetails = await _appointeeDalContext.VefifyAppinteeManualById(reqObj);
 
-            if (updatedAppointeeDetails == null)
-            {
-                throw new Exception("Appointee not found.");
-            }
+        //    if (updatedAppointeeDetails == null)
+        //    {
+        //        throw new Exception("Appointee not found.");
+        //    }
 
-            // Apply the verification updates
-            foreach (var update in reqObj.VerificationUpdates)
-            {
-                switch (update.FieldName.ToLower())
-                {
-                    case "isfnamevarified":
-                        updatedAppointeeDetails.IsFNameVarified = update.IsVerified;
-                        break;
-                    case "ispasssportvarified":
-                        updatedAppointeeDetails.IsPasssportVarified = update.IsVerified;
-                        break;
-                    case "isaadhaarvarified":
-                        updatedAppointeeDetails.IsAadhaarVarified = update.IsVerified;
-                        break;
-                    default:
-                        throw new Exception($"Unknown field name: {update.FieldName}");
-                }
-            }
+        //    // Apply the verification updates
+        //    foreach (var update in reqObj.VerificationUpdates)
+        //    {
+        //        switch (update.FieldName.ToLower())
+        //        {
+        //            case "isfnamevarified":
+        //                updatedAppointeeDetails.IsFNameVarified = update.IsVerified;
+        //                break;
+        //            case "ispasssportvarified":
+        //                updatedAppointeeDetails.IsPasssportVarified = update.IsVerified;
+        //                break;
+        //            case "isaadhaarvarified":
+        //                updatedAppointeeDetails.IsAadhaarVarified = update.IsVerified;
+        //                break;
+        //            default:
+        //                throw new Exception($"Unknown field name: {update.FieldName}");
+        //        }
+        //    }
 
-            return updatedAppointeeDetails;
-        }
+        //    return updatedAppointeeDetails;
+        //}
 
-        public async Task<AppointeeFileViewDetailResponse> GetNotVeriedfileView(AppointeeNotVerifiedFileViewRequest reqObj)
-        {
-            // Initialize response object
-            /*  var response = new AppointeeFileViewDetailResponse();
+        //public async Task<AppointeeFileViewDetailResponse> GetNotVeriedfileView(AppointeeNotVerifiedFileViewRequest reqObj)
+        //{
+        //    // Initialize response object
+        //    /*  var response = new AppointeeFileViewDetailResponse();
 
-              // Fetch relevant UploadTypeMaster records based on AppointeeId and FileCategory
-              var uploadTypeMasters = await _appointeeDalContext.GetAppinteeFileViewDetail(reqObj);
+        //      // Fetch relevant UploadTypeMaster records based on AppointeeId and FileCategory
+        //      var uploadTypeMasters = await _appointeeDalContext.GetAppinteeFileViewDetail(reqObj);
 
-              // Filter UploadTypeMaster results based on the specified conditions
+        //      // Filter UploadTypeMaster results based on the specified conditions
 
-              response.UploadTypeMasters = uploadTypeMasters
-                  .Where(u => u.UploadTypeCategory == reqObj.FileCategory &&
-                  u.UploadTypeCode != null && // Ensure UploadTypeCode is not null
-                  (u.AppointeeDetails == null || // Check AppointeeDetails conditions if they exist
-                  (u.AppointeeDetails.IsPasssportVarified == null &&
-                  u.AppointeeDetails.IsManualPassbook == null &&
-                  u.AppointeeDetails.IsFNameVarified == null)))
-                  .ToList();
+        //      response.UploadTypeMasters = uploadTypeMasters
+        //          .Where(u => u.UploadTypeCategory == reqObj.FileCategory &&
+        //          u.UploadTypeCode != null && // Ensure UploadTypeCode is not null
+        //          (u.AppointeeDetails == null || // Check AppointeeDetails conditions if they exist
+        //          (u.AppointeeDetails.IsPasssportVarified == null &&
+        //          u.AppointeeDetails.IsManualPassbook == null &&
+        //          u.AppointeeDetails.IsFNameVarified == null)))
+        //          .ToList();
 
-              return response;
-            */
-            return await _appointeeDalContext.GetAppinteeFileViewDetail(reqObj);
+        //      return response;
+        //    */
+        //    return await _appointeeDalContext.GetAppinteeFileViewDetail(reqObj);
 
-        }
+        //}
     }
 }

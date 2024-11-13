@@ -448,7 +448,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             return updatePension;
         }
 
-        public async Task<AppointeeDetails> VefifyAppinteeManualById(int appointeeId, bool? isValid, string type, int userId)
+        public async Task<AppointeeDetails> VefifyAppinteeFathersNameManualById(int appointeeId, bool? isValid, string type, int userId)
         {
             var appointeeDetails = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.AppointeeId == appointeeId && x.ActiveStatus == true);
 
@@ -456,28 +456,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             {
                 throw new Exception("Appointee not found.");
             }
-
-            // Dynamically update each field specified in the request
-
-            switch (type)
-            {
-                switch (update.FieldName.ToLower())
-                {
-                    case "isfnamevarified":
-                        appointeeDetails.IsFNameVarified = update.IsVerified;
-                        break;
-                    case "ispasssportvarified":
-                        appointeeDetails.IsPasssportVarified = update.IsVerified;
-                        break;
-                    case "isaadhaarvarified":
-                        appointeeDetails.IsAadhaarVarified = update.IsVerified;
-                        break;
-                    default:
-                        throw new Exception($"Unknown field name: {update.FieldName}");
-                }
-            }
-
-            // Set the updated metadata fields
+            appointeeDetails.IsFNameVarified = isValid;
             appointeeDetails.UpdatedBy = userId;
             appointeeDetails.UpdatedOn = DateTime.Now;
 
@@ -486,37 +465,23 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return appointeeDetails;
         }
-
-        public async Task<AppointeeFileViewDetailResponse> GetAppinteeFileViewDetail(AppointeeNotVerifiedFileViewRequest reqObj)
+        public async Task<AppointeeDetails> VefifyAppinteePfDetailsManualById(AppointeePfVerificationRequest reqObj)
         {
-            var response = new AppointeeFileViewDetailResponse();
+            var appointeeDetails = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.AppointeeId == reqObj.AppointeeId && x.ActiveStatus == true);
 
-            // Fetch UploadTypeMaster records
-            var uploadTypeMasters = await _dbContextClass.UploadTypeMaster.ToListAsync();
+            if (appointeeDetails == null)
+            {
+                throw new Exception("Appointee not found.");
+            }
 
-            // Filter AppointeeUploadDetails by UserId and RefAppointeeId
-            var uploadDetails = await _dbContextClass.AppointeeUploadDetails
-                .Where(aud => aud.AppointeeId == reqObj.AppointeeId && aud.UploadTypeCode == reqObj.FileCategory)
-                .ToListAsync();
+            appointeeDetails.IsUanVarified = reqObj.IsValid;
+            appointeeDetails.IsPensionApplicable = reqObj.IsPensionApplicable;
+            appointeeDetails.IsPensionGap = reqObj.IsPensionGapFind;
+            appointeeDetails.UpdatedBy = reqObj.UserId;
+            appointeeDetails.UpdatedOn = DateTime.Now;
+            await _dbContextClass.SaveChangesAsync();
 
-            // Check AppointeeDetails conditions based on IsPassportVarified, IsManualPassbook, IsFNameVarified
-            var appointeeDetails = await _dbContextClass.AppointeeDetails
-                .Where(ad => ad.AppointeeId == reqObj.AppointeeId &&
-                             ad.IsPasssportVarified == null &&
-                             ad.IsManualPassbook == null &&
-                             ad.IsFNameVarified == null)
-                .ToListAsync();
-
-            response.AppointeeId = reqObj.AppointeeId;
-            response.FileCategory = reqObj.FileCategory;
-            response.FileId = reqObj.FileId;
-
-            // Map UploadTypeMaster details to response
-            response.UploadTypeMasters = uploadTypeMasters;
-
-            return response;
-
-
+            return appointeeDetails;
         }
     }
 }
