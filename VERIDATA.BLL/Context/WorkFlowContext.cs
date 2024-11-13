@@ -1,4 +1,5 @@
-﻿using VERIDATA.BLL.Interfaces;
+﻿using System.Reflection.Metadata.Ecma335;
+using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
@@ -946,7 +947,7 @@ namespace VERIDATA.BLL.Context
                         throw new Exception($"Unknown field name: {update.FieldName}");
                 }
             }
-            // Save the changes to the database
+            
             if (!isVerificationRequired)
             {
                 string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId);
@@ -964,6 +965,7 @@ namespace VERIDATA.BLL.Context
             }
 
             return isVerificationRequired;
+            
         }
         private async Task<bool> VefifyFNameValidityManual(int AppointeeId, List<VerificationUpdate>? DocValidity, int userId)
         {
@@ -993,6 +995,8 @@ namespace VERIDATA.BLL.Context
             }
 
             return isDataValid;
+
+         
         }
         private async Task RemarksMailSend(int appointeeId, string Remarks, string type, int? userId)
         {
@@ -1013,6 +1017,24 @@ namespace VERIDATA.BLL.Context
             }
 
         }
+
+       public async Task<List<FileCategoryResponse>> GetNotVeriedfileView(int appointeeId)
+        {
+            // First, verify the conditions based on `AppointeeDetails` table
+            var result = await _dbContextWorkflow.CheckVerifyDetails(appointeeId);
+
+            // If the conditions are not met, return an empty list
+            if (!result)
+            {
+                return new List<FileCategoryResponse>();
+            }
+
+            // If conditions are met, proceed to fetch the file data
+            var fileData = await _dbContextWorkflow.getFileTypeCode(appointeeId);
+            return fileData;
+        }
+
+       
     }
 
 }

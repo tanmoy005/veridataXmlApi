@@ -44,6 +44,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<List<UnderProcessWithActionQueryDataResponse>> GetUnderProcessDataWithActionAsync(AppointeeSeacrhFilterRequest reqObj);
         public Task<List<PfStatusDataFilterQueryResponse>> GetAppointeePfdetailsAsync(PfDataFilterReportRequest reqObj);
         public Task<List<FileCategoryResponse>> getFileTypeCode(int appointeeId);
+        Task<bool> CheckVerifyDetails(int appointeeId);
 
 
     }

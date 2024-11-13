@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Mustache;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
 using VERIDATA.DAL.utility;
@@ -460,13 +461,20 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             switch (type)
             {
-                case ManualVerificationType.FathersName:
-                    appointeeDetails.IsFNameVarified = isValid;
-                    break;
-                case ManualVerificationType.EpfoPassbook:
-                    appointeeDetails.IsUanVarified = isValid;
-                    break;
-                   
+                switch (update.FieldName.ToLower())
+                {
+                    case "isfnamevarified":
+                        appointeeDetails.IsFNameVarified = update.IsVerified;
+                        break;
+                    case "ispasssportvarified":
+                        appointeeDetails.IsPasssportVarified = update.IsVerified;
+                        break;
+                    case "isaadhaarvarified":
+                        appointeeDetails.IsAadhaarVarified = update.IsVerified;
+                        break;
+                    default:
+                        throw new Exception($"Unknown field name: {update.FieldName}");
+                }
             }
 
             // Set the updated metadata fields
@@ -479,6 +487,36 @@ namespace VERIDATA.DAL.DataAccess.Context
             return appointeeDetails;
         }
 
+        public async Task<AppointeeFileViewDetailResponse> GetAppinteeFileViewDetail(AppointeeNotVerifiedFileViewRequest reqObj)
+        {
+            var response = new AppointeeFileViewDetailResponse();
 
+            // Fetch UploadTypeMaster records
+            var uploadTypeMasters = await _dbContextClass.UploadTypeMaster.ToListAsync();
+
+            // Filter AppointeeUploadDetails by UserId and RefAppointeeId
+            var uploadDetails = await _dbContextClass.AppointeeUploadDetails
+                .Where(aud => aud.AppointeeId == reqObj.AppointeeId && aud.UploadTypeCode == reqObj.FileCategory)
+                .ToListAsync();
+
+            // Check AppointeeDetails conditions based on IsPassportVarified, IsManualPassbook, IsFNameVarified
+            var appointeeDetails = await _dbContextClass.AppointeeDetails
+                .Where(ad => ad.AppointeeId == reqObj.AppointeeId &&
+                             ad.IsPasssportVarified == null &&
+                             ad.IsManualPassbook == null &&
+                             ad.IsFNameVarified == null)
+                .ToListAsync();
+
+            response.AppointeeId = reqObj.AppointeeId;
+            response.FileCategory = reqObj.FileCategory;
+            response.FileId = reqObj.FileId;
+
+            // Map UploadTypeMaster details to response
+            response.UploadTypeMasters = uploadTypeMasters;
+
+            return response;
+
+
+        }
     }
 }

@@ -616,6 +616,31 @@ namespace PfcAPI.Controllers.Appoientee
                 throw;
             }
         }
+        [AllowAnonymous]
+        [Authorize]
+        [HttpPost("GetAppointeeUploadedUnverifiedFiles")]
+        public ActionResult GetAppointeeUploadedUnverifiedFiles(int AppointeeId)
+        {
+            try
+            {
+                List<FileCategoryResponse> _fileData = Task.Run(async () => await _workflowContext.GetNotVeriedfileView(AppointeeId)).GetAwaiter().GetResult();
+
+                // Filter out entries where fileCategory is null
+                var filteredFileData = _fileData
+                    .Where(fileCategoryResponse => fileCategoryResponse.FileCategory != null)
+                    .ToList();
+
+                // Return the filtered list in the response
+                return Ok(new BaseResponse<FileCategoryResponse>(HttpStatusCode.OK, filteredFileData));
+
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+            
+        }
 
     }
 }

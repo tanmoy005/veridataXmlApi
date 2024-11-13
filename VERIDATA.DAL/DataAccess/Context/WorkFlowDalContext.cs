@@ -1137,6 +1137,14 @@ namespace VERIDATA.DAL.DataAccess.Context
             return groupedData;
         }
 
+        public async Task<bool> CheckVerifyDetails(int appointeeId)
+        {
+            return await _dbContextClass.AppointeeDetails
+                .AnyAsync(details => details.AppointeeId == appointeeId &&
+                                     details.IsSubmit == true &&
+                                     details.ActiveStatus == true &&
+                                     (details.IsUanVarified != true || details.IsFNameVarified != true));
+        }
     }
 }
 
