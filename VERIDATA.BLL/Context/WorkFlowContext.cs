@@ -1118,6 +1118,53 @@ namespace VERIDATA.BLL.Context
 
             return _underProcessdata;
         }
+
+        public async Task PostAppointeeFileDetailsAsync(AppointeeReUploadFilesAfterSubmitRequest AppointeeFileDetailsReupload)
+        {
+            _ = _aadhaarConfig.EncriptKey;
+            int appointeeId = AppointeeFileDetailsReupload.AppointeeId;
+            AppointeeDetails? _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
+            string mailType = string.Empty;
+            if (_appointeedetails.IsProcessed != true)
+            {
+                bool _isSubmit = _appointeedetails?.IsSubmit ?? false;
+                if (_appointeedetails != null && !_isSubmit)
+                {
+                    await _fileContext.postappointeeReUploadedFiles(AppointeeFileDetailsReupload);
+                    // var isManual = _appointeedetails?.IsPassbookFetch == true || string.IsNullOrEmpty(_appointeedetails.UANNumber) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
+                    var isManual = _appointeedetails?.IsFNameVarified == true || string.IsNullOrEmpty(_appointeedetails.UANNumber);
+                    await _dbContextCandiate.UpdateAppointeeSubmit(appointeeId, AppointeeFileDetailsReupload.IsSubmit ?? false, isManual);
+                    mailType = MailType.Submit;
+                    if (isManual == false)
+                    {
+                        WorkFlowDataRequest _WorkFlowDataRequest = new();
+                        int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
+                        _WorkFlowDataRequest.appointeeId = appointeeId;
+                        _WorkFlowDataRequest.remarks = string.Empty;
+                        _WorkFlowDataRequest.workflowState = _stateId;
+                        _WorkFlowDataRequest.approvalStatus = WorkFlowStatusType.ReuploadDocument;
+                        _WorkFlowDataRequest.userId = AppointeeFileDetailsReupload.UserId;
+
+                        await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
+                    }
+                }
+                if ((AppointeeFileDetailsReupload.IsSubmit ?? false) && !_isSubmit)
+                {
+
+                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsPanVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false))
+                    {
+                        mailType = MailType.AutoApprove;
+                        await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeFileDetailsReupload?.UserId ?? 0, true);//isapprove set true
+
+                    }
+                }
+
+                await PostMailFileSubmisstionSuccess(_appointeedetails.AppointeeId ?? 0, AppointeeFileDetailsReupload?.UserId ?? 0, mailType);
+
+            }
+
+            await _dbContextActivity.PostActivityDetails(AppointeeFileDetailsReupload?.AppointeeId ?? 0, AppointeeFileDetailsReupload?.UserId ?? 0, ActivityLog.DATASBMT);
+        }
     }
 
 }

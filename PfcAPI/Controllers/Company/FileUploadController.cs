@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using VERIDATA.BLL.Context;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.Model.Base;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
+using VERIDATA.Model.Table.Public;
 using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace PfcAPI.Controllers.Company
@@ -198,6 +200,37 @@ namespace PfcAPI.Controllers.Company
             {
                 throw;
             }
+        }
+
+        [AllowAnonymous]
+        [Authorize]
+       // [HttpPost]
+        [HttpPost("PostReuploadDocuments")]
+        public IActionResult PostReuploadDocuments([FromForm]AppointeeReUploadFilesAfterSubmitRequest reqObj)
+        {
+            if (reqObj != null)
+            {
+
+                try
+                {
+                    bool? _isSubmit = reqObj?.IsSubmit;
+
+                    //Task.Run(async () => await _fileService.postappointeeUploadedFiles(AppointeeDetails)).GetAwaiter().GetResult();
+                    Task.Run(async () => await _workflowcontext.PostAppointeeFileDetailsAsync(reqObj)).GetAwaiter().GetResult();
+                   
+                    return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
+                }
+                catch (Exception)
+                {
+                    throw;
+
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
     }
 }

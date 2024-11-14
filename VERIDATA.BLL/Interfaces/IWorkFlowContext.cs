@@ -32,6 +32,6 @@ namespace VERIDATA.BLL.Interfaces
         public Task VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj);
       
         public Task <List<FileCategoryResponse>> GetNotVeriedfileView(int appointeeId);
-
+        public Task PostAppointeeFileDetailsAsync(AppointeeReUploadFilesAfterSubmitRequest AppointeeFileDetailsReupload);
     }
 }

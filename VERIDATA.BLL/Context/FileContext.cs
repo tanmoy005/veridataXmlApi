@@ -859,55 +859,72 @@ namespace VERIDATA.BLL.Context
             }
         }
 
-        //mGhosh new code
-        //public async Task<List<FileDetailsResponse>> getFiledetailsByAppointeeId(int appointeeId, string? uploadTypeCode = null)
-        //{
-        //    List<AppointeeUploadDetails> _UploadDetails;
-        //    List<FileDetailsResponse> _FileDataList = new();
-        //    // Filter data by UploadTypeCode if provided
-        //    if (!string.IsNullOrEmpty(uploadTypeCode))
-        //    {
-        //        _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId, uploadTypeCode);
-        //    }
-        //    else
-        //    {
-        //        _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
-        //    }
+        public async Task postappointeeReUploadedFiles(AppointeeReUploadFilesAfterSubmitRequest AppointeeDetails)
+        {
 
-        //    if (_UploadDetails?.Count > 0)
-        //    {
-        //        foreach (var obj in _UploadDetails)
-        //        {
-        //            var doc = new FileDetailsResponse();
 
-        //            // Retrieving binary data from Content column or the file path
-        //            byte[]? _FileData = obj.Content;
-        //            if (_FileData == null && !string.IsNullOrEmpty(obj.UploadPath))
-        //            {
-        //                _FileData = await GetFileDataAsync(obj.UploadPath);
-        //            }
+            if (AppointeeDetails != null)
+            {
+                List<IFormFile>? fileUploaded = AppointeeDetails.FileDetails;
+                int _appointeeId = AppointeeDetails?.AppointeeId ?? 0;
 
-        //            doc.FileData = _FileData;
-        //            doc.FileName = $"{obj?.FileName}_{obj?.UploadTypeCode}";
-        //            doc.UploadTypeId = obj?.UploadTypeId ?? 0;
-        //            doc.mimeType = obj?.MimeType ?? string.Empty;
-        //            doc.UploadTypeAlias = obj?.UploadTypeCode ?? string.Empty;
+                if (fileUploaded?.Count > 0 && _appointeeId != 0)
+                {
+                    List<AppointeeUploadDetails>? _prevDocList = await _appointeeContext.GetAppinteeUploadDetails(_appointeeId);
+                    if (!string.IsNullOrEmpty(AppointeeDetails?.FileUploaded ?? string.Empty))
+                    {
+                        List<FileUploadDataModel>? _Uploadedfiledetails = JsonConvert.DeserializeObject<List<FileUploadDataModel>>(AppointeeDetails?.FileUploaded).ToList() ?? new List<FileUploadDataModel>();
 
-        //            _FileDataList.Add(doc);
-        //        }
-        //    }
-        //    return _FileDataList;
-        //}
-        //public async Task<AppointeeUploadDetails> getFiledetailsByFileType(int appointeeId, string fileTypeCode)
-        //{
-        //    AppointeeUploadDetails FileDetailsResponse = new();
-        //    List<AppointeeUploadDetails> _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
-        //    if (_UploadDetails?.Count > 0)
-        //    {
-        //        FileDetailsResponse = _UploadDetails?.LastOrDefault(x => x.UploadTypeCode == fileTypeCode);
-        //    }
-        //    return FileDetailsResponse;
-        //}
+                        foreach (IFormFile obj in fileUploaded)
+                        {
+                            long? fileLength = obj?.Length;
+                            string? mimetype = obj?.ContentType?.ToLower();
+                            FileUploadDataModel? fileDetails = _Uploadedfiledetails?.Find(x => x.fileName == obj?.FileName && x.fileLength == fileLength && x.isFileUploaded);
+
+                            if (fileDetails != null)
+                            {
+
+
+
+                                // Read the file into a byte array
+                                using (var memoryStream = new MemoryStream())
+                                {
+                                    await obj.CopyToAsync(memoryStream);
+                                    var fileContent = memoryStream.ToArray();
+
+                                    AppointeeUploadDetails uploaddata = new()
+                                    {
+                                        AppointeeId = AppointeeDetails.AppointeeId,
+                                        UploadTypeId = fileDetails.uploadTypeId,
+                                        UploadTypeCode = fileDetails.uploadTypeAlias,
+                                        FileName = obj.FileName,
+                                        UploadPath = null, 
+                                        IsPathRefered = CheckType.yes,
+                                        MimeType = mimetype,
+                                        ActiveStatus = true,
+                                        CreatedBy = AppointeeDetails.UserId,
+                                        CreatedOn = DateTime.Now,
+                                        Content = fileContent // Store the file content here
+                                    };
+
+                                    AppointeeUploadDetails? _prevdocDetails = _prevDocList?.Where(x => x.UploadTypeId == fileDetails.uploadTypeId)?.FirstOrDefault();
+
+                                    await _appointeeContext.uploadFilesNUpdatePrevfiles(uploaddata, _prevdocDetails, AppointeeDetails.UserId);
+                                    if (_prevdocDetails != null)
+                                    {
+                                        // Optional: Remove old file if needed
+                                        bool file_removed = RemoveDocFile(_prevdocDetails.UploadPath);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
+        }
 
         public async Task<FileDetailsResponse> getFiledetailsByFileUploadId(int appointeeId, int? uploadId)
         {
