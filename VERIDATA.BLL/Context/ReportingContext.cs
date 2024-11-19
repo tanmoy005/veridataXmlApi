@@ -810,6 +810,27 @@ namespace VERIDATA.BLL.Context
 
             return excelDataList;
         }
+      
+        public async Task<List<ManualVerificationExcelDataResponse>> GetAppointeeManualVerificationExcelReport(List<ManualVerificationProcessDetailsResponse> processDetails)
 
+        {
+            var excelDataList = processDetails.Select(x => new ManualVerificationExcelDataResponse
+            {
+                id = x.id,
+                candidateId = x.candidateId,
+                appointeeId = x.appointeeId,
+                appointeeName = x.appointeeName,
+                appointeeEmailId = x.appointeeEmailId,
+                mobileNo = x.mobileNo,
+                dateOfJoining = x.dateOfJoining?.ToShortDateString(),
+                isDocSubmitted = x.isDocSubmitted,
+                isNoIsuueinVerification = x.isNoIsuueinVerification,
+                Status = x.Status
+            }).ToList();
+
+            return await Task.FromResult(excelDataList);
+        }
+
+                
     }
 }
