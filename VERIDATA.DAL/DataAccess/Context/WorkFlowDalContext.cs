@@ -159,13 +159,14 @@ namespace VERIDATA.DAL.DataAccess.Context
             DateTime _CurrDate = Convert.ToDateTime(CurrDate);
             DateTime? _ToDate = reqObj.ToDate != null ? reqObj.ToDate?.AddDays(1) : null;
             List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
+
             WorkflowApprovalStatusMaster? ReprocessState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Reprocess?.Trim());
             WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
             WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
             WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
             WorkflowApprovalStatusMaster? ReuploadState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
-            WorkflowApprovalStatusMaster? ManualVerificationState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
-
+            WorkflowApprovalStatusMaster? ManualVerificationState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualVerification?.Trim());
+            WorkflowApprovalStatusMaster? ManualVerificationProcess = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualReVerification?.Trim());
 
             IQueryable<UnderProcessQueryDataResponse> querydata = from b in _dbContextClass.UnderProcessFileData
                                                                   join w in _dbContextClass.WorkFlowDetails
@@ -176,14 +177,18 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                   join c in _dbContextClass.AppointeeConsentMapping
                                                                   on b.AppointeeId equals c.AppointeeId into consentgrouping
                                                                   from c in consentgrouping.Where(x => x.ActiveStatus == true).DefaultIfEmpty()
-                                                                  where (!(w.AppvlStatusId == CloseState.AppvlStatusId || w.AppvlStatusId == ApproveState.AppvlStatusId || w.AppvlStatusId == RejectState.AppvlStatusId))
+                                                                  where !(w.AppvlStatusId == CloseState.AppvlStatusId
+                                                                         || w.AppvlStatusId == ApproveState.AppvlStatusId
+                                                                         || w.AppvlStatusId == RejectState.AppvlStatusId
+                                                                         || w.AppvlStatusId == ReuploadState.AppvlStatusId
+                                                                         || w.AppvlStatusId == ManualVerificationState.AppvlStatusId
+                                                                         || w.AppvlStatusId == ManualVerificationProcess.AppvlStatusId)
                                                                   && (p.IsProcessed.Equals(false) || p.IsProcessed == null)
                                                                   && (string.IsNullOrEmpty(reqObj.AppointeeName) || b.AppointeeName.Contains(reqObj.AppointeeName))
                                                                   && (string.IsNullOrEmpty(reqObj.CandidateId) || b.CandidateId.Contains(reqObj.CandidateId))
                                                                   && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate) && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
                                                                   && b.ActiveStatus == true
                                                                   && (reqObj.IsManualPassbook == null || p.IsManualPassbook == reqObj.IsManualPassbook)
-
                                                                   orderby p.IsSubmit
                                                                   select new UnderProcessQueryDataResponse
                                                                   {
