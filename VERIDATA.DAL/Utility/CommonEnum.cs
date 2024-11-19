@@ -147,6 +147,7 @@
         {
             public const string Pan = "PanDetails";
             public const string FindUan = "FindUan";
+            public const string AadharMobileLink = "AadharMobileLink";
             public const string Passport = "PassportDetails";
             public const string AadharGenerateOTP = "AdharGenerateOTP";
             public const string AadharVerifyOTP = "AdharVerifyOTP";
@@ -189,8 +190,8 @@
             public const string OTHER = "107";
             public const string ADHNOTVARIFIRED = "108";
             public const string UANNOTVARIDIED = "109";
-            public const string ADHNOTAVAILABLE = "110";
-            public const string PHNOTPINWITHADH = "111";
+            public const string ADHNOTAVAILABLE = "111";
+            public const string PHNOTPINWITHADH = "110";
             public const string PASSPORTNO = "112";
             public const string INVDPASSPRT = "113";
             public const string PASSPRTNAME = "114";
@@ -268,6 +269,12 @@
             public const string CONSENTREVOKED = "CNSTRVK";
             public const string PREREQUISITECONFIRMYES = "PREREQCNFYES";
             public const string PREREQUISITECONFIRMNO = "PREREQCNFNO";
+            public const string MNLFTHRVERIFIED = "MNFTRVCMPT";
+            public const string MNLFTHRVERIFLD = "MNFTHRVFLD";
+            public const string MNLUANERICMPLTE = "MNUANVCMPT";
+            public const string MNLUANVERIFLD = "MNUANVFLD";
+            public const string DOCUMENTREUPLOADRQST = "DCRUPLDRQ";
+            public const string DOCUMENTREUPLED = "DCRUPLD";
         }
         public static class MenuCode
         {

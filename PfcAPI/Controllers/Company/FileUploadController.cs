@@ -204,20 +204,17 @@ namespace PfcAPI.Controllers.Company
 
         [AllowAnonymous]
         [Authorize]
-       // [HttpPost]
+        // [HttpPost]
         [HttpPost("PostReuploadDocuments")]
-        public IActionResult PostReuploadDocuments([FromForm]AppointeeReUploadFilesAfterSubmitRequest reqObj)
+        public IActionResult PostReuploadDocuments([FromForm] AppointeeReUploadFilesAfterSubmitRequest reqObj)
         {
             if (reqObj != null)
             {
 
                 try
                 {
-                    bool? _isSubmit = reqObj?.IsSubmit;
+                    Task.Run(async () => await _workflowcontext.PostAppointeeFileReuploadDetailsAsync(reqObj)).GetAwaiter().GetResult();
 
-                    //Task.Run(async () => await _fileService.postappointeeUploadedFiles(AppointeeDetails)).GetAwaiter().GetResult();
-                    Task.Run(async () => await _workflowcontext.PostAppointeeFileDetailsAsync(reqObj)).GetAwaiter().GetResult();
-                   
                     return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
                 }
                 catch (Exception)

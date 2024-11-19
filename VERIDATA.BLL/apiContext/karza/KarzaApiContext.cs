@@ -8,6 +8,7 @@ using VERIDATA.Model.Request;
 using VERIDATA.Model.Request.api.Karza;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
+using static System.Net.WebRequestMethods;
 using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.apiContext.karza
@@ -586,7 +587,7 @@ namespace VERIDATA.BLL.apiContext.karza
                         Company = companyName,
                         StartDate = startDate?.ToString("dd/MM/yyyy"),
                         EpsGapfind = gapDetected,
-                        HasEpsContribution= hasEpsContribution
+                        HasEpsContribution = hasEpsContribution
                     });
 
                     // Update last company's end date for comparison with the next company, with null check
@@ -601,5 +602,55 @@ namespace VERIDATA.BLL.apiContext.karza
             return result;
         }
 
+        public async Task<GetAadharMobileLinkDetails> GetMobileAadharLinkStatus(string aadharNo, string mobileNo, int userId)
+        {
+            GetAadharMobileLinkDetails Response = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Adhaar, ApiSubTYpeName.AadharMobileLink, ApiProviderType.Karza);
+            Karza_AadharMobileLinkRequest request = new()
+            {
+                aadhaar = aadharNo,
+                mobile = mobileNo,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+
+            if (_apiResponse.IsSuccessStatusCode)
+            {
+                string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+                Karza_AadhaarMobileLinkResponse OTPResponse = JsonConvert.DeserializeObject<Karza_AadhaarMobileLinkResponse>(apiResponse);
+                if (OTPResponse.statusCode == (int)KarzaStatusCode.Invalid || OTPResponse.statusCode == (int)KarzaStatusCode.NotFound
+                    || OTPResponse?.result?.validId?.ToLower() != "yes")
+                {
+                    Response.StatusCode = HttpStatusCode.BadRequest;
+                    Response.ReasonPhrase = "Invalid Aadhar Number or Combination of Inputs";
+                    return Response;
+                }
+                //if (OTPResponse?.result?.validId?.ToLower() == "yes" && OTPResponse?.result?.isMobileLinked?.ToLower() == "yes")
+                //{
+                //    Response.validId = true;
+                //}
+                //else
+                if (OTPResponse?.result?.isMobileLinked?.ToLower() != "yes")
+                {
+                    Response.StatusCode = HttpStatusCode.BadRequest;
+                    Response.ReasonPhrase = "Mobile Numner not linked with Aadhar number";
+                    return Response;
+                }
+
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.validId = OTPResponse?.result?.validId?.ToLower() == "yes";
+                Response.validMobileNo = OTPResponse?.result?.isMobileLinked?.ToLower() == "yes";
+                // Response.KarzaPassbkdata = UpdateEpsContribution(OTPResponse?.result ?? new UanPassbookDetails());
+            }
+            else
+            {
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.ReasonPhrase = "Site Not Reachable. Please try again after some time";
+                //Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
+            }
+
+            return Response;
+        }
     }
 }

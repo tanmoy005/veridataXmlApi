@@ -676,13 +676,33 @@ namespace VERIDATA.BLL.Context
         public async Task<CandidateValidateResponse> VerifyAadharData(AadharValidationRequest reqObj)
         {
             bool IsValid = false;
-            _ = new CandidateValidateResponse();
+            CandidateValidateResponse response = new();
             AadharDetailsData _aadharData = new();
             List<ReasonRemarks> ReasonList = new();
             _ = new CandidateValidateUpdatedDataRequest();
             AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.AppointeeId);
             if (reqObj.isValidAdhar)
             {
+                var _aadharMobileLinkDetails = await GetAadharMobileLinkStatus(reqObj?.AadharDetails?.AadharNumber, appointeedetail?.MobileNo, reqObj?.UserId ?? 0);
+                if (_aadharMobileLinkDetails.StatusCode == HttpStatusCode.OK)
+                {
+                    if (_aadharMobileLinkDetails?.validId ?? false)
+                    {
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDADHAR, Inputdata = reqObj?.AadharDetails?.AadharNumber, Fetcheddata = string.Empty });
+                    }
+                    if (_aadharMobileLinkDetails?.validMobileNo ?? false)
+                    {
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PHNOTPINWITHADH, Inputdata = appointeedetail?.MobileNo, Fetcheddata = string.Empty });
+                    }
+
+                }
+                else
+                {
+                    response.IsValid = false;
+                    response.Remarks = _aadharMobileLinkDetails?.remarks;
+                    return response;
+                }
+
                 string? aadharName = reqObj?.AppointeeAadhaarName?.Trim();
                 string? appointeeAadhaarFullName = reqObj?.AadharDetails?.Name;
                 string? appointeeAadhaarGender = reqObj?.AadharDetails?.Gender;
@@ -763,7 +783,7 @@ namespace VERIDATA.BLL.Context
                 //PanNumber = panNumber,
             };
 
-            CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+            response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
 
 
             return response;
@@ -788,7 +808,7 @@ namespace VERIDATA.BLL.Context
             //    Type = RemarksType.UAN
 
             //};
-             await _candidateContext.UpdateCandidateUANData(reqObj.appointeeId, reqObj.UanNumber);
+            await _candidateContext.UpdateCandidateUANData(reqObj.appointeeId, reqObj.UanNumber);
 
             var apiProvider = await _masterContext.GetApiProviderData(ApiType.EPFO);
             await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.UANVERIFICATIONSTART);
@@ -1163,7 +1183,7 @@ namespace VERIDATA.BLL.Context
                 IsPensionGap = _IsPensionGapIdentified,
                 UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? appointeedetail?.UANNumber : reqObj?.PassbookDetails?.PfUan,
                 IsEmployementVarified = IsValid,
-                IsFNameVarified= _isFatherNameValidate,
+                IsFNameVarified = _isFatherNameValidate,
             };
             CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
             {
@@ -1254,6 +1274,33 @@ namespace VERIDATA.BLL.Context
         {
             return epsResults?.Any(result => result.HasEpsContribution) ?? false;
         }
+        public async Task<GetAadharMobileLinkDetails> GetAadharMobileLinkStatus(string aadharNo, string mobileNo, int userId)
+        {
 
+            GetAadharMobileLinkDetails response = new();
+            GetAadharMobileLinkDetails _apiResponse = new();
+            var apiProvider = await _masterContext.GetApiProviderData(ApiType.Adhaar);
+            if (apiProvider?.ToLower() == ApiProviderType.Karza)
+            {
+                _apiResponse = await _karzaApiContext.GetMobileAadharLinkStatus(aadharNo, mobileNo, userId);
+            }
+            //if (apiProvider?.ToLower() == ApiProviderType.SurePass)
+            //{
+            //    _apiResponse = await _surepassApiContext.GetMobileAadharLinkStatus(reqObj.client_id, reqObj.otp, reqObj.userId);
+            //}
+
+
+            response.StatusCode = _apiResponse.StatusCode;
+            if (_apiResponse.StatusCode != HttpStatusCode.OK)
+            {
+                response.UserMessage = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "UIDAI (Aadhar)");
+                response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
+            }
+            else
+            {
+                response = _apiResponse;
+            }
+            return response;
+        }
     }
 }

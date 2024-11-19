@@ -906,7 +906,7 @@ namespace VERIDATA.BLL.Context
         public async Task VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj)
         {
             bool? isDataValid = false;
-            var isDataVerificationReq = await VefifyDocValidityManual(reqObj.AppointeeId, reqObj.VerificationUpdates, reqObj.UserId);
+            var isDataVerificationReq = await VefifyDocValidityManual(reqObj.AppointeeId, reqObj.VerificationSubCategoryList, reqObj.UserId);
             if (!string.IsNullOrEmpty(reqObj.Remarks))
             {
                 List<ReasonRemarks> Remarks = new();
@@ -920,12 +920,14 @@ namespace VERIDATA.BLL.Context
                 switch (reqObj.VerificationCategory)
                 {
                     case ManualVerificationType.FathersName:
-                        isDataValid = await VefifyFNameValidityManual(reqObj.AppointeeId, reqObj.VerificationUpdates, reqObj.UserId);
+                        var verificationQuestion = reqObj.VerificationSubCategoryList?.FirstOrDefault().VerificationQueries;
+                        isDataValid = await VefifyFNameValidityManual(reqObj.AppointeeId, verificationQuestion, reqObj.UserId);
                         updatedAppointeeDetails = await _dbContextCandiate.VefifyAppinteeFathersNameManualById(reqObj.AppointeeId, isDataValid, reqObj.VerificationCategory, reqObj.UserId);
                         break;
                     case ManualVerificationType.EpfoPassbook:
-                        isPensionApplicable = reqObj.VerificationUpdates?.FirstOrDefault(x => x.FieldName == ManualVerificationFieldType.PensionApplicable)?.Value ?? false;
-                        isDataValid = await VefifyPassBookValidityManual(reqObj.AppointeeId, reqObj.VerificationUpdates, isPensionApplicable, reqObj.UserId);
+                        var PassbookQuestion = reqObj.VerificationSubCategoryList?.Where(x => x.SubCategory == "EPFPSSBKMNL").FirstOrDefault();
+                        isPensionApplicable = PassbookQuestion?.VerificationQueries?.FirstOrDefault(x => x.FieldName == ManualVerificationFieldType.PensionApplicable)?.Value ?? false;
+                        isDataValid = await VefifyPassBookValidityManual(reqObj.AppointeeId, PassbookQuestion?.VerificationQueries, isPensionApplicable, reqObj.UserId);
                         var pfVerificationReqObj = new AppointeePfVerificationRequest
                         {
                             AppointeeId = reqObj.AppointeeId,
@@ -949,58 +951,72 @@ namespace VERIDATA.BLL.Context
 
             }
         }
-        private async Task<bool> VefifyDocValidityManual(int appointeeId, List<VerificationUpdate>? docValidity, int userId)
+        private async Task<bool> VefifyDocValidityManual(int appointeeId, List<VerificationUpdatesubCategory>? docValidity, int userId)
         {
             List<ReasonRemarks> reasonList = new();
             bool isVerificationRequired = true;
             // Dynamically update each field specified in the request
-            foreach (var update in docValidity)
+            foreach (var obj in docValidity)
             {
-                switch (update.FieldName)
+                foreach (var questions in obj?.VerificationQueries)
                 {
-                    case ManualVerificationFieldType.DocIncomplete:
-                        if (!update.Value)
-                        {
-                            reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INCMPLTDOC, Inputdata = string.Empty, Fetcheddata = string.Empty });
-                            isVerificationRequired = false;
-                        }
-                        break;
-                    case ManualVerificationFieldType.DocInvalid:
-                        if (!update.Value)
-                        {
-                            reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDDOC, Inputdata = string.Empty, Fetcheddata = string.Empty });
-                            isVerificationRequired = false;
+                    switch (questions.FieldName)
+                    {
+                        case ManualVerificationFieldType.DocIncomplete:
+                            if (!questions.Value)
+                            {
+                                reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INCMPLTDOC, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                                isVerificationRequired = false;
+                            }
+                            break;
+                        case ManualVerificationFieldType.DocInvalid:
+                            if (!questions.Value)
+                            {
+                                reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDDOC, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                                isVerificationRequired = false;
 
-                        }
-                        break;
-                    default:
-                        throw new Exception($"Unknown field name: {update.FieldName}");
+                            }
+                            break;
+
+                    }
+                }
+                if (!isVerificationRequired)
+                {
+                    return false;
                 }
             }
 
             if (!isVerificationRequired)
             {
-                string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId);
-                WorkFlowDataRequest _WorkFlowDataRequest = new();
-                int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
-
-                _WorkFlowDataRequest.appointeeId = appointeeId;
-                _WorkFlowDataRequest.remarks = remarks;
-                _WorkFlowDataRequest.workflowState = _stateId;
-                _WorkFlowDataRequest.approvalStatus = WorkFlowStatusType.ReuploadDocument;
-                _WorkFlowDataRequest.userId = userId;
-
-                await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
-                await RemarksMailSend(appointeeId, remarks, RemarksType.Manual, userId);
+                await docReuploadRequested(appointeeId, userId, reasonList);
             }
 
             return isVerificationRequired;
 
         }
-        private async Task<bool> VefifyFNameValidityManual(int AppointeeId, List<VerificationUpdate>? DocValidity, int userId)
+
+        private async Task docReuploadRequested(int appointeeId, int userId, List<ReasonRemarks> reasonList)
+        {
+            string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId);
+            WorkFlowDataRequest _WorkFlowDataRequest = new();
+            int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
+
+            _WorkFlowDataRequest.appointeeId = appointeeId;
+            _WorkFlowDataRequest.remarks = remarks;
+            _WorkFlowDataRequest.workflowState = _stateId;
+            _WorkFlowDataRequest.approvalStatus = WorkFlowStatusType.ReuploadDocument;
+            _WorkFlowDataRequest.userId = userId;
+
+            await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
+            await RemarksMailSend(appointeeId, remarks, RemarksType.Manual, userId);
+            await _dbContextActivity.PostActivityDetails(appointeeId, userId, ActivityLog.DOCUMENTREUPLOADRQST);
+        }
+
+        private async Task<bool> VefifyFNameValidityManual(int appointeeId, List<VerificationUpdate>? DocValidity, int userId)
         {
             List<ReasonRemarks> ReasonList = new();
             bool isDataValid = true;
+            string activityType = string.Empty;
             // Dynamically update each field specified in the request
             foreach (var update in DocValidity)
             {
@@ -1011,27 +1027,34 @@ namespace VERIDATA.BLL.Context
                         {
                             ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.CAREOFNAME, Inputdata = string.Empty, Fetcheddata = string.Empty });
                             isDataValid = false;
+
                         }
                         break;
-                    default:
-                        throw new Exception($"Unknown field name: {update.FieldName}");
+
                 }
             }
             // Save the changes to the database
             if (!isDataValid)
             {
-                string Remarks = await _dbContextCandiate.UpdateRemarksByType(AppointeeId, ReasonList, RemarksType.Manual, userId);
-                await RemarksMailSend(AppointeeId, Remarks, RemarksType.Manual, userId);
+                string Remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, ReasonList, RemarksType.Manual, userId);
+                await RemarksMailSend(appointeeId, Remarks, RemarksType.Manual, userId);
+                activityType = ActivityLog.MNLFTHRVERIFLD;
+                await docReuploadRequested(appointeeId, userId, ReasonList);
             }
-
+            else
+            {
+                activityType = ActivityLog.MNLFTHRVERIFIED;
+            }
+            await _dbContextActivity.PostActivityDetails(appointeeId, userId, activityType);
             return isDataValid;
         }
 
-        private async Task<bool> VefifyPassBookValidityManual(int AppointeeId, List<VerificationUpdate>? DocValidity, bool isPensionApplicable, int userId)
+        private async Task<bool> VefifyPassBookValidityManual(int appointeeId, List<VerificationUpdate>? docValidity, bool isPensionApplicable, int userId)
         {
             List<ReasonRemarks> ReasonList = new();
             bool isDataValid = true;
-            foreach (var update in DocValidity)
+            string activityType = string.Empty;
+            foreach (var update in docValidity)
             {
                 switch (update.FieldName.ToLower())
                 {
@@ -1042,17 +1065,22 @@ namespace VERIDATA.BLL.Context
                             isDataValid = false;
                         }
                         break;
-                    default:
-                        throw new Exception($"Unknown field name: {update.FieldName}");
+
                 }
             }
             // Save the changes to the database
             if (!isDataValid)
             {
-                string Remarks = await _dbContextCandiate.UpdateRemarksByType(AppointeeId, ReasonList, RemarksType.Manual, userId);
-                await RemarksMailSend(AppointeeId, Remarks, RemarksType.Manual, userId);
+                string Remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, ReasonList, RemarksType.Manual, userId);
+                await RemarksMailSend(appointeeId, Remarks, RemarksType.Manual, userId);
+                activityType = ActivityLog.MNLUANVERIFLD;
+                await docReuploadRequested(appointeeId, userId, ReasonList);
             }
-
+            else
+            {
+                activityType = ActivityLog.MNLUANERICMPLTE;
+            }
+            await _dbContextActivity.PostActivityDetails(appointeeId, userId, activityType);
             return isDataValid;
 
 
@@ -1119,51 +1147,30 @@ namespace VERIDATA.BLL.Context
             return _underProcessdata;
         }
 
-        public async Task PostAppointeeFileDetailsAsync(AppointeeReUploadFilesAfterSubmitRequest AppointeeFileDetailsReupload)
+        public async Task PostAppointeeFileReuploadDetailsAsync(AppointeeReUploadFilesAfterSubmitRequest AppointeeFileDetailsReupload)
         {
-            _ = _aadhaarConfig.EncriptKey;
             int appointeeId = AppointeeFileDetailsReupload.AppointeeId;
             AppointeeDetails? _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
-            string mailType = string.Empty;
-            if (_appointeedetails.IsProcessed != true)
+            if (_appointeedetails?.IsProcessed != true && _appointeedetails?.IsSubmit == true)
             {
-                bool _isSubmit = _appointeedetails?.IsSubmit ?? false;
-                if (_appointeedetails != null && !_isSubmit)
+                await _fileContext.postappointeeReUploadedFiles(AppointeeFileDetailsReupload);
+                var _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
+                await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(new WorkFlowDataRequest
                 {
-                    await _fileContext.postappointeeReUploadedFiles(AppointeeFileDetailsReupload);
-                    // var isManual = _appointeedetails?.IsPassbookFetch == true || string.IsNullOrEmpty(_appointeedetails.UANNumber) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
-                    var isManual = _appointeedetails?.IsFNameVarified == true || string.IsNullOrEmpty(_appointeedetails.UANNumber);
-                    await _dbContextCandiate.UpdateAppointeeSubmit(appointeeId, AppointeeFileDetailsReupload.IsSubmit ?? false, isManual);
-                    mailType = MailType.Submit;
-                    if (isManual == false)
-                    {
-                        WorkFlowDataRequest _WorkFlowDataRequest = new();
-                        int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
-                        _WorkFlowDataRequest.appointeeId = appointeeId;
-                        _WorkFlowDataRequest.remarks = string.Empty;
-                        _WorkFlowDataRequest.workflowState = _stateId;
-                        _WorkFlowDataRequest.approvalStatus = WorkFlowStatusType.ReuploadDocument;
-                        _WorkFlowDataRequest.userId = AppointeeFileDetailsReupload.UserId;
+                    appointeeId = AppointeeFileDetailsReupload.AppointeeId,
+                    remarks = string.Empty,
+                    workflowState = _stateId,
+                    approvalStatus = WorkFlowStatusType.ReuploadDocument,
+                    userId = AppointeeFileDetailsReupload.UserId
+                });
 
-                        await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
-                    }
-                }
-                if ((AppointeeFileDetailsReupload.IsSubmit ?? false) && !_isSubmit)
-                {
-
-                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsPanVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false))
-                    {
-                        mailType = MailType.AutoApprove;
-                        await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeFileDetailsReupload?.UserId ?? 0, true);//isapprove set true
-
-                    }
-                }
-
-                await PostMailFileSubmisstionSuccess(_appointeedetails.AppointeeId ?? 0, AppointeeFileDetailsReupload?.UserId ?? 0, mailType);
-
+                await _dbContextActivity.PostActivityDetails(
+                    AppointeeFileDetailsReupload?.AppointeeId ?? 0,
+                    AppointeeFileDetailsReupload?.UserId ?? 0,
+                    ActivityLog.DOCUMENTREUPLED
+                );
             }
 
-            await _dbContextActivity.PostActivityDetails(AppointeeFileDetailsReupload?.AppointeeId ?? 0, AppointeeFileDetailsReupload?.UserId ?? 0, ActivityLog.DATASBMT);
         }
     }
 

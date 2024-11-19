@@ -18,7 +18,7 @@ namespace VERIDATA.Model.Request
         public string? Remarks { get; set; }
 
         [Required]
-        public List<VerificationUpdate>? VerificationUpdates { get; set; }
+        public List<VerificationUpdatesubCategory>? VerificationSubCategoryList { get; set; }
     }
 
     public class VerificationUpdate
@@ -27,5 +27,12 @@ namespace VERIDATA.Model.Request
         public string? FieldName { get; set; }
         [Required]
         public bool Value { get; set; }
+    }
+    public class VerificationUpdatesubCategory
+    {
+        [Required]
+        public string? SubCategory { get; set; }
+        [Required]
+        public List<VerificationUpdate>? VerificationQueries { get; set; }
     }
 }

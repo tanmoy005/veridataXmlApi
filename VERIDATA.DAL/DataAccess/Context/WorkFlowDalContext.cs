@@ -806,6 +806,8 @@ namespace VERIDATA.DAL.DataAccess.Context
         {
             WorkflowApprovalStatusMaster? approvalState = new();
             int _reprocessCount = 0;
+
+
             List<WorkflowApprovalStatusMaster> getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
             if (!string.IsNullOrEmpty(WorkFlowRequest.approvalStatus))
             {
@@ -823,8 +825,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                     await AppointeeWorkflowReProcessdAsync(WorkFlowRequest.appointeeId, approvalState.AppvlStatusId, WorkFlowRequest.userId);
                 }
             }
-
             WorkFlowDetails? _workFlow_det = await _dbContextClass.WorkFlowDetails.FirstOrDefaultAsync(x => x.AppointeeId == WorkFlowRequest.appointeeId && x.ActiveStatus == true);
+
             if (_workFlow_det != null)
             {
                 _reprocessCount = _workFlow_det?.ReprocessCount ?? 0;
@@ -840,8 +842,10 @@ namespace VERIDATA.DAL.DataAccess.Context
 
                 // await _dbContextClass.SaveChangesAsync();
             }
-
-            await workflowdataUpdate(WorkFlowRequest, approvalState, _reprocessCount, _workFlow_det);
+            if (WorkFlowRequest?.approvalStatus?.ToLower()?.Trim() != _workFlow_det?.StateAlias?.ToLower()?.Trim())
+            {
+                await workflowdataUpdate(WorkFlowRequest, approvalState, _reprocessCount, _workFlow_det);
+            }
         }
         private async Task AppointeeWorkflowReProcessdAsync(int appointeeId, int StatusId, int userId)
         {

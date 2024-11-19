@@ -662,71 +662,7 @@ namespace VERIDATA.BLL.Context
         /// 
         public async Task postappointeeUploadedFiles(AppointeeFileDetailsRequest AppointeeDetails)
         {
-
-
-            // mGhosh new code
-
-            if (AppointeeDetails != null)
-            {
-                List<IFormFile>? fileUploaded = AppointeeDetails.FileDetails;
-                int _appointeeId = AppointeeDetails?.AppointeeId ?? 0;
-
-                if (fileUploaded?.Count > 0 && _appointeeId != 0)
-                {
-                    List<AppointeeUploadDetails>? _prevDocList = await _appointeeContext.GetAppinteeUploadDetails(_appointeeId);
-                    if (!string.IsNullOrEmpty(AppointeeDetails?.FileUploaded ?? string.Empty))
-                    {
-                        List<FileUploadDataModel>? _Uploadedfiledetails = JsonConvert.DeserializeObject<List<FileUploadDataModel>>(AppointeeDetails?.FileUploaded).ToList() ?? new List<FileUploadDataModel>();
-
-                        foreach (IFormFile obj in fileUploaded)
-                        {
-                            long? fileLength = obj?.Length;
-                            string? mimetype = obj?.ContentType?.ToLower();
-                            FileUploadDataModel? fileDetails = _Uploadedfiledetails?.Find(x => x.fileName == obj?.FileName && x.fileLength == fileLength && x.isFileUploaded);
-
-                            if (fileDetails != null)
-                            {
-
-
-
-                                // Read the file into a byte array
-                                using (var memoryStream = new MemoryStream())
-                                {
-                                    await obj.CopyToAsync(memoryStream);
-                                    var fileContent = memoryStream.ToArray();
-
-                                    AppointeeUploadDetails uploaddata = new()
-                                    {
-                                        AppointeeId = AppointeeDetails.AppointeeId,
-                                        UploadTypeId = fileDetails.uploadTypeId,
-                                        UploadTypeCode = fileDetails.uploadTypeAlias,
-                                        FileName = obj.FileName,
-                                        // Keep the UploadPath as not null if needed for other data handling
-                                        UploadPath = null, // You can maintain a placeholder path if necessary
-                                        IsPathRefered = CheckType.yes,
-                                        MimeType = mimetype,
-                                        ActiveStatus = true,
-                                        CreatedBy = AppointeeDetails.UserId,
-                                        CreatedOn = DateTime.Now,
-                                        Content = fileContent // Store the file content here
-                                    };
-
-                                    AppointeeUploadDetails? _prevdocDetails = _prevDocList?.Where(x => x.UploadTypeId == fileDetails.uploadTypeId)?.FirstOrDefault();
-
-                                    await _appointeeContext.uploadFilesNUpdatePrevfiles(uploaddata, _prevdocDetails, AppointeeDetails.UserId);
-                                    if (_prevdocDetails != null)
-                                    {
-                                        // Optional: Remove old file if needed
-                                        bool file_removed = RemoveDocFile(_prevdocDetails.UploadPath);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
+            await uploadFileDetailsByAppointeeId(AppointeeDetails.FileUploaded, AppointeeDetails.FileDetails, AppointeeDetails.UserId, AppointeeDetails.AppointeeId);
 
         }
         public async Task postAppointeePassbookUpload(AppointeeDataSaveInFilesRequset UploadDetails)
@@ -861,31 +797,32 @@ namespace VERIDATA.BLL.Context
 
         public async Task postappointeeReUploadedFiles(AppointeeReUploadFilesAfterSubmitRequest AppointeeDetails)
         {
+            await uploadFileDetailsByAppointeeId(AppointeeDetails.FileUploaded, AppointeeDetails.FileDetails, AppointeeDetails.UserId, AppointeeDetails.AppointeeId);
 
+        }
 
-            if (AppointeeDetails != null)
+        private async Task uploadFileDetailsByAppointeeId(string? uploadedFileDetails, List<IFormFile>? fileDetails, int userId, int appointeeId)
+        {
+            if (!string.IsNullOrEmpty(uploadedFileDetails))
             {
-                List<IFormFile>? fileUploaded = AppointeeDetails.FileDetails;
-                int _appointeeId = AppointeeDetails?.AppointeeId ?? 0;
+                List<IFormFile>? fileUploaded = fileDetails;
+                int _appointeeId = appointeeId;
 
                 if (fileUploaded?.Count > 0 && _appointeeId != 0)
                 {
                     List<AppointeeUploadDetails>? _prevDocList = await _appointeeContext.GetAppinteeUploadDetails(_appointeeId);
-                    if (!string.IsNullOrEmpty(AppointeeDetails?.FileUploaded ?? string.Empty))
+                    if (!string.IsNullOrEmpty(uploadedFileDetails ?? string.Empty))
                     {
-                        List<FileUploadDataModel>? _Uploadedfiledetails = JsonConvert.DeserializeObject<List<FileUploadDataModel>>(AppointeeDetails?.FileUploaded).ToList() ?? new List<FileUploadDataModel>();
+                        List<FileUploadDataModel>? _Uploadedfiledetails = JsonConvert.DeserializeObject<List<FileUploadDataModel>>(uploadedFileDetails).ToList() ?? new List<FileUploadDataModel>();
 
                         foreach (IFormFile obj in fileUploaded)
                         {
                             long? fileLength = obj?.Length;
                             string? mimetype = obj?.ContentType?.ToLower();
-                            FileUploadDataModel? fileDetails = _Uploadedfiledetails?.Find(x => x.fileName == obj?.FileName && x.fileLength == fileLength && x.isFileUploaded);
+                            FileUploadDataModel? _fileDetails = _Uploadedfiledetails?.Find(x => x.fileName == obj?.FileName && x.fileLength == fileLength && x.isFileUploaded);
 
-                            if (fileDetails != null)
+                            if (_fileDetails != null)
                             {
-
-
-
                                 // Read the file into a byte array
                                 using (var memoryStream = new MemoryStream())
                                 {
@@ -894,22 +831,22 @@ namespace VERIDATA.BLL.Context
 
                                     AppointeeUploadDetails uploaddata = new()
                                     {
-                                        AppointeeId = AppointeeDetails.AppointeeId,
-                                        UploadTypeId = fileDetails.uploadTypeId,
-                                        UploadTypeCode = fileDetails.uploadTypeAlias,
+                                        AppointeeId = appointeeId,
+                                        UploadTypeId = _fileDetails.uploadTypeId,
+                                        UploadTypeCode = _fileDetails.uploadTypeAlias,
                                         FileName = obj.FileName,
-                                        UploadPath = null, 
+                                        UploadPath = null,
                                         IsPathRefered = CheckType.yes,
                                         MimeType = mimetype,
                                         ActiveStatus = true,
-                                        CreatedBy = AppointeeDetails.UserId,
+                                        CreatedBy = userId,
                                         CreatedOn = DateTime.Now,
                                         Content = fileContent // Store the file content here
                                     };
 
-                                    AppointeeUploadDetails? _prevdocDetails = _prevDocList?.Where(x => x.UploadTypeId == fileDetails.uploadTypeId)?.FirstOrDefault();
+                                    AppointeeUploadDetails? _prevdocDetails = _prevDocList?.Where(x => x.UploadTypeId == _fileDetails.uploadTypeId)?.FirstOrDefault();
 
-                                    await _appointeeContext.uploadFilesNUpdatePrevfiles(uploaddata, _prevdocDetails, AppointeeDetails.UserId);
+                                    await _appointeeContext.uploadFilesNUpdatePrevfiles(uploaddata, _prevdocDetails, userId);
                                     if (_prevdocDetails != null)
                                     {
                                         // Optional: Remove old file if needed
@@ -921,9 +858,6 @@ namespace VERIDATA.BLL.Context
                     }
                 }
             }
-
-
-
         }
 
         public async Task<FileDetailsResponse> getFiledetailsByFileUploadId(int appointeeId, int? uploadId)
@@ -1023,7 +957,7 @@ namespace VERIDATA.BLL.Context
             return response;
         }
 
-       
+
         //private async Task<bool> OfflineKycDigitalSignatureCheck(string? xmlFileData)
         //{
         //    bool isValid = false;
