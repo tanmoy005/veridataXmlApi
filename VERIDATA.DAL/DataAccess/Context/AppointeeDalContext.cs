@@ -191,38 +191,42 @@ namespace VERIDATA.DAL.DataAccess.Context
                 await _dbContextClass.SaveChangesAsync();
             }
         }
-        public async Task uploadFilesNUpdatePrevfiles(AppointeeUploadDetails uploadDetails, AppointeeUploadDetails prevDocDetails, int userId)
+        //public async Task uploadFilesNUpdatePrevfiles(AppointeeUploadDetails uploadDetails, AppointeeUploadDetails prevDocDetails, int userId)
+        //{
+        //    //using var transaction = _dbContextClass.Database.BeginTransaction();
+        //    //try
+        //    //{
+        //    //await uploadfiles(uploadDetails);
+        //    await RemovePrevfiles(prevDocDetails, userId);
+        //    //    transaction.Commit();
+        //    //}
+        //    //catch (Exception)
+        //    //{
+        //    //    throw;
+        //    //}
+        //}
+        public async Task Uploadfiles(List<AppointeeUploadDetails> uploadDetails)
         {
-            //using var transaction = _dbContextClass.Database.BeginTransaction();
-            //try
-            //{
-            await uploadfiles(uploadDetails);
-            await RemovePrevfiles(prevDocDetails, userId);
-            //    transaction.Commit();
-            //}
-            //catch (Exception)
-            //{
-            //    throw;
-            //}
-        }
-        private async Task uploadfiles(AppointeeUploadDetails uploadDetails)
-        {
-            if (uploadDetails != null)
+            if (uploadDetails.Count > 0)
             {
-                _ = _dbContextClass.AppointeeUploadDetails.Add(uploadDetails);
+                _dbContextClass.AppointeeUploadDetails.AddRange(uploadDetails);
                 _ = await _dbContextClass.SaveChangesAsync();
             }
 
         }
-        private async Task RemovePrevfiles(AppointeeUploadDetails prevDocDetails, int userId)
+        public async Task RemovePrevfiles(List<AppointeeUploadDetails> prevDocDetails, int userId)
         {
 
-            if (prevDocDetails != null)
+            if (prevDocDetails.Count > 0)
             {
-                prevDocDetails.ActiveStatus = false;
-                prevDocDetails.UpdatedOn = DateTime.Now;
-                prevDocDetails.UpdatedBy = userId;
-                _ = await _dbContextClass.SaveChangesAsync();
+                foreach (var doc in prevDocDetails)
+                {
+                    doc.ActiveStatus = false;
+                    doc.UpdatedOn = DateTime.Now;
+                    doc.UpdatedBy = userId;
+                }
+
+                await _dbContextClass.SaveChangesAsync();
             }
 
         }

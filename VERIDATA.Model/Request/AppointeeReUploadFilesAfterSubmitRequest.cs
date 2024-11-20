@@ -18,6 +18,6 @@ namespace VERIDATA.Model.Request
         public int UserId { get; set; }
         public List<IFormFile>? FileDetails { get; set; }
         public string? FileUploaded { get; set; }
-        public bool? IsSubmit { get; set; }
+        //public bool? IsSubmit { get; set; }
     }
 }

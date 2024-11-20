@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
+using VERIDATA.DAL.utility;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
@@ -1204,14 +1205,13 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                join c in _dbContextClass.AppointeeConsentMapping
                                                                                on b.AppointeeId equals c.AppointeeId into consentgrouping
                                                                                from c in consentgrouping.Where(x => x.ActiveStatus == true).DefaultIfEmpty()
-                                                                               join h in _dbContextClass.WorkFlowDetailsHist
-                                                                               on w.AppointeeId equals h.AppointeeId
+                                                                                   //join h in _dbContextClass.WorkFlowDetailsHist
+                                                                                   //on w.AppointeeId equals h.AppointeeId
                                                                                where wm.AppvlStatusCode == reqObj.FilterType
                                                                                && (p.IsProcessed.Equals(false) || p.IsProcessed == null)
                                                                                && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate)
                                                                                && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
                                                                                && b.ActiveStatus == true
-                                                                               && h.StateId==9
                                                                                orderby p.IsSubmit
                                                                                select new ManualVerificationProcessQueryDataResponse
                                                                                {
@@ -1221,8 +1221,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                    IsJoiningDateLapsed = b.DateOfJoining < _CurrDate,
                                                                                    WorkflowCreatedDate = w.CreatedOn,
                                                                                    Status = wm.AppvlStatusDesc,
-                                                                                   VerificationAttempted = _dbContextClass.WorkFlowDetailsHist
-                                                                                       .Count(h => h.AppointeeId == w.AppointeeId) 
+                                                                                   VerificationAttempted = reqObj.FilterType == WorkFlowStatusType.ManualReVerification ? _dbContextClass.WorkFlowDetailsHist.Where(x => x.StateAlias.Trim() == WorkFlowStatusType.ManualReVerification && x.AppointeeId == b.AppointeeId).ToList().Count : 0
+
                                                                                };
 
             List<ManualVerificationProcessQueryDataResponse> list = await querydata.ToListAsync().ConfigureAwait(false);

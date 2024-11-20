@@ -85,7 +85,7 @@ namespace VERIDATA.BLL.Context
                     }
                     if (appointeedetail?.MobileNo != phoneNo && !string.IsNullOrEmpty(phoneNo?.ToUpper()))
                     {
-                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANMOBILE, Inputdata = appointeedetail?.MobileNo, Fetcheddata = maskedPhoneNumber });
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.MOBILENTMATCH, Inputdata = appointeedetail?.MobileNo, Fetcheddata = maskedPhoneNumber });
                     }
                 }
                 else
@@ -661,6 +661,7 @@ namespace VERIDATA.BLL.Context
                     string nameNode = personalInfoNode.SelectSingleNode("@name").Value;
                     string genderNode = personalInfoNode.SelectSingleNode("@gender").Value;
                     string dobNode = personalInfoNode.SelectSingleNode("@dob").Value;
+                    string hashMobileNo = personalInfoNode.SelectSingleNode("@m").Value;
                     string careofNode = personalAddresNode.SelectSingleNode("@careof").Value;
                     var lastFourDigit = new string(referenceId.Where(char.IsDigit).Take(4).ToArray());
                     response.Name = nameNode;
@@ -668,6 +669,8 @@ namespace VERIDATA.BLL.Context
                     response.CareOf = careofNode;
                     response.Gender = genderNode;
                     response.AadharNumber = $"{"XXXXXXXX"}{lastFourDigit}";
+                    response.MobileNumberHash = hashMobileNo?.Trim();
+                    //response.AadharNumber = referenceId;
 
                 }
             }
@@ -683,34 +686,35 @@ namespace VERIDATA.BLL.Context
             AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.AppointeeId);
             if (reqObj.isValidAdhar)
             {
-                var _aadharMobileLinkDetails = await GetAadharMobileLinkStatus(reqObj?.AadharDetails?.AadharNumber, appointeedetail?.MobileNo, reqObj?.UserId ?? 0);
-                if (_aadharMobileLinkDetails.StatusCode == HttpStatusCode.OK)
-                {
-                    if (_aadharMobileLinkDetails?.validId ?? false)
-                    {
-                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDADHAR, Inputdata = reqObj?.AadharDetails?.AadharNumber, Fetcheddata = string.Empty });
-                    }
-                    if (_aadharMobileLinkDetails?.validMobileNo ?? false)
-                    {
-                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PHNOTPINWITHADH, Inputdata = appointeedetail?.MobileNo, Fetcheddata = string.Empty });
-                    }
+                var lastAdhar4Digit = reqObj.AadharDetails?.AadharNumber?.Trim()?.LastOrDefault().ToString();
+                var isMobileValid = CommonUtility.CheckMobileNumber(appointeedetail.MobileNo, reqObj.AadharDetails?.MobileNumberHash, reqObj?.sharePhrase ?? "", lastAdhar4Digit);
+                //var _aadharMobileLinkDetails = await GetAadharMobileLinkStatus(reqObj?.AadharDetails?.AadharNumber, appointeedetail?.MobileNo, reqObj?.UserId ?? 0);
+                //if (_aadharMobileLinkDetails.StatusCode == HttpStatusCode.OK)
+                //{
+                //    if (_aadharMobileLinkDetails?.validId ?? false)
+                //    {
+                //        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDADHAR, Inputdata = reqObj?.AadharDetails?.AadharNumber, Fetcheddata = string.Empty });
+                //    }
+                
 
-                }
-                else
-                {
-                    response.IsValid = false;
-                    response.Remarks = _aadharMobileLinkDetails?.remarks;
-                    return response;
-                }
+                //}
+                //else
+                //{
+                //    response.IsValid = false;
+                //    response.Remarks = _aadharMobileLinkDetails?.remarks;
+                //    return response;
+                //}
 
                 string? aadharName = reqObj?.AppointeeAadhaarName?.Trim();
                 string? appointeeAadhaarFullName = reqObj?.AadharDetails?.Name;
                 string? appointeeAadhaarGender = reqObj?.AadharDetails?.Gender;
                 string? appointeeAadhaarDOB = reqObj?.AadharDetails?.Dob;
                 string? appointeeCareOf = reqObj?.AadharDetails?.CareOf;
+                string? appointeeAadhaarNumber = reqObj?.AadharDetails?.AadharNumber;
 
                 _aadharData.AadhaarName = aadharName;
-                _aadharData.AadhaarNumber = reqObj?.AadharDetails?.AadharNumber;
+                //_aadharData.AadhaarNumber = reqObj?.AppointeeAadhaarNo;
+                _aadharData.AadhaarNumber = appointeeAadhaarNumber;
                 _aadharData.NameFromAadhaar = appointeeAadhaarFullName;
                 _aadharData.GenderFromAadhaar = appointeeAadhaarGender;
                 _aadharData.DobFromAadhaar = appointeeAadhaarDOB;
@@ -721,25 +725,25 @@ namespace VERIDATA.BLL.Context
                     bool hasCoName = !string.IsNullOrEmpty(appointeeCareOf);
                     _ = !hasCoName || appointeedetail?.MemberName?.ToUpper() == appointeeCareOf;
 
-                    if (aadharName?.ToUpper() == appointeeAadhaarFullName?.ToUpper() &&
+                    if (isMobileValid && aadharName?.ToUpper() == appointeedetail.AppointeeName?.Trim()?.ToUpper() &&
                         appointeedetail?.Gender?.ToUpper() == appointeeAadhaarGender?.ToUpper() && appointeedetail?.DateOfBirth == _inptdob)//&& validateCareOfName)
 
                     {
 
-                        if (appointeedetail.AppointeeName?.Trim()?.ToUpper() != appointeeAadhaarFullName?.Trim()?.ToUpper())
-                        {
-                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail.AppointeeName, Fetcheddata = appointeeAadhaarFullName });
-                        }
+                        //if (appointeedetail.AppointeeName?.Trim()?.ToUpper() != appointeeAadhaarFullName?.Trim()?.ToUpper())
+                        //{
+                        //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail.AppointeeName, Fetcheddata = appointeeAadhaarFullName });
+                        //}
 
                         IsValid = true;
                     }
                     else
                     {
 
-                        //if (aadharName?.ToUpper() != appointeeAadhaarFullName?.ToUpper())
-                        //{
-                        //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = aadharName, Fetcheddata = appointeeAadhaarFullName });
-                        //}
+                        if (!isMobileValid)
+                        {
+                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.MOBILENTMATCH, Inputdata = appointeedetail?.MobileNo, Fetcheddata = string.Empty });
+                        }
                         if (appointeedetail?.Gender?.ToUpper() != appointeeAadhaarGender?.ToUpper())
                         {
                             ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.GENDER, Inputdata = appointeedetail?.Gender, Fetcheddata = appointeeAadhaarGender });
@@ -1085,22 +1089,22 @@ namespace VERIDATA.BLL.Context
             return Response;
         }
 
-        private async Task PostPfPassbookData(GetPassbookDetailsRequest reqObj, string apiResponse, string apiProvider)
-        {
+        //private async Task PostPfPassbookData(GetPassbookDetailsRequest reqObj, string apiResponse, string apiProvider)
+        //{
 
-            AppointeeDataSaveInFilesRequset uploadreq = new()
-            {
-                AppointeeId = reqObj.AppointeeId,
-                AppointeeCode = reqObj?.AppointeeCode ?? "DEFAULT",
-                FileTypeAlias = FileTypealias.PFPassbook,
-                FileSubType = apiProvider,
-                FileUploaded = apiResponse,
-                UserId = reqObj.UserId,
-                mimetype = "json"
-            };
+        //    AppointeeDataSaveInFilesRequset uploadreq = new()
+        //    {
+        //        AppointeeId = reqObj.AppointeeId,
+        //        AppointeeCode = reqObj?.AppointeeCode ?? "DEFAULT",
+        //        FileTypeAlias = FileTypealias.PFPassbook,
+        //        FileSubType = apiProvider,
+        //        FileUploaded = apiResponse,
+        //        UserId = reqObj.UserId,
+        //        mimetype = "json"
+        //    };
 
-            await _fileService.postAppointeePassbookUpload(uploadreq);
-        }
+        //    await _fileService.postAppointeePassbookUpload(uploadreq);
+        //}
         private async Task SavePfPassbookData(GetPassbookDetailsRequest reqObj, string apiResponse, string apiProvider)
         {
             EmployementHistoryDetails uploadReq = new()

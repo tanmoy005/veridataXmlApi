@@ -8,5 +8,6 @@ namespace VERIDATA.Model.DataAccess
         public string? Gender { get; set; }
         public string? CareOf { get; set; }
         public string? AadharNumber { get; set; }
+        public string? MobileNumberHash { get; set; }
     }
 }

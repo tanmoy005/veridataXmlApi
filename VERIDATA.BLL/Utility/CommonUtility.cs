@@ -313,6 +313,50 @@ namespace VERIDATA.BLL.utility
             }
             return mailtype;
         }
+
+        public static bool CheckMobileNumber(string mobile, string hashMobileNo, string sharePhrase, string aadhaarLast4Digits)
+        {
+            bool isMobileNumberMatched = false;
+            string concatenatedString = mobile + sharePhrase;
+            string hashText = Sha256Hash(concatenatedString);
+            int lastAadhaarChar = int.Parse(aadhaarLast4Digits[^1].ToString());
+            if (lastAadhaarChar > 1)
+            {
+                for (int i = 2; i <= lastAadhaarChar; i++)
+                {
+                    hashText = Sha256Hash(hashText);
+                }
+            }
+
+            //string finalHash = RepeatSha256Hash(initialHash, lastDigit - 1);
+            if (hashText == hashMobileNo)
+            {
+                isMobileNumberMatched = true;
+            }
+            return isMobileNumberMatched;
+        }
+        public static string Sha256Hash(string input)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            }
+        }
+        public static string RepeatSha256Hash(string input, int additionalHashes)
+        {
+            byte[] hashBytes = Encoding.UTF8.GetBytes(input);
+
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                for (int i = 0; i < additionalHashes; i++)
+                {
+                    hashBytes = sha256.ComputeHash(hashBytes);
+                }
+
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            }
+        }
     }
 
 }
