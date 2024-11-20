@@ -1186,7 +1186,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                    AppointeeDetails = p,
                                                                                    AppointeeId = b.AppointeeId,
                                                                                    IsJoiningDateLapsed = b.DateOfJoining < _CurrDate,
-                                                                                   WorkflowCreatedDate = w.CreatedOn
+                                                                                   WorkflowCreatedDate = w.CreatedOn,
+                                                                                   Status=wm.AppvlStatusDesc
                                                                                };
 
             List<ManualVerificationProcessQueryDataResponse> list = await querydata.ToListAsync().ConfigureAwait(false);

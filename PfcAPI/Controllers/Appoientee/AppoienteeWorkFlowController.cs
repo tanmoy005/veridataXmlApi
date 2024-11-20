@@ -656,13 +656,13 @@ namespace PfcAPI.Controllers.Appoientee
             try
 
             {
-                ManualVerificationExcelDataResponse Response = new();
+                ManualVerificationDataResponse Response = new();
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
                 string reportName = $"Manual_Verification_Report_{_currDateString}.xlsx";
 
                 List<ManualVerificationProcessDetailsResponse> _getunderProcessData = Task.Run(async () => await _workflowContext.GetManualVeificationProcessData(reqObj)).GetAwaiter().GetResult();
-
+                Response.ManualVerificationList = _getunderProcessData;
                 if (_getunderProcessData.Count > 0)
                 {
                     List<ManualVerificationExcelDataResponse> excelData = Task.Run(async () => await _reportingContext.GetAppointeeManualVerificationExcelReport(_getunderProcessData)).GetAwaiter().GetResult();
@@ -670,12 +670,12 @@ namespace PfcAPI.Controllers.Appoientee
                     byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportName, string.Empty);
 
                     Filedata _filedata = new() { FileData = exportbytes, FileName = reportName, FileType = "xlsx" };
-                  //  Response.ManualVerificationList = excelData;
+                    
                     Response.Filedata = _filedata;
 
                 }
 
-                return Ok(new BaseResponse<ManualVerificationProcessDetailsResponse>(HttpStatusCode.OK, _getunderProcessData));
+                return Ok(new BaseResponse<ManualVerificationDataResponse>(HttpStatusCode.OK, Response));
             }
             catch (Exception)
             {

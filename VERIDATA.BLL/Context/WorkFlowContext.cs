@@ -982,14 +982,15 @@ namespace VERIDATA.BLL.Context
                 }
                 if (!isVerificationRequired)
                 {
+                    await docReuploadRequested(appointeeId, userId, reasonList);
                     return false;
                 }
             }
 
-            if (!isVerificationRequired)
-            {
-                await docReuploadRequested(appointeeId, userId, reasonList);
-            }
+            //if (!isVerificationRequired)
+            //{
+
+            //}
 
             return isVerificationRequired;
 
@@ -1140,9 +1141,11 @@ namespace VERIDATA.BLL.Context
                 dateOfJoining = row.AppointeeDetails?.DateOfJoining ?? row.UnderProcess?.DateOfJoining,
                 isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                 isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
-                //ConsentStatusCode = row.ConsentStatusId ?? 0,
-                CreatedDate = row.WorkflowCreatedDate
-            }).OrderByDescending(x => x.CreatedDate).ThenBy(y => y.dateOfJoining).ToList();
+                verificationAttempted = row?.VerificationAttempted ?? 0,
+                createdDate = row?.WorkflowCreatedDate,
+                status = row?.Status
+
+            }).OrderByDescending(x => x.createdDate).ThenBy(y => y.dateOfJoining).ToList();
 
             return _underProcessdata;
         }

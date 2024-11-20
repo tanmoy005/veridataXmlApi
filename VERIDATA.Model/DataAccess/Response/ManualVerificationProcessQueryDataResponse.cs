@@ -13,9 +13,9 @@ namespace VERIDATA.Model.DataAccess.Response
         public AppointeeDetails? AppointeeDetails { get; set; }
         public DateTime? WorkflowCreatedDate { get; set; }
         //public int? AppvlStatusId { get; set; }
-        //public int? ConsentStatusId { get; set; }
+        public int? VerificationAttempted { get; set; }
         public int? AppointeeId { get; set; }
         public bool IsJoiningDateLapsed { get; set; }
-        //public bool IsReupload { get; set; }
+        public string? Status { get; set; }
     }
 }

@@ -825,7 +825,7 @@ namespace VERIDATA.BLL.Context
                 dateOfJoining = x.dateOfJoining?.ToShortDateString(),
                 isDocSubmitted = x.isDocSubmitted,
                 isNoIsuueinVerification = x.isNoIsuueinVerification,
-                Status = x.Status
+                Status = x.status
             }).ToList();
 
             return await Task.FromResult(excelDataList);

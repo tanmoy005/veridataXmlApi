@@ -19,8 +19,8 @@ namespace VERIDATA.Model.Response
         public DateTime? dateOfOffer { get; set; }
         public bool? isDocSubmitted { get; set; }
         public bool? isNoIsuueinVerification { get; set; }
-        public DateTime? CreatedDate { get; set; }
-        //public int? ConsentStatusCode { get; set; }
-        public string? Status { get; set; }
+        public DateTime? createdDate { get; set; }
+        public int? verificationAttempted { get; set; }
+        public string? status { get; set; }
     }
 }

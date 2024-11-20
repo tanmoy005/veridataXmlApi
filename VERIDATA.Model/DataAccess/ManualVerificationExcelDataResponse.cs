@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VERIDATA.Model.DataAccess;
+﻿using System.ComponentModel;
 
-namespace VERIDATA.Model.Response
+namespace VERIDATA.Model.DataAccess
 {
     public class ManualVerificationExcelDataResponse
     {
@@ -29,10 +22,6 @@ namespace VERIDATA.Model.Response
         public bool? isNoIsuueinVerification { get; set; } //  Yes/No
         [DisplayName("Status")]
         public string? Status { get; set; }
-
-    
-        public Filedata? Filedata { get; set; }
-
-       // public List<ManualVerificationProcessDetailsResponse>? ManualVerificationList { get; set; }
+        
     }
 }
