@@ -130,6 +130,7 @@
         {
             public const string INACTIVEUAN = "INACTUAN";
             public const string ADHAR = "ADHAR";
+            public const string ADHARMBLE = "ADHARMBLE";
             public const string Others = "OTH";
 
         }

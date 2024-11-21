@@ -80,7 +80,7 @@ namespace PfcAPI.Controllers.RestApi
                             isValidAdhar = true,
                             AppointeeId = reqObj.appointeeId,
                             AppointeeAadhaarName = reqObj.aadharName,
-                            AppointeeAadhaarNo = reqObj.aadharNumber,
+                            //AppointeeAadhaarNo = reqObj.aadharNumber,
                             sharePhrase = reqObj.shareCode
                         };
                         var VerifyAadhar = Task.Run(async () => await _varifyCandidate.VerifyAadharData(VarifyReq)).GetAwaiter().GetResult();

@@ -229,6 +229,10 @@ namespace VERIDATA.BLL.Context
                             reasonType = RemarksType.Adhaar;
                             remarksCode = ReasonCode.DOB;
                             break;
+                        case RemedySubType.ADHARMBLE:
+                            reasonType = RemarksType.Adhaar;
+                            remarksCode = ReasonCode.PHNOTPINWITHADH;
+                            break;
                         default:
                             reasonType = string.Empty;
                             remarksCode = string.Empty;
