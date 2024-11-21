@@ -32,9 +32,12 @@ namespace VERIDATA.BLL.Context
         private readonly IkarzaApiContext _karzaApiContext;
         private readonly IsignzyApiContext _signzyApiContext;
         private readonly IMasterDalContext _masterContext;
+        private readonly IWorkFlowContext _workFlowContext;
 
 
-        public CandidateContext(ApiConfiguration apiConfig, IFileContext fileContext, IAppointeeDalContext appointeeDalContext, IMasterDalContext masterDalContext, IEmailSender emailSender, IActivityDalContext activityDalContext, IkarzaApiContext karzaApiContext, IsignzyApiContext signzyApiContext)
+        public CandidateContext(ApiConfiguration apiConfig, IFileContext fileContext, IAppointeeDalContext appointeeDalContext, 
+            IMasterDalContext masterDalContext, IEmailSender emailSender, IActivityDalContext activityDalContext, 
+            IkarzaApiContext karzaApiContext, IsignzyApiContext signzyApiContext, IWorkFlowContext workFlowContext)
         {
             _apiConfig = apiConfig;
             _fileContext = fileContext;
@@ -44,6 +47,7 @@ namespace VERIDATA.BLL.Context
             _masterContext = masterDalContext;
             _karzaApiContext = karzaApiContext;
             _signzyApiContext = signzyApiContext;
+            _workFlowContext = workFlowContext;
         }
         public async Task<AppointeeDetailsResponse> GetAppointeeDetailsAsync(int appointeeId)
         {
@@ -53,7 +57,7 @@ namespace VERIDATA.BLL.Context
             AppointeeDetailsResponse data = new();
             if (_appointeedetails?.AppointeeDetailsId == null)
             {
-                UnderProcessFileData _appntundrprocessdata = await _appointeeDalContext.GetUnderProcessAppinteeDetailsById(appointeeId);
+               UnderProcessFileData _appntundrprocessdata = await _appointeeDalContext.GetUnderProcessAppinteeDetailsById(appointeeId);
                 if (_appntundrprocessdata?.UnderProcessId != null)
                 {
                     data.AppointeeDetailsId = _appointeedetails?.AppointeeDetailsId ?? 0;
@@ -137,7 +141,8 @@ namespace VERIDATA.BLL.Context
                 data.SaveStep = _appointeedetails?.SaveStep ?? 0;
                 data.IsSubmit = _appointeedetails?.IsSubmit ?? false;
                 data.UserId = _appointeedetails?.CreatedBy ?? 0;
-                //GetFileDataModel
+                data.workFlowStatus = await _workFlowContext?.AppointeeWorkflowCurrentState(appointeeId) ;
+                             //GetFileDataModel
                 string? _paddedName = _appointeedetails?.AppointeeName?.Length > 4 ? _appointeedetails.AppointeeName?[..3] : _appointeedetails?.AppointeeName?.PadRight(3, '0');
                 string candidateFileName = $"{_appointeedetails?.CandidateId}_{_paddedName}";
                 await _fileContext.getFiledetailsByAppointeeId(appointeeId, _FileDataList);

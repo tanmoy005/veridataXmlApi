@@ -57,6 +57,7 @@ namespace VERIDATA.Model.DataAccess.Response
         public int SaveStep { get; set; }
         public bool IsSubmit { get; set; }
         public int UserId { get; set; }
+        public string workFlowStatus { get; set; } 
         //public List<string>? UploadedFileType { get; set; }
         public List<FileDetailsResponse>? FileUploaded { get; set; }
     }
