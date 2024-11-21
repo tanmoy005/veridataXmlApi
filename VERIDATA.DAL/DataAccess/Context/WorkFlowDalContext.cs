@@ -1165,35 +1165,8 @@ namespace VERIDATA.DAL.DataAccess.Context
             DateTime _CurrDate = Convert.ToDateTime(CurrDate);
             DateTime? _ToDate = reqObj.ToDate != null ? reqObj.ToDate?.AddDays(1) : null;
 
-            /* IQueryable<ManualVerificationProcessQueryDataResponse> querydata = from b in _dbContextClass.UnderProcessFileData
-                                                                               join w in _dbContextClass.WorkFlowDetails
-                                                                               on b.AppointeeId equals w.AppointeeId
-                                                                               join wm in _dbContextClass.WorkflowApprovalStatusMaster
-                                                                               on w.AppvlStatusId equals wm.AppvlStatusId
-                                                                               join p in _dbContextClass.AppointeeDetails
-                                                                               on b.AppointeeId equals p.AppointeeId into grouping
-                                                                               from p in grouping.DefaultIfEmpty()
-                                                                               join c in _dbContextClass.AppointeeConsentMapping
-                                                                               on b.AppointeeId equals c.AppointeeId into consentgrouping
-                                                                               from c in consentgrouping.Where(x => x.ActiveStatus == true).DefaultIfEmpty()
-                                                                               join h in _dbContextClass.WorkFlowDetailsHist on w.AppointeeId equals h.AppointeeId
-                                                                               where wm.AppvlStatusCode == reqObj.FilterType
-                                                                               && (p.IsProcessed.Equals(false) || p.IsProcessed == null)
-                                                                               && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate) && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
-                                                                               && b.ActiveStatus == true
-                                                                               orderby p.IsSubmit
-                                                                               select new ManualVerificationProcessQueryDataResponse
-                                                                               {
-                                                                                   UnderProcess = b,
-                                                                                   AppointeeDetails = p,
-                                                                                   AppointeeId = b.AppointeeId,
-                                                                                   IsJoiningDateLapsed = b.DateOfJoining < _CurrDate,
-                                                                                   WorkflowCreatedDate = w.CreatedOn,
-                                                                                   Status=wm.AppvlStatusDesc,
-                                                                                   VerificationAttempted = _dbContextClass.WorkFlowDetailsHist.
-                                                                                   Count(h => h.AppointeeId == b.AppointeeId)
-                                                                               };
-            */
+            var verificationAttemptCounts = _dbContextClass.WorkFlowDetailsHist.Where(x => x.StateAlias.Trim() == WorkFlowStatusType.ManualReVerification).GroupBy(x => x.AppointeeId).ToDictionary(g => g.Key, g => g.Count());
+
             IQueryable<ManualVerificationProcessQueryDataResponse> querydata = from b in _dbContextClass.UnderProcessFileData
                                                                                join w in _dbContextClass.WorkFlowDetails
                                                                                on b.AppointeeId equals w.AppointeeId
@@ -1205,8 +1178,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                join c in _dbContextClass.AppointeeConsentMapping
                                                                                on b.AppointeeId equals c.AppointeeId into consentgrouping
                                                                                from c in consentgrouping.Where(x => x.ActiveStatus == true).DefaultIfEmpty()
-                                                                                   //join h in _dbContextClass.WorkFlowDetailsHist
-                                                                                   //on w.AppointeeId equals h.AppointeeId
                                                                                where wm.AppvlStatusCode == reqObj.FilterType
                                                                                && (p.IsProcessed.Equals(false) || p.IsProcessed == null)
                                                                                && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate)
@@ -1221,7 +1192,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                    IsJoiningDateLapsed = b.DateOfJoining < _CurrDate,
                                                                                    WorkflowCreatedDate = w.CreatedOn,
                                                                                    Status = wm.AppvlStatusDesc,
-                                                                                   VerificationAttempted = reqObj.FilterType == WorkFlowStatusType.ManualReVerification ? _dbContextClass.WorkFlowDetailsHist.Where(x => x.StateAlias.Trim() == WorkFlowStatusType.ManualReVerification && x.AppointeeId == b.AppointeeId).ToList().Count : 0
+                                                                                   VerificationAttempted = verificationAttemptCounts.ContainsKey(b.AppointeeId)? verificationAttemptCounts[b.AppointeeId]: 0
 
                                                                                };
 
