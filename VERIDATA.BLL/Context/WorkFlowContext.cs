@@ -601,6 +601,7 @@ namespace VERIDATA.BLL.Context
             WorkflowApprovalStatusMaster? verifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
             WorkflowApprovalStatusMaster? forcedVerifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ForcedApproved?.Trim());
             WorkflowApprovalStatusMaster? rejectedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
+            WorkflowApprovalStatusMaster? manuVerification = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualVerification?.Trim());
 
             List<MenuMaster> menuDataList = await _dbContextMaster.GetMasterMenuData();
             MenuMaster? verifiedMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.VERIFIED);
@@ -610,7 +611,7 @@ namespace VERIDATA.BLL.Context
             //var criticalMenu = menuDataList.FirstOrDefault(x => x.MenuAlias == MenuCode.CRITICAL);
             MenuMaster? linkntsendMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.LINKNOTSENT);
             MenuMaster? uploadedDataMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.UPLOADEDDATA);
-            MenuMaster? manuVerification = menuDataList.Find(x=> x.MenuAlias== MenuCode.ManualVerification);  
+            MenuMaster? manuVeri = menuDataList.Find(x=> x.MenuAlias== MenuCode.ManualVerification);  
 
             //var appointeeData = await _dbContextClass.AppointeeMaster.Where(m => m.AppointeeName.Contains(Name) && m.ActiveStatus == true).ToListAsync();
 
@@ -670,7 +671,19 @@ namespace VERIDATA.BLL.Context
                 };
                 searchedDataRes.Add(res);
             }
+            List<GlobalSearchAppointeeData> manualVerificationData = await _dbContextWorkflow.GetAppointeeSearchDetails(Name?.Trim(), "Raw");
 
+            foreach (GlobalSearchAppointeeData obj in manualVerificationData)
+            {
+                GetAppointeeGlobalSearchResponse res = new()
+                {
+                    AppointeeName = obj.AppointeeName,
+                    CandidateId = obj.CandidateId,
+                    AppointeePath = manuVeri.menu_action,
+                    PathName = manuVeri.MenuTitle
+                };
+                searchedDataRes.Add(res);
+            }
             return searchedDataRes;
         }
         public async Task<List<DropDownDetailsResponse>> GetAllReportFilterStatus()
