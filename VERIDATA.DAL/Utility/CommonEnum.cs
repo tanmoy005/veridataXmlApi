@@ -294,7 +294,7 @@
             public const string EXPIRED = "EXPRED";
             public const string CRITICAL = "CRITCL";
             public const string SETUP = "SETUP";
-            public const string ManualVerification = "ManuVerification";
+            public const string MANUALVERIFICATION = "MANUVERI";
 
         }
         public static class UpdateType

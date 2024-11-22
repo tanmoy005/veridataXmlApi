@@ -3,7 +3,6 @@ using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
-using VERIDATA.Model.Table.Public;
 
 namespace VERIDATA.BLL.Interfaces
 {

@@ -75,10 +75,10 @@ namespace VERIDATA.BLL.Context
                 {
                     IsValid = true;
                     string maskedPhoneNumber = CommonUtility.MaskedString(phoneNo);
-                    if (string.IsNullOrEmpty(phoneNo?.ToUpper()))
-                    {
-                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANMOBILENOTAVAIL, Inputdata = appointeedetail?.MobileNo, Fetcheddata = maskedPhoneNumber });
-                    }
+                    //if (string.IsNullOrEmpty(phoneNo?.ToUpper()))
+                    //{
+                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANMOBILENOTAVAIL, Inputdata = appointeedetail?.MobileNo, Fetcheddata = maskedPhoneNumber });
+                    //}
                     if (appointeedetail?.AppointeeName?.Trim()?.ToUpper() != panFullName?.ToUpper())
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = panFullName });
@@ -325,7 +325,8 @@ namespace VERIDATA.BLL.Context
             }
             if (apiProvider?.ToLower() == ApiProviderType.Karza)
             {
-                Response = await GetPanMobileToUan(reqObj);
+                //Response = await GetPanMobileToUan(reqObj);
+                Response = await GetMobileToUan(reqObj);
             }
             if (apiProvider?.ToLower() == ApiProviderType.Signzy)
             {
@@ -1240,7 +1241,8 @@ namespace VERIDATA.BLL.Context
                 }
                 else if (apiProvider?.ToLower() == ApiProviderType.Karza)
                 {
-                    response = await GetPanMobileToUan(reqObj);
+                    //response = await GetPanMobileToUan(reqObj);
+                    response = await GetMobileToUan(reqObj);
 
                 }
                 else if (apiProvider?.ToLower() == ApiProviderType.Signzy)

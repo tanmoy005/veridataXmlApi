@@ -602,6 +602,8 @@ namespace VERIDATA.BLL.Context
             WorkflowApprovalStatusMaster? forcedVerifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ForcedApproved?.Trim());
             WorkflowApprovalStatusMaster? rejectedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
             WorkflowApprovalStatusMaster? manuVerification = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualVerification?.Trim());
+            WorkflowApprovalStatusMaster? manuReVerification = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualReVerification?.Trim());
+            WorkflowApprovalStatusMaster? manuReUpload = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
 
             List<MenuMaster> menuDataList = await _dbContextMaster.GetMasterMenuData();
             MenuMaster? verifiedMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.VERIFIED);
@@ -611,7 +613,7 @@ namespace VERIDATA.BLL.Context
             //var criticalMenu = menuDataList.FirstOrDefault(x => x.MenuAlias == MenuCode.CRITICAL);
             MenuMaster? linkntsendMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.LINKNOTSENT);
             MenuMaster? uploadedDataMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.UPLOADEDDATA);
-            MenuMaster? manuVeri = menuDataList.Find(x=> x.MenuAlias== MenuCode.ManualVerification);  
+            MenuMaster? manualVeriMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.MANUALVERIFICATION);
 
             //var appointeeData = await _dbContextClass.AppointeeMaster.Where(m => m.AppointeeName.Contains(Name) && m.ActiveStatus == true).ToListAsync();
 
@@ -631,10 +633,25 @@ namespace VERIDATA.BLL.Context
             {
                 searchedDataRes.AddRange(_allProcessedData);
             }
+            List<GetAppointeeGlobalSearchResponse> _allManualVerificationData = appointeelist.DistinctBy(x => x.AppointeeId).Where(x => (x.AppvlStatusId == manuVerification.AppvlStatusId || x.AppvlStatusId == manuReVerification.AppvlStatusId || x.AppvlStatusId == manuReUpload.AppvlStatusId))
+               .Select(obj => new GetAppointeeGlobalSearchResponse
+               {
 
-            List<GetAppointeeGlobalSearchResponse> _allUnderProcessedData = appointeelist.DistinctBy(x => x.AppointeeId).Where(x => !(x.AppvlStatusId == verifiedState.AppvlStatusId || x.AppvlStatusId == rejectedState.AppvlStatusId || x.AppvlStatusId == forcedVerifiedState.AppvlStatusId))
+                   AppointeeName = obj.AppointeeName,
+                   CandidateId = obj.CandidateId,
+                   AppointeePath = manualVeriMenu.menu_action,
+                   PathName = manualVeriMenu.MenuTitle,
+               }).ToList();
+            if (_allManualVerificationData.Count > 0)
+            { 
+                searchedDataRes.AddRange(_allManualVerificationData);
+            }
+            var manualCandidateList = _allManualVerificationData.Select(y => y.CandidateId).ToList();
+            var currentAppointeeList = appointeelist.Where(x => !manualCandidateList.Contains(x.CandidateId))?.ToList();
+            List<GetAppointeeGlobalSearchResponse> _allUnderProcessedData = currentAppointeeList.DistinctBy(x => x.AppointeeId).Where(x => !(x.AppvlStatusId == verifiedState.AppvlStatusId || x.AppvlStatusId == rejectedState.AppvlStatusId || x.AppvlStatusId == forcedVerifiedState.AppvlStatusId))
                 .Select(obj => new GetAppointeeGlobalSearchResponse
                 {
+
                     AppointeeName = obj.AppointeeName,
                     CandidateId = obj.CandidateId,
                     AppointeePath = (obj.DateOfJoining < _currDate) ? lapsedMenu.menu_action : processingMenu.menu_action,
@@ -645,7 +662,7 @@ namespace VERIDATA.BLL.Context
                 searchedDataRes.AddRange(_allUnderProcessedData);
             }
             //var _allProcessedData = appointeelist.Where(x => x.IsProcessed == true).ToList();
-            List<GlobalSearchAppointeeData> linknotsendData = await _dbContextWorkflow.GetAppointeeSearchDetails(Name?.Trim(), "Raw");
+            List<GlobalSearchAppointeeData> linknotsendData = await _dbContextWorkflow.GetAppointeeSearchDetails(Name?.Trim(), "LinkNotSend");
             foreach (GlobalSearchAppointeeData obj in linknotsendData)
             {
                 GetAppointeeGlobalSearchResponse res = new()
@@ -671,19 +688,7 @@ namespace VERIDATA.BLL.Context
                 };
                 searchedDataRes.Add(res);
             }
-            List<GlobalSearchAppointeeData> manualVerificationData = await _dbContextWorkflow.GetAppointeeSearchDetails(Name?.Trim(), "Raw");
 
-            foreach (GlobalSearchAppointeeData obj in manualVerificationData)
-            {
-                GetAppointeeGlobalSearchResponse res = new()
-                {
-                    AppointeeName = obj.AppointeeName,
-                    CandidateId = obj.CandidateId,
-                    AppointeePath = manuVeri.menu_action,
-                    PathName = manuVeri.MenuTitle
-                };
-                searchedDataRes.Add(res);
-            }
             return searchedDataRes;
         }
         public async Task<List<DropDownDetailsResponse>> GetAllReportFilterStatus()
@@ -1176,7 +1181,7 @@ namespace VERIDATA.BLL.Context
                     appointeeId = AppointeeFileDetailsReupload.AppointeeId,
                     remarks = string.Empty,
                     workflowState = _stateId,
-                    approvalStatus = WorkFlowStatusType.ReuploadDocument,
+                    approvalStatus = WorkFlowStatusType.ManualReVerification,
                     userId = AppointeeFileDetailsReupload.UserId
                 });
 
