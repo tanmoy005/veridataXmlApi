@@ -43,6 +43,7 @@
             Processing = 8,
             NoLinkSent = 9,
             NonExsist = 10,
+            ManuVerification=11,
         }
         public static class MailType
         {
@@ -293,6 +294,7 @@
             public const string EXPIRED = "EXPRED";
             public const string CRITICAL = "CRITCL";
             public const string SETUP = "SETUP";
+            public const string ManualVerification = "ManuVerification";
 
         }
         public static class UpdateType

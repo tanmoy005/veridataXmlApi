@@ -610,7 +610,7 @@ namespace VERIDATA.BLL.Context
             //var criticalMenu = menuDataList.FirstOrDefault(x => x.MenuAlias == MenuCode.CRITICAL);
             MenuMaster? linkntsendMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.LINKNOTSENT);
             MenuMaster? uploadedDataMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.UPLOADEDDATA);
-
+            MenuMaster? manuVerification = menuDataList.Find(x=> x.MenuAlias== MenuCode.ManualVerification);  
 
             //var appointeeData = await _dbContextClass.AppointeeMaster.Where(m => m.AppointeeName.Contains(Name) && m.ActiveStatus == true).ToListAsync();
 

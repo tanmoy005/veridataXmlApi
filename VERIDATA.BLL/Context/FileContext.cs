@@ -606,7 +606,8 @@ namespace VERIDATA.BLL.Context
                 CommonEnum.ValidationType.NoLinkSent => "NoLinkSent",
                 CommonEnum.ValidationType.NoResponse => "NoResponse",
                 CommonEnum.ValidationType.Processing => "Processing",
-                _ => "Default",
+                CommonEnum.ValidationType.ManuVerification=> "ManualVerification",
+                 _ => "Default",
             };
             string fileName = $"{subfolder}_{category}_{_currDateString}.xlsx";
             byte[] fileData = CommonUtility.ExportFromDataTableToExcel(data, "AppointeeList", string.Empty);
