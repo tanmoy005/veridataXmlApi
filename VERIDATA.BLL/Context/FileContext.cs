@@ -784,7 +784,7 @@ namespace VERIDATA.BLL.Context
                     //doc.FileData = _FileData;
 
                     // Prepare the filename
-                    string _fileName = $"{obj?.UploadTypeCode}_{obj?.FileName}";
+                    string _fileName = $"{obj?.FileName}";
                     doc.FileName = _fileName;
                     doc.UploadDetailsId = obj?.UploadDetailsId ?? 0;
                     doc.UploadTypeId = obj?.UploadTypeId ?? 0;
