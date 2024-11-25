@@ -70,7 +70,7 @@ namespace VERIDATA.BLL.Context
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isPensionGap = row?.AppointeeData?.IsPensionGap == null ? "NA" : row?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
-                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
+                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AutoFetch" : string.Empty,
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
                 }).ToList();
             }
@@ -97,7 +97,7 @@ namespace VERIDATA.BLL.Context
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isPensionGap = row?.AppointeeData?.IsPensionGap == null ? "NA" : row?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
-                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
+                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AutoFetch" : string.Empty,
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
 
                 }).ToList();
@@ -643,7 +643,7 @@ namespace VERIDATA.BLL.Context
                    PathName = manualVeriMenu.MenuTitle,
                }).ToList();
             if (_allManualVerificationData.Count > 0)
-            { 
+            {
                 searchedDataRes.AddRange(_allManualVerificationData);
             }
             var manualCandidateList = _allManualVerificationData.Select(y => y.CandidateId).ToList();
