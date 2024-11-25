@@ -53,6 +53,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="C:\Users\Tanmoy\.nuget\packages\select.htmltopdf.netcore\24.1.0\contentFiles\any\any\Select.Html.dep" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="FileUploaded\Sampledata.xlsx" />
     <None Remove="FileUploaded\SampleUpdatedata.xlsx" />
     <None Remove="FileUploaded\~%24SAMPLEDATA.XLSX.tmp" />
