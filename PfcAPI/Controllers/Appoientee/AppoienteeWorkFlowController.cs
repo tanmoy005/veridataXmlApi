@@ -10,6 +10,7 @@ using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
+using VERIDATA.Model.Response.api.Signzy;
 using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace PfcAPI.Controllers.Appoientee
@@ -665,14 +666,26 @@ namespace PfcAPI.Controllers.Appoientee
                 Response.ManualVerificationList = _getunderProcessData;
                 if (_getunderProcessData.Count > 0)
                 {
+                  
                     List<ManualVerificationExcelDataResponse> excelData = Task.Run(async () => await _reportingContext.GetAppointeeManualVerificationExcelReport(_getunderProcessData)).GetAwaiter().GetResult();
-                    DataTable _exportdt1 = CommonUtility.ToDataTable<ManualVerificationExcelDataResponse>(excelData);
-                    byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportName, string.Empty);
+                    if (excelData.Count > 0)
+                    {
 
-                    Filedata _filedata = new() { FileData = exportbytes, FileName = reportName, FileType = "xlsx" };
-                    
-                    Response.Filedata = _filedata;
+                        DataTable _exportdt1 = CommonUtility.ToDataTable<ManualVerificationExcelDataResponse>(excelData);
+                        byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportName, string.Empty);
 
+                        Filedata _filedata = new() { FileData = exportbytes, FileName = reportName, FileType = "xlsx" };
+
+                        Response.Filedata = _filedata;
+                    }
+                    else
+                    {
+                        _ErrorResponse.ErrorCode = 400;
+                        _ErrorResponse.UserMessage = "There is no data to export a report";
+                        _ErrorResponse.InternalMessage = "There is no data to export a report";
+
+                        return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+                    }
                 }
 
                 return Ok(new BaseResponse<ManualVerificationDataResponse>(HttpStatusCode.OK, Response));
