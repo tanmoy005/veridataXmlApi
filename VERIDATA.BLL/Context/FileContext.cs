@@ -846,7 +846,7 @@ namespace VERIDATA.BLL.Context
                 {
                     long? fileLength = obj?.Length;
                     string? mimetype = obj?.ContentType?.ToLower();
-                    FileUploadDataModel? _fileDetails = uploadedFileDetails?.Find(x => x.fileName == obj?.FileName && x.fileLength == fileLength && x.isFileUploaded);
+                    FileUploadDataModel? _fileDetails = uploadedFileDetails?.FirstOrDefault(x => x.fileName == obj?.FileName && x.fileLength == fileLength && x.isFileUploaded);
 
                     if (_fileDetails != null)
                     {

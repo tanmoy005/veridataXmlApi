@@ -14,15 +14,15 @@ namespace VERIDATA.Model.DataAccess.Request
 
         public string Type { get; set; } = string.Empty;
 
-        public bool IsPensionApplicable { get; set; }
+        public bool? IsPensionApplicable { get; set; }
 
-        public bool IsPensionGapFind { get; set; }
+        public bool? IsPensionGapFind { get; set; }
 
         public int UserId { get; set; }
 
         public AppointeePfVerificationRequest() { }
 
-        public AppointeePfVerificationRequest(int appointeeId, bool? isValid, string type, bool isPensionApplicable, bool isPensionGapFind, int userId)
+        public AppointeePfVerificationRequest(int appointeeId, bool? isValid, string type, bool? isPensionApplicable, bool? isPensionGapFind, int userId)
         {
             AppointeeId = appointeeId;
             IsValid = isValid;

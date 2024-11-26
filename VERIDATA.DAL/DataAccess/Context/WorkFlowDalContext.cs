@@ -75,7 +75,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                     && (string.IsNullOrEmpty(filter.ProcessStatus) || w.AppvlStatusId == _filteredStatus.AppvlStatusId)
                                                                     && (string.IsNullOrEmpty(filter.AppointeeName) || u.AppointeeName.Contains(filter.AppointeeName))
                                                                     && (string.IsNullOrEmpty(filter.CandidateId) || u.CandidateId.Contains(filter.CandidateId))
-                                                                    && (filter.IsManualPassbook == null || a.IsManualPassbook == filter.IsManualPassbook)
+                                                                    && (filter.IsManualPassbook == null || filter.IsManualPassbook==true && a.IsManualPassbook == true)
+                                                                    && (filter.IsManualPassbook == null || filter.IsManualPassbook == false && a.IsPassbookFetch == true)
                                                                  select new ProcessedDataDetailsResponse
                                                                  {
 
