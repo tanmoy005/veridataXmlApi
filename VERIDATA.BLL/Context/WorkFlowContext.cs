@@ -70,7 +70,7 @@ namespace VERIDATA.BLL.Context
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isPensionGap = row?.AppointeeData?.IsPensionGap == null ? "NA" : row?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
-                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AutoFetch" : string.Empty,
+                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AutoFetch" : "NA",
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
                 }).ToList();
             }
@@ -97,7 +97,7 @@ namespace VERIDATA.BLL.Context
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isPensionGap = row?.AppointeeData?.IsPensionGap == null ? "NA" : row?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
-                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AutoFetch" : string.Empty,
+                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AutoFetch" : "NA",
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
 
                 }).ToList();
@@ -168,7 +168,7 @@ namespace VERIDATA.BLL.Context
                         Status = row?.IsReupload ?? false ? "Reupload Requested" : row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         StatusCode = row?.IsReupload ?? false ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         ConsentStatusCode = row.ConsentStatusId ?? 0,
-                        passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
+                        passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "AutoFetch" : "NA",
                         CreatedDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
 
@@ -197,7 +197,8 @@ namespace VERIDATA.BLL.Context
                         Status = row?.IsReupload ?? false ? "Reupload Requested" : row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         StatusCode = row?.IsReupload ?? false ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         ConsentStatusCode = row.ConsentStatusId ?? 0,
-                        passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
+                        passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "AutoFetch" : "NA",
+                        //passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
                         CreatedDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
                 }
