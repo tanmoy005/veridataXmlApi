@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Response
 {
@@ -42,6 +44,9 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("Aadhar Number")]
         public string? AadharNumber { get; set; }
+
+        [DisplayName("uan_aadhar_link")]
+        public string? IsUanAadharLink { get; set; }
 
     }
 }

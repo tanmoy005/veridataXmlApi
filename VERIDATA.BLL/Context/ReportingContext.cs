@@ -732,6 +732,10 @@ namespace VERIDATA.BLL.Context
                         isTrusPassbook = false;
                         EpfoPassbook = false;
                         break;
+                    case (int)CommonEnum.PfType.EPFnTrus:
+                        isTrusPassbook = true;
+                        EpfoPassbook = true;
+                        break;
 
                     default:
                         isTrusPassbook = null;
@@ -769,9 +773,10 @@ namespace VERIDATA.BLL.Context
                         PensionStatus = row?.PensionGapIdentified == null ? "NA" : row?.PensionGapIdentified == true ? "Yes" : "No",
                         EPFOPassBookStatus = !string.IsNullOrEmpty(row?.Uan) ? "Epfo" : "No UAN",
                         TrustPassBookStatus = row?.IsTrustPassbook == null ? string.Empty : (row?.IsTrustPassbook == true ? "Trust" : string.Empty),
-                        IsManual = row?.IsManualPassbook == null ? "NA" : (row?.IsManualPassbook == true ? "Manual Upload" : "Auto Fetch"),
+                        IsManual = row?.IsManualPassbook == null ? "NA" : (row?.IsManualPassbook == true ? "Manual" : "Auto"),
                         UAN = string.IsNullOrEmpty(row?.Uan) ? "NA" : CommonUtility.DecryptString(key, row?.Uan),
                         AadharNumber = string.IsNullOrEmpty(row?.AadhaarNumberView) ? "NA" : row?.AadhaarNumberView,
+                        IsUanAadharLink="Yes",
                         CreatedDate = row?.CreatedDate
                     })
                     .ToList();
