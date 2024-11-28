@@ -105,6 +105,8 @@ namespace VERIDATA.BLL.Context
                     uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
                     status = row?.ProcessData?.DataUploaded ?? false ? "Downloaded" : "NA",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
+                    uanAadharLink= row?.AppointeeData?.IsUanAadharLink == null ? "NA" : row?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
+
                 })?.ToList();
             }
             return response;
@@ -777,6 +779,7 @@ namespace VERIDATA.BLL.Context
                         UAN = string.IsNullOrEmpty(row?.Uan) ? "NA" : CommonUtility.DecryptString(key, row?.Uan),
                         AadharNumber = string.IsNullOrEmpty(row?.AadhaarNumberView) ? "NA" : row?.AadhaarNumberView,
                         IsUanAadharLink = row?.IsUanAadharLink == null ? "NA" : row?.IsUanAadharLink ?? false ? "Yes" : "No",
+                        isEpsMember= row?.EPS_Member_YN == null ? "NA" : row?.EPS_Member_YN ?? false ? "Yes" : "No",
                         CreatedDate = row?.CreatedDate
                     })
                     .ToList();

@@ -17,5 +17,6 @@
         public bool? isTrustPFApplicable { get; set; }
         public DateTime? dateOfJoining { get; set; }
         public decimal? epfWages { get; set; }
+        public string? uanAadharLink { get; set; }
     }
 }

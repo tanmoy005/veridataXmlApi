@@ -35,5 +35,7 @@ namespace VERIDATA.Model.DataAccess.Response
         public bool? IsManualPassbook { get; set; }
         public bool? PensionGapIdentified { get; set; }
         public bool? IsUanAadharLink { get; set; }
+
+        public  bool? EPS_Member_YN { get; set; }
     }
 }

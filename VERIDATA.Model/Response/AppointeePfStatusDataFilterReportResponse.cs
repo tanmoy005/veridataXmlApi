@@ -48,5 +48,8 @@ namespace VERIDATA.Model.Response
         [DisplayName("uan_aadhar_link")]
         public string? IsUanAadharLink { get; set; }
 
+        [DisplayName("EPS_membership")]
+        public string? isEpsMember { get; set; }
+
     }
 }
