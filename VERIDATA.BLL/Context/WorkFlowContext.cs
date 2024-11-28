@@ -71,7 +71,7 @@ namespace VERIDATA.BLL.Context
                     isPensionGap = row?.AppointeeData?.IsPensionGap == null ? "NA" : row?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
                     uanLinkWithAadhar = row?.AppointeeData?.IsUanAadharLink == null ? "NA" : row?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
-                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AutoFetch" : "NA",
+                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "Auto" : "NA",
                     passbookStatusCode = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? string.Empty : row?.AppointeeData?.IsManualPassbook ?? false ? "MNL" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AF" : string.Empty,
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
                 }).ToList();
@@ -100,7 +100,7 @@ namespace VERIDATA.BLL.Context
                     isPensionGap = row?.AppointeeData?.IsPensionGap == null ? "NA" : row?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
                     uanLinkWithAadhar = row?.AppointeeData?.IsUanAadharLink == null ? "NA" : row?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
-                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AutoFetch" : "NA",
+                    passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "Auto" : "NA",
                     passbookStatusCode = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? string.Empty : row?.AppointeeData?.IsManualPassbook ?? false ? "MNL" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AF" : string.Empty,
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
 
@@ -170,10 +170,10 @@ namespace VERIDATA.BLL.Context
                         isReprocess = false,
                         isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
                         status = (row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument) ? "Submitted" : (row.AppointeeDetails?.IsSubmit ?? false) ? "Submitted" : (row?.AppvlStatusCode == WorkFlowStatusType.ManualVerification) || (row?.AppvlStatusCode == WorkFlowStatusType.ManualReVerification) || row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                        statusCode = row?.IsReupload ?? false ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
+                        statusCode = row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         verificationStatusCode= row?.AppvlStatusCode,
                         consentStatusCode = row.ConsentStatusId ?? 0,
-                        passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "AutoFetch" : "NA",
+                        passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "Auto" : "NA",
                         createdDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
 
@@ -201,10 +201,10 @@ namespace VERIDATA.BLL.Context
                         isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
                         //Status = row?.IsReupload ?? false ? "Reupload Requested" : row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         status = (row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument) ? "Submitted" : (row.AppointeeDetails?.IsSubmit ?? false) ? "Submitted" : (row?.AppvlStatusCode == WorkFlowStatusType.ManualVerification) || (row?.AppvlStatusCode == WorkFlowStatusType.ManualReVerification) || row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                        statusCode = row?.IsReupload ?? false ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
+                        statusCode = row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         verificationStatusCode= row?.AppvlStatusCode,
                         consentStatusCode = row.ConsentStatusId ?? 0,
-                        passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "AutoFetch" : "NA",
+                        passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "Auto" : "NA",
                         //passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
                         createdDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
