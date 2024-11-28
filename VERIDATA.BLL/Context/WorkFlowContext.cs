@@ -70,7 +70,9 @@ namespace VERIDATA.BLL.Context
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isPensionGap = row?.AppointeeData?.IsPensionGap == null ? "NA" : row?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
+                    uanLinkWithAadhar = "Yes",
                     passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AutoFetch" : "NA",
+                    passbookStatusCode = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? string.Empty : row?.AppointeeData?.IsManualPassbook ?? false ? "MNL" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AF" : string.Empty,
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
                 }).ToList();
             }
@@ -97,7 +99,9 @@ namespace VERIDATA.BLL.Context
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     isPensionGap = row?.AppointeeData?.IsPensionGap == null ? "NA" : row?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
                     isTrustPFApplicable = row?.AppointeeData?.IsTrustPassbook ?? false,
+                    uanLinkWithAadhar="Yes",
                     passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AutoFetch" : "NA",
+                    passbookStatusCode = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? string.Empty : row?.AppointeeData?.IsManualPassbook ?? false ? "MNL" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AF" : string.Empty,
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
 
                 }).ToList();
