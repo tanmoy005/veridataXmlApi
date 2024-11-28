@@ -223,5 +223,8 @@ namespace VERIDATA.Model.Table.Public
         [Column("is_passbook_fetch", TypeName = DbDataType._boolean)]
         [DefaultValue(false)]
         public bool? IsPassbookFetch { get; set; }
+        [Column("is_uan_aadhar_link", TypeName = DbDataType._boolean)]
+        [DefaultValue(false)]
+        public bool? IsUanAadharLink { get; set; }
     }
 }

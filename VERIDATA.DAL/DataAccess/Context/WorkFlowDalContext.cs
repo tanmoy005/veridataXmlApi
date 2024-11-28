@@ -182,21 +182,22 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                   where !(w.AppvlStatusId == CloseState.AppvlStatusId
                                                                          || w.AppvlStatusId == ApproveState.AppvlStatusId
                                                                          || w.AppvlStatusId == RejectState.AppvlStatusId
-                                                                         || w.AppvlStatusId == ReuploadState.AppvlStatusId
-                                                                         || w.AppvlStatusId == ManualVerificationState.AppvlStatusId
-                                                                         || w.AppvlStatusId == ManualVerificationProcess.AppvlStatusId)
+                                                                         //|| w.AppvlStatusId == ReuploadState.AppvlStatusId
+                                                                         //|| w.AppvlStatusId == ManualVerificationState.AppvlStatusId
+                                                                         //|| w.AppvlStatusId == ManualVerificationProcess.AppvlStatusId)
                                                                   && (p.IsProcessed.Equals(false) || p.IsProcessed == null)
                                                                   && (string.IsNullOrEmpty(reqObj.AppointeeName) || b.AppointeeName.Contains(reqObj.AppointeeName))
                                                                   && (string.IsNullOrEmpty(reqObj.CandidateId) || b.CandidateId.Contains(reqObj.CandidateId))
                                                                   && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate) && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
                                                                   && b.ActiveStatus == true
-                                                                  && (reqObj.IsManualPassbook == null || p.IsManualPassbook == reqObj.IsManualPassbook)
+                                                                  && (reqObj.IsManualPassbook == null || p.IsManualPassbook == reqObj.IsManualPassbook))
                                                                   orderby p.IsSubmit
                                                                   select new UnderProcessQueryDataResponse
                                                                   {
                                                                       UnderProcess = b,
                                                                       AppointeeDetails = p,
                                                                       AppvlStatusId = w.AppvlStatusId,
+                                                                      AppvlStatusCode = w.StateAlias,
                                                                       AppointeeId = b.AppointeeId,
                                                                       ConsentStatusId = c.ConsentStatus,
                                                                       IsJoiningDateLapsed = b.DateOfJoining < _CurrDate,

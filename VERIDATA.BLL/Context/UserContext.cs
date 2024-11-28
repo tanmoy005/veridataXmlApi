@@ -912,10 +912,10 @@ namespace VERIDATA.BLL.Context
                 dateOfJoining = row.AppointeeDetails?.DateOfJoining ?? row.UnderProcess.DateOfJoining,
                 isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                 isReprocess = false,
-                Status = row.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                StatusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
-                ConsentStatusCode = row.ConsentStatusId ?? 0,
-                CreatedDate = row.UnderProcess?.CreatedOn
+                status = row.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
+                statusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
+                consentStatusCode = row.ConsentStatusId ?? 0,
+                createdDate = row.UnderProcess?.CreatedOn
             }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
 
 
@@ -931,11 +931,11 @@ namespace VERIDATA.BLL.Context
 
             UnderProcessedData.WidgetFilterDays = filterDays;
 
-            List<UnderProcessDetailsResponse>? data = appointeeList.Where(x => x.StatusCode == 0 && x.dateOfJoining > _currDate).ToList();
+            List<UnderProcessDetailsResponse>? data = appointeeList.Where(x => x.statusCode == 0 && x.dateOfJoining > _currDate).ToList();
 
             UnderProcessedData.WidgetTypeValue = data?.Count() ?? 0;
 
-            var groupdateValue = data.GroupBy(x => Convert.ToDateTime(x.CreatedDate?.ToString("dd/MM/yyyy")))?.Select(x => new
+            var groupdateValue = data.GroupBy(x => Convert.ToDateTime(x.createdDate?.ToString("dd/MM/yyyy")))?.Select(x => new
             {
                 Value = x.Count(),
                 Date = x.Key
@@ -970,11 +970,11 @@ namespace VERIDATA.BLL.Context
                 WidgetFilterDays = filterDays
             };
 
-            List<UnderProcessDetailsResponse>? data = appointeeList.Where(m => m.StatusCode != 0 && m.dateOfJoining >= _currDate).ToList();
+            List<UnderProcessDetailsResponse>? data = appointeeList.Where(m => m.statusCode != 0 && m.dateOfJoining >= _currDate).ToList();
 
             UnderProcessedData.WidgetTypeValue = data?.Count() ?? 0;
 
-            var groupdateValue = data.GroupBy(x => Convert.ToDateTime(x.CreatedDate?.ToString("dd/MM/yyyy")))?.Select(x => new
+            var groupdateValue = data.GroupBy(x => Convert.ToDateTime(x.createdDate?.ToString("dd/MM/yyyy")))?.Select(x => new
             {
                 Value = x.Count(),
                 Date = x.Key
@@ -1010,7 +1010,7 @@ namespace VERIDATA.BLL.Context
 
             UnderProcessedData.WidgetTypeValue = data?.Count() ?? 0;
 
-            var groupdateValue = data?.GroupBy(x => Convert.ToDateTime(x.CreatedDate?.ToString("dd/MM/yyyy")))?.Select(x => new
+            var groupdateValue = data?.GroupBy(x => Convert.ToDateTime(x.createdDate?.ToString("dd/MM/yyyy")))?.Select(x => new
             {
                 Value = x.Count(),
                 Date = x.Key

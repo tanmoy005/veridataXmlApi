@@ -169,8 +169,8 @@ namespace VERIDATA.BLL.Context
                     EmailId = x?.appointeeEmailId,
                     mobileNo = x?.mobileNo,
                     dateOfJoining = x?.dateOfJoining?.ToShortDateString(),
-                    CreatedDate = x?.CreatedDate?.ToShortDateString() ?? string.Empty,
-                    Status = x?.Status,
+                    CreatedDate = x?.createdDate?.ToShortDateString() ?? string.Empty,
+                    Status = x?.status,
                 })?.ToList();
             }
             return response;

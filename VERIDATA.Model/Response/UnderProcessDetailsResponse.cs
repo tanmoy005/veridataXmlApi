@@ -17,11 +17,12 @@
         public bool? isDocSubmitted { get; set; }
         public bool? isReprocess { get; set; }
         public bool? isNoIsuueinVerification { get; set; }
-        public DateTime? CreatedDate { get; set; }
-        public int? ConsentStatusCode { get; set; }
-        public string? Status { get; set; }
+        public DateTime? createdDate { get; set; }
+        public int? consentStatusCode { get; set; }
+        public string? status { get; set; }
         public string? passbookStatus { get; set; }
-        public int StatusCode { get; set; }
+        public int statusCode { get; set; }
+        public string? verificationStatusCode { get; set; }
         public string? lvl1Email { get; set; }
         public string? lvl2Email { get; set; }
         public string? lvl3Email { get; set; }

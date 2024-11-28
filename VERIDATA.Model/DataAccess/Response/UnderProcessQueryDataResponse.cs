@@ -7,6 +7,7 @@ namespace VERIDATA.Model.DataAccess.Response
         public UnderProcessFileData? UnderProcess { get; set; }
         public AppointeeDetails? AppointeeDetails { get; set; }
         public int? AppvlStatusId { get; set; }
+        public string? AppvlStatusCode { get; set; }
         public int? ConsentStatusId { get; set; }
         public int? AppointeeId { get; set; }
         public bool IsJoiningDateLapsed { get; set; }
