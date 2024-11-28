@@ -776,7 +776,7 @@ namespace VERIDATA.BLL.Context
                         IsManual = row?.IsManualPassbook == null ? "NA" : (row?.IsManualPassbook == true ? "Manual" : "Auto"),
                         UAN = string.IsNullOrEmpty(row?.Uan) ? "NA" : CommonUtility.DecryptString(key, row?.Uan),
                         AadharNumber = string.IsNullOrEmpty(row?.AadhaarNumberView) ? "NA" : row?.AadhaarNumberView,
-                        IsUanAadharLink="Yes",
+                        IsUanAadharLink = row?.IsUanAadharLink == null ? "NA" : row?.IsUanAadharLink ?? false ? "Yes" : "No",
                         CreatedDate = row?.CreatedDate
                     })
                     .ToList();

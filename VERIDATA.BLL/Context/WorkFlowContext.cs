@@ -171,7 +171,7 @@ namespace VERIDATA.BLL.Context
                         isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
                         status = (row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument) ? "Submitted" : (row.AppointeeDetails?.IsSubmit ?? false) ? "Submitted" : (row?.AppvlStatusCode == WorkFlowStatusType.ManualVerification) || (row?.AppvlStatusCode == WorkFlowStatusType.ManualReVerification) || row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         statusCode = row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
-                        verificationStatusCode= row?.AppvlStatusCode,
+                        verificationStatusCode = row?.AppvlStatusCode,
                         consentStatusCode = row.ConsentStatusId ?? 0,
                         passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "Auto" : "NA",
                         createdDate = row.UnderProcess?.CreatedOn
@@ -202,7 +202,7 @@ namespace VERIDATA.BLL.Context
                         //Status = row?.IsReupload ?? false ? "Reupload Requested" : row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         status = (row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument) ? "Submitted" : (row.AppointeeDetails?.IsSubmit ?? false) ? "Submitted" : (row?.AppvlStatusCode == WorkFlowStatusType.ManualVerification) || (row?.AppvlStatusCode == WorkFlowStatusType.ManualReVerification) || row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         statusCode = row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
-                        verificationStatusCode= row?.AppvlStatusCode,
+                        verificationStatusCode = row?.AppvlStatusCode,
                         consentStatusCode = row.ConsentStatusId ?? 0,
                         passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "Auto" : "NA",
                         //passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
@@ -932,7 +932,7 @@ namespace VERIDATA.BLL.Context
         public async Task VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj)
         {
             bool? isDataValid = false;
-            var isDataVerificationReq = await VefifyDocValidityManual(reqObj.AppointeeId, reqObj.VerificationSubCategoryList, reqObj.UserId);
+            var isDataVerificationReq = await VefifyDocValidityManual(reqObj.AppointeeId, reqObj.VerificationSubCategoryList, reqObj.UserId, reqObj.VerificationCategory);
             if (!string.IsNullOrEmpty(reqObj.Remarks))
             {
                 List<ReasonRemarks> Remarks = new();
@@ -984,28 +984,35 @@ namespace VERIDATA.BLL.Context
 
             }
         }
-        private async Task<bool> VefifyDocValidityManual(int appointeeId, List<VerificationUpdatesubCategory>? docValidity, int userId)
+        private async Task<bool> VefifyDocValidityManual(int appointeeId, List<VerificationUpdatesubCategory>? docValidity, int userId, string? VerificationCategory)// TODO
         {
             List<ReasonRemarks> reasonList = new();
             bool isVerificationRequired = true;
             // Dynamically update each field specified in the request
             foreach (var obj in docValidity)
             {
+                var inputData = string.Empty;
+
+                inputData = obj.SubCategory == ManualVerificationSubType.TENTHCERT || obj.SubCategory == ManualVerificationSubType.OTHID ? "Father's Name Verification : No" : obj.SubCategory == ManualVerificationSubType.EpfHistory ? "EPFO Service History : No" : obj.SubCategory == ManualVerificationSubType.EpfPassbook ? "EPFO Service History : No" : string.Empty;
                 foreach (var questions in obj?.VerificationQueries)
                 {
+
+
                     switch (questions.FieldName)
                     {
                         case ManualVerificationFieldType.DocIncomplete:
                             if (!questions.Value)
                             {
-                                reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INCMPLTDOC, Inputdata = string.Empty, Fetcheddata = string.Empty });
+
+
+                                reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INCMPLTDOC, Inputdata = inputData, Fetcheddata = string.Empty });
                                 isVerificationRequired = false;
                             }
                             break;
                         case ManualVerificationFieldType.DocInvalid:
                             if (!questions.Value)
                             {
-                                reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDDOC, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                                reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDDOC, Inputdata = inputData, Fetcheddata = string.Empty });
                                 isVerificationRequired = false;
 
                             }

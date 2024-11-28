@@ -80,6 +80,7 @@ namespace VERIDATA.BLL.Context
                     data.IsManualPassbook = null;
                     data.IsAadhaarVarified = null;
                     data.IsFnameVarified = null;
+                    data.IsUanLinkWithAadhar = null;
                     data.IsProcessed = false;
                     data.IsSubmit = false;
                     data.FileUploaded = _FileDataList;
@@ -140,6 +141,7 @@ namespace VERIDATA.BLL.Context
                 data.IsProcessed = _appointeedetails?.IsProcessed;
                 data.SaveStep = _appointeedetails?.SaveStep ?? 0;
                 data.IsSubmit = _appointeedetails?.IsSubmit ?? false;
+                data.IsUanLinkWithAadhar = _appointeedetails?.IsUanAadharLink == null ? "NA" : _appointeedetails?.IsUanAadharLink ?? false ? "Yes" : "No";
                 data.UserId = _appointeedetails?.CreatedBy ?? 0;
                 data.workFlowStatus = await _workFlowContext?.AppointeeWorkflowCurrentState(appointeeId) ;
                              //GetFileDataModel

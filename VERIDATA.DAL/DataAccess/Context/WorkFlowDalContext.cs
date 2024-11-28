@@ -75,8 +75,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                     && (string.IsNullOrEmpty(filter.ProcessStatus) || w.AppvlStatusId == _filteredStatus.AppvlStatusId)
                                                                     && (string.IsNullOrEmpty(filter.AppointeeName) || u.AppointeeName.Contains(filter.AppointeeName))
                                                                     && (string.IsNullOrEmpty(filter.CandidateId) || u.CandidateId.Contains(filter.CandidateId))
-                                                                    && (filter.IsManualPassbook == null || filter.IsManualPassbook==true && a.IsManualPassbook == true)
-                                                                    && (filter.IsManualPassbook == null || filter.IsManualPassbook == false && a.IsPassbookFetch == true)
+                                                                    && (filter.IsManualPassbook == null || (filter.IsManualPassbook == true && a.IsManualPassbook == true) || (filter.IsManualPassbook == false && a.IsPassbookFetch == true))
                                                                  select new ProcessedDataDetailsResponse
                                                                  {
 
@@ -182,9 +181,9 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                   where !(w.AppvlStatusId == CloseState.AppvlStatusId
                                                                          || w.AppvlStatusId == ApproveState.AppvlStatusId
                                                                          || w.AppvlStatusId == RejectState.AppvlStatusId)
-                                                                         //|| w.AppvlStatusId == ReuploadState.AppvlStatusId
-                                                                         //|| w.AppvlStatusId == ManualVerificationState.AppvlStatusId
-                                                                         //|| w.AppvlStatusId == ManualVerificationProcess.AppvlStatusId)
+                                                                  //|| w.AppvlStatusId == ReuploadState.AppvlStatusId
+                                                                  //|| w.AppvlStatusId == ManualVerificationState.AppvlStatusId
+                                                                  //|| w.AppvlStatusId == ManualVerificationProcess.AppvlStatusId)
                                                                   && (p.IsProcessed.Equals(false) || p.IsProcessed == null)
                                                                   && (string.IsNullOrEmpty(reqObj.AppointeeName) || b.AppointeeName.Contains(reqObj.AppointeeName))
                                                                   && (string.IsNullOrEmpty(reqObj.CandidateId) || b.CandidateId.Contains(reqObj.CandidateId))
@@ -1106,6 +1105,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                             PensionGapIdentified = appointee.IsPensionGap,
                             Uan = appointee.UANNumber,
                             AadhaarNumberView = appointee.AadhaarNumberView,
+                            IsUanAadharLink = appointee.IsUanAadharLink,
                         };
 
             return await query.ToListAsync();
@@ -1194,7 +1194,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                    IsJoiningDateLapsed = b.DateOfJoining < _CurrDate,
                                                                                    WorkflowCreatedDate = w.CreatedOn,
                                                                                    Status = wm.AppvlStatusDesc,
-                                                                                   VerificationAttempted = verificationAttemptCounts.ContainsKey(b.AppointeeId)? verificationAttemptCounts[b.AppointeeId]: 0
+                                                                                   VerificationAttempted = verificationAttemptCounts.ContainsKey(b.AppointeeId) ? verificationAttemptCounts[b.AppointeeId] : 0
 
                                                                                };
 

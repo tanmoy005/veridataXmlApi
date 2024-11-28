@@ -402,6 +402,13 @@
             public const string FathersName = "FTHR";
             public const string EpfoPassbook = "EPFO";
         }
+        public static class ManualVerificationSubType
+        {
+            public const string EpfPassbook = "EPFPSHF";
+            public const string EpfHistory = "EPFPSHF";
+            public const string TENTHCERT = "10THCERT";
+            public const string OTHID = "OTHID";
+        }
         public static class ManualVerificationFieldType
         {
             public const string FathersName = "isFnameVarified";
