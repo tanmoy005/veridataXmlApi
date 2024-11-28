@@ -11,6 +11,6 @@ namespace VERIDATA.Model.DataAccess.Response
         public int? ConsentStatusId { get; set; }
         public int? AppointeeId { get; set; }
         public bool IsJoiningDateLapsed { get; set; }
-        public bool IsReupload { get; set; }
+        //public bool IsReupload { get; set; }
     }
 }

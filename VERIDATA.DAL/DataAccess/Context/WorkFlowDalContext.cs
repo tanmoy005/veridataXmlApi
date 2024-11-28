@@ -166,9 +166,9 @@ namespace VERIDATA.DAL.DataAccess.Context
             WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
             WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
             WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
-            WorkflowApprovalStatusMaster? ReuploadState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
-            WorkflowApprovalStatusMaster? ManualVerificationState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualVerification?.Trim());
-            WorkflowApprovalStatusMaster? ManualVerificationProcess = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualReVerification?.Trim());
+            //WorkflowApprovalStatusMaster? ReuploadState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
+            //WorkflowApprovalStatusMaster? ManualVerificationState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualVerification?.Trim());
+            //WorkflowApprovalStatusMaster? ManualVerificationProcess = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualReVerification?.Trim());
 
             IQueryable<UnderProcessQueryDataResponse> querydata = from b in _dbContextClass.UnderProcessFileData
                                                                   join w in _dbContextClass.WorkFlowDetails
@@ -181,7 +181,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                   from c in consentgrouping.Where(x => x.ActiveStatus == true).DefaultIfEmpty()
                                                                   where !(w.AppvlStatusId == CloseState.AppvlStatusId
                                                                          || w.AppvlStatusId == ApproveState.AppvlStatusId
-                                                                         || w.AppvlStatusId == RejectState.AppvlStatusId
+                                                                         || w.AppvlStatusId == RejectState.AppvlStatusId)
                                                                          //|| w.AppvlStatusId == ReuploadState.AppvlStatusId
                                                                          //|| w.AppvlStatusId == ManualVerificationState.AppvlStatusId
                                                                          //|| w.AppvlStatusId == ManualVerificationProcess.AppvlStatusId)
@@ -190,7 +190,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                   && (string.IsNullOrEmpty(reqObj.CandidateId) || b.CandidateId.Contains(reqObj.CandidateId))
                                                                   && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate) && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
                                                                   && b.ActiveStatus == true
-                                                                  && (reqObj.IsManualPassbook == null || p.IsManualPassbook == reqObj.IsManualPassbook))
+                                                                  && (reqObj.IsManualPassbook == null || p.IsManualPassbook == reqObj.IsManualPassbook)
                                                                   orderby p.IsSubmit
                                                                   select new UnderProcessQueryDataResponse
                                                                   {
@@ -201,7 +201,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                       AppointeeId = b.AppointeeId,
                                                                       ConsentStatusId = c.ConsentStatus,
                                                                       IsJoiningDateLapsed = b.DateOfJoining < _CurrDate,
-                                                                      IsReupload = w.AppvlStatusId == ReuploadState.AppvlStatusId
+                                                                      //IsReupload = w.AppvlStatusId == ReuploadState.AppvlStatusId
                                                                   };
 
             List<UnderProcessQueryDataResponse> list = await querydata.ToListAsync().ConfigureAwait(false);
