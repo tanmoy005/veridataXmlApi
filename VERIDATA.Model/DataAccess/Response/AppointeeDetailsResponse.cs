@@ -54,6 +54,7 @@ namespace VERIDATA.Model.DataAccess.Response
         public bool? IsManualPassbook { get; set; }
         public bool? IsTrustPassbook { get; set; }
         public string? IsUanLinkWithAadhar { get; set; }
+        public bool? UanAadharLinkStatus { get; set; }
         public bool? IsProcessed { get; set; }
         public int SaveStep { get; set; }
         public bool IsSubmit { get; set; }

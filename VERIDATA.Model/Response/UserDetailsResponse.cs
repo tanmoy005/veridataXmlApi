@@ -10,6 +10,7 @@ namespace VERIDATA.Model.Response
         public string? UserCode { get; set; }
         [Required]
         [StringLength(50, ErrorMessage = "Name length must be less than or equal 50 characters.")]
+        public string? CandidateId { get; set; }
         public string? UserName { get; set; }
         public string? Password { get; set; }
 
