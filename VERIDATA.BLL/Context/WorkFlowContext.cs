@@ -993,7 +993,7 @@ namespace VERIDATA.BLL.Context
             {
                 var inputData = string.Empty;
 
-                inputData = obj.SubCategory == ManualVerificationSubType.TENTHCERT || obj.SubCategory == ManualVerificationSubType.OTHID ? "Father's Name Verification : No" : obj.SubCategory == ManualVerificationSubType.EpfHistory ? "EPFO Service History : No" : obj.SubCategory == ManualVerificationSubType.EpfPassbook ? "EPFO Service History : No" : string.Empty;
+                inputData = obj.SubCategory == ManualVerificationSubType.TENTHCERT || obj.SubCategory == ManualVerificationSubType.OTHID ? "Father's Name Verification" : obj.SubCategory == ManualVerificationSubType.EpfHistory ? "EPFO Service History" : obj.SubCategory == ManualVerificationSubType.EpfPassbook ? "EPFO Passbook(s)" : string.Empty;
                 foreach (var questions in obj?.VerificationQueries)
                 {
 
