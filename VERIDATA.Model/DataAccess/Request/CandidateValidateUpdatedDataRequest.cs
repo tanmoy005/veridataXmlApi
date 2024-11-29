@@ -46,7 +46,7 @@ namespace VERIDATA.Model.DataAccess.Request
         public bool? IsPassbookFetch { get; set; }
         public bool? IsEmployementVarified { get; set; }
         public bool? IsFNameVarified { get; set; } 
-        public bool? IsUanLinkVerified { get; set; }
+        public bool? IsUanFromMobile { get; set; }
         public bool? AadharUanLinkYN { get; set; }
     }
 }

@@ -459,6 +459,8 @@ namespace VERIDATA.BLL.Context
                     UanData _uanDetails = new UanData
                     {
                         UanNumber = _apiResponse.UanNumber,
+                        IsUanFromMobile=true,
+                        AadharUanLinkYN=true
                     };
                     CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
                     {
