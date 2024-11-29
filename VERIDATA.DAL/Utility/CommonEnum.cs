@@ -385,7 +385,15 @@
             TrustPassbook = 1,
             EpfoPassBook = 2,
             Na = 3,
-            EPFnTrus= 4,
+            EPFnTrus = 4,
+
+        }
+
+        public enum EpsGap
+        {
+            Yes = 1,
+            No= 2,
+            NA= 3,
         }
         public static class JsonTypeAlias
         {

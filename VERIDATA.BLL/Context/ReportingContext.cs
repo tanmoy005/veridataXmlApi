@@ -744,6 +744,30 @@ namespace VERIDATA.BLL.Context
                         EpfoPassbook = null;
                         break;
                 }
+                bool? epsGap = reqObj.EpsGap switch
+                {
+                    (int)CommonEnum.EpsGap.Yes => true,
+                    (int)CommonEnum.EpsGap.No => false,
+
+                    _ => null,
+                };
+                switch (reqObj.EpsGap)
+                {
+                    case (int)CommonEnum.EpsGap.Yes:
+                        epsGap = true;
+                        break;
+
+                    case (int)CommonEnum.EpsGap.No:
+                        epsGap = false;
+                        break;
+
+                    default:
+                        epsGap = null;
+                        epsGap = null;
+                        break;
+                   
+                }
+
 
 
                 var filterRequest = new PfDataFilterReportRequest
@@ -754,6 +778,7 @@ namespace VERIDATA.BLL.Context
                     IsPensionGapIdentified = reqObj.PensionStatus,
                     FromDate = reqObj.FromDate,
                     ToDate = reqObj.ToDate,
+                    IsPensionGap= reqObj.EpsGap !=0,
 
                 };
 
