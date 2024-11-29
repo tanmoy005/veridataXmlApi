@@ -142,6 +142,7 @@ namespace VERIDATA.BLL.Context
                 data.SaveStep = _appointeedetails?.SaveStep ?? 0;
                 data.IsSubmit = _appointeedetails?.IsSubmit ?? false;
                 data.IsUanLinkWithAadhar = _appointeedetails?.IsUanAadharLink == null ? "NA" : _appointeedetails?.IsUanAadharLink ?? false ? "Yes" : "No";
+                data.UanAadharLinkStatus = _appointeedetails?.IsUanAadharLink ;
                 data.UserId = _appointeedetails?.CreatedBy ?? 0;
                 data.workFlowStatus = await _workFlowContext?.AppointeeWorkflowCurrentState(appointeeId) ;
                              //GetFileDataModel

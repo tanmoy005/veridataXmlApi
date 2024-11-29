@@ -94,7 +94,10 @@ namespace VERIDATA.DAL.DataAccess.Context
                     _appointeedetails.IsPassbookFetch = validationReq.uanData?.IsPassbookFetch;
                     _appointeedetails.UANNumber = validationReq.uanData?.UanNumber;
                     _appointeedetails.IsFNameVarified = validationReq.uanData?.IsFNameVarified;
-                    _appointeedetails.IsUanAadharLink = (validationReq.uanData?.IsUanFromMobile??false)? validationReq.uanData?.AadharUanLinkYN:null;
+                    if (validationReq.uanData?.IsUanFromMobile ?? false)
+                    {
+                        _appointeedetails.IsUanAadharLink = validationReq.uanData?.AadharUanLinkYN;
+                    }
                 }
                 if (validationReq.Type == RemarksType.Passport)
                 {
@@ -108,7 +111,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     _appointeedetails.PANName = validationReq?.panData?.PanName;
                     _appointeedetails.FathersNameFromPan = validationReq?.panData?.PanFatherName;
                 }
-               
+
 
             }
             _ = await _dbContextClass.SaveChangesAsync();

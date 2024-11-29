@@ -135,6 +135,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             userDetails.UserId = users?.u?.UserId ?? 0;
             userDetails.UserName = users?.u?.UserName;
+            userDetails.CandidateId = users?.u?.CandidateId;
             userDetails.Password = users?.UserPwdTxt;
             userDetails.EmailId = users?.u?.EmailId;
             userDetails.Phone = users?.u?.ContactNo;
@@ -266,6 +267,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     {
                         obj.IsUanVarified = null;
                     }
+                    obj.IsUanAadharLink = null;
                 }
 
                 //obj.AppointeeEmailId = (!string.IsNullOrEmpty(currRawdata.AppointeeEmailId) && (obj.AppointeeEmailId?.Trim() != currRawdata.AppointeeEmailId)) ? currRawdata.AppointeeEmailId : obj.AppointeeEmailId?.Trim();
