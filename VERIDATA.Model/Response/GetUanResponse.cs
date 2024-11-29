@@ -8,5 +8,7 @@ namespace VERIDATA.Model.Response
         //public bool? IsVarified { get; set; }
         public string? UanNumber { get; set; }
         public string? Remarks { get; set; }
+
+        public bool? isAadharUanVerified { get; set; }
     }
 }

@@ -7,5 +7,6 @@ namespace VERIDATA.Model.DataAccess
         public bool? IsUanAvailable { get; set; }
         public string? UanNumber { get; set; }
         public bool? IsInactiveUan { get; set; }
+        public bool? isUanLinkVerified { get; set; }
     }
 }

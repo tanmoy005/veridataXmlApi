@@ -119,6 +119,7 @@
             public const string Pan = "PAN";
             public const string Others = "OTH";
             public const string Manual = "MNAL";
+            public const string AadharUanLink = "AdhrUanLnk";
 
         }
         public static class RemedyType

@@ -175,7 +175,7 @@ namespace VERIDATA.BLL.Context
                 string? UANNumber = !string.IsNullOrEmpty(validationReq.uanData?.UanNumber) ? CommonUtility.CustomEncryptString(key, validationReq.uanData?.UanNumber) : null;
                 validationReq.uanData.UanNumber = UANNumber;
             }
-
+            
             await _appointeeDalContext.UpdateAppointeeVerifiedData(validationReq);
 
             if (validationReq?.Reasons?.Count > 0)

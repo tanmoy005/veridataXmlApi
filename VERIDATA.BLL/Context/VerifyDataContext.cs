@@ -346,6 +346,7 @@ namespace VERIDATA.BLL.Context
                 Response.IsUanAvailable = _apiResponse.IsUanAvailable ?? false;
                 Response.UanNumber = _apiResponse.UanNumber;
                 Response.Remarks = _apiResponse.IsUanAvailable ?? false ? string.Empty : _apiResponse.ReasonPhrase;
+                Response.isAadharUanVerified = _apiResponse.isUanLinkVerified ?? false;
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
                     UanData _uanDetails = new UanData
