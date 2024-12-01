@@ -838,7 +838,10 @@ namespace VERIDATA.BLL.Context
                 Uan = x.UAN,
                 AadhaarNumberView = x.AadharNumber,
                 IsManualPassbook = x.IsManual,
-                PensionGapIdentified = x.PensionStatus
+                PensionGapIdentified = x.PensionStatus,
+                AadharuanLink=x.IsUanAadharLink,
+                EpsMember=x.isEpsMember
+
             }).ToList();
 
             return excelDataList;

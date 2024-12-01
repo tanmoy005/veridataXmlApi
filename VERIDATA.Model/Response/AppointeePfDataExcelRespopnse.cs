@@ -31,5 +31,10 @@ namespace VERIDATA.Model.Response
         public string? AadhaarNumberView { get; set; }
         [DisplayName("Pension Gap")]
         public string? PensionGapIdentified { get; set; }
+
+        [DisplayName("Aadhar UAN Linked")]
+        public string? AadharuanLink {  get; set; }
+        [DisplayName("EPS Membership")]
+        public string EpsMember {  get; set; }
     }
 }
