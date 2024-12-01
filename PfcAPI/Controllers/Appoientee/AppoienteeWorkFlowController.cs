@@ -666,7 +666,7 @@ namespace PfcAPI.Controllers.Appoientee
                 Response.ManualVerificationList = _getunderProcessData;
                 if (_getunderProcessData.Count > 0)
                 {
-                  
+
                     List<ManualVerificationExcelDataResponse> excelData = Task.Run(async () => await _reportingContext.GetAppointeeManualVerificationExcelReport(_getunderProcessData)).GetAwaiter().GetResult();
                     if (excelData.Count > 0)
                     {
