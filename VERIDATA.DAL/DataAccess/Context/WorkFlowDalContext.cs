@@ -1087,7 +1087,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                             (reqObj.IsTrustPassbook == null || appointee.IsTrustPassbook == reqObj.IsTrustPassbook)
                             && (reqObj.IsEpfoPassbook == null || (reqObj.IsEpfoPassbook != false ? !string.IsNullOrEmpty(appointee.UANNumber) : string.IsNullOrEmpty(appointee.UANNumber)))
                             && (reqObj.IsManual == null || appointee.IsManualPassbook == reqObj.IsManual)
-                            && (reqObj.IsPensionGapIdentified == null || appointee.IsPensionGap == reqObj.IsPensionGapIdentified)
+                            && (reqObj.IsPensionApplicable == null || appointee.IsPensionApplicable == reqObj.IsPensionApplicable)
+                            && (reqObj.IsPensionGap == null || appointee.IsPensionGap == reqObj.IsPensionGap)
                             && (!reqObj.FromDate.HasValue || appointee.CreatedOn >= reqObj.FromDate)
                             && (!reqObj.ToDate.HasValue || appointee.CreatedOn <= reqObj.ToDate)
                         select new PfStatusDataFilterQueryResponse
@@ -1106,6 +1107,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                             Uan = appointee.UANNumber,
                             AadhaarNumberView = appointee.AadhaarNumberView,
                             IsUanAadharLink = appointee.IsUanAadharLink,
+                            EPS_Member_YN=appointee.IsPensionApplicable,
                         };
 
             return await query.ToListAsync();
