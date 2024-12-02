@@ -13,10 +13,10 @@ namespace VERIDATA.Model.Response
         [DisplayName("Email")]
         public string? EmailId { get; set; }
 
-        [DisplayName("mobile No")]
+        [DisplayName("Mobile No.")]
         public string? mobileNo { get; set; }
 
-        [DisplayName("Joining Date")]
+        [DisplayName("Date of Joining")]
         public string? dateOfJoining { get; set; }
 
         

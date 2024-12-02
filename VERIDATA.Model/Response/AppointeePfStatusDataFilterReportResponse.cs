@@ -6,19 +6,17 @@ namespace VERIDATA.Model.Response
 {
     public class AppointeePfStatusDataFilterReportResponse
     {
-        [DisplayName("Appointee Id")]
-        public int? AppointeeId { get; set; }
 
         [DisplayName("Candidate Id")]
         public string? candidateId { get; set; }
 
-        [DisplayName("Appointee Name")]
+        [DisplayName("Name")]
         public string? AppointeeName { get; set; }
 
         [DisplayName("Email")]
         public string? EmailId { get; set; }
 
-        [DisplayName("Mobile No")]
+        [DisplayName("Mobile No.")]
         public string? MobileNo { get; set; }
 
         [DisplayName("Date Of Joining")]
@@ -42,7 +40,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("UAN")]
         public string? UAN { get; set; }
 
-        [DisplayName("Aadhar Number")]
+        [DisplayName("Aadhaar No.")]
         public string? AadharNumber { get; set; }
 
         [DisplayName("uan_aadhar_link")]

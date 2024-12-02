@@ -467,7 +467,6 @@ namespace VERIDATA.BLL.Context
                 List<AppointeeAgingDataReportDetails>? _noResponseViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed &&
                 X?.AppointeeDetails?.IsSubmit != true && X?.AppointeeDetails?.SaveStep != 1)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeAgingDataReportDetails
                 {
-                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
@@ -484,7 +483,7 @@ namespace VERIDATA.BLL.Context
             {
                 List<AppointeeAgingDataReportDetails>? _underProcessViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed && (X?.AppointeeDetails?.IsSubmit == true || X?.AppointeeDetails?.SaveStep == 1))?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeAgingDataReportDetails
                 {
-                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                  //  AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
@@ -542,7 +541,7 @@ namespace VERIDATA.BLL.Context
         {
             return nationalityData?.Select(row => new AppointeeNationalityDataReportDetails
             {
-                AppointeeId = row?.AppointeeDetails?.AppointeeId,
+               // AppointeeId = row?.AppointeeDetails?.AppointeeId,
                 AppointeeName = row?.AppointeeDetails?.AppointeeName,
                 candidateId = row?.AppointeeDetails?.CandidateId,
                 EmailId = row?.AppointeeDetails?.AppointeeEmailId,
@@ -553,7 +552,7 @@ namespace VERIDATA.BLL.Context
                 ExpiryDate = row?.AppointeeDetails?.PassportValidTill?.ToShortDateString() ?? "N/A",
                 PassportNumber = string.IsNullOrEmpty(row?.AppointeeDetails?.PassportNo) ? "N/A" : CommonUtility.DecryptString(key, row?.AppointeeDetails?.PassportNo),
 
-            }).OrderByDescending(y => y.AppointeeId).ToList();
+            }).OrderByDescending(y => y.candidateId).ToList();
         }
 
         public async Task<List<AppointeeDataFilterReportDetails>> AppointeeDetailsReport(AppointeeDataFilterReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
@@ -580,7 +579,7 @@ namespace VERIDATA.BLL.Context
                 {
                     candidateId = row?.CandidateId,
                     AppointeeName = row?.AppointeeName,
-                    AppointeeId = row?.AppointeeId,
+                //    AppointeeId = row?.AppointeeId,
                     EmailId = row?.AppointeeEmailId,
                     MobileNo = row?.MobileNo,
                     DateOfJoining = row?.DateOfJoining,
@@ -605,7 +604,7 @@ namespace VERIDATA.BLL.Context
                 {
                     candidateId = row?.CandidateId,
                     AppointeeName = row?.AppointeeName,
-                    AppointeeId = row?.AppointeeId,
+                   // AppointeeId = row?.AppointeeId,
                     EmailId = row?.AppointeeEmailId,
                     MobileNo = row?.MobileNo,
                     DateOfJoining = row?.DateOfJoining,
@@ -630,7 +629,7 @@ namespace VERIDATA.BLL.Context
             {
                 List<AppointeeDataFilterReportDetails>? _lapsedViewdata = underProcessData?.Where(X => X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportDetails
                 {
-                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                  //  AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
@@ -646,7 +645,7 @@ namespace VERIDATA.BLL.Context
 
                 List<AppointeeDataFilterReportDetails>? _underProcessViewdata = underProcessData?.Where(X => !X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportDetails
                 {
-                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                   // AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
@@ -793,7 +792,7 @@ namespace VERIDATA.BLL.Context
                     {
                         candidateId = row?.CandidateId,
                         AppointeeName = row?.AppointeeName,
-                        AppointeeId = row?.AppointeeId,
+                      //  AppointeeId = row?.AppointeeId,
                         EmailId = row?.AppointeeEmailId,
                         MobileNo = row?.MobileNo,
                         DateOfJoining = row?.DateOfJoining,

@@ -6,19 +6,16 @@ namespace VERIDATA.Model.DataAccess
 {
     public class AppointeeDataFilterReportDetails
     {
-        [DisplayName("Appointee Id")]
-        public int? AppointeeId { get; set; }
-
         [DisplayName("Candidate Id")]
         public string? candidateId { get; set; }
 
-        [DisplayName("Appointee Name")]
+        [DisplayName("Name")]
         public string? AppointeeName { get; set; }
 
         [DisplayName("Email")]
         public string? EmailId { get; set; }
 
-        [DisplayName("Mobile No")]
+        [DisplayName("Mobile No.")]
         public string? MobileNo { get; set; }
 
         [DisplayName("Date Of Joining")]

@@ -5,7 +5,7 @@ namespace VERIDATA.Model.Response
     public class PfCreateAppointeeDetailsResponse
     {
 
-        [DisplayName("Appointee Name")]
+        [DisplayName("Name")]
         public string? AppointeeName { get; set; }
         [DisplayName("Email")]
         public string? EmailId { get; set; }
@@ -16,10 +16,8 @@ namespace VERIDATA.Model.Response
         [DisplayName("Gender")]
         public string? Gender { get; set; }
 
-        //[DisplayName("Gender Name")]
-        //public string? GenderName { get; set; }
 
-        [DisplayName("Mobile No")]
+        [DisplayName("Mobile No.")]
         public string? MobileNo { get; set; } //number that varified with aadhar
 
         [DisplayName("UAN Number")]
@@ -34,8 +32,6 @@ namespace VERIDATA.Model.Response
         [DisplayName("Relation")]
         public string? MemberRelation { get; set; }
 
-        //[DisplayName("Relation Name")]
-        //public string? MemberRelationName { get; set; }
 
         [DisplayName("Nationality")]
         public string? Nationality { get; set; }
@@ -46,14 +42,11 @@ namespace VERIDATA.Model.Response
         [DisplayName("Qualification")]
         public string? Qualification { get; set; }
 
-        //[DisplayName("Qualification Name")]
-        //public string? QualificationName { get; set; }
+      
 
         [DisplayName("Maratial Status")]
         public string? MaratialStatus { get; set; }
 
-        //[DisplayName("Maratial Status Name")]
-        //public string? MaratialStatusName { get; set; }
 
         [DisplayName("Is International Worker")]
         public string? IsInternationalWorker { get; set; }

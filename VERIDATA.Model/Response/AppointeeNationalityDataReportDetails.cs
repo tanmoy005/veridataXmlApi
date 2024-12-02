@@ -4,9 +4,6 @@ namespace VERIDATA.Model.Response
 {
     public class AppointeeNationalityDataReportDetails
     {
-        [DisplayName("Appointee Id")]
-        public int? AppointeeId { get; set; }
-
         [DisplayName("Candidate Id")]
         public string? candidateId { get; set; }
 
@@ -16,7 +13,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Email")]
         public string? EmailId { get; set; }
 
-        [DisplayName("Mobile No")]
+        [DisplayName("Mobile No.")]
         public string? MobileNo { get; set; }
         
         [DisplayName("Nationality")]

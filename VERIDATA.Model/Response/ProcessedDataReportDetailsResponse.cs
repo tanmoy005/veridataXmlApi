@@ -7,7 +7,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Candidate Id")]
         public string? CandidateId { get; set; }
 
-        [DisplayName("Appointee Name")]
+        [DisplayName("Name")]
         public string? AppointeeName { get; set; }
         [DisplayName("Email")]
         public string? EmailId { get; set; }
@@ -18,7 +18,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Gender Name")]
         public string? GenderName { get; set; }
 
-        [DisplayName("Mobile No")]
+        [DisplayName("Mobile No.")]
         public string? MobileNo { get; set; } //number that varified with aadhar
 
         [DisplayName("UAN Number")]
