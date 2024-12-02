@@ -181,12 +181,16 @@ namespace VERIDATA.BLL.Context
                 //GetFileId
                 int _fileid = await _workFlowDalContext.PostUploadedXSLfileAsync(resdata.FileName, resdata.FilePath, fileDetails.CompanyId);
                 List<UpdatedAppointeeBasicInfo> updateListData = new();
-
+                string[] formats = { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "d/M/yyyy", "M/d/yyyy" };
                 foreach ((DataRow row, UpdatedAppointeeBasicInfo _rawData) in
                 from DataRow row in validateResdata.ValidXlsData?.Rows
                 let _rawData = new UpdatedAppointeeBasicInfo()
                 select (row, _rawData))
                 {
+                    DateTime joiningDate = new();
+                    var _dateOfJoining = ((string)row["Updated Date Of Joining"])?.Trim();
+                    // Validate the date format (dd/MM/yyyy)
+                    DateTime.TryParseExact(_dateOfJoining, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out joiningDate);
                     string? candidateID = ((string)row["Candidate ID"])?.Trim();
                     string? appointeeName = ((string)row["Updated Name"])?.Trim();
                     string? appointeeMobileNo = ((string)row["Updated Phone No"])?.Trim();
@@ -194,7 +198,7 @@ namespace VERIDATA.BLL.Context
                     {
                         _rawData.CandidateID = candidateID;
                         _rawData.AppointeeName = string.IsNullOrEmpty(appointeeName) ? string.Empty : appointeeName;
-                        _rawData.DateOfJoining = ((string)row["Updated Date Of Joining"])?.Trim();
+                        _rawData.DateOfJoining = joiningDate.ToString("dd-MM-yyyy");
                         _rawData.MobileNo = appointeeMobileNo;
 
                         updateListData.Add(_rawData);
@@ -502,6 +506,7 @@ namespace VERIDATA.BLL.Context
             bool isRemarksColumnAdd = false;
             if (data?.dataTable?.Rows != null)
             {
+
                 foreach (object? column in data.dataTable.Columns)
                 {
                     _ = ValidData.Columns.Add(column.ToString());
@@ -532,8 +537,10 @@ namespace VERIDATA.BLL.Context
 
                     if (!string.IsNullOrEmpty(DateOfJoining))
                     {
-                        DateTime Jngrdate = new();
-                        bool joindateValidity = DateTime.TryParseExact(DateOfJoining, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out Jngrdate);
+                        DateTime joiningDate = new();
+                        string[] formats = { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "d/M/yyyy", "M/d/yyyy" };
+                        // Validate the date format (dd/MM/yyyy)
+                        bool joindateValidity = DateTime.TryParseExact(DateOfJoining, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out joiningDate);
 
                         if (!joindateValidity)
                         {
@@ -545,7 +552,7 @@ namespace VERIDATA.BLL.Context
                         }
                         else
                         {
-                            if (Jngrdate < DateTime.Now)
+                            if (joiningDate < DateTime.Now)
                             {
                                 isdataValid = false;
                                 string _Issue = "Joining date must be a future date.";
