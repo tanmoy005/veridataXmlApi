@@ -775,7 +775,7 @@ namespace VERIDATA.BLL.Context
                     IsManual = manualPassbook,
                     IsTrustPassbook = isTrusPassbook,
                     IsEpfoPassbook = EpfoPassbook,
-                    IsPensionGapIdentified = reqObj.PensionStatus,
+                    IsPensionApplicable = reqObj.PensionStatus,
                     FromDate = reqObj.FromDate,
                     ToDate = reqObj.ToDate,
                     IsPensionGap= reqObj.EpsGap !=0,

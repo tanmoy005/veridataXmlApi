@@ -14,7 +14,7 @@ namespace VERIDATA.Model.DataAccess.Request
         public bool? IsTrustPassbook { get; set; }
         public bool? IsEpfoPassbook { get; set; }
         public bool? IsManual { get; set; }
-        public bool? IsPensionGapIdentified { get; set; }
+        public bool? IsPensionApplicable { get; set; }
         public bool? IsPensionGap { get; set; }
 
     }
