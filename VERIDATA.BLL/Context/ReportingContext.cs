@@ -851,9 +851,7 @@ namespace VERIDATA.BLL.Context
         {
             var excelDataList = processDetails.Select(x => new ManualVerificationExcelDataResponse
             {
-                id = x.id,
                 candidateId = x.candidateId,
-                appointeeId = x.appointeeId,
                 appointeeName = x.appointeeName,
                 appointeeEmailId = x.appointeeEmailId,
                 mobileNo = x.mobileNo,

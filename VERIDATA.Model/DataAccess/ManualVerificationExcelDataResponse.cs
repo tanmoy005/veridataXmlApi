@@ -4,17 +4,17 @@ namespace VERIDATA.Model.DataAccess
 {
     public class ManualVerificationExcelDataResponse
     {
-        public int id { get; set; }
-        [DisplayName("Appointee Id")]
+       
+        [DisplayName("Candidate Id")]
         public string? candidateId { get; set; }
-        public int? appointeeId { get; set; }
+        
         [DisplayName("Name")]
         public string? appointeeName { get; set; }
         [DisplayName("Email")]
         public string? appointeeEmailId { get; set; }
-        [DisplayName("Mobile No")]
+        [DisplayName("Mobile No.")]
         public string? mobileNo { get; set; } //number that varified with aadhar
-        [DisplayName("Joining Date")]
+        [DisplayName("Date Of Joining")]
         public string? dateOfJoining { get; set; }
         [DisplayName("Submitted")] // Yes/No
         public bool? isDocSubmitted { get; set; }
