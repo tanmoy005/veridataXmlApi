@@ -45,10 +45,10 @@ namespace VERIDATA.Model.Response
         [DisplayName("Aadhar Number")]
         public string? AadharNumber { get; set; }
 
-        [DisplayName("uan_aadhar_link")]
+        [DisplayName("UAN Aadhar Link")]
         public string? IsUanAadharLink { get; set; }
 
-        [DisplayName("EPS_membership")]
+        [DisplayName("EPS Membership")]
         public string? isEpsMember { get; set; }
 
     }

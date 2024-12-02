@@ -1106,6 +1106,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                             Uan = appointee.UANNumber,
                             AadhaarNumberView = appointee.AadhaarNumberView,
                             IsUanAadharLink = appointee.IsUanAadharLink,
+                            EPS_Member_YN=appointee.IsPensionApplicable,
                         };
 
             return await query.ToListAsync();

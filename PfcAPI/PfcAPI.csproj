@@ -123,6 +123,7 @@
     <None Include="DatabaseMigration\DMLScript\Master\master.api_type_mapping.Table.sql" />
     <None Include="DatabaseMigration\DMLScript\Master\master.api_type_master.Table.sql" />
     <None Include="DatabaseMigration\DMLScript\Master\master.disability_master.Table.sql" />
+    <None Include="DatabaseMigration\DMLScript\Master\master.faq_master.Table.sql" />
     <None Include="DatabaseMigration\DMLScript\Master\master.gender_master.Table.sql" />
     <None Include="DatabaseMigration\DMLScript\Master\master.marital_status_master.Table.sql" />
     <None Include="DatabaseMigration\DMLScript\Master\master.nationility_master.Table.sql" />
