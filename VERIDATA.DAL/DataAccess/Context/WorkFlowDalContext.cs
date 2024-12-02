@@ -189,7 +189,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                   && (string.IsNullOrEmpty(reqObj.CandidateId) || b.CandidateId.Contains(reqObj.CandidateId))
                                                                   && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate) && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
                                                                   && b.ActiveStatus == true
-                                                                  && (reqObj.IsManualPassbook == null || p.IsManualPassbook == reqObj.IsManualPassbook)
+                                                                  && (reqObj.IsManualPassbook == null || p.IsManualPassbook ==true && p.IsManualPassbook == true || p.IsManualPassbook == false && p.IsPassbookFetch == true)
                                                                   orderby p.IsSubmit
                                                                   select new UnderProcessQueryDataResponse
                                                                   {
