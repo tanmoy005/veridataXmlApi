@@ -778,7 +778,7 @@ namespace VERIDATA.BLL.Context
                     IsPensionApplicable = reqObj.PensionStatus,
                     FromDate = reqObj.FromDate,
                     ToDate = reqObj.ToDate,
-                    IsPensionGap= reqObj.EpsGap !=0,
+                    IsPensionGap= epsGap,
 
                 };
 
