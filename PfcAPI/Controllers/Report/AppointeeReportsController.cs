@@ -39,7 +39,7 @@ namespace PfcAPI.Controllers.Report
                 //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
-                string reportname = $"Approved_Appointee_{_currDateString}.xlsx";
+                string reportname = $"Verified_Appointee_{_currDateString}.xlsx";
                 List<ProcessedDataReportDetailsResponse> appointeeList = Task.Run(async () => await _reportContext.GetApporvedAppointeeDetails(filter)).GetAwaiter().GetResult();
                 if (appointeeList.Count > 0)
                 {
@@ -76,7 +76,7 @@ namespace PfcAPI.Controllers.Report
                 filter.ToDate = filter?.ToDate != null ? filter?.ToDate.Value.AddDays(1) : filter?.ToDate;
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
-                string reportname = $"Rejected_Appointee_{_currDateString}.xlsx";
+                string reportname = $"Cancelled_Appointee_{_currDateString}.xlsx";
 
                 List<RejectedDataReportDetailsResponse> appointeeList = Task.Run(async () => await _reportContext.GetRejectedAppointeeDetails(filter)).GetAwaiter().GetResult();
                 if (appointeeList.Count > 0)
@@ -130,7 +130,7 @@ namespace PfcAPI.Controllers.Report
                 filter.ToDate = filter?.ToDate != null ? filter?.ToDate.Value.AddDays(1) : filter?.ToDate;
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
-                string reportname = $"PF_Creation_Appointee_{_currDateString}.xlsx";
+                string reportname = $"PF_Users_{_currDateString}.xlsx";
                 List<PfCreateAppointeeDetailsResponse> appointeeList = Task.Run(async () => await _reportContext.DownloadedPfUserCreateAppointeeDetails(filter)).GetAwaiter().GetResult();
                 if (appointeeList.Count > 0)
                 {
@@ -414,7 +414,7 @@ namespace PfcAPI.Controllers.Report
                 //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
-                string reportname = $"Appointee_Details_Report_{_currDateString}.xlsx";
+                string reportname = $"Appointee_Data_{_currDateString}.xlsx";
                 List<AppointeeDataFilterReportDetails>? appointeeList = Task.Run(async () => await _reportContext.AppointeeDetailsReport(reqObj)).GetAwaiter().GetResult();
 
                 if (appointeeList?.Count > 0)
@@ -448,7 +448,7 @@ namespace PfcAPI.Controllers.Report
                 //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
-                string reportname = $"Appointee_PF_Details_Report_{_currDateString}.xlsx";
+                string reportname = $"PF_Pension_Data_{_currDateString}.xlsx";
                 List<AppointeePfStatusDataFilterReportResponse>? appointeeList = Task.Run(async () => await _reportContext.AppointeePfDetailsFileterReport(reqObj)).GetAwaiter().GetResult();
                 if (appointeeList?.Count > 0)
                 {

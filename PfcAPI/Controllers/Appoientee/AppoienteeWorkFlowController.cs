@@ -150,6 +150,7 @@ namespace PfcAPI.Controllers.Appoientee
             }
         }
 
+        [AllowAnonymous]
         [Authorize]
         [HttpPost("GetUnderProcessFileData")]
         public ActionResult GetUnderProcessFileData(AppointeeSeacrhFilterRequest reqObj)
