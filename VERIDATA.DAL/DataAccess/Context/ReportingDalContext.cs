@@ -89,8 +89,11 @@ namespace VERIDATA.DAL.DataAccess.Context
                 PANNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.PANNumber) ? null : CommonDalUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.PANNumber),
                 AadhaarName = r.FirstOrDefault()?.data?.AppointeeData?.AadhaarName,
                 //AadhaarNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView) ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView,
-                AadhaarNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView) ? "NA" : CommonDalUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumber)?? r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView,
-                Remarks = r?.Where(x => x.ReasonId == othRsnCatgry.ReasonId)?.Select(y => y.Remarks)?.Aggregate("", (current, s) => current + s + ",")
+                AadhaarNumber = string.IsNullOrEmpty(r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView) ? "NA" : CommonDalUtility.DecryptString(key, r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumber) ?? r.FirstOrDefault()?.data?.AppointeeData?.AadhaarNumberView,
+                Remarks = r?.Where(x => x.ReasonId == othRsnCatgry.ReasonId)?.Select(y => y.Remarks)?.Aggregate("", (current, s) => current + s + ","),
+                PensionGapAvailable = r.FirstOrDefault()?.data?.AppointeeData?.IsPensionGap == null ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.IsPensionGap ?? false ? "Yes" : "No",
+                AadharUANLink = r.FirstOrDefault()?.data?.AppointeeData?.IsUanAadharLink == null ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
+                VerificationType = r.FirstOrDefault()?.data?.AppointeeData?.IsManualPassbook == null && r.FirstOrDefault()?.data?.AppointeeData?.IsPassbookFetch == null ? "NA" : r.FirstOrDefault()?.data?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : r.FirstOrDefault()?.data?.AppointeeData?.IsPassbookFetch ?? false ? "Auto" : "NA",
             }).ToList();
 
             return Response;
@@ -217,7 +220,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return list;
 
-           
+
         }
         public async Task<List<UnderProcessCandidateReportDataResponse>> GetUnderProcessCandidateReport(AppointeeCountReportSearchRequest reqObj, string? _statusCode, bool? _intSubmitCode, int? _intSubStatusCode)
         {
