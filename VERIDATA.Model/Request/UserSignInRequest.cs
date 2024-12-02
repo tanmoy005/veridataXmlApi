@@ -5,7 +5,7 @@ namespace VERIDATA.Model.Request
     public class UserSignInRequest
     {
         [Required]
-        [StringLength(15)]
+        [StringLength(15, ErrorMessage = "Invalid Username")]
         public string? UserCode { get; set; }
 
         [Required]

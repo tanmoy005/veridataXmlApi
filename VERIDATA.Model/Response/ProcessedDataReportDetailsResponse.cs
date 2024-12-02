@@ -24,8 +24,14 @@ namespace VERIDATA.Model.Response
         [DisplayName("UAN Number")]
         public string? UANNumber { get; set; }
 
-        [DisplayName("Pension Available")]
+        [DisplayName("Aadhar UAN Linked")]
+        public string? AadharUANLink { get; set; }
+
+        [DisplayName("EPS Membership")]
         public string? PensionAvailable { get; set; }
+        
+        [DisplayName("EPS Gap")]
+        public string? PensionGapAvailable { get; set; }
 
         [DisplayName("Date Of Joining")]
         public string? DateOfJoining { get; set; }
@@ -80,6 +86,9 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("PAN Number")]
         public string? PANNumber { get; set; }
+        
+        [DisplayName("Verification Type")]
+        public string? VerificationType { get; set; }
 
         [DisplayName("Remarks")]
         public string? Remarks { get; set; }
