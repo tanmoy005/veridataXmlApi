@@ -464,7 +464,6 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [Authorize]
-        //[AllowAnonymous]
         [HttpPost]
         [Route("GetEmployementDetails")]
         public ActionResult GetEmployementDetails(int AppointeeId, int userId)
@@ -520,7 +519,6 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [Authorize]
-        //[AllowAnonymous]
         [HttpPost]
         [Route("UpdateDocWithUanDetails")]
         public ActionResult UpdateDocWithUanDetails(AppointeeUpdatePfUanDetailsRequest reqObj)
@@ -602,8 +600,7 @@ namespace PfcAPI.Controllers.Appoientee
             }
         }
 
-        [AllowAnonymous]
-        //[Authorize]
+        [Authorize]
         [HttpPost]
         [Route("UpdateAppointeeManualVerification")]
         public ActionResult UpdateAppointeeManualVerification(AppointeeApproveVerificationRequest reqObj)
@@ -624,7 +621,7 @@ namespace PfcAPI.Controllers.Appoientee
                 throw;
             }
         }
-        //[AllowAnonymous]
+        
         [Authorize]
         [HttpPost("GetAppointeeUploadedUnverifiedFiles")]
         public ActionResult GetAppointeeUploadedUnverifiedFiles(int AppointeeId)
@@ -650,7 +647,6 @@ namespace PfcAPI.Controllers.Appoientee
 
         }
 
-        [AllowAnonymous]
         [Authorize]
         [HttpPost("GetManualVeificationProcessData")]
         public ActionResult GetManualVeificationProcessData(ManualVeificationProcessDataRequest reqObj)

@@ -857,7 +857,7 @@ namespace VERIDATA.BLL.Context
             {
                 IGrouping<int?, ManualVerificationProcessDetailsResponse> x = item.Value;
                 List<string?> ResonDetails = x.Select(y => y.remarks).ToList();
-                string Remarks = ResonDetails.Count > 0 ? string.Join(", ", ResonDetails) : "NA";
+                string _remarks = ResonDetails.Count > 0 ? string.Join(", ", ResonDetails) : "NA";
                 ManualVerificationExcelDataResponse? _data = x.Select(r =>
 
                     new ManualVerificationExcelDataResponse
@@ -868,7 +868,7 @@ namespace VERIDATA.BLL.Context
                         mobileNo = r.mobileNo,
                         dateOfJoining = r.dateOfJoining?.ToShortDateString(),
                         status = r.status,
-                        remarks = r.remarks,
+                        remarks = _remarks,
                     }).FirstOrDefault();
                 response.Add(_data);
             }
