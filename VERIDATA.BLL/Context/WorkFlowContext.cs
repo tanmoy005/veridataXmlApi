@@ -553,7 +553,7 @@ namespace VERIDATA.BLL.Context
                 {
 
                     //if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsPanVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false))
-                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false)  && (_appointeedetails.IsFNameVarified ?? false))
+                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false))
                     {
                         mailType = MailType.AutoApprove;
                         await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeFileDetails?.UserId ?? 0, true);//isapprove set true
@@ -930,7 +930,7 @@ namespace VERIDATA.BLL.Context
             return await _dbContextWorkflow.getFileTypeCode(appointeeId);
         }
 
-        public async Task VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj)
+        public async Task<bool> VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj)
         {
             bool? isDataValid = false;
             var isDataVerificationReq = await VefifyDocValidityManual(reqObj.AppointeeId, reqObj.VerificationSubCategoryList, reqObj.UserId, reqObj.VerificationCategory);
@@ -977,7 +977,7 @@ namespace VERIDATA.BLL.Context
             if (isDataVerificationReq)
             {
                 //if ((updatedAppointeeDetails?.IsUanVarified ?? false) && (updatedAppointeeDetails.IsAadhaarVarified ?? false) && (updatedAppointeeDetails.IsPanVarified ?? false) && (updatedAppointeeDetails.IsFNameVarified ?? false))
-                if ((updatedAppointeeDetails?.IsUanVarified ?? false) && (updatedAppointeeDetails.IsAadhaarVarified ?? false)  && (updatedAppointeeDetails.IsFNameVarified ?? false))
+                if ((updatedAppointeeDetails?.IsUanVarified ?? false) && (updatedAppointeeDetails.IsAadhaarVarified ?? false) && (updatedAppointeeDetails.IsFNameVarified ?? false))
                 {
                     await DataUploadAndApproved(updatedAppointeeDetails.AppointeeId, reqObj?.UserId ?? 0, true);//isapprove set true
 
@@ -985,6 +985,7 @@ namespace VERIDATA.BLL.Context
                 }
 
             }
+            return isDataValid ?? false;
         }
         private async Task<bool> VefifyDocValidityManual(int appointeeId, List<VerificationUpdatesubCategory>? docValidity, int userId, string? VerificationCategory)// TODO
         {
@@ -995,7 +996,7 @@ namespace VERIDATA.BLL.Context
             {
                 var inputData = string.Empty;
 
-                inputData = obj.SubCategory == ManualVerificationSubType.TENTHCERT || obj.SubCategory == ManualVerificationSubType.OTHID ? "Father's Name Verification" : obj.SubCategory == ManualVerificationSubType.EpfHistory ? "EPFO Service History" : obj.SubCategory == ManualVerificationSubType.EpfPassbook ? "EPFO Passbook(s)" : string.Empty;
+                inputData = obj.SubCategory == ManualVerificationSubType.FathersName || obj.SubCategory == ManualVerificationSubType.TENTHCERT || obj.SubCategory == ManualVerificationSubType.OTHID ? "Father's Name Verification" : obj.SubCategory == ManualVerificationSubType.EpfHistory ? "EPFO Service History" : obj.SubCategory == ManualVerificationSubType.EpfPassbook ? "EPFO Passbook(s)" : string.Empty;
                 foreach (var questions in obj?.VerificationQueries)
                 {
 

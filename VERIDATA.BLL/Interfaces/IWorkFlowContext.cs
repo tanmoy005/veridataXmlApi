@@ -29,7 +29,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<VarificationStatusResponse> ValidateRemainderMail(int appointeeId, int UserId);
         public Task PostMailResend(int appointeeId, int UserId);
         public Task<List<FileCategoryResponse>> getFileType(int appointeeId);
-        public Task VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj);
+        public Task <bool> VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj);
       
         public Task <List<FileCategoryResponse>> GetNotVeriedfileView(int appointeeId);
         public Task PostAppointeeFileReuploadDetailsAsync(AppointeeReUploadFilesAfterSubmitRequest AppointeeFileDetailsReupload);

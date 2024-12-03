@@ -415,6 +415,7 @@
         {
             public const string EpfPassbook = "EPFPSHF";
             public const string EpfHistory = "EPFPSHF";
+            public const string FathersName = "FTHR";
             public const string TENTHCERT = "10THCERT";
             public const string OTHID = "OTHID";
         }
