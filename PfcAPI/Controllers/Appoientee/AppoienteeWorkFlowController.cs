@@ -611,9 +611,9 @@ namespace PfcAPI.Controllers.Appoientee
             }
             try
             {
-                Task.Run(async () => await _workflowContext.VerifyAppointeeManualAsync(reqObj)).GetAwaiter().GetResult();
+               var isvalid= Task.Run(async () => await _workflowContext.VerifyAppointeeManualAsync(reqObj)).GetAwaiter().GetResult();
 
-                return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
+                return Ok(new BaseResponse<bool>(HttpStatusCode.OK, isvalid));
             }
             catch (Exception)
             {
