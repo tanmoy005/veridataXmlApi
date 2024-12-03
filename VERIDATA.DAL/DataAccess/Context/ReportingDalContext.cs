@@ -214,10 +214,10 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             List<NationalityQueryDataResponse> list = await querydata.ToListAsync().ConfigureAwait(false);
 
-            if (list == null || list.Count == 0)
-            {
-                throw new Exception("No records found based on the query parameters.");
-            }
+            //if (list == null || list.Count == 0)
+            //{
+            //    throw new Exception("No records found based on the query parameters.");
+            //}
 
             return list;
 
