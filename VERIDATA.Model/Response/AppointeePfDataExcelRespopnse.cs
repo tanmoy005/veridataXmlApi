@@ -23,13 +23,13 @@ namespace VERIDATA.Model.Response
         public string? IsTrustPassbook { get; set; }
         [DisplayName("EPFO Passbook")]
         public string? Status { get; set; }
-        [DisplayName("Manual Passbook")]
+        [DisplayName("Verification Type")]
         public string? IsManualPassbook { get; set; }
         [DisplayName("UAN")]
         public string? Uan { get; set; }
         [DisplayName("Aadhaar No")]
         public string? AadhaarNumberView { get; set; }
-        [DisplayName("Pension Gap")]
+        [DisplayName("EPS Gap")]
         public string? PensionGapIdentified { get; set; }
 
         [DisplayName("Aadhar UAN Linked")]

@@ -846,7 +846,7 @@ namespace VERIDATA.BLL.Context
                         MobileNo = row?.MobileNo,
                         DateOfJoining = row?.DateOfJoining,
                         PensionStatus = row?.PensionGapIdentified == null ? "NA" : row?.PensionGapIdentified == true ? "Yes" : "No",
-                        EPFOPassBookStatus = !string.IsNullOrEmpty(row?.Uan) ? "Epfo" : "No UAN",
+                        EPFOPassBookStatus = !string.IsNullOrEmpty(row?.Uan) ? "EPFO" : "No UAN",
                         TrustPassBookStatus = row?.IsTrustPassbook == null ? string.Empty : (row?.IsTrustPassbook == true ? "Trust" : string.Empty),
                         IsManual = row?.IsManualPassbook == null ? "NA" : (row?.IsManualPassbook == true ? "Manual" : "Auto"),
                         UAN = string.IsNullOrEmpty(row?.Uan) ? "NA" : CommonUtility.DecryptString(key, row?.Uan),
