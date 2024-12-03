@@ -139,7 +139,7 @@ namespace VERIDATA.BLL.Context
                        Qualification = r?.AppointeeData?.Qualification,
                        UANNumber = string.IsNullOrEmpty(r?.AppointeeData?.UANNumber) ? null : CommonUtility.DecryptString(key, r?.AppointeeData?.UANNumber),
                        EPFWages = r?.AppointeeData?.EPFWages ?? 00,
-                       Gender = r?.AppointeeData?.Gender=="M"? "Maile" : r?.AppointeeData?.Gender=="F"? "Female" :"Others",
+                       Gender = r?.AppointeeData?.Gender == "M" ? "Maile" : r?.AppointeeData?.Gender == "F" ? "Female" : "Others",
                        MaratialStatus = r?.AppointeeData?.MaratialStatus,
                        MemberName = r?.AppointeeData?.MemberName,
                        MemberRelation = r?.AppointeeData?.MemberRelation,
@@ -468,14 +468,15 @@ namespace VERIDATA.BLL.Context
                 List<AppointeeAgingDataReportDetails>? _noResponseViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed &&
                 X?.AppointeeDetails?.IsSubmit != true && X?.AppointeeDetails?.SaveStep != 1)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeAgingDataReportDetails
                 {
+                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
                     MobileNo = row?.UnderProcess?.MobileNo,
-                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining?.ToString("dd/MM/yyyy") ?? row?.UnderProcess?.DateOfJoining?.ToString("dd/MM/yyyy"),
-                    CreatedDate = row?.UnderProcess?.CreatedOn?.ToString("dd/MM/yyyy"),
+                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
+                    CreatedDate = row?.UnderProcess?.CreatedOn,
                     Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                    LastActionDate = row?.LastActionDate?.ToString("dd/MM/yyyy"),
+                    LastActionDate = row?.LastActionDate,
                     LastActivityDesc = row?.ActivityDesc,
                 }).OrderByDescending(y => y.DateOfJoining).ToList();
                 _response = _noResponseViewdata;
@@ -484,15 +485,15 @@ namespace VERIDATA.BLL.Context
             {
                 List<AppointeeAgingDataReportDetails>? _underProcessViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed && (X?.AppointeeDetails?.IsSubmit == true || X?.AppointeeDetails?.SaveStep == 1))?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeAgingDataReportDetails
                 {
-                    //  AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                    AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
                     MobileNo = row?.UnderProcess?.MobileNo,
-                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining?.ToString("dd/MM/yyyy") ?? row?.UnderProcess?.DateOfJoining?.ToString("dd/MM/yyyy"),
-                    CreatedDate = row?.UnderProcess?.CreatedOn?.ToString("dd/MM/yyyy"),
+                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
+                    CreatedDate = row?.UnderProcess?.CreatedOn,
                     Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                    LastActionDate = row?.LastActionDate?.ToString("dd/MM/yyyy"),
+                    LastActionDate = row?.LastActionDate,
                     LastActivityDesc = row?.ActivityDesc,
                 }).OrderByDescending(y => y.DateOfJoining).ToList();
                 _response = _underProcessViewdata;
@@ -500,7 +501,30 @@ namespace VERIDATA.BLL.Context
             }
             return _response;
         }
+        public async Task<List<AppointeeAgingDataExcelReportDetails>> AppointeeAgingDetailsExcelReport(List<AppointeeAgingDataReportDetails> reqObj)
+        {
 
+            List<AppointeeAgingDataExcelReportDetails> _response = new();
+            if (reqObj.Count > 0)
+            {
+
+                var _listData = reqObj?.Select(row => new AppointeeAgingDataExcelReportDetails
+                {
+                    AppointeeName = row?.AppointeeName,
+                    candidateId = row?.candidateId,
+                    EmailId = row?.EmailId ,
+                    MobileNo = row?.MobileNo,
+                    DateOfJoining = row?.DateOfJoining?.ToString("dd/MM/yyyy") ,
+                    CreatedDate = row?.CreatedDate?.ToString("dd/MM/yyyy"),
+                    Status = row?.Status,
+                    LastActionDate = row?.LastActionDate?.ToString("dd/MM/yyyy"),
+                    LastActivityDesc = row?.LastActivityDesc,
+                }).ToList();
+                _response.AddRange(_listData);
+            }
+
+            return _response;
+        }
         public async Task<List<AppointeeNationalityDataReportDetails>> AppointeeNationalityDetailsReport(GetNationalityReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
         {
             List<AppointeeNationalityDataReportDetails> _response = new();
@@ -660,6 +684,30 @@ namespace VERIDATA.BLL.Context
             }
             var res = _response?.OrderByDescending(y => y?.DateOfJoining)?.ToList();
             return res;
+        }
+
+        public async Task<List<AppointeeDataExcelReportDetails>> AppointeeDetailsExcelReport(List<AppointeeDataFilterReportDetails> reqObj)
+        {
+
+            List<AppointeeDataExcelReportDetails> _response = new();
+            if (reqObj.Count > 0)
+            {
+
+                var _listData = reqObj?.Select(row => new AppointeeDataExcelReportDetails
+                {
+                    candidateId = row?.candidateId,
+                    AppointeeName = row?.AppointeeName,
+                    //    AppointeeId = row?.AppointeeId,
+                    EmailId = row?.EmailId,
+                    MobileNo = row?.MobileNo,
+                    DateOfJoining = row?.DateOfJoining?.ToShortDateString(),
+                    Status = row?.Status,
+                    CreatedDate = row?.CreatedDate?.ToShortDateString()
+                }).ToList();
+                _response.AddRange(_listData);
+            }
+
+            return _response;
         }
         public async Task<List<AppointeeDataPfReportResponse>> AppointeePfDetailsReport(AppointeeDataFilterReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
         {

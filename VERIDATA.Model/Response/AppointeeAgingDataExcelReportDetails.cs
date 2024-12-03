@@ -2,14 +2,11 @@
 
 namespace VERIDATA.Model.Response
 {
-    public class AppointeeAgingDataReportDetails
+    public class AppointeeAgingDataExcelReportDetails
     {
       
         [DisplayName("Candidate ID")]
         public string? candidateId { get; set; }
-        
-        [DisplayName("Appointee ID")]
-        public int? AppointeeId { get; set; }
 
         [DisplayName("Name")]
         public string? AppointeeName { get; set; }
@@ -21,17 +18,16 @@ namespace VERIDATA.Model.Response
         public string? MobileNo { get; set; }
 
         [DisplayName("Date Of Joining")]
-        public DateTime? DateOfJoining { get; set; }
-
+        public string? DateOfJoining { get; set; }
 
         [DisplayName("Link Sent Date")]
-        public DateTime? CreatedDate { get; set; }
+        public string? CreatedDate { get; set; }
 
         [DisplayName("Status")]
         public string? Status { get; set; }
 
         [DisplayName("Last Activity at")]
-        public DateTime? LastActionDate { get; set; }
+        public string? LastActionDate { get; set; }
 
         [DisplayName("Last Activity Info")]
         public string? LastActivityDesc { get; set; }

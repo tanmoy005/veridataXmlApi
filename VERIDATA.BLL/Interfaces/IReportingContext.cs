@@ -17,6 +17,8 @@ namespace VERIDATA.BLL.Interfaces
         public Task<List<AppointeeAgingDataReportDetails>> AppointeeDetailsAgingReport(GetAgingReportRequest reqObj);
         public Task<List<AppointeeNationalityDataReportDetails>> AppointeeNationalityDetailsReport(GetNationalityReportRequest reqObj);//DateTime? FromDate, DateTime? ToDate)
         public Task<List<AppointeeDataFilterReportDetails>> AppointeeDetailsReport(AppointeeDataFilterReportRequest reqObj);
+        public Task<List<AppointeeDataExcelReportDetails>> AppointeeDetailsExcelReport(List<AppointeeDataFilterReportDetails> reqObj);
+        public Task<List<AppointeeAgingDataExcelReportDetails>> AppointeeAgingDetailsExcelReport(List<AppointeeAgingDataReportDetails> reqObj);
         public Task<List<AppointeeDataPfReportResponse>> AppointeePfDetailsReport(AppointeeDataFilterReportRequest reqObj);
         public Task<List<AppointeePfStatusDataFilterReportResponse>> AppointeePfDetailsFileterReport(AppointeePfDataFilterReportRequest reqObj);
         public Task<List<AppointeePfDataExcelRespopnse>> GetAppointeePfDataExcelReport(List<AppointeePfStatusDataFilterReportResponse> reqObj);

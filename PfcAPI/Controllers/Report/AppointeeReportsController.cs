@@ -352,7 +352,9 @@ namespace PfcAPI.Controllers.Report
                 List<AppointeeAgingDataReportDetails>? appointeeList = Task.Run(async () => await _reportContext.AppointeeDetailsAgingReport(reqObj)).GetAwaiter().GetResult();
                 if (appointeeList?.Count > 0)
                 {
-                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeAgingDataReportDetails>(appointeeList);
+                    List<AppointeeAgingDataExcelReportDetails>? _appointeeList = Task.Run(async () => await _reportContext.AppointeeAgingDetailsExcelReport(appointeeList)).GetAwaiter().GetResult();
+
+                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeAgingDataExcelReportDetails>(_appointeeList);
                     byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportname, reqObj.FilePassword ?? string.Empty);
                     //var _file = file(exportbytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", reportname);
                     Filedata _filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
@@ -419,7 +421,8 @@ namespace PfcAPI.Controllers.Report
 
                 if (appointeeList?.Count > 0)
                 {
-                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeDataFilterReportDetails>(appointeeList);
+                    List<AppointeeDataExcelReportDetails>? listData = Task.Run(async () => await _reportContext.AppointeeDetailsExcelReport(appointeeList)).GetAwaiter().GetResult();
+                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeDataExcelReportDetails>(listData);
                     byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportname, string.Empty);
 
                     Filedata _filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
