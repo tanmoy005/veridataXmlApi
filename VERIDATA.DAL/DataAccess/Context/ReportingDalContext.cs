@@ -275,7 +275,9 @@ namespace VERIDATA.DAL.DataAccess.Context
             var querydata = from ap in AppointeeListDetails
                             join rp in _dbContextClass.AppointeeReasonMappingData
                                 on ap.appointeeId equals rp.AppointeeId
-                            where rp.ActiveStatus == true
+                                into grouping
+                            from p in grouping.DefaultIfEmpty()
+                            where (p == null || p.ActiveStatus == true)
                             select new ManualVerificationProcessDetailsResponse
                             {
                                 appointeeId = ap.appointeeId,
@@ -285,7 +287,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                 mobileNo = ap.mobileNo,
                                 dateOfJoining = ap.dateOfJoining,
                                 status = ap.status,
-                                remarks = rp.Remarks,
+                                remarks = p?.Remarks,
                             };
 
             List<ManualVerificationProcessDetailsResponse> rejectedAppointeeList = querydata.ToList();

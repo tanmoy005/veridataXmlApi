@@ -675,14 +675,7 @@ namespace PfcAPI.Controllers.Appoientee
 
                         Response.Filedata = _filedata;
                     }
-                    else
-                    {
-                        _ErrorResponse.ErrorCode = 400;
-                        _ErrorResponse.UserMessage = "There is no data to export a report";
-                        _ErrorResponse.InternalMessage = "There is no data to export a report";
-
-                        return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
-                    }
+                    
                 }
 
                 return Ok(new BaseResponse<ManualVerificationDataResponse>(HttpStatusCode.OK, Response));
