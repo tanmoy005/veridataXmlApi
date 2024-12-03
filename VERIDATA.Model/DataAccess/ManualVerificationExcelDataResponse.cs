@@ -16,12 +16,15 @@ namespace VERIDATA.Model.DataAccess
         public string? mobileNo { get; set; } //number that varified with aadhar
         [DisplayName("Date Of Joining")]
         public string? dateOfJoining { get; set; }
-        [DisplayName("Submitted")] // Yes/No
-        public bool? isDocSubmitted { get; set; }
-        [DisplayName("Issue")]
-        public bool? isNoIsuueinVerification { get; set; } //  Yes/No
+        //[DisplayName("Submitted")] // Yes/No
+        //public bool? isDocSubmitted { get; set; }
+        //[DisplayName("Issue")]
+        //public bool? isNoIsuueinVerification { get; set; } //  Yes/No
         [DisplayName("Status")]
-        public string? Status { get; set; }
+        public string? status { get; set; }
+        
+        [DisplayName("Remarks")]
+        public string? remarks { get; set; }
         
     }
 }

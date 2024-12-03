@@ -1,4 +1,5 @@
 ﻿
+using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
@@ -16,6 +17,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<List<NonProcessCandidateReportDataResponse>> GetNonProcessCandidateReport(AppointeeCountReportSearchRequest reqObj);
         public Task<List<NationalityQueryDataResponse>> GetCandidateNationalityReport(GetNationalityReportRequest reqObj);
         public Task<List<UnderProcessCandidateReportDataResponse>> GetUnderProcessCandidateReport(AppointeeCountReportSearchRequest reqObj, string? _statusCode, bool? _intSubmitCode, int? _intSubStatusCode);
+        public Task<List<ManualVerificationProcessDetailsResponse>> GetManualVerificationProcessReportDataAsync(List<ManualVerificationProcessDetailsResponse> AppointeeListDetails);
 
     }
 }

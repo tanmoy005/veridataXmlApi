@@ -3,6 +3,7 @@ using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
 using VERIDATA.DAL.utility;
 using VERIDATA.Model.Configuration;
+using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
@@ -267,6 +268,28 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return await underProcessQueryData.ToListAsync();
 
+        }
+        public async Task<List<ManualVerificationProcessDetailsResponse>> GetManualVerificationProcessReportDataAsync(List<ManualVerificationProcessDetailsResponse> AppointeeListDetails)
+        {
+
+            var querydata = from ap in AppointeeListDetails
+                            join rp in _dbContextClass.AppointeeReasonMappingData
+                                on ap.appointeeId equals rp.AppointeeId
+                            where rp.ActiveStatus == true
+                            select new ManualVerificationProcessDetailsResponse
+                            {
+                                appointeeId = ap.appointeeId,
+                                candidateId = ap.candidateId,
+                                appointeeName = ap.appointeeName,
+                                appointeeEmailId = ap.appointeeEmailId,
+                                mobileNo = ap.mobileNo,
+                                dateOfJoining = ap.dateOfJoining,
+                                status = ap.status,
+                                remarks = rp.Remarks,
+                            };
+
+            List<ManualVerificationProcessDetailsResponse> rejectedAppointeeList = querydata.ToList();
+            return rejectedAppointeeList;
         }
     }
 }

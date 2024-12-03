@@ -105,7 +105,7 @@ namespace VERIDATA.BLL.Context
                     uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
                     status = row?.ProcessData?.DataUploaded ?? false ? "Downloaded" : "NA",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
-                    uanAadharLink= row?.AppointeeData?.IsUanAadharLink == null ? "NA" : row?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
+                    uanAadharLink = row?.AppointeeData?.IsUanAadharLink == null ? "NA" : row?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
 
                 })?.ToList();
             }
@@ -484,7 +484,7 @@ namespace VERIDATA.BLL.Context
             {
                 List<AppointeeAgingDataReportDetails>? _underProcessViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed && (X?.AppointeeDetails?.IsSubmit == true || X?.AppointeeDetails?.SaveStep == 1))?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeAgingDataReportDetails
                 {
-                  //  AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                    //  AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
@@ -542,7 +542,7 @@ namespace VERIDATA.BLL.Context
         {
             return nationalityData?.Select(row => new AppointeeNationalityDataReportDetails
             {
-               // AppointeeId = row?.AppointeeDetails?.AppointeeId,
+                // AppointeeId = row?.AppointeeDetails?.AppointeeId,
                 AppointeeName = row?.AppointeeDetails?.AppointeeName,
                 candidateId = row?.AppointeeDetails?.CandidateId,
                 EmailId = row?.AppointeeDetails?.AppointeeEmailId,
@@ -580,7 +580,7 @@ namespace VERIDATA.BLL.Context
                 {
                     candidateId = row?.CandidateId,
                     AppointeeName = row?.AppointeeName,
-                //    AppointeeId = row?.AppointeeId,
+                    //    AppointeeId = row?.AppointeeId,
                     EmailId = row?.AppointeeEmailId,
                     MobileNo = row?.MobileNo,
                     DateOfJoining = row?.DateOfJoining,
@@ -605,7 +605,7 @@ namespace VERIDATA.BLL.Context
                 {
                     candidateId = row?.CandidateId,
                     AppointeeName = row?.AppointeeName,
-                   // AppointeeId = row?.AppointeeId,
+                    // AppointeeId = row?.AppointeeId,
                     EmailId = row?.AppointeeEmailId,
                     MobileNo = row?.MobileNo,
                     DateOfJoining = row?.DateOfJoining,
@@ -630,7 +630,7 @@ namespace VERIDATA.BLL.Context
             {
                 List<AppointeeDataFilterReportDetails>? _lapsedViewdata = underProcessData?.Where(X => X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportDetails
                 {
-                  //  AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                    //  AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
@@ -646,7 +646,7 @@ namespace VERIDATA.BLL.Context
 
                 List<AppointeeDataFilterReportDetails>? _underProcessViewdata = underProcessData?.Where(X => !X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportDetails
                 {
-                   // AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
+                    // AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
@@ -765,7 +765,7 @@ namespace VERIDATA.BLL.Context
                         epsGap = null;
                         epsGap = null;
                         break;
-                   
+
                 }
 
 
@@ -778,7 +778,7 @@ namespace VERIDATA.BLL.Context
                     IsPensionApplicable = reqObj.PensionStatus,
                     FromDate = reqObj.FromDate,
                     ToDate = reqObj.ToDate,
-                    IsPensionGap= epsGap,
+                    IsPensionGap = epsGap,
 
                 };
 
@@ -793,7 +793,7 @@ namespace VERIDATA.BLL.Context
                     {
                         candidateId = row?.CandidateId,
                         AppointeeName = row?.AppointeeName,
-                      //  AppointeeId = row?.AppointeeId,
+                        //  AppointeeId = row?.AppointeeId,
                         EmailId = row?.AppointeeEmailId,
                         MobileNo = row?.MobileNo,
                         DateOfJoining = row?.DateOfJoining,
@@ -804,7 +804,7 @@ namespace VERIDATA.BLL.Context
                         UAN = string.IsNullOrEmpty(row?.Uan) ? "NA" : CommonUtility.DecryptString(key, row?.Uan),
                         AadharNumber = string.IsNullOrEmpty(row?.AadhaarNumberView) ? "NA" : row?.AadhaarNumberView,
                         IsUanAadharLink = row?.IsUanAadharLink == null ? "NA" : row?.IsUanAadharLink ?? false ? "Yes" : "No",
-                        isEpsMember= row?.EPS_Member_YN == null ? "NA" : row?.EPS_Member_YN ?? false ? "Yes" : "No",
+                        isEpsMember = row?.EPS_Member_YN == null ? "NA" : row?.EPS_Member_YN ?? false ? "Yes" : "No",
                         CreatedDate = row?.CreatedDate
                     })
                     .ToList();
@@ -839,32 +839,42 @@ namespace VERIDATA.BLL.Context
                 AadhaarNumberView = x.AadharNumber,
                 IsManualPassbook = x.IsManual,
                 PensionGapIdentified = x.PensionStatus,
-                AadharuanLink=x.IsUanAadharLink,
-                EpsMember=x.isEpsMember
+                AadharuanLink = x.IsUanAadharLink,
+                EpsMember = x.isEpsMember
 
             }).ToList();
 
             return excelDataList;
         }
-      
-        public async Task<List<ManualVerificationExcelDataResponse>> GetAppointeeManualVerificationExcelReport(List<ManualVerificationProcessDetailsResponse> processDetails)
+
+        public async Task<List<ManualVerificationExcelDataResponse>> GetAppointeeManualVerificationExcelReport(List<ManualVerificationProcessDetailsResponse> AppointeeListDetails)
 
         {
-            var excelDataList = processDetails.Select(x => new ManualVerificationExcelDataResponse
+            List<ManualVerificationExcelDataResponse> response = new();
+            List<ManualVerificationProcessDetailsResponse> reportData = await _reportingDalContext.GetManualVerificationProcessReportDataAsync(AppointeeListDetails);
+            List<IGrouping<int?, ManualVerificationProcessDetailsResponse>> GroupData = reportData.GroupBy(x => x.appointeeId).ToList();
+            foreach (var item in GroupData.Select((value, index) => new { Value = value, Index = index }))
             {
-                candidateId = x.candidateId,
-                appointeeName = x.appointeeName,
-                appointeeEmailId = x.appointeeEmailId,
-                mobileNo = x.mobileNo,
-                dateOfJoining = x.dateOfJoining?.ToShortDateString(),
-                isDocSubmitted = x.isDocSubmitted,
-                isNoIsuueinVerification = x.isNoIsuueinVerification,
-                Status = x.status
-            }).ToList();
+                IGrouping<int?, ManualVerificationProcessDetailsResponse> x = item.Value;
+                List<string?> ResonDetails = x.Select(y => y.remarks).ToList();
+                string Remarks = ResonDetails.Count > 0 ? string.Join(", ", ResonDetails) : "NA";
+                ManualVerificationExcelDataResponse? _data = x.Select(r =>
 
-            return await Task.FromResult(excelDataList);
+                    new ManualVerificationExcelDataResponse
+                    {
+                        candidateId = r.candidateId,
+                        appointeeName = r.appointeeName,
+                        appointeeEmailId = r.appointeeEmailId,
+                        mobileNo = r.mobileNo,
+                        dateOfJoining = r.dateOfJoining?.ToShortDateString(),
+                        status = r.status,
+                        remarks = r.remarks,
+                    }).FirstOrDefault();
+                response.Add(_data);
+            }
+            return response;
         }
 
-                
+
     }
 }

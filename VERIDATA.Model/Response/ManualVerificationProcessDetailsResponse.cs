@@ -22,5 +22,6 @@ namespace VERIDATA.Model.Response
         public DateTime? createdDate { get; set; }
         public int? verificationAttempted { get; set; }
         public string? status { get; set; }
+        public string? remarks { get; set; }
     }
 }
