@@ -129,6 +129,7 @@ namespace VERIDATA.BLL.Context
                 processeddata = proceesedAppointeeList?.DistinctBy(x => x.AppointeeData.AppointeeId)?
                    .OrderBy(x => x.AppointeeData.DateOfJoining)?.Select(r => new PfCreateAppointeeDetailsResponse
                    {
+                       CandidateId = r?.AppointeeData?.CandidateId,
                        AppointeeName = r?.AppointeeData?.AppointeeName,
                        DateOfBirth = r?.AppointeeData?.DateOfBirth?.ToShortDateString(),
                        MobileNo = r?.AppointeeData?.MobileNo,

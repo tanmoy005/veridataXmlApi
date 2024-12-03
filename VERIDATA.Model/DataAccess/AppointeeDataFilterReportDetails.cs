@@ -6,7 +6,7 @@ namespace VERIDATA.Model.DataAccess
 {
     public class AppointeeDataFilterReportDetails
     {
-        [DisplayName("Candidate Id")]
+        [DisplayName("Candidate ID")]
         public string? candidateId { get; set; }
 
         [DisplayName("Name")]

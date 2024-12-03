@@ -9,7 +9,7 @@ namespace VERIDATA.Model.Response
 {
     public class AppointeePfDataExcelRespopnse
     {
-        [DisplayName("Candidate Id")]
+        [DisplayName("Candidate ID")]
         public string? CandidateId { get; set; }
         [DisplayName("Appointee Name")]
         public string? AppointeeName { get; set; }

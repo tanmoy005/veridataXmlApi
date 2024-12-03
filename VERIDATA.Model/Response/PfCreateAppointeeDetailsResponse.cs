@@ -4,6 +4,8 @@ namespace VERIDATA.Model.Response
 {
     public class PfCreateAppointeeDetailsResponse
     {
+        [DisplayName("Candidate ID")]
+        public string? CandidateId { get; set; }
 
         [DisplayName("Name")]
         public string? AppointeeName { get; set; }

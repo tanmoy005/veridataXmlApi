@@ -4,7 +4,7 @@ namespace VERIDATA.Model.Response
 {
     public class RejectedDataReportDetailsResponse
     {
-        [DisplayName("Candidate Id")]
+        [DisplayName("Candidate ID")]
         public string? CandidateId { get; set; }
 
         [DisplayName("Appointee Name")]
