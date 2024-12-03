@@ -22,7 +22,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Mobile No.")]
         public string? MobileNo { get; set; } //number that varified with aadhar
 
-        [DisplayName("UAN Number")]
+        [DisplayName("UAN")]
         public string? UANNumber { get; set; }
 
         [DisplayName("Date Of Joining")]
@@ -74,13 +74,13 @@ namespace VERIDATA.Model.Response
         [DisplayName("Aadhaar Name")]
         public string? AadhaarName { get; set; } //Varified with aadhar
 
-        [DisplayName("Aadhaar Number")]
+        [DisplayName("Aadhaar No.")]
         public string? AadhaarNumber { get; set; }
 
         [DisplayName("PAN Name")]
         public string? PANName { get; set; } //Varified with aadhar
 
-        [DisplayName("PAN Number")]
+        [DisplayName("PAN No.")]
         public string? PANNumber { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Mobile No")]
         public string? MobileNo { get; set; }
 
-        [DisplayName("UAN Number")]
+        [DisplayName("UAN")]
         public string? UANNumber { get; set; }
 
         [DisplayName("Date Of Joining")]
@@ -28,10 +28,10 @@ namespace VERIDATA.Model.Response
         [DisplayName("Nationality")]
         public string? Nationality { get; set; }
 
-        [DisplayName("Aadhaar Number")]
+        [DisplayName("Aadhaar No.")]
         public string? AadhaarNumber { get; set; }
 
-        [DisplayName("PAN Number")]
+        [DisplayName("PAN No.")]
         public string? PANNumber { get; set; }
 
         [DisplayName("Remarks")]

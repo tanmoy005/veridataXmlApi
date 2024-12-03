@@ -139,7 +139,7 @@ namespace VERIDATA.BLL.Context
                        Qualification = r?.AppointeeData?.Qualification,
                        UANNumber = string.IsNullOrEmpty(r?.AppointeeData?.UANNumber) ? null : CommonUtility.DecryptString(key, r?.AppointeeData?.UANNumber),
                        EPFWages = r?.AppointeeData?.EPFWages ?? 00,
-                       Gender = r?.AppointeeData?.Gender,
+                       Gender = r?.AppointeeData?.Gender=="M"? "Maile" : r?.AppointeeData?.Gender=="F"? "Female" :"Others",
                        MaratialStatus = r?.AppointeeData?.MaratialStatus,
                        MemberName = r?.AppointeeData?.MemberName,
                        MemberRelation = r?.AppointeeData?.MemberRelation,
@@ -472,10 +472,10 @@ namespace VERIDATA.BLL.Context
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
                     MobileNo = row?.UnderProcess?.MobileNo,
-                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
-                    CreatedDate = row?.UnderProcess?.CreatedOn,
+                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining?.ToString("dd/MM/yyyy") ?? row?.UnderProcess?.DateOfJoining?.ToString("dd/MM/yyyy"),
+                    CreatedDate = row?.UnderProcess?.CreatedOn?.ToString("dd/MM/yyyy"),
                     Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                    LastActionDate = row?.LastActionDate,
+                    LastActionDate = row?.LastActionDate?.ToString("dd/MM/yyyy"),
                     LastActivityDesc = row?.ActivityDesc,
                 }).OrderByDescending(y => y.DateOfJoining).ToList();
                 _response = _noResponseViewdata;
@@ -489,10 +489,10 @@ namespace VERIDATA.BLL.Context
                     candidateId = row?.UnderProcess?.CandidateId,
                     EmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
                     MobileNo = row?.UnderProcess?.MobileNo,
-                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
-                    CreatedDate = row?.UnderProcess?.CreatedOn,
+                    DateOfJoining = row?.AppointeeDetails?.DateOfJoining?.ToString("dd/MM/yyyy") ?? row?.UnderProcess?.DateOfJoining?.ToString("dd/MM/yyyy"),
+                    CreatedDate = row?.UnderProcess?.CreatedOn?.ToString("dd/MM/yyyy"),
                     Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                    LastActionDate = row?.LastActionDate,
+                    LastActionDate = row?.LastActionDate?.ToString("dd/MM/yyyy"),
                     LastActivityDesc = row?.ActivityDesc,
                 }).OrderByDescending(y => y.DateOfJoining).ToList();
                 _response = _underProcessViewdata;

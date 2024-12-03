@@ -18,19 +18,19 @@ namespace VERIDATA.Model.Response
         public string? MobileNo { get; set; }
 
         [DisplayName("Date Of Joining")]
-        public DateTime? DateOfJoining { get; set; }
+        public string? DateOfJoining { get; set; }
 
 
         [DisplayName("Link Sent Date")]
-        public DateTime? CreatedDate { get; set; }
+        public string? CreatedDate { get; set; }
 
         [DisplayName("Status")]
         public string? Status { get; set; }
 
         [DisplayName("Last Activity at")]
-        public DateTime? LastActionDate { get; set; }
+        public string? LastActionDate { get; set; }
 
-        [DisplayName("Last Activity")]
+        [DisplayName("Last Activity Info")]
         public string? LastActivityDesc { get; set; }
 
 
