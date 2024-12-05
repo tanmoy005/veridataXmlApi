@@ -453,26 +453,44 @@ namespace VERIDATA.BLL.Context
                 Response.UanNumber = _apiResponse.UanNumber;
                 Response.Remarks = _apiResponse.IsUanAvailable ?? false ? string.Empty : _apiResponse.ReasonPhrase;
                 List<ReasonRemarks> ReasonList = new();
+                UanData _uanDetails = new UanData
+                {
+                    UanNumber = _apiResponse.UanNumber,
+                };
+                CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
+                {
+                    AppointeeId = reqObj.appointeeId,
+                    EmailId = string.Empty,
+                    UserId = reqObj.userId,
+                    UserName = string.Empty,
+                    Reasons = ReasonList,
+                    uanData = _uanDetails,
+                    Type = RemarksType.UAN,
 
+                };
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
-                    UanData _uanDetails = new UanData
-                    {
-                        UanNumber = _apiResponse.UanNumber,
-                        IsUanFromMobile=true,
-                        AadharUanLinkYN=true
-                    };
-                    CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
-                    {
-                        AppointeeId = reqObj.appointeeId,
-                        EmailId = string.Empty,
-                        UserId = reqObj.userId,
-                        UserName = string.Empty,
-                        Reasons = ReasonList,
-                        uanData = _uanDetails,
-                        Type = RemarksType.UAN
 
-                    };
+                    _uanDetails.IsUanFromMobile = true;
+                    _uanDetails.AadharUanLinkYN = true;
+
+                    //CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
+                    //{
+                    //    AppointeeId = reqObj.appointeeId,
+                    //    EmailId = string.Empty,
+                    //    UserId = reqObj.userId,
+                    //    UserName = string.Empty,
+                    //    Reasons = ReasonList,
+                    //    uanData = _uanDetails,
+                    //    Type = RemarksType.UAN
+
+                    //};
+                    _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+                }
+                else
+                if (_apiResponse.IsUanAvailable == false && string.IsNullOrEmpty(_apiResponse.UanNumber))
+                {
+                    candidateUpdatedDataReq.Status = true;
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
                 }
                 if (_apiResponse.IsInactiveUan ?? false)
@@ -699,7 +717,7 @@ namespace VERIDATA.BLL.Context
                 //    {
                 //        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDADHAR, Inputdata = reqObj?.AadharDetails?.AadharNumber, Fetcheddata = string.Empty });
                 //    }
-                
+
 
                 //}
                 //else
