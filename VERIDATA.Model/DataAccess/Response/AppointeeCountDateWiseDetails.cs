@@ -7,6 +7,7 @@ namespace VERIDATA.Model.DataAccess.Response
         public List<AppointeeCountDateWise>? AppointeeCountDateWise { get; set; }
         public List<AppointeeCountDetails>? AppointeeCountDetails { get; set; }
         public List<AppointeeTotalCount>? AppointeeTotalCount { get; set; }
+        public List<AppointeeCountDetailsXls> appointeeCountDetailsXls { get; set; }
     }
     public class AppointeeTotalCount
     {
@@ -38,8 +39,8 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Candidate ID")]
         public string? CandidateId { get; set; }
 
-        //[DisplayName("Compnay Id")]
-        //public int? CompanyId { get; set; }
+        [DisplayName("Compnay Id")]
+        public int? CompanyId { get; set; }
 
         [DisplayName("Entity Name")]
         public string? CompanyName { get; set; }
@@ -56,5 +57,29 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Action Taken")]
         public string? ActionTaken { get; set; }
 
+    }
+
+    public class AppointeeCountDetailsXls
+    {
+        [DisplayName("Date")]
+        public string? Date { get; set; }
+
+        [DisplayName("Candidate ID")]
+        public string? CandidateId { get; set; }
+
+        [DisplayName("Entity Name")]
+        public string? CompanyName { get; set; }
+
+        [DisplayName("AppointeeName")]
+        public string? AppointeeName { get; set; }
+
+        [DisplayName("EmailId")]
+        public string? EmailId { get; set; }
+
+        [DisplayName("Appointee Status")]
+        public string? AppointeeStatus { get; set; }
+
+        [DisplayName("Action Taken")]
+        public string? ActionTaken { get; set; }
     }
 }
