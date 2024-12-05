@@ -25,5 +25,8 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("Status")]
         public string? Status { get; set; }
+
+        [DisplayName("Verification Type")]
+        public string? verificationType { get; set; }
     }
 }

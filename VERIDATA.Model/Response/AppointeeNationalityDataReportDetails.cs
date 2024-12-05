@@ -19,7 +19,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Nationality")]
         public string? Nationality { get; set; } 
         
-        [DisplayName("Country")]
+        [DisplayName("Country Name")]
         public string? CountryName { get; set; } 
 
         [DisplayName("Passport No.")]

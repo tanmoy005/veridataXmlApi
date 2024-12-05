@@ -174,6 +174,7 @@ namespace VERIDATA.BLL.Context
                     dateOfJoining = x?.dateOfJoining?.ToShortDateString(),
                     CreatedDate = x?.createdDate?.ToShortDateString() ?? string.Empty,
                     Status = x?.status,
+                    verificationType=x?.verificationStatusCode
                 })?.ToList();
             }
             return response;
@@ -916,6 +917,7 @@ namespace VERIDATA.BLL.Context
                         mobileNo = r.mobileNo,
                         dateOfJoining = r.dateOfJoining?.ToShortDateString(),
                         status = r.status,
+                        linkSentDate= r.createdDate?.ToShortDateString(),
                         remarks = _remarks,
                     }).FirstOrDefault();
                 response.Add(_data);

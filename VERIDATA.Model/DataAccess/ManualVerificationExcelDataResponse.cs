@@ -19,7 +19,10 @@ namespace VERIDATA.Model.DataAccess
         //[DisplayName("Submitted")] // Yes/No
         //public bool? isDocSubmitted { get; set; }
         //[DisplayName("Issue")]
-        //public bool? isNoIsuueinVerification { get; set; } //  Yes/No
+        //public bool? isNoIsuueinVerification { get; set; } //  Yes/
+        [DisplayName("Link Sent Date")]
+        public string? linkSentDate { get; set; }
+        
         [DisplayName("Status")]
         public string? status { get; set; }
         

@@ -26,7 +26,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Status")]
         public string? Status { get; set; }
 
-        [DisplayName("Last Activity at")]
+        [DisplayName("Last Activity Date")]
         public string? LastActionDate { get; set; }
 
         [DisplayName("Last Activity Info")]
