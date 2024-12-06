@@ -174,7 +174,7 @@ namespace VERIDATA.BLL.Context
                     dateOfJoining = x?.dateOfJoining?.ToShortDateString(),
                     CreatedDate = x?.createdDate?.ToShortDateString() ?? string.Empty,
                     Status = x?.status,
-                    verificationType=x?.verificationStatusCode
+                    verificationType = x?.verificationStatusCode
                 })?.ToList();
             }
             return response;
@@ -442,6 +442,16 @@ namespace VERIDATA.BLL.Context
             }
             _response.AppointeeCountDateWise = _appointeeCountDateWises;
             _response.AppointeeCountDetails = _apntDetailsList?.OrderBy(x => Convert.ToDateTime(x.Date))?.ToList();
+            _response.appointeeCountDetailsXls = _apntDetailsList?.OrderBy(x => Convert.ToDateTime(x.Date))?.Select(y => new AppointeeCountDetailsXls
+            {
+                AppointeeName = y?.AppointeeName,
+                CandidateId = y?.CandidateId,
+                CompanyName = y?.CompanyName,
+                EmailId = y?.EmailId,
+                ActionTaken = y.ActionTaken,
+                AppointeeStatus = y.AppointeeStatus,
+                Date = y.Date,
+            })?.ToList();
             _response.AppointeeTotalCount = _appointeeTotalCountList;
 
             return _response;
@@ -513,9 +523,9 @@ namespace VERIDATA.BLL.Context
                 {
                     AppointeeName = row?.AppointeeName,
                     candidateId = row?.candidateId,
-                    EmailId = row?.EmailId ,
+                    EmailId = row?.EmailId,
                     MobileNo = row?.MobileNo,
-                    DateOfJoining = row?.DateOfJoining?.ToString("dd/MM/yyyy") ,
+                    DateOfJoining = row?.DateOfJoining?.ToString("dd/MM/yyyy"),
                     CreatedDate = row?.CreatedDate?.ToString("dd/MM/yyyy"),
                     Status = row?.Status,
                     LastActionDate = row?.LastActionDate?.ToString("dd/MM/yyyy"),
@@ -917,7 +927,7 @@ namespace VERIDATA.BLL.Context
                         mobileNo = r.mobileNo,
                         dateOfJoining = r.dateOfJoining?.ToShortDateString(),
                         status = r.status,
-                        linkSentDate= r.createdDate?.ToShortDateString(),
+                        linkSentDate = r.createdDate?.ToShortDateString(),
                         remarks = _remarks,
                     }).FirstOrDefault();
                 response.Add(_data);

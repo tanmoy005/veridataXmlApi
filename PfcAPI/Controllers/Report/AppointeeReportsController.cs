@@ -260,7 +260,6 @@ namespace PfcAPI.Controllers.Report
             }
         }
 
-        [AllowAnonymous]
         [Authorize]
         [HttpPost]
         [Route("AppointeeCounterReport")]
@@ -278,7 +277,7 @@ namespace PfcAPI.Controllers.Report
                 AppointeeCountDateWiseDetails apiList = Task.Run(async () => await _reportContext.AppointeeCountReport(reqObj)).GetAwaiter().GetResult();
                 if (apiList?.AppointeeCountDateWise?.Count > 0)
                 {
-                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeCountDetailsXls>(apiList.appointeeCountDetailsXls);
+                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeTotalCount>(apiList.AppointeeTotalCount);
                     DataTable _exportdt2 = CommonUtility.ToDataTable<AppointeeCountDetailsXls>(apiList.appointeeCountDetailsXls);
                     _exportdt.Add(_exportdt1);
                     _exportdt.Add(_exportdt2);
