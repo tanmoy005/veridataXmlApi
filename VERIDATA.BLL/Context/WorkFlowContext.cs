@@ -971,7 +971,7 @@ namespace VERIDATA.BLL.Context
                     if (isDataVerificationReq)
                     {
                         var PassbookQuestion = reqObj.VerificationSubCategoryList?.Where(x => x.SubCategory == "EPFPSSBKMNL").FirstOrDefault();
-                        isPensionApplicable = PassbookQuestion?.VerificationQueries?.FirstOrDefault(x => x.FieldName == ManualVerificationFieldType.PensionApplicable)?.Value ?? false;
+                        isPensionApplicable = PassbookQuestion?.VerificationQueries?.FirstOrDefault(x => x.FieldName?.ToLower() == ManualVerificationFieldType.PensionApplicable)?.Value ?? false;
                         isDataValid = await VefifyPassBookValidityManual(reqObj.AppointeeId, PassbookQuestion?.VerificationQueries, isPensionApplicable ?? false, reqObj.UserId);
                     }
                     var pfVerificationReqObj = new AppointeePfVerificationRequest
@@ -1014,7 +1014,7 @@ namespace VERIDATA.BLL.Context
                 {
 
 
-                    switch (questions.FieldName)
+                    switch (questions.FieldName.ToLower())
                     {
                         case ManualVerificationFieldType.DocIncomplete:
                             if (!questions.Value)
@@ -1072,6 +1072,7 @@ namespace VERIDATA.BLL.Context
         private async Task<bool> VefifyFNameValidityManual(int appointeeId, List<VerificationUpdate>? DocValidity, int userId)
         {
             List<ReasonRemarks> ReasonList = new();
+            AppointeeDetails _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
             bool isDataValid = true;
             string activityType = string.Empty;
             // Dynamically update each field specified in the request
@@ -1082,7 +1083,7 @@ namespace VERIDATA.BLL.Context
                     case ManualVerificationFieldType.FathersName:
                         if (!update.Value)
                         {
-                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.CAREOFNAME, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.CAREOFNAME, Inputdata = _appointeedetails.MemberName, Fetcheddata = string.Empty });
                             isDataValid = false;
 
                         }

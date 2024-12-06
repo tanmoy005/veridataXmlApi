@@ -421,11 +421,11 @@
         }
         public static class ManualVerificationFieldType
         {
-            public const string FathersName = "isFnameVarified";
-            public const string PensionApplicable = "isPensionApplicable";
-            public const string PensionGap = "isPensionGapFound";
-            public const string DocIncomplete = "isDocComplete";
-            public const string DocInvalid = "isDocValid";
+            public const string FathersName = "isfnamevarified";
+            public const string PensionApplicable = "ispensionapplicable";
+            public const string PensionGap = "ispensiongapfound";
+            public const string DocIncomplete = "isdoccomplete";
+            public const string DocInvalid = "isdocvalid";
         }
     }
 }
