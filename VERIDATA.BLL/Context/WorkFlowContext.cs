@@ -559,6 +559,19 @@ namespace VERIDATA.BLL.Context
                         await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeFileDetails?.UserId ?? 0, true);//isapprove set true
 
                     }
+                    else if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && string.IsNullOrEmpty(_appointeedetails.UANNumber) && _appointeedetails.IsUanAvailable == false)
+                    {
+                        mailType = MailType.Submit;
+                        WorkFlowDataRequest _WorkFlowDataRequest = new();
+                        int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
+                        _WorkFlowDataRequest.appointeeId = appointeeId;
+                        _WorkFlowDataRequest.remarks = string.Empty;
+                        _WorkFlowDataRequest.workflowState = _stateId;
+                        _WorkFlowDataRequest.approvalStatus = WorkFlowStatusType.ManualVerification;
+                        _WorkFlowDataRequest.userId = AppointeeFileDetails.UserId;
+
+                        await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
+                    }
                 }
 
                 await PostMailFileSubmisstionSuccess(_appointeedetails.AppointeeId ?? 0, AppointeeFileDetails?.UserId ?? 0, mailType);
