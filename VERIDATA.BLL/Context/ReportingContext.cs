@@ -408,7 +408,7 @@ namespace VERIDATA.BLL.Context
                     {
                         AppointeeName = x?.AppointeeName,
                         CandidateId = x?.CandidateId,
-                        //CompanyId = x?.CompanyId,
+                        CompanyId = x?.CompanyId,
                         CompanyName = x?.CompanyName,
                         EmailId = x?.AppointeeEmail,
                         ActionTaken = (x?.AppvlStatusCode != WorkFlowStatusType.ProcessIni?.Trim() && x?.SaveStep == 1) ? x?.UpdatedOn?.ToShortDateString() ?? x?.ActionTakenAt?.ToShortDateString()
