@@ -446,6 +446,7 @@ namespace VERIDATA.BLL.Context
             _ = new GetCandidateUanDetails();
             GetCandidateUanDetails _apiResponse = await _karzaApiContext.GetUanFromMobile(reqObj.mobileNumber, reqObj.userId);
             Response.StatusCode = _apiResponse.StatusCode;
+            AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.appointeeId);
 
             if (_apiResponse.StatusCode == HttpStatusCode.OK)
             {
@@ -488,7 +489,7 @@ namespace VERIDATA.BLL.Context
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
                 }
                 else
-                if (_apiResponse.IsUanAvailable == false && string.IsNullOrEmpty(_apiResponse.UanNumber))
+                if (_apiResponse.IsUanAvailable == false && appointeedetail.IsUanAvailable==false && string.IsNullOrEmpty(_apiResponse.UanNumber))
                 {
                     candidateUpdatedDataReq.Status = true;
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
