@@ -1132,7 +1132,7 @@ namespace VERIDATA.BLL.Context
                 string Remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, ReasonList, RemarksType.Manual, userId);
                 await RemarksMailSend(appointeeId, Remarks, RemarksType.Manual, userId);
                 activityType = ActivityLog.MNLUANVERIFLD;
-                await docReuploadRequested(appointeeId, userId, ReasonList);
+               // await docReuploadRequested(appointeeId, userId, ReasonList);
             }
             else
             {
