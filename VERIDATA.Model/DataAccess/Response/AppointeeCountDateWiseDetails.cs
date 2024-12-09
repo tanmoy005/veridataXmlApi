@@ -7,7 +7,8 @@ namespace VERIDATA.Model.DataAccess.Response
         public List<AppointeeCountDateWise>? AppointeeCountDateWise { get; set; }
         public List<AppointeeCountDetails>? AppointeeCountDetails { get; set; }
         public List<AppointeeTotalCount>? AppointeeTotalCount { get; set; }
-        public List<AppointeeCountDetailsXls> appointeeCountDetailsXls { get; set; }
+        public List<AppointeeCountDetailsXls>? appointeeCountDetailsXls { get; set; }
+        public List<AppointeeCounteBillReport>? appointeeCounteBillReports { get; set; }
     }
     public class AppointeeTotalCount
     {
@@ -23,13 +24,14 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Total Link Not Sent")]
         public int? TotalLinkNotSentCount { get; set; }
 
-        [DisplayName("Compnay Id")]
+        [DisplayName("Company Id")]
         public int? CompnayId { get; set; }
     }
     public class AppointeeCountDateWise
     {
         public AppointeeTotalCount? appointeeTotalCount { get; set; }
         public List<AppointeeCountDetails>? AppointeeCountDetails { get; set; }
+        public List<AppointeeCountDetailsXls>? appointeeCountXls {  get; set; }
     }
     public class AppointeeCountDetails
     {
@@ -39,7 +41,7 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Candidate ID")]
         public string? CandidateId { get; set; }
 
-        [DisplayName("Compnay Id")]
+        [DisplayName("Company Id")]
         public int? CompanyId { get; set; }
 
         [DisplayName("Entity Name")]
@@ -64,7 +66,7 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Date")]
         public string? Date { get; set; }
 
-        [DisplayName("Candidate ID")]
+       [DisplayName("Candidate ID")]
         public string? CandidateId { get; set; }
 
         [DisplayName("Entity Name")]
@@ -81,5 +83,23 @@ namespace VERIDATA.Model.DataAccess.Response
 
         [DisplayName("Action Taken")]
         public string? ActionTaken { get; set; }
+    }
+    public class AppointeeCounteBillReport
+    {
+        [DisplayName("Date")]
+        public string? Date { get; set; }
+        [DisplayName("Company Id")]
+        public int? CompanyId { get; set; }
+        [DisplayName("Company Name")]
+        public string? companyName { get; set; }
+
+        [DisplayName("Total of New Appointee")]
+        public int? totalAppointeeCount { get; set; }
+
+        [DisplayName("Total of New Appointee")]
+        public int? ratePerTotalAppointeeCount { get; set; }
+
+        [DisplayName("Total Billing")]
+        public int? GrandTotal {  get; set; } 
     }
 }

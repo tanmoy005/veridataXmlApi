@@ -35,5 +35,8 @@ namespace VERIDATA.Model.Table.Admin
         [Column("updated_on", TypeName = DbDataType._datetime)]
         public DateTime? UpdatedOn { get; set; }
 
+        [Column("appointee_count_rate", TypeName = DbDataType._integer)]
+        public int? AppointeCountRate { get; set; }
+
     }
 }

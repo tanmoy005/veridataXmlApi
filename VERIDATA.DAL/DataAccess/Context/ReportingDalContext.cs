@@ -293,5 +293,47 @@ namespace VERIDATA.DAL.DataAccess.Context
             List<ManualVerificationProcessDetailsResponse> rejectedAppointeeList = querydata.ToList();
             return rejectedAppointeeList;
         }
+
+        public async Task<List<AppointeeCounteBillReport>> GetAppointeeBillingReport(AppointeeCountReportBillRequest reqJob)
+        {
+            // Fetch the rate from GeneralSetup
+            int ratePerAppointee = await _dbContextClass.GeneralSetup
+                .Where(gs => gs.ActiveStatus == true)
+                .Select(gs => gs.AppointeCountRate ?? 0) // Default to 0 if null
+                .FirstOrDefaultAsync();
+
+            // Base query
+            var query = from up in _dbContextClass.UnderProcessFileData
+                        join c in _dbContextClass.CompanyDetails on up.CompanyId equals c.Id
+                        where up.CreatedOn != null
+                        select new { up, c };
+
+            // Apply filters based on the request
+            if (reqJob.FromDate.HasValue && reqJob.ToDate.HasValue)
+            {
+                DateTime toDate = reqJob.ToDate.Value.AddDays(1).Date; // Include end of the day for `ToDate`
+                query = query.Where(x => x.up.CreatedOn >= reqJob.FromDate.Value.Date && x.up.CreatedOn < toDate);
+            }
+
+            if (reqJob.EntityId != null && reqJob.EntityId.Any())
+            {
+                query = query.Where(x => reqJob.EntityId.Contains(x.up.CompanyId));
+            }
+
+            // Group and calculate the result
+            var result = await query
+                .GroupBy(x => new { x.up.CompanyId, x.c.CompanyName })
+                .Select(g => new AppointeeCounteBillReport
+                {
+                    CompanyId = g.Key.CompanyId,
+                    companyName = g.Key.CompanyName,
+                    totalAppointeeCount = g.Count(),
+                    ratePerTotalAppointeeCount = ratePerAppointee,
+                    GrandTotal = g.Count() * ratePerAppointee
+                })
+                .ToListAsync();
+
+            return result;
+        }
     }
 }

@@ -935,6 +935,17 @@ namespace VERIDATA.BLL.Context
             return response;
         }
 
+        public async Task<AppointeeCountDateWiseDetails> AppointeeCountBillReport(AppointeeCountReportBillRequest reqObj)
+        {
+            var response = new AppointeeCountDateWiseDetails();
 
+            // Fetch data from the DAL
+            var appointeeBillingReport = await _reportingDalContext.GetAppointeeBillingReport(reqObj);
+
+            // Populate the response
+            response.appointeeCounteBillReports = appointeeBillingReport;
+
+            return response;
+        }
     }
 }

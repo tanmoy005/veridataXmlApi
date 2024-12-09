@@ -18,6 +18,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<List<NationalityQueryDataResponse>> GetCandidateNationalityReport(GetNationalityReportRequest reqObj);
         public Task<List<UnderProcessCandidateReportDataResponse>> GetUnderProcessCandidateReport(AppointeeCountReportSearchRequest reqObj, string? _statusCode, bool? _intSubmitCode, int? _intSubStatusCode);
         public Task<List<ManualVerificationProcessDetailsResponse>> GetManualVerificationProcessReportDataAsync(List<ManualVerificationProcessDetailsResponse> AppointeeListDetails);
+        public Task<List<AppointeeCounteBillReport>> GetAppointeeBillingReport(AppointeeCountReportBillRequest reqJob);
 
     }
 }

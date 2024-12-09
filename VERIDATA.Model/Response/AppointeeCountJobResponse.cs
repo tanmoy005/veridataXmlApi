@@ -7,6 +7,7 @@ namespace VERIDATA.Model.Response
     {
         public List<AppointeeCountDateWise>? AppointeeCountDateWises { get; set; }
         public List<AppointeeCountDetails>? AppointeeCountListDetails { get; set; }
+        public List<AppointeeCountDetailsXls>? AppointeeCountDetailsXls { get; set; }
         public Filedata? Filedata { get; set; }
 
     }
