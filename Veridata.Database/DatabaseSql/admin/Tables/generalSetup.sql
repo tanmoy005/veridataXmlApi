@@ -7,6 +7,7 @@
     [created_on]        DATETIME NULL,
     [updated_by]        INT      NULL,
     [updated_on]        DATETIME NULL,
+    [appointee_count_rate] INT NULL, 
     CONSTRAINT [PK_generalSetup] PRIMARY KEY CLUSTERED ([id] ASC)
 );
 
