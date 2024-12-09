@@ -347,7 +347,7 @@ namespace VERIDATA.BLL.Context
                         {
                             isdataValid = false;
                             string _Issue = "Candidate ID should not be blank.";
-                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {candidateId}, Issue: {_Issue} " : $" Data: {candidateId}, Issue: {_Issue} ";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row {index};  Data - {candidateId} ; Issue - {_Issue} " : $" Data - {candidateId}, Issue - {_Issue} ";
                             validateData.InternalMessages.Add(msg);
                             errormsg += $"{msg}, ";
                         }
@@ -356,7 +356,7 @@ namespace VERIDATA.BLL.Context
                         {
                             isdataValid = false;
                             string _Issue = "Invalid Company Name.";
-                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {companyName}, Issue: {_Issue} " : $" Data: {companyName}, Issue: {_Issue} ";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row {index} ;  Data - {companyName}; Issue - {_Issue} " : $" Data - {companyName}; Issue - {_Issue} ";
                             validateData.InternalMessages.Add(msg);
                             errormsg += $"{msg}, ";
                         }
@@ -364,7 +364,7 @@ namespace VERIDATA.BLL.Context
                         {
                             isdataValid = false;
                             string _Issue = "Name should not be blank.";
-                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {appointeeName}, Issue: {_Issue} " : $" Data: {appointeeName}, Issue: {_Issue} ";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row  {index};  Data : {appointeeName}, Issue - {_Issue} " : $" Data: {appointeeName}; Issue: {_Issue} ";
                             validateData.InternalMessages.Add(msg);
                             errormsg += $"{msg}, ";
                         }
@@ -375,7 +375,7 @@ namespace VERIDATA.BLL.Context
                     {
                         isdataValid = false;
                         string _Issue = "Email format is wrong.";
-                        msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {AppointeeEmailId}, Issue: {_Issue} " : $" Data: {AppointeeEmailId}, Issue: {_Issue} ";
+                        msg = string.IsNullOrEmpty(msg) ? $"Row {index} ;  Data - {AppointeeEmailId} ; Issue - {_Issue} " : $" Data - {AppointeeEmailId} ; Issue - {_Issue} ";
                         validateData.InternalMessages.Add(msg);
                         errormsg += $"{msg}, ";
                     }
@@ -387,7 +387,7 @@ namespace VERIDATA.BLL.Context
                         {
                             isdataValid = false;
                             string _Issue = "Leble1 Email format is wrong.";
-                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {lvl1Email}, Issue: {_Issue} " : $" Data: {lvl1Email}, Issue: {_Issue} ";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row {index} ;  Data - {lvl1Email}, Issue - {_Issue} " : $" Data - {lvl1Email}; Issue - {_Issue} ";
                             validateData.InternalMessages.Add(msg);
                             errormsg += $"{msg}, ";
                         }
@@ -399,7 +399,7 @@ namespace VERIDATA.BLL.Context
                         {
                             isdataValid = false;
                             string _Issue = "Leble1 Email format is wrong.";
-                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {lvl2Email}, Issue: {_Issue} " : $" Data: {lvl2Email}, Issue: {_Issue} ";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row {index} ;  Data : {lvl2Email} ; Issue - {_Issue} " : $" Data: {lvl2Email} ; Issue - {_Issue} ";
                             validateData.InternalMessages.Add(msg);
                             errormsg += $"{msg}, ";
                         }
@@ -411,7 +411,7 @@ namespace VERIDATA.BLL.Context
                         {
                             isdataValid = false;
                             string _Issue = "Leble1 Email format is wrong.";
-                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {lvl3Email}, Issue: {_Issue} " : $" Data: {lvl3Email}, Issue: {_Issue} ";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row {index} ;   Data - {lvl3Email}; Issue - {_Issue} " : $" Data - {lvl3Email} ; Issue - {_Issue} ";
                             validateData.InternalMessages.Add(msg);
                             errormsg += $"{msg}, ";
                         }
@@ -422,9 +422,9 @@ namespace VERIDATA.BLL.Context
                     {
                         isdataValid = false;
                         string _Issue = "Mobile No format is wrong.";
-                        msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {MobileNo},  Issue: {_Issue}" : $" Data: {MobileNo},  Issue: {_Issue}";
+                        msg = string.IsNullOrEmpty(msg) ? $"Row {index} ;  Data - {MobileNo};  Issue - {_Issue}" : $" Data - {MobileNo};  Issue - {_Issue}";
                         validateData.InternalMessages.Add(msg);
-                        errormsg += $"{msg}, ";
+                        errormsg += $"{msg}; ";
                     }
 
                     DateTime joiningDate = new();
@@ -435,9 +435,9 @@ namespace VERIDATA.BLL.Context
                     {
                         isdataValid = false;
                         string _Issue = "Joining date should not be blank.";
-                        msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index}, Issue: {_Issue}" : $" Issue: {_Issue}";
+                        msg = string.IsNullOrEmpty(msg) ? $"Row {index}; Issue - {_Issue}" : $" Issue - {_Issue}";
                         validateData.InternalMessages.Add(msg);
-                        errormsg += $"{msg}, ";
+                        errormsg += $"{msg}; ";
                     }
                     else
                     {
@@ -449,9 +449,9 @@ namespace VERIDATA.BLL.Context
                         {
                             isdataValid = false;
                             string _Issue = "Joining date format (dd-MM-yyyy) is wrong.";
-                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index}, Data: {DateOfJoining}, Issue: {_Issue}" : $" Data: {DateOfJoining}, Issue: {_Issue}";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row {index} ;  Data - {DateOfJoining}; Issue - {_Issue}" : $" Data: {DateOfJoining}, Issue - {_Issue}";
                             validateData.InternalMessages.Add(msg);
-                            errormsg += $"{msg}, ";
+                            errormsg += $"{msg}; ";
                         }
                         else
                         {
@@ -460,9 +460,9 @@ namespace VERIDATA.BLL.Context
                             {
                                 isdataValid = false;
                                 string _Issue = "Joining date must be a future date.";
-                                msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index}, Data: {DateOfJoining}, Issue: {_Issue}" : $" Data: {DateOfJoining}, Issue: {_Issue}";
+                                msg = string.IsNullOrEmpty(msg) ? $"Row {index};  Data - {DateOfJoining} ; Issue - {_Issue}" : $" Data - {DateOfJoining} ; Issue - {_Issue}";
                                 validateData.InternalMessages.Add(msg);
-                                errormsg += $"{msg}, ";
+                                errormsg += $"{msg}; ";
                             }
                         }
                     }
@@ -470,9 +470,9 @@ namespace VERIDATA.BLL.Context
                     {
                         isdataValid = false;
                         string _Issue = "Fresher should not be blank and value should be 'YES' or 'NO'";
-                        msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {IsPFverificationReq}, Issue: {_Issue} " : $" Data: {IsPFverificationReq}, Issue: {_Issue} ";
+                        msg = string.IsNullOrEmpty(msg) ? $"Row {index};  Data - {IsPFverificationReq}; Issue - {_Issue} " : $" Data - {IsPFverificationReq}; Issue - {_Issue} ";
                         validateData.InternalMessages.Add(msg);
-                        errormsg += $"{msg}, ";
+                        errormsg += $"{msg}; ";
                     }
 
 
@@ -546,9 +546,9 @@ namespace VERIDATA.BLL.Context
                         {
                             isdataValid = false;
                             string _Issue = "Joining date format(dd-MM-yyyy) is wrong.";
-                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {DateOfJoining},  Issue: {_Issue} " : $" Data: {DateOfJoining},  Issue: {_Issue} ";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row {index} ;   Data - {DateOfJoining};  Issue - {_Issue} " : $" Data - {DateOfJoining};  Issue - {_Issue} ";
                             validateData.InternalMessages.Add(msg);
-                            errormsg += $"{msg}, ";
+                            errormsg += $"{msg}; ";
                         }
                         else
                         {
@@ -556,9 +556,9 @@ namespace VERIDATA.BLL.Context
                             {
                                 isdataValid = false;
                                 string _Issue = "Joining date must be a future date.";
-                                msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {DateOfJoining},  Issue: {_Issue} " : $" Data: {DateOfJoining},  Issue: {_Issue} ";
+                                msg = string.IsNullOrEmpty(msg) ? $"Row  {index} ;  Data - {DateOfJoining} ; Issue - {_Issue} " : $" Data: {DateOfJoining}; Issue - {_Issue} ";
                                 validateData.InternalMessages.Add(msg);
-                                errormsg += $"{msg}, ";
+                                errormsg += $"{msg}; ";
                             }
                         }
                     }
@@ -571,9 +571,9 @@ namespace VERIDATA.BLL.Context
                         {
                             isdataValid = false;
                             string _Issue = "Mobile No format is wrong.";
-                            msg = string.IsNullOrEmpty(msg) ? $"Row No. : {index},  Data : {MobileNo},  Issue: {_Issue}" : $" Data: {MobileNo},  Issue: {_Issue}";
+                            msg = string.IsNullOrEmpty(msg) ? $"Row {index} ;  Data - {MobileNo}; Issue - {_Issue}" : $" Data: {MobileNo}; Issue - {_Issue}";
                             validateData.InternalMessages.Add(msg);
-                            errormsg += $"{msg}, ";
+                            errormsg += $"{msg}; ";
                         }
                     }
                     if (isdataValid)
