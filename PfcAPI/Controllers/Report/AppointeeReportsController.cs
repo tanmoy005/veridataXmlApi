@@ -488,7 +488,7 @@ namespace PfcAPI.Controllers.Report
                 List<DataTable> _exportdt = new();
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
-                string reportname = $"Appointee_Count_Report_{_currDateString}.xlsx";
+                string reportname = $"Billing_Information_Report_{_currDateString}.xlsx";
 
                 var apiList = Task.Run(async () => await _reportContext.AppointeeCountBillReport(reqObj)).GetAwaiter().GetResult();
                 if (apiList.appointeeCounteBillReports?.Count > 0)

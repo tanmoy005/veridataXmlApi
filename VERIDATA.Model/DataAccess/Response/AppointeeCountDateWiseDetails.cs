@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VERIDATA.Model.DataAccess.Response
 {
@@ -86,20 +87,25 @@ namespace VERIDATA.Model.DataAccess.Response
     }
     public class AppointeeCounteBillReport
     {
-        [DisplayName("Date")]
-        public string? Date { get; set; }
-        [DisplayName("Company Id")]
-        public int? CompanyId { get; set; }
-        [DisplayName("Company Name")]
+        [DisplayName("Entity Name")]
         public string? companyName { get; set; }
 
-        [DisplayName("Total of New Appointee")]
+        [DisplayName("From Date")]
+        public string? FromDate { get; set; }
+        [DisplayName("To Date")]
+        public string? ToDate { get; set; }
+
+        //[NotMapped]
+        //[DisplayName("Company Id")]
+       // public int? CompanyId { get; set; }
+        
+        [DisplayName("Total Number of New Appointee")]
         public int? totalAppointeeCount { get; set; }
 
-        [DisplayName("Cost per New Appointee")]
+        [DisplayName("Cost per New Appointee : INR")]
         public int? ratePerTotalAppointeeCount { get; set; }
 
-        [DisplayName("Total Billing")]
+        [DisplayName("Total Billing : INR")]
         public int? GrandTotal {  get; set; } 
     }
 }

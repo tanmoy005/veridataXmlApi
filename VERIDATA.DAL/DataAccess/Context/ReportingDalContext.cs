@@ -309,10 +309,15 @@ namespace VERIDATA.DAL.DataAccess.Context
                         select new { up, c };
 
             // Apply filters based on the request
-            if (reqJob.FromDate.HasValue && reqJob.ToDate.HasValue)
+           
+            if(reqJob.FromDate.HasValue)
+            {
+                query = query.Where(x => x.up.CreatedOn >= reqJob.FromDate.Value.Date);
+            }
+            if (reqJob.ToDate.HasValue)
             {
                 DateTime toDate = reqJob.ToDate.Value.AddDays(1).Date; // Include end of the day for `ToDate`
-                query = query.Where(x => x.up.CreatedOn >= reqJob.FromDate.Value.Date && x.up.CreatedOn < toDate);
+                query = query.Where(x => x.up.CreatedOn < toDate);
             }
 
             if (reqJob.EntityId != null && reqJob.EntityId.Any())
@@ -325,10 +330,12 @@ namespace VERIDATA.DAL.DataAccess.Context
                 .GroupBy(x => new { x.up.CompanyId, x.c.CompanyName })
                 .Select(g => new AppointeeCounteBillReport
                 {
-                    CompanyId = g.Key.CompanyId,
                     companyName = g.Key.CompanyName,
-                    totalAppointeeCount = g.Count(),
+                    FromDate = reqJob.FromDate.HasValue ? reqJob.FromDate.Value.ToShortDateString() : "All",
+                    ToDate = reqJob.ToDate.HasValue ? reqJob.ToDate.Value.ToShortDateString() : "All",
+                    // CompanyId = g.Key.CompanyId,
                     ratePerTotalAppointeeCount = ratePerAppointee,
+                    totalAppointeeCount = g.Count(),
                     GrandTotal = g.Count() * ratePerAppointee
                 })
                 .ToListAsync();
