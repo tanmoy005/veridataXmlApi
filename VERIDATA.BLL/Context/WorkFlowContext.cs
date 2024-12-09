@@ -559,6 +559,19 @@ namespace VERIDATA.BLL.Context
                         await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeFileDetails?.UserId ?? 0, true);//isapprove set true
 
                     }
+                    else if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && string.IsNullOrEmpty(_appointeedetails.UANNumber) && _appointeedetails.IsUanAvailable == false)
+                    {
+                        mailType = MailType.Submit;
+                        WorkFlowDataRequest _WorkFlowDataRequest = new();
+                        int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
+                        _WorkFlowDataRequest.appointeeId = appointeeId;
+                        _WorkFlowDataRequest.remarks = string.Empty;
+                        _WorkFlowDataRequest.workflowState = _stateId;
+                        _WorkFlowDataRequest.approvalStatus = WorkFlowStatusType.ManualVerification;
+                        _WorkFlowDataRequest.userId = AppointeeFileDetails.UserId;
+
+                        await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
+                    }
                 }
 
                 await PostMailFileSubmisstionSuccess(_appointeedetails.AppointeeId ?? 0, AppointeeFileDetails?.UserId ?? 0, mailType);
@@ -958,7 +971,7 @@ namespace VERIDATA.BLL.Context
                     if (isDataVerificationReq)
                     {
                         var PassbookQuestion = reqObj.VerificationSubCategoryList?.Where(x => x.SubCategory == "EPFPSSBKMNL").FirstOrDefault();
-                        isPensionApplicable = PassbookQuestion?.VerificationQueries?.FirstOrDefault(x => x.FieldName == ManualVerificationFieldType.PensionApplicable)?.Value ?? false;
+                        isPensionApplicable = PassbookQuestion?.VerificationQueries?.FirstOrDefault(x => x.FieldName?.ToLower() == ManualVerificationFieldType.PensionApplicable)?.Value ?? false;
                         isDataValid = await VefifyPassBookValidityManual(reqObj.AppointeeId, PassbookQuestion?.VerificationQueries, isPensionApplicable ?? false, reqObj.UserId);
                     }
                     var pfVerificationReqObj = new AppointeePfVerificationRequest
@@ -1001,7 +1014,7 @@ namespace VERIDATA.BLL.Context
                 {
 
 
-                    switch (questions.FieldName)
+                    switch (questions.FieldName.ToLower())
                     {
                         case ManualVerificationFieldType.DocIncomplete:
                             if (!questions.Value)
@@ -1059,6 +1072,7 @@ namespace VERIDATA.BLL.Context
         private async Task<bool> VefifyFNameValidityManual(int appointeeId, List<VerificationUpdate>? DocValidity, int userId)
         {
             List<ReasonRemarks> ReasonList = new();
+            AppointeeDetails _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
             bool isDataValid = true;
             string activityType = string.Empty;
             // Dynamically update each field specified in the request
@@ -1069,7 +1083,7 @@ namespace VERIDATA.BLL.Context
                     case ManualVerificationFieldType.FathersName:
                         if (!update.Value)
                         {
-                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.CAREOFNAME, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.CAREOFNAME, Inputdata = _appointeedetails.MemberName, Fetcheddata = string.Empty });
                             isDataValid = false;
 
                         }
