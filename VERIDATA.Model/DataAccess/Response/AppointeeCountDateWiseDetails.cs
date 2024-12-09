@@ -96,7 +96,7 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Total of New Appointee")]
         public int? totalAppointeeCount { get; set; }
 
-        [DisplayName("Total of New Appointee")]
+        [DisplayName("Cost per New Appointee")]
         public int? ratePerTotalAppointeeCount { get; set; }
 
         [DisplayName("Total Billing")]

@@ -189,7 +189,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                   && (string.IsNullOrEmpty(reqObj.CandidateId) || b.CandidateId.Contains(reqObj.CandidateId))
                                                                   && (reqObj.FromDate == null || b.CreatedOn >= reqObj.FromDate) && (reqObj.ToDate == null || b.CreatedOn < _ToDate)
                                                                   && b.ActiveStatus == true
-                                                                  && (reqObj.IsManualPassbook == null || reqObj.IsManualPassbook ==true && p.IsManualPassbook == true || reqObj.IsManualPassbook == false && p.IsPassbookFetch == true)
+                                                                  && (reqObj.IsManualPassbook == null || reqObj.IsManualPassbook == true && p.IsManualPassbook == true || reqObj.IsManualPassbook == false && p.IsPassbookFetch == true)
                                                                   orderby p.IsSubmit
                                                                   select new UnderProcessQueryDataResponse
                                                                   {
@@ -1107,7 +1107,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                             Uan = appointee.UANNumber,
                             AadhaarNumberView = appointee.AadhaarNumberView,
                             IsUanAadharLink = appointee.IsUanAadharLink,
-                            EPS_Member_YN=appointee.IsPensionApplicable,
+                            EPS_Member_YN = appointee.IsPensionApplicable,
                         };
 
             return await query.ToListAsync();
@@ -1204,7 +1204,21 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return list;
         }
-      
+
+        public async Task UpdateReuploadFathersName(AppointeeReUploadFilesAfterSubmitRequest reqObj)
+        {
+
+            AppointeeDetails AppointeeDetailsData = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.ActiveStatus.Value.Equals(true) && x.AppointeeId == reqObj.AppointeeId);
+            {
+
+                AppointeeDetailsData.IsFNameVarified = (reqObj.FathersName?.Trim() == (AppointeeDetailsData.MemberName?.Trim())) ? AppointeeDetailsData.IsFNameVarified : null;
+                AppointeeDetailsData.MemberName = !string.IsNullOrEmpty(reqObj.FathersName) ? reqObj.FathersName?.Trim() : AppointeeDetailsData.MemberName;
+                AppointeeDetailsData.UpdatedBy = reqObj.UserId;
+                AppointeeDetailsData.UpdatedOn = DateTime.Now;
+                _ = await _dbContextClass.SaveChangesAsync();
+            }
+
+        }
     }
 }
 

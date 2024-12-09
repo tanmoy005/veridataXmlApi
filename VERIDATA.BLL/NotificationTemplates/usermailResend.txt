@@ -212,7 +212,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 22px; line-height: 2; word-break: break-word; text-align: center; mso-line-height-alt: 44px; margin: 0;">
-                                                            <span style="font-size: 22px;">User Info Resend </span>
+                                                            <span style="font-size: 22px;">User Info Remider/Process Incomplete</span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -422,11 +422,14 @@
                                                         <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
                                                            Dear {{Name}},
                                                         </p></br>
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">Welcome to <strong> VERIDATA<sup>&reg;</sup></strong> Your Onboarding Compliance Ally.</br> 
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">Hope you are doing well. </p></br>
-                                                        <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">Welcome to <strong> VERIDATA<sup>&reg;</sup></strong> Your Onboarding Compliance Ally,</br> Please enter the requested details by following the instructions, one step at a time.</br>Successful completion of this process will facilitate your onboarding.</p></br>
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														This is a friendly reminder that your verification process with {{CompanyName}} is incomplete.</br> </p> <br>
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
+														Please enter the requested details in <strong>VERIDATA<sup>®</sup></strong>, by following the instructions one step at a time.</br>Successful completion of this process will facilitate your onboarding to {{CompanyName}}.</p></br>
 														
-												
+																								
 													
 
                                                          <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"> <strong>Before verification there are some prerequisites, that you must possess:</strong></p></br>
@@ -644,12 +647,15 @@
 													Please have the following documents with you, before you start the verification process:</p></br></br>
 
                                                     	<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
-														1. 10th Pass certificate + another official document to provide your father's name.<br>
+														1. PAN Card and 10th Pass certificate soft copies, to verify your father's name.<br>
 														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
-														2. Your visa image, if you are an international passport holder.</br>
-														3. Current year PF Passbook, downloaded from EPFO portal</br>
+														2. Your visa image, if you are an international passport holder(except Nepal, Bhutan, Bangladesh).</br>
+														3.Your Handicap Certificate, if you are physically challenged. </br>
+														4. Entire EPFO Service History, downloaded from EPFO portal</br>
+                                                          (required if you opt for manual UAN verification in the Veridata portal)</br>
+														5. All years' PF Passbooks, downloaded from EPFO portal</br>
                                                           (required if you opt for manual UAN verification in the Veridata portal).</br>
-														4. Trust PF Passbook softcopy, if you are / have been a Trust or Private PF holder.</br></br>
+														6. All Trust PF Passbook softcopy(s), if you are / have been a Trust or Private PF holder.</br></br>
 
 														<strong><a href={{Url}}>Click on the login link:</a></strong></p>
 														

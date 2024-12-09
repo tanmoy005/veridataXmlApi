@@ -1214,6 +1214,8 @@ namespace VERIDATA.BLL.Context
             if (_appointeedetails?.IsProcessed != true && _appointeedetails?.IsSubmit == true)
             {
                 await _fileContext.postappointeeReUploadedFiles(AppointeeFileDetailsReupload);
+                await _dbContextWorkflow.UpdateReuploadFathersName(AppointeeFileDetailsReupload);
+
                 var _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
                 await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(new WorkFlowDataRequest
                 {

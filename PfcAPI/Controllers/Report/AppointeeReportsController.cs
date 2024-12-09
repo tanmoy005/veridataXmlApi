@@ -476,6 +476,7 @@ namespace PfcAPI.Controllers.Report
 
 
         [Authorize]
+        //[AllowAnonymous]
         [HttpPost]
         [Route("AppointeeCounterBillingReport")]
         public ActionResult AppointeeCounterBillingReport(AppointeeCountReportBillRequest reqObj)
@@ -490,31 +491,24 @@ namespace PfcAPI.Controllers.Report
                 string reportname = $"Appointee_Count_Report_{_currDateString}.xlsx";
 
                 var apiList = Task.Run(async () => await _reportContext.AppointeeCountBillReport(reqObj)).GetAwaiter().GetResult();
-              //var response = await _reportContext.AppointeeCountBillReport(reqObj);
-            if(apiList.AppointeeCountDetails?.Count > 0)
+                if (apiList.appointeeCounteBillReports?.Count > 0)
                 {
-                   // DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeCountDetailsXls>(apiList.AppointeeTotalCount);
-                    DataTable _exportdt2 = CommonUtility.ToDataTable<AppointeeCountDetailsXls>(apiList.appointeeCountDetailsXls);
-                  //  _exportdt.Add(_exportdt1);
-                    _exportdt.Add(_exportdt2);
-                    byte[] exportbytes = CommonUtility.ExportFromDataTableListToExcel(_exportdt);
-                    //var _file = file(exportbytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", reportname);
-                    //var _filedata = new Filedata() { FileData = pdf, FileName = reportname, FileType = "pdf" };
+                    DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeCounteBillReport>(apiList.appointeeCounteBillReports);
+                    byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportname, string.Empty);
                     Filedata _filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
-                    response.AppointeeCountDetailsXls = apiList.appointeeCountDetailsXls;
-                   // response.AppointeeCountListDetails = apiList.AppointeeCountDetails;
+                    response.AppointeeCounteBillReport = apiList.appointeeCounteBillReports;
                     response.Filedata = _filedata;
                 }
 
-                return Ok(new BaseResponse<AppointeeCountDateWiseDetails>(HttpStatusCode.OK, apiList));
+                return Ok(new BaseResponse<AppointeeCountJobResponse>(HttpStatusCode.OK, response));
             }
             catch (Exception)
             {
-                
+
                 throw;
             }
 
-          
+
         }
 
     }

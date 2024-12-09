@@ -13,6 +13,7 @@ namespace VERIDATA.Model.Request
         [Required]
         public int AppointeeId { get; set; }
         public string? AppointeeCode { get; set; }
+        public string? FathersName { get; set; }
       
         [Required]
         public int UserId { get; set; }

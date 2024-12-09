@@ -46,6 +46,7 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<List<FileCategoryResponse>> getFileTypeCode(int appointeeId);
         Task<bool> CheckVerifyDetails(int appointeeId);
         public Task<List<ManualVerificationProcessQueryDataResponse>> GetManualVerificationProcessDataAsync(ManualVeificationProcessDataRequest reqObj);
+        public Task UpdateReuploadFathersName(AppointeeReUploadFilesAfterSubmitRequest reqObj);
 
     }
 }
