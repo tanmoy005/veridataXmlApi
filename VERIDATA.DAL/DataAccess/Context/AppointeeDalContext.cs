@@ -199,7 +199,17 @@ namespace VERIDATA.DAL.DataAccess.Context
 
                 if (PrevReason.Count > 0)
                 {
-                    PrevReason.ForEach(x => x.ActiveStatus = false);
+                    if (string.IsNullOrEmpty(subType))
+                    {
+
+                        PrevReason.ForEach(x => x.ActiveStatus = false);
+
+                    }
+                    else
+                    {
+                        PrevReason.Where(x => x.ReasonSubType == subType).ToList().ForEach(x => x.ActiveStatus = false);
+
+                    }
                 }
                 if (_resaonList.Count > 0)
                 {
