@@ -67,10 +67,20 @@ namespace VERIDATA.BLL.Context
 
             if (appointeedetail.AppointeeDetailsId != null && request != null)
             {
-                DateTime _inptdob = Convert.ToDateTime(panDOB);
+                DateTime _inptdob = new();
+                bool dOBVarified = false;
+                if (string.IsNullOrEmpty(panDOB))
+                {
+                    dOBVarified = true;
+                }
+                else
+                {
+                    _inptdob = Convert.ToDateTime(panDOB);
+
+                }
 
                 if (panName?.ToUpper() == panFullName?.Trim()?.ToUpper() &&
-                    appointeedetail?.DateOfBirth == _inptdob)
+                    (appointeedetail?.DateOfBirth == _inptdob || dOBVarified))
                 //&& (string.IsNullOrEmpty(phoneNo?.ToUpper()) || appointeedetail?.MobileNo?.ToUpper() == phoneNo?.ToUpper()))
                 {
                     IsValid = true;
@@ -79,10 +89,10 @@ namespace VERIDATA.BLL.Context
                     //{
                     //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANMOBILENOTAVAIL, Inputdata = appointeedetail?.MobileNo, Fetcheddata = maskedPhoneNumber });
                     //}
-                    if (appointeedetail?.AppointeeName?.Trim()?.ToUpper() != panFullName?.ToUpper())
-                    {
-                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = panFullName });
-                    }
+                    //if (appointeedetail?.AppointeeName?.Trim()?.ToUpper() != panFullName?.ToUpper())
+                    //{
+                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = panFullName });
+                    //}
                     if (appointeedetail?.MobileNo != phoneNo && !string.IsNullOrEmpty(phoneNo?.ToUpper()))
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.MOBILENTMATCH, Inputdata = appointeedetail?.MobileNo, Fetcheddata = maskedPhoneNumber });
@@ -100,7 +110,7 @@ namespace VERIDATA.BLL.Context
                     //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = panName, Fetcheddata = panFullName });
                     //}
 
-                    if (appointeedetail?.DateOfBirth != _inptdob)
+                    if (appointeedetail?.DateOfBirth != _inptdob && dOBVarified == false)
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANDOB, Inputdata = appointeedetail?.DateOfBirth?.ToShortDateString(), Fetcheddata = _inptdob.ToShortDateString() });
                     }
@@ -489,7 +499,7 @@ namespace VERIDATA.BLL.Context
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
                 }
                 else
-                if (_apiResponse.IsUanAvailable == false && appointeedetail.IsUanAvailable==false && string.IsNullOrEmpty(_apiResponse.UanNumber))
+                if (_apiResponse.IsUanAvailable == false && appointeedetail.IsUanAvailable == false && string.IsNullOrEmpty(_apiResponse.UanNumber))
                 {
                     candidateUpdatedDataReq.Status = true;
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
