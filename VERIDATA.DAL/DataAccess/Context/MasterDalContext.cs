@@ -433,7 +433,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                 {
                     FaqId = y.FaqId,
                     FaqName = y.FaqName,
-                    FaqDescription = y.FaqDesc
+                    FaqDescription = y.FaqDesc,
+                    Contenttype=y.textType.Trim()
                 })?.ToListAsync();
             //response = responseData.Provider;
             return responseData;
