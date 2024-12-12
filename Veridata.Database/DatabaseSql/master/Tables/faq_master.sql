@@ -2,6 +2,7 @@
     [faq_id]        INT            IDENTITY (1, 1) NOT NULL,
     [faq_name]      NVARCHAR (MAX) NULL,
     [faq_desc]      NVARCHAR (MAX) NULL,
+    [txt_type]      NVARCHAR(10) NULL,
     [active_status] BIT            NULL,
     [created_by]    INT            NULL,
     [created_on]    DATETIME       NULL,
