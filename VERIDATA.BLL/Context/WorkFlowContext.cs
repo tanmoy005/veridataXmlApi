@@ -1038,8 +1038,13 @@ namespace VERIDATA.BLL.Context
                 }
                 if (!isVerificationRequired)
                 {
-                    await docReuploadRequested(appointeeId, userId, reasonList);
-                    return false;
+                    await docReuploadRequested(appointeeId, userId, reasonList, obj.SubCategory);
+                    //return false;
+                }
+                else
+                {
+                    await _dbContextCandiate.UpdateRemarksStatusByType(appointeeId, RemarksType.Manual, obj.SubCategory, userId);
+
                 }
             }
 
@@ -1052,9 +1057,9 @@ namespace VERIDATA.BLL.Context
 
         }
 
-        private async Task docReuploadRequested(int appointeeId, int userId, List<ReasonRemarks> reasonList)
+        private async Task docReuploadRequested(int appointeeId, int userId, List<ReasonRemarks> reasonList,string subType)
         {
-            string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId);
+            string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId, subType);
             WorkFlowDataRequest _WorkFlowDataRequest = new();
             int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
 
@@ -1094,10 +1099,10 @@ namespace VERIDATA.BLL.Context
             // Save the changes to the database
             if (!isDataValid)
             {
-                string Remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, ReasonList, RemarksType.Manual, userId);
+                string Remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, ReasonList, RemarksType.Manual, userId,"");
                 await RemarksMailSend(appointeeId, Remarks, RemarksType.Manual, userId);
                 activityType = ActivityLog.MNLFTHRVERIFLD;
-                await docReuploadRequested(appointeeId, userId, ReasonList);
+                await docReuploadRequested(appointeeId, userId, ReasonList, ManualVerificationSubType.FathersName);
             }
             else
             {
@@ -1132,7 +1137,7 @@ namespace VERIDATA.BLL.Context
                 string Remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, ReasonList, RemarksType.Manual, userId);
                 await RemarksMailSend(appointeeId, Remarks, RemarksType.Manual, userId);
                 activityType = ActivityLog.MNLUANVERIFLD;
-               // await docReuploadRequested(appointeeId, userId, ReasonList);
+                // await docReuploadRequested(appointeeId, userId, ReasonList);
             }
             else
             {

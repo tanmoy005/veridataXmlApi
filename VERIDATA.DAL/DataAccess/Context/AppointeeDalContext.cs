@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using Microsoft.EntityFrameworkCore;
 using Mustache;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
@@ -139,48 +140,94 @@ namespace VERIDATA.DAL.DataAccess.Context
                 var reasonListquery = from rm in AllResonDetails
                                       join r in Reasons
                                       on rm.ReasonCode equals r.ReasonCode
-                                      select new { rm.ReasonName, rm.ReasonCode, rm.ReasonId, r.Inputdata, r.Fetcheddata, r.Remarks };
+                                      select new RemarksDetails { ReasonName = rm.ReasonName, ReasonCode = rm.ReasonCode, ReasonId = rm.ReasonId, Inputdata = r.Inputdata, Fetcheddata = r.Fetcheddata, Remarks = r.Remarks };
                 var ResonDetails = reasonListquery.ToList();
                 // var ResonDetails = AllResonDetails.Where(x => ReasonCodeList.Contains(x.ReasonCode)).ToList();
-                if (ResonDetails?.Count > 0)
-                {
-
-                    //var CurrReasonIdList = ResonDetails.Select(x => x.ReasonId).ToList();
-                    List<int> AllReasonIdList = AllResonDetails.Select(x => x.ReasonId).ToList();
-                    List<AppointeeReasonMappingData> PrevReason = AllPrevReason.Where(x => AllReasonIdList.Contains(x.ReasonId)).ToList();
-                    List<AppointeeReasonMappingData>? _resaonList = ResonDetails?.Select(x => new AppointeeReasonMappingData
-                    {
-                        AppointeeId = AppointeeId,
-                        ReasonId = x.ReasonId,
-                        Remarks = x.ReasonCode != ReasonCode.OTHER ? CommonDalUtility.ParseMessage(x.ReasonName, new { x.Inputdata, x.Fetcheddata }) : x.Remarks,
-                        CreatedBy = UserId,
-                        ActiveStatus = true,
-                        CreatedOn = DateTime.Now,
-                    }).ToList();
-                    await _dbContextClass.AppointeeReasonMappingData.AddRangeAsync(_resaonList);
-
-                    if (PrevReason.Count > 0)
-                    {
-                        PrevReason.ForEach(x => x.ActiveStatus = false);
-                    }
-                    if (_resaonList.Count > 0)
-                    {
-                        AllRemarks = string.Join(", ", _resaonList.Select(x => x.Remarks).ToList());
-                    }
-                }
-                else
-                {
-                    if (AllPrevReason.Count > 0)
-                    {
-                        List<int> allreasonIdByType = AllResonDetails.Select(x => x.ReasonId).ToList();
-                        AllPrevReason.Where(x => allreasonIdByType.Contains(x.ReasonId)).ToList().ForEach(x => x.ActiveStatus = false);
-                    }
-                }
-                _ = await _dbContextClass.SaveChangesAsync();
+                AllRemarks = await RemarksUpdateByType_SubType(AppointeeId, UserId, AllRemarks, AllResonDetails, AllPrevReason, ResonDetails, string.Empty);
             }
             return AllRemarks;
         }
-        public async Task UpdateRemarksStatusByType(int AppointeeId, string Type, int UserId)
+        public async Task<string> UpdateRemarksByType(int AppointeeId, List<ReasonRemarks> Reasons, string Type, int UserId, string subType)
+        {
+            string AllRemarks = string.Empty;
+            if (Reasons?.Count > 0)
+            {
+                List<ReasonMaser> AllResonDetails = await GetAllRemarksByType(Type);
+                List<AppointeeReasonMappingData> AllPrevReason = await _dbContextClass.AppointeeReasonMappingData
+                    .Where(x => x.AppointeeId.Equals(AppointeeId) && x.ActiveStatus == true)
+                    .ToListAsync();
+
+                var reasonListquery = from rm in AllResonDetails
+                                      join r in Reasons
+                                      on rm.ReasonCode equals r.ReasonCode
+                                      select new RemarksDetails
+                                      {
+                                          ReasonName = rm.ReasonName,
+                                          ReasonCode = rm.ReasonCode,
+                                          ReasonId = rm.ReasonId,
+                                          Inputdata = r.Inputdata,
+                                          Fetcheddata = r.Fetcheddata,
+                                          Remarks = r.Remarks
+                                      };
+
+                var ResonDetails = reasonListquery.ToList();
+
+                // Call the updated method and pass the new parameter
+                AllRemarks = await RemarksUpdateByType_SubType(AppointeeId, UserId, AllRemarks, AllResonDetails, AllPrevReason, ResonDetails, subType);
+            }
+            return AllRemarks;
+        }
+        private async Task<string> RemarksUpdateByType_SubType(int AppointeeId, int UserId, string AllRemarks, List<ReasonMaser> AllResonDetails, List<AppointeeReasonMappingData> AllPrevReason, List<RemarksDetails> ResonDetails, string? subType)
+        {
+            if (ResonDetails?.Count > 0)
+            {
+
+                //var CurrReasonIdList = ResonDetails.Select(x => x.ReasonId).ToList();
+                List<int> AllReasonIdList = AllResonDetails.Select(x => x.ReasonId).ToList();
+                List<AppointeeReasonMappingData> PrevReason = AllPrevReason.Where(x => AllReasonIdList.Contains(x.ReasonId)).ToList();
+                List<AppointeeReasonMappingData>? _resaonList = ResonDetails?.Select(x => new AppointeeReasonMappingData
+                {
+                    AppointeeId = AppointeeId,
+                    ReasonId = x.ReasonId ?? 0,
+                    ReasonSubType = subType,
+                    Remarks = x.ReasonCode != ReasonCode.OTHER ? CommonDalUtility.ParseMessage(x.ReasonName, new { x.Inputdata, x.Fetcheddata }) : x.Remarks,
+                    CreatedBy = UserId,
+                    ActiveStatus = true,
+                    CreatedOn = DateTime.Now,
+                }).ToList();
+                await _dbContextClass.AppointeeReasonMappingData.AddRangeAsync(_resaonList);
+
+                if (PrevReason.Count > 0)
+                {
+                    PrevReason.ForEach(x => x.ActiveStatus = false);
+                }
+                if (_resaonList.Count > 0)
+                {
+                    AllRemarks = string.Join(", ", _resaonList.Select(x => x.Remarks).ToList());
+                }
+            }
+            else
+            {
+                if (AllPrevReason.Count > 0)
+                {
+                    List<int> allreasonIdByType = AllResonDetails.Select(x => x.ReasonId).ToList();
+                    if (string.IsNullOrEmpty(subType))
+                    {
+
+                        AllPrevReason.Where(x => allreasonIdByType.Contains(x.ReasonId)).ToList().ForEach(x => x.ActiveStatus = false);
+                    }
+                    else
+                    {
+                        AllPrevReason.Where(x => allreasonIdByType.Contains(x.ReasonId) && x.ReasonSubType == subType).ToList().ForEach(x => x.ActiveStatus = false);
+
+                    }
+                }
+            }
+            _ = await _dbContextClass.SaveChangesAsync();
+            return AllRemarks;
+        }
+
+        public async Task UpdateRemarksStatusByType(int AppointeeId, string Type, string subType, int UserId)
         {
             string AllRemarks = string.Empty;
 
@@ -191,8 +238,14 @@ namespace VERIDATA.DAL.DataAccess.Context
             // var ResonDetails = AllResonDetails.Where(x => ReasonCodeList.Contains(x.ReasonCode)).ToList();
             if (AllPrevReason?.Count > 0)
             {
-                AllPrevReason?.ForEach(x => { x.ActiveStatus = false; x.UpdatedOn = DateTime.Now; x.UpdatedBy = UserId; });
-
+                if (string.IsNullOrEmpty(subType))
+                {
+                    AllPrevReason?.ForEach(x => { x.ActiveStatus = false; x.UpdatedOn = DateTime.Now; x.UpdatedBy = UserId; });
+                }
+                else
+                {
+                    AllPrevReason?.Where(x => x.ReasonSubType == subType)?.ToList()?.ForEach(x => { x.ActiveStatus = false; x.UpdatedOn = DateTime.Now; x.UpdatedBy = UserId; });
+                }
                 await _dbContextClass.SaveChangesAsync();
             }
         }

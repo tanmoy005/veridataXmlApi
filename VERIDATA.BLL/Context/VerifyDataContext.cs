@@ -711,22 +711,6 @@ namespace VERIDATA.BLL.Context
             {
                 var lastAdhar4Digit = reqObj.AadharDetails?.AadharNumber?.Trim()?.LastOrDefault().ToString();
                 var isMobileValid = CommonUtility.CheckMobileNumber(appointeedetail.MobileNo, reqObj.AadharDetails?.MobileNumberHash, reqObj?.sharePhrase ?? "", lastAdhar4Digit);
-                //var _aadharMobileLinkDetails = await GetAadharMobileLinkStatus(reqObj?.AadharDetails?.AadharNumber, appointeedetail?.MobileNo, reqObj?.UserId ?? 0);
-                //if (_aadharMobileLinkDetails.StatusCode == HttpStatusCode.OK)
-                //{
-                //    if (_aadharMobileLinkDetails?.validId ?? false)
-                //    {
-                //        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDADHAR, Inputdata = reqObj?.AadharDetails?.AadharNumber, Fetcheddata = string.Empty });
-                //    }
-
-
-                //}
-                //else
-                //{
-                //    response.IsValid = false;
-                //    response.Remarks = _aadharMobileLinkDetails?.remarks;
-                //    return response;
-                //}
 
                 string? aadharName = reqObj?.AppointeeAadhaarName?.Trim();
                 string? appointeeAadhaarFullName = reqObj?.AadharDetails?.Name;

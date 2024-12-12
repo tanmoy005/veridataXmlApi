@@ -2,6 +2,7 @@
     [appointee_reason_id] BIGINT         IDENTITY (1, 1) NOT NULL,
     [appointee_id]        BIGINT         NOT NULL,
     [reason_id]           INT            NOT NULL,
+    [reason_sub_type]     NVARCHAR(20)   NULL,
     [remarks]             NVARCHAR (MAX) NULL,
     [active_status]       BIT            NULL,
     [created_by]          INT            NULL,
