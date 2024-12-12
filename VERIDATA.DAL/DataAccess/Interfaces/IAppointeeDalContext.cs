@@ -16,7 +16,9 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task UpdateAppointeeVerifiedData(CandidateValidateUpdatedDataRequest validationReq);
         public Task UpdateAppointeeUanNumber(int appointeeId, string uanNumber);
         public Task<string> UpdateRemarksByType(int AppointeeId, List<ReasonRemarks> Reasons, string Type, int UserId);
-        public Task UpdateRemarksStatusByType(int AppointeeId, string Type, int UserId);
+        public Task<string> UpdateRemarksByType(int AppointeeId, List<ReasonRemarks> Reasons, string Type, int UserId, string subType);
+
+        public Task UpdateRemarksStatusByType(int AppointeeId, string Type,string subType, int UserId);
         //public Task uploadFilesNUpdatePrevfiles(AppointeeUploadDetails uploadDetails, AppointeeUploadDetails prevDocDetails, int userId);
         public Task Uploadfiles(List<AppointeeUploadDetails> uploadDetails);
         public Task RemovePrevfiles(List<AppointeeUploadDetails> prevDocDetails, int userId);

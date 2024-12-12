@@ -413,7 +413,7 @@
         }
         public static class ManualVerificationSubType
         {
-            public const string EpfPassbook = "EPFPSHF";
+            public const string EpfPassbook = "EPFPSSBKMNL";
             public const string EpfHistory = "EPFPSHF";
             public const string FathersName = "FTHR";
             public const string TENTHCERT = "10THCERT";

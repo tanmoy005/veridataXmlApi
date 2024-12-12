@@ -201,7 +201,7 @@ namespace VERIDATA.BLL.Context
             }
             else
             {
-                await _appointeeDalContext.UpdateRemarksStatusByType(validationReq.AppointeeId, validationReq?.Type ?? "", validationReq?.UserId ?? 0);
+                await _appointeeDalContext.UpdateRemarksStatusByType(validationReq.AppointeeId, validationReq?.Type ?? "",string.Empty, validationReq?.UserId ?? 0);
             }
             Response.IsValid = validationReq.Status ?? false;
             Response.Remarks = Remarks;

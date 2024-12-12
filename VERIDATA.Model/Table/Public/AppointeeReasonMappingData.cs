@@ -19,6 +19,9 @@ namespace VERIDATA.Model.Table.Public
 
         [Column("reason_id", TypeName = DbDataType._integer)]
         public int ReasonId { get; set; }
+        
+        [Column("reason_sub_type", TypeName = DbDataType._text20)]
+        public string? ReasonSubType { get; set; }
 
         [Column("remarks", TypeName = DbDataType._textmax)]
         public string? Remarks { get; set; }
