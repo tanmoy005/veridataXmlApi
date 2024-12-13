@@ -1002,11 +1002,11 @@ namespace VERIDATA.BLL.Context
         }
         private async Task<bool> VefifyDocValidityManual(int appointeeId, List<VerificationUpdatesubCategory>? docValidity, int userId, string? VerificationCategory)// TODO
         {
-            List<ReasonRemarks> reasonList = new();
             bool isVerificationRequired = true;
             // Dynamically update each field specified in the request
             foreach (var obj in docValidity)
             {
+                List<ReasonRemarks> reasonList = new();
                 var inputData = string.Empty;
 
                 inputData = obj.SubCategory == ManualVerificationSubType.FathersName || obj.SubCategory == ManualVerificationSubType.TENTHCERT || obj.SubCategory == ManualVerificationSubType.OTHID ? "Father's Name Verification" : obj.SubCategory == ManualVerificationSubType.EpfHistory ? "EPFO Service History" : obj.SubCategory == ManualVerificationSubType.EpfPassbook ? "EPFO Passbook(s)" : string.Empty;
@@ -1038,7 +1038,8 @@ namespace VERIDATA.BLL.Context
                 }
                 if (!isVerificationRequired)
                 {
-                    await docReuploadRequested(appointeeId, userId, reasonList, obj.SubCategory);
+                    string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId, obj.SubCategory);
+                    await docReuploadRequested(appointeeId, userId, remarks, obj.SubCategory);
                     //return false;
                 }
                 else
@@ -1057,9 +1058,9 @@ namespace VERIDATA.BLL.Context
 
         }
 
-        private async Task docReuploadRequested(int appointeeId, int userId, List<ReasonRemarks> reasonList,string subType)
+        private async Task docReuploadRequested(int appointeeId, int userId, string remarks, string subType)
         {
-            string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId, subType);
+            // string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId, subType);
             WorkFlowDataRequest _WorkFlowDataRequest = new();
             int _stateId = await _dbContextWorkflow.GetWorkFlowStateIdByAlias(WorkFlowType.UploadDetails);
 
@@ -1099,10 +1100,10 @@ namespace VERIDATA.BLL.Context
             // Save the changes to the database
             if (!isDataValid)
             {
-                string Remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, ReasonList, RemarksType.Manual, userId,"");
-                await RemarksMailSend(appointeeId, Remarks, RemarksType.Manual, userId);
+                string Remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, ReasonList, RemarksType.Manual, userId, ManualVerificationSubType.FathersName);
+                //await RemarksMailSend(appointeeId, Remarks, RemarksType.Manual, userId);
                 activityType = ActivityLog.MNLFTHRVERIFLD;
-                await docReuploadRequested(appointeeId, userId, ReasonList, ManualVerificationSubType.FathersName);
+                await docReuploadRequested(appointeeId, userId, Remarks, ManualVerificationSubType.FathersName);
             }
             else
             {
