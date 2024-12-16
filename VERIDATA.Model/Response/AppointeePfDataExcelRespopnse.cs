@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace VERIDATA.Model.Response
 {
@@ -33,8 +28,8 @@ namespace VERIDATA.Model.Response
         public string? PensionGapIdentified { get; set; }
 
         [DisplayName("Aadhar UAN Linked")]
-        public string? AadharuanLink {  get; set; }
+        public string? AadharuanLink { get; set; }
         [DisplayName("EPS Membership")]
-        public string EpsMember {  get; set; }
+        public string EpsMember { get; set; }
     }
 }

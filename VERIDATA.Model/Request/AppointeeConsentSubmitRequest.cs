@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace VERIDATA.Model.Request
+﻿namespace VERIDATA.Model.Request
 {
     public class AppointeeConsentSubmitRequest
     {

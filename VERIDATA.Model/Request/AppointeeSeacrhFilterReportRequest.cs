@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VERIDATA.Model.Request
+﻿namespace VERIDATA.Model.Request
 {
     public class AppointeeSeacrhFilterReportRequest
     {
-      //  public AppointeeSeacrhFilterReportRequest();
+        //  public AppointeeSeacrhFilterReportRequest();
 
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }

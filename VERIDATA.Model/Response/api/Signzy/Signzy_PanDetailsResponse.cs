@@ -4,7 +4,7 @@ using VERIDATA.Model.Response.api.Signzy.Base;
 
 namespace VERIDATA.Model.Response.api.Signzy
 {
-    public class Signzy_PanDetailsResponse: Signzy_BaseResponse
+    public class Signzy_PanDetailsResponse : Signzy_BaseResponse
     {
         public string? Name { get; set; }
         public string? Number { get; set; }

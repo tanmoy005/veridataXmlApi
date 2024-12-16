@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
-using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Response
 {

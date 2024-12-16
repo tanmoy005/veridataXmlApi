@@ -1,6 +1,5 @@
 ﻿
 using Newtonsoft.Json;
-using VERIDATA.Model.Response.api.Karza.Base;
 
 namespace VERIDATA.Model.Response.api.Karza
 {

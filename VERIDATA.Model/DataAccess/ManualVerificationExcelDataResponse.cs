@@ -4,10 +4,10 @@ namespace VERIDATA.Model.DataAccess
 {
     public class ManualVerificationExcelDataResponse
     {
-       
+
         [DisplayName("Candidate ID")]
         public string? candidateId { get; set; }
-        
+
         [DisplayName("Name")]
         public string? appointeeName { get; set; }
         [DisplayName("Email")]
@@ -22,12 +22,12 @@ namespace VERIDATA.Model.DataAccess
         //public bool? isNoIsuueinVerification { get; set; } //  Yes/
         [DisplayName("Link Sent Date")]
         public string? linkSentDate { get; set; }
-        
+
         [DisplayName("Status")]
         public string? status { get; set; }
-        
+
         [DisplayName("Remarks")]
         public string? remarks { get; set; }
-        
+
     }
 }

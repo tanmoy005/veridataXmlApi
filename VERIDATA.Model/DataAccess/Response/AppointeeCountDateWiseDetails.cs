@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VERIDATA.Model.DataAccess.Response
 {
@@ -11,6 +10,7 @@ namespace VERIDATA.Model.DataAccess.Response
         public List<AppointeeCountDetailsXls>? appointeeCountDetailsXls { get; set; }
         public List<AppointeeCounteBillReport>? appointeeCounteBillReports { get; set; }
     }
+
     public class AppointeeTotalCount
     {
         [DisplayName("Date")]
@@ -28,12 +28,14 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Company Id")]
         public int? CompnayId { get; set; }
     }
+
     public class AppointeeCountDateWise
     {
         public AppointeeTotalCount? appointeeTotalCount { get; set; }
         public List<AppointeeCountDetails>? AppointeeCountDetails { get; set; }
-        public List<AppointeeCountDetailsXls>? appointeeCountXls {  get; set; }
+        public List<AppointeeCountDetailsXls>? appointeeCountXls { get; set; }
     }
+
     public class AppointeeCountDetails
     {
         [DisplayName("Date")]
@@ -59,7 +61,6 @@ namespace VERIDATA.Model.DataAccess.Response
 
         [DisplayName("Action Taken")]
         public string? ActionTaken { get; set; }
-
     }
 
     public class AppointeeCountDetailsXls
@@ -67,7 +68,7 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Date")]
         public string? Date { get; set; }
 
-       [DisplayName("Candidate ID")]
+        [DisplayName("Candidate ID")]
         public string? CandidateId { get; set; }
 
         [DisplayName("Entity Name")]
@@ -85,6 +86,7 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Action Taken")]
         public string? ActionTaken { get; set; }
     }
+
     public class AppointeeCounteBillReport
     {
         [DisplayName("Entity Name")]
@@ -92,13 +94,14 @@ namespace VERIDATA.Model.DataAccess.Response
 
         [DisplayName("From Date")]
         public string? FromDate { get; set; }
+
         [DisplayName("To Date")]
         public string? ToDate { get; set; }
 
         //[NotMapped]
         //[DisplayName("Company Id")]
-       // public int? CompanyId { get; set; }
-        
+        // public int? CompanyId { get; set; }
+
         [DisplayName("Total Number of New Appointee")]
         public int? totalAppointeeCount { get; set; }
 
@@ -106,6 +109,6 @@ namespace VERIDATA.Model.DataAccess.Response
         public int? ratePerTotalAppointeeCount { get; set; }
 
         [DisplayName("Total Billing : INR")]
-        public int? GrandTotal {  get; set; } 
+        public int? GrandTotal { get; set; }
     }
 }

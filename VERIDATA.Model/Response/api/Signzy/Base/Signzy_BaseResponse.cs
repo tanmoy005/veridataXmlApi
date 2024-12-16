@@ -5,7 +5,7 @@
         public BaseErrorResponse? Error { get; set; }
         public string? Message { get; set; }
     }
-    
+
     public class BaseErrorResponse
     {
         public string? Status { get; set; }

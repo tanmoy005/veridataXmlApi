@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VERIDATA.Model.Response
+﻿namespace VERIDATA.Model.Response
 {
-    
+
     public class FileCategoryResponse
     {
         public string? FileCategory { get; set; } // Represents upload_doc_type

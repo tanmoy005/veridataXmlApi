@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VERIDATA.Model.DataAccess.Response
+﻿namespace VERIDATA.Model.DataAccess.Response
 {
     public class PfStatusDataFilterQueryResponse
     {
@@ -36,6 +29,6 @@ namespace VERIDATA.Model.DataAccess.Response
         public bool? PensionGapIdentified { get; set; }
         public bool? IsUanAadharLink { get; set; }
 
-        public  bool? EPS_Member_YN { get; set; }
+        public bool? EPS_Member_YN { get; set; }
     }
 }

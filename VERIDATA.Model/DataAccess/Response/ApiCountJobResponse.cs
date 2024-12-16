@@ -9,7 +9,7 @@ namespace VERIDATA.Model.DataAccess.Response
 
         [DisplayName("Provider")]
         public string? ProviderName { get; set; }
-        
+
         [DisplayName("Api")]
         public string? ApiName { get; set; }
 
@@ -25,6 +25,6 @@ namespace VERIDATA.Model.DataAccess.Response
         [DisplayName("Invalid")]
         public int? TotalUnprocessableEntityCount { get; set; }
 
-       
+
     }
 }

@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-
-namespace VERIDATA.Model.Response
+﻿namespace VERIDATA.Model.Response
 {
     public class AuthenticatedUserResponse
     {

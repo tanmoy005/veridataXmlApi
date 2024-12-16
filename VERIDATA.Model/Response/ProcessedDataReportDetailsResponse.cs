@@ -29,7 +29,7 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("EPS Membership")]
         public string? PensionAvailable { get; set; }
-        
+
         [DisplayName("EPS Gap")]
         public string? PensionGapAvailable { get; set; }
 
@@ -71,7 +71,7 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("Handicape Type")]
         public string? HandicapeType { get; set; }
-        
+
         [DisplayName("Aadhaar Name")]
         public string? AadhaarName { get; set; } //Varified with aadhar
 
@@ -83,7 +83,7 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("PAN No.")]
         public string? PANNumber { get; set; }
-        
+
         [DisplayName("Verification Type")]
         public string? VerificationType { get; set; }
 

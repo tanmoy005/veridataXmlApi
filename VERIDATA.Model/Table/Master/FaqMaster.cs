@@ -19,9 +19,9 @@ namespace VERIDATA.Model.Table.Master
         [Column("faq_desc", TypeName = DbDataType._textmax)]
         public string? FaqDesc { get; set; }
 
-        [Column("txt_type", TypeName =DbDataType._text10)]
-        public string? textType { get; set; }  
-        
+        [Column("txt_type", TypeName = DbDataType._text10)]
+        public string? textType { get; set; }
+
         [Column("active_status", TypeName = DbDataType._boolean)]
         [DefaultValue(true)]
         public bool? ActiveStatus { get; set; }

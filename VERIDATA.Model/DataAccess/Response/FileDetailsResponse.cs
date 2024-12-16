@@ -11,6 +11,6 @@ namespace VERIDATA.Model.DataAccess.Response
         public string? mimeType { get; set; }
         public string? UploadTypeAlias { get; set; }
         public string? FileExtention { get; set; }
-        
+
     }
 }

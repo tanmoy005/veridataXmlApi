@@ -44,7 +44,7 @@ namespace VERIDATA.Model.Response
         [DisplayName("Qualification")]
         public string? Qualification { get; set; }
 
-      
+
 
         [DisplayName("Maratial Status")]
         public string? MaratialStatus { get; set; }

@@ -4,7 +4,7 @@ namespace VERIDATA.Model.Response
 {
     public class AppointeeAgingDataExcelReportDetails
     {
-      
+
         [DisplayName("Candidate ID")]
         public string? candidateId { get; set; }
 

@@ -15,16 +15,16 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("Mobile No.")]
         public string? MobileNo { get; set; }
-        
+
         [DisplayName("Nationality")]
-        public string? Nationality { get; set; } 
-        
+        public string? Nationality { get; set; }
+
         [DisplayName("Country Name")]
-        public string? CountryName { get; set; } 
+        public string? CountryName { get; set; }
 
         [DisplayName("Passport No.")]
-        public string? PassportNumber { get; set; } 
-        
+        public string? PassportNumber { get; set; }
+
         [DisplayName("Start Date")]
         public string? StartDate { get; set; }
 

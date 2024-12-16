@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VERIDATA.Model.DataAccess.Response
+﻿namespace VERIDATA.Model.DataAccess.Response
 {
     public class AppointeeLastActivityDetailsResponse
     {

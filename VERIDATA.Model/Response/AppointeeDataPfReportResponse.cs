@@ -27,14 +27,14 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("Status")]
         public string? Status { get; set; }
-        
+
         [DisplayName("Trust Passbook Status")]
-        public string? TrustPassBookStatus { get; set; } 
-        
+        public string? TrustPassBookStatus { get; set; }
+
         [DisplayName("EPFO Passbook Status")]
         public string? EPFOPassBookStatus { get; set; }
 
-       
+
 
 
     }

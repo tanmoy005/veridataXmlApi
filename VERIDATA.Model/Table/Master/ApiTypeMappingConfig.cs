@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using VERIDATA.Model.utility;
-using System.ComponentModel;
 
 namespace VERIDATA.Model.Table.Master
 {
@@ -29,7 +29,7 @@ namespace VERIDATA.Model.Table.Master
         //public string? Provider { get; set; }
 
         [Column("api_Priority", TypeName = DbDataType._integer)]  // mGhosh filed added
-        public int apiPriority { get; set; } 
+        public int apiPriority { get; set; }
 
         [Column("active_status", TypeName = DbDataType._boolean)]
         [DefaultValue(true)]

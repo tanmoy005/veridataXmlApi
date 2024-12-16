@@ -1,7 +1,4 @@
-﻿
-using VERIDATA.Model.Request.api.Signzy.Base;
-
-namespace VERIDATA.Model.Request.api.Signzy
+﻿namespace VERIDATA.Model.Request.api.Signzy
 {
     public class Signzy_UanGenerateOtpRequest
     {

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace VERIDATA.Model.Response
 {
     public class UnderProcessDetailsReportResponse
     {
-       
+
 
         [DisplayName("Candidate Id")]
         public string? candidateId { get; set; }

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using VERIDATA.Model.Response.api.Signzy.Base;
+﻿using VERIDATA.Model.Response.api.Signzy.Base;
 
 namespace VERIDATA.Model.Response.api.Signzy
 {
@@ -9,5 +8,5 @@ namespace VERIDATA.Model.Response.api.Signzy
         public string? ClientRefNum { get; set; }
         public string? TxnId { get; set; }
     }
-    
+
 }
