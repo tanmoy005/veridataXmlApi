@@ -16,7 +16,7 @@ namespace VERIDATA.BLL.apiContext.Common
         //    public const string info = "info";
 
         //}
-       
+
         //public static class SurePassApiRoute
         //{
         //    public const string Pan = "api/v1/pan/pan-comprehensive";

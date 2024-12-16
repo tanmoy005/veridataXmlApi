@@ -1,7 +1,6 @@
 ﻿using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
-using VERIDATA.Model.Response.api.Karza;
 using VERIDATA.Model.Response.api.Signzy;
 
 namespace VERIDATA.BLL.apiContext.signzy

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Hangfire;
 using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using System.Globalization;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.apiContext.karza;
 using VERIDATA.BLL.apiContext.signzy;
@@ -23,6 +23,7 @@ using VERIDATA.DAL.DataAccess.Context;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
 using VERIDATA.Model.Configuration;
+
 //using Hangfire.PostgreSql;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -96,8 +97,6 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = long.MaxValue;
     options.MemoryBufferThreshold = Int32.MaxValue;
 });
-
-
 
 builder.Services.AddSwaggerGen(option =>
 {
@@ -215,10 +214,10 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 //app.UseHttpsRedirection();
 app.MapHangfireDashboard();
 
-
 app.MapControllers();
 
 app.Run();
+
 public class DashboardAuthorizationFilter : IDashboardAuthorizationFilter
 {
     public bool Authorize(DashboardContext context)

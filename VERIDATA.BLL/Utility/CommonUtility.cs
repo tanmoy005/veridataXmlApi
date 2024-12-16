@@ -1,13 +1,13 @@
-﻿using Mustache;
-using OfficeOpenXml;
-using OfficeOpenXml.Table;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Mustache;
+using OfficeOpenXml;
+using OfficeOpenXml.Table;
 using VERIDATA.Model.Configuration;
 using static VERIDATA.DAL.utility.CommonEnum;
 
@@ -17,6 +17,7 @@ namespace VERIDATA.BLL.utility
     {
         public static Random random = new();
         public static ApiConfiguration config;
+
         public static void Initialize(ApiConfiguration Configuration)
         {
             config = Configuration;
@@ -30,6 +31,7 @@ namespace VERIDATA.BLL.utility
 
             return Convert.ToBase64String(hashedPassword);
         }
+
         public static string GenarateUserName(string name, int fileId)
         {
             string randomtext = RandomString(4);
@@ -44,12 +46,14 @@ namespace VERIDATA.BLL.utility
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
         public static string RandomNumber(int length)
         {
             const string chars = "0123456789";
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
         public static string GenerateRandomPassword(int length)
         {
             Guid g = Guid.NewGuid();
@@ -59,6 +63,7 @@ namespace VERIDATA.BLL.utility
 
             return GuidString;
         }
+
         public static string FormatResourceName(Assembly assembly, string resourceName)
         {
             return assembly.GetName().Name + "." +
@@ -67,6 +72,7 @@ namespace VERIDATA.BLL.utility
                     .Replace("\\", ".")
                     .Replace("/", ".");
         }
+
         public static string ParseHtmlData<T1>(string filepath, T1 payload)
         {
             string content = GetEmbeddedResource(filepath);
@@ -81,7 +87,6 @@ namespace VERIDATA.BLL.utility
             Assembly assembly = Assembly.GetExecutingAssembly();
             if (string.IsNullOrEmpty(resourceName))
             {
-
                 resourceName = CommonUtility.FormatResourceName(assembly, resourceName);
                 using Stream resourceStream = assembly.GetManifestResourceStream(resourceName);
                 if (resourceStream == null)
@@ -95,6 +100,7 @@ namespace VERIDATA.BLL.utility
             }
             return embededResource;
         }
+
         public static DataTable ToDataTable<T>(List<T> items)
         {
             DataTable dataTable = new(typeof(T).Name);
@@ -103,7 +109,7 @@ namespace VERIDATA.BLL.utility
             PropertyInfo[] Props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (PropertyInfo prop in Props)
             {
-                //Defining type of data column gives proper data table 
+                //Defining type of data column gives proper data table
                 Type? type = prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(prop.PropertyType) : prop.PropertyType;
                 //Setting column names as Property names
                 string displayName = string.Empty;
@@ -215,6 +221,7 @@ namespace VERIDATA.BLL.utility
             }
             return string.Empty;
         }
+
         public static byte[] ExportFromListToExcel<T>(List<T> table, string filename)
         {
             using ExcelPackage pack = new();
@@ -222,6 +229,7 @@ namespace VERIDATA.BLL.utility
             _ = ws.Cells["A1"].LoadFromCollection(table, true, TableStyles.Light1);
             return pack.GetAsByteArray();
         }
+
         public static byte[] ExportFromDataTableToExcel(DataTable? table, string sheetName, string? filePassword)
         {
             string? password = string.IsNullOrEmpty(filePassword) ? filePassword : DecryptString(config.EncriptKey, filePassword);
@@ -231,6 +239,7 @@ namespace VERIDATA.BLL.utility
             byte[] bytedata = string.IsNullOrEmpty(filePassword) ? pack.GetAsByteArray() : pack.GetAsByteArray(password);
             return bytedata;
         }
+
         public static byte[] ExportFromDataTableListToExcel(List<DataTable>? table)
         {
             using ExcelPackage pack = new();
@@ -238,20 +247,12 @@ namespace VERIDATA.BLL.utility
             {
                 ExcelWorksheet ws = pack.Workbook.Worksheets.Add(string.Concat(data.TableName));
                 _ = ws.Cells["A1"].LoadFromDataTable(data, true, TableStyles.Light1);
-
             });
-            //foreach(var (item, index) in table)
-            //{
-            //    var index= Current
-            //    ExcelWorksheet ws = pack.Workbook.Worksheets.Add(sheetName);
-            //    ws.Cells["A1"].LoadFromDataTable(table, true, TableStyles.Light1);
-            //}
-            //ExcelWorksheet ws = pack.Workbook.Worksheets.Add(sheetName);
-            //ws.Cells["A1"].LoadFromDataTable(table, true, TableStyles.Light1);
-            //Byte[] bytedata = pack.GetAsByteArray("password");
+
             byte[] bytedata = pack.GetAsByteArray();
             return bytedata;
         }
+
         public static void ForEachWithIndex<T>(this IEnumerable<T> enumerable, Action<T, int> handler)
         {
             int idx = 0;
@@ -260,6 +261,7 @@ namespace VERIDATA.BLL.utility
                 handler(item, idx++);
             }
         }
+
         public static bool IsEmailValidate(string? EmailId)
         {
             bool isEmail = false;
@@ -276,6 +278,7 @@ namespace VERIDATA.BLL.utility
 
             return date.ToString("MMM");
         }
+
         public static string GetMonthYearFullName(string monthYear, string type, string format)
         {
             // Parse the input string to DateTime
@@ -295,6 +298,7 @@ namespace VERIDATA.BLL.utility
             }
             // Return the full month name (e.g., "May", "June")
         }
+
         public static string GetMailType(string Type)
         {
             string mailtype = string.Empty;
@@ -335,6 +339,7 @@ namespace VERIDATA.BLL.utility
             }
             return isMobileNumberMatched;
         }
+
         public static string Sha256Hash(string input)
         {
             using (SHA256 sha256 = SHA256.Create())
@@ -343,6 +348,7 @@ namespace VERIDATA.BLL.utility
                 return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
             }
         }
+
         public static string RepeatSha256Hash(string input, int additionalHashes)
         {
             byte[] hashBytes = Encoding.UTF8.GetBytes(input);
@@ -358,5 +364,4 @@ namespace VERIDATA.BLL.utility
             }
         }
     }
-
 }

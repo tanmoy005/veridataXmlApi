@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Data;
+﻿using System.Data;
 using System.Net;
+using Microsoft.Extensions.Logging;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;

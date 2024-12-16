@@ -1,5 +1,4 @@
-﻿using VERIDATA.Model.DataAccess.Response;
-using VERIDATA.Model.Request;
+﻿using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
 
 namespace VERIDATA.BLL.Interfaces
@@ -29,9 +28,9 @@ namespace VERIDATA.BLL.Interfaces
         public Task<VarificationStatusResponse> ValidateRemainderMail(int appointeeId, int UserId);
         public Task PostMailResend(int appointeeId, int UserId);
         public Task<List<FileCategoryResponse>> getFileType(int appointeeId);
-        public Task <bool> VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj);
-      
-        public Task <List<FileCategoryResponse>> GetNotVeriedfileView(int appointeeId);
+        public Task<bool> VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj);
+
+        public Task<List<FileCategoryResponse>> GetNotVeriedfileView(int appointeeId);
         public Task PostAppointeeFileReuploadDetailsAsync(AppointeeReUploadFilesAfterSubmitRequest AppointeeFileDetailsReupload);
     }
 }

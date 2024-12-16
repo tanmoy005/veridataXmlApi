@@ -1,14 +1,12 @@
-﻿using Newtonsoft.Json;
-using System.Net;
+﻿using System.Net;
 using System.Text;
+using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.Services;
-using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Request.api.surepass;
 using VERIDATA.Model.Response.api.surepass;
-using static VERIDATA.BLL.apiContext.Common.ApiRoute;
 using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.apiContext.surepass

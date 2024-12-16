@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System.Net;
+﻿using System.Net;
 using System.Text;
+using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.Services;
 using VERIDATA.Model.DataAccess;
@@ -263,7 +263,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             {
                 res.StatusCode = _apiResponse.StatusCode;
                 res.ReasonPhrase = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
-               // res.ReasonPhrase = employementUanResponse?.Error?.Message?.ToString() ?? employementUanResponse?.Message;
+                // res.ReasonPhrase = employementUanResponse?.Error?.Message?.ToString() ?? employementUanResponse?.Message;
             }
 
             return res;

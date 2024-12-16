@@ -1,12 +1,12 @@
-﻿using ICSharpCode.SharpZipLib.Zip;
+﻿using System.Data;
+using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
+using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using System.Data;
-using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
@@ -17,13 +17,11 @@ using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
-using VERIDATA.Model.Table.Master;
 using VERIDATA.Model.Table.Public;
 using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
 {
-
     public class FileContext : IFileContext
     {
         private readonly IAppointeeDalContext _appointeeContext;
@@ -34,7 +32,6 @@ namespace VERIDATA.BLL.Context
 
         public FileContext(IAppointeeDalContext appointeeContext, IUserContext userContext, IEmailSender emailSender, IWorkFlowDalContext workFlowDalContext, IMasterDalContext masterDalContext)
         {
-            //_dbContextClass = dbContextClass;
             _appointeeContext = appointeeContext;
             _userContext = userContext;
             _emailSender = emailSender;
@@ -95,7 +92,6 @@ namespace VERIDATA.BLL.Context
                         _rawData.lvl1Email = ((string)row["level1 Email"])?.Trim();
                         _rawData.lvl2Email = ((string)row["level2 Email"])?.Trim();
                         _rawData.lvl3Email = ((string)row["level3 Email"])?.Trim();
-                        // _rawData.CompanyId = CompanyDetails?.CompanyId;
                         _rawData.CompanyName = CompanyName?.Trim();
                         rawListData.Add(_rawData);
                     }
@@ -153,8 +149,8 @@ namespace VERIDATA.BLL.Context
             //transaction.Commit();
             UploadedxlsRawFileDataResponse rawDataResponse = new() { RawFileData = RawFileData, DownloadFileData = _FileDataList, DuplicateCount = _duplicateUserCount, InvalidUserCount = _InvalidUserCount };
             return rawDataResponse;
-
         }
+
         public async Task<UploadedxlsRawFileDataResponse> UploadUpdateAppointeexlsFile(CompanyFileUploadRequest fileDetails)
         {
             int _nonExitingUserCount = 0;
@@ -242,14 +238,12 @@ namespace VERIDATA.BLL.Context
             string? _ext = Path.GetExtension(fileData.FileName);
             string _fileName = $"{_fileNameWithoutext}{DateTime.Now.Ticks}{_ext}";
 
-
             string Cuurentpath = Directory.GetCurrentDirectory();
             string path = string.IsNullOrEmpty(subfolder) ? Path.Combine(Cuurentpath, "Uploads") : Path.Combine(Cuurentpath, "Uploads", subfolder);
             if (!Directory.Exists(path))
             {
                 _ = Directory.CreateDirectory(path);
             }
-
 
             //Save the uploaded Excel file.
             string filePath = Path.Combine(path, _fileName);
@@ -282,7 +276,6 @@ namespace VERIDATA.BLL.Context
                         string content = worksheet?.Cells[i, j]?.Value?.ToString() ?? string.Empty;
                         if (i == 1)
                         {
-
                             _ = dt.Columns.Add(content);
                         }
                         else
@@ -299,6 +292,7 @@ namespace VERIDATA.BLL.Context
             _uploadedxslfiledetails.dataTable = dt;
             return Task.FromResult(_uploadedxslfiledetails);
         }
+
         /// <summary>
         /// validate data format of the uploaded data from excel file
         /// </summary>
@@ -318,7 +312,6 @@ namespace VERIDATA.BLL.Context
                     _ = InValidData.Columns.Add(column.ToString());
                 }
 
-                //foreach (var (row, index, appointeeName, AppointeeEmailId, MobileNo, DateOfOffer, DateOfJoining, EPFWages)
                 foreach ((DataRow row, int index, string candidateId, string companyName, string appointeeName, string AppointeeEmailId, string MobileNo, string DateOfJoining, string IsPFverificationReq, string lvl1Email, string lvl2Email, string lvl3Email)
                     in from DataRow row in data.dataTable.Rows
                        let rowindex = data.dataTable.Rows.IndexOf(row)
@@ -369,7 +362,6 @@ namespace VERIDATA.BLL.Context
                             errormsg += $"{msg}, ";
                         }
                     }
-                    // bool isEmail = Regex.IsMatch(AppointeeEmailId, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
                     bool isEmail = CommonUtility.IsEmailValidate(AppointeeEmailId);
                     if (!isEmail)
                     {
@@ -475,8 +467,6 @@ namespace VERIDATA.BLL.Context
                         errormsg += $"{msg}; ";
                     }
 
-
-
                     if (isdataValid)
                     {
                         _ = ValidData.Rows.Add(row.ItemArray);
@@ -498,6 +488,7 @@ namespace VERIDATA.BLL.Context
             validateData.InValidXlsData = InValidData;
             return validateData;
         }
+
         public XSLfileDetailsListResponse ValidateUpdatexlsFile(UploadedXSLfileDetailsResponse data)
         {
             XSLfileDetailsListResponse validateData = new();
@@ -506,7 +497,6 @@ namespace VERIDATA.BLL.Context
             bool isRemarksColumnAdd = false;
             if (data?.dataTable?.Rows != null)
             {
-
                 foreach (object? column in data.dataTable.Columns)
                 {
                     _ = ValidData.Columns.Add(column.ToString());
@@ -520,20 +510,12 @@ namespace VERIDATA.BLL.Context
                        let DateOfJoining = ((string)row["Updated Date Of Joining"])?.Trim()
                        let appointeeName = ((string)row["Updated Name"])?.Trim()
                        let MobileNo = ((string)row["Updated Phone No"])?.Trim()
-                       //let AppointeeEmailId = ((string)row["Updated EmailId"])?.Trim()
-                       //let companyName = ((string)row["Updated Company Name"])?.Trim()
-                       //let IsPFverificationReq = ((string)row["Updated Fresher"])?.Trim()?.ToUpper()
-                       //let lvl1Email = ((string)row["Updated level1 Email"])?.Trim()
-                       //let lvl2Email = ((string)row["Updated level2 Email"])?.Trim()
-                       //let lvl3Email = ((string)row["Updated level3 Email"])?.Trim()
                        where !string.IsNullOrEmpty(candidateId)
                        select (row, index, candidateId, appointeeName, DateOfJoining, MobileNo))//, AppointeeEmailId, companyName, IsPFverificationReq, lvl1Email, lvl2Email, lvl3Email))
                 {
                     string errormsg = string.Empty;
                     string msg = string.Empty;
                     bool isdataValid = true;
-                    //bool isEmail = false;
-
 
                     if (!string.IsNullOrEmpty(DateOfJoining))
                     {
@@ -565,7 +547,6 @@ namespace VERIDATA.BLL.Context
 
                     if (!string.IsNullOrEmpty(MobileNo))
                     {
-
                         bool isMobileNo = Regex.IsMatch(MobileNo, @"(^[0-9]{10}$)|(^\+[0-9]{2}\s+[0-9]{2}[0-9]{8}$)", RegexOptions.IgnoreCase);
                         if (!isMobileNo)
                         {
@@ -613,12 +594,11 @@ namespace VERIDATA.BLL.Context
                 CommonEnum.ValidationType.NoLinkSent => "NoLinkSent",
                 CommonEnum.ValidationType.NoResponse => "NoResponse",
                 CommonEnum.ValidationType.Processing => "Processing",
-                CommonEnum.ValidationType.ManuVerification=> "ManualVerification",
-                 _ => "Default",
+                CommonEnum.ValidationType.ManuVerification => "ManualVerification",
+                _ => "Default",
             };
             string fileName = $"{subfolder}_{category}_{_currDateString}.xlsx";
             byte[] fileData = CommonUtility.ExportFromDataTableToExcel(data, "AppointeeList", string.Empty);
-            //string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             string contentType = "xlsx";
             Filedata _Filedata = new() { FileData = fileData, FileName = fileName, FileType = contentType };
             return _Filedata;
@@ -631,7 +611,6 @@ namespace VERIDATA.BLL.Context
         /// < returns > byte[] </ returns >
         public async Task<byte[]?> GetFileDataAsync(string filePath)
         {
-
             //code for validation and get the file
             if (Path.Exists(filePath))
             {
@@ -654,7 +633,6 @@ namespace VERIDATA.BLL.Context
         /// < returns ></ returns >
         public bool RemoveDocFile(string fileName)
         {
-
             if ((fileName != null || fileName != string.Empty) && File.Exists(fileName))
             {
                 File.Delete(fileName);
@@ -667,76 +645,12 @@ namespace VERIDATA.BLL.Context
         /// </summary>
         /// <param name="AppointeeDetails"></param>
         /// <returns></returns>
-        /// 
+        ///
         public async Task postappointeeUploadedFiles(AppointeeFileDetailsRequest AppointeeDetails)
         {
             await uploadFileDetailsByAppointeeId(AppointeeDetails.FileUploaded, AppointeeDetails.FileDetails, AppointeeDetails.UserId, AppointeeDetails.AppointeeId);
-
         }
-        //public async Task postAppointeePassbookUpload(AppointeeDataSaveInFilesRequset UploadDetails)
-        //{
-        //    if (UploadDetails != null)
-        //    {
-        //        List<AppointeeUploadDetails> uploadDetails = new();
-        //        int? _appointeeId = UploadDetails?.AppointeeId;
 
-        //        UploadTypeMaster _uploadFileType = await _appointeeContext.getFileTypeDataByAliasAsync(UploadDetails.FileTypeAlias);
-        //        List<AppointeeUploadDetails> _prevDocList = await _appointeeContext.GetAppinteeUploadDetails(_appointeeId ?? 0);
-        //        if (!string.IsNullOrEmpty(UploadDetails.FileUploaded ?? string.Empty))
-        //        {
-        //            string Cuurentpath = Directory.GetCurrentDirectory();
-        //            string path = Path.Combine(Cuurentpath, "AppointeeUploads", UploadDetails.AppointeeCode, UploadDetails?.FileTypeAlias ?? "");
-        //            if (!Directory.Exists(path))
-        //            {
-        //                _ = Directory.CreateDirectory(path);
-        //            }
-        //            //Save the uploaded file.
-        //            string _fileName = string.Concat(_uploadFileType.UploadTypeName, UploadDetails.mimetype);
-        //            string _filePath = Path.Combine(path, _fileName);
-
-        //            if (UploadDetails.FileTypeAlias == FileTypealias.PFPassbook)
-        //            {
-        //                File.WriteAllText(_filePath, UploadDetails.FileUploaded);
-        //            }
-        //            else
-        //            {
-        //                using StreamWriter file = File.CreateText(_filePath);
-        //                JsonSerializer serializer = new();
-        //                //serialize object directly into file stream
-        //                serializer.Serialize(file, UploadDetails.FileUploaded);
-        //            }
-
-        //            if (Path.Exists(_filePath))
-        //            {
-        //                AppointeeUploadDetails uploaddata = new()
-        //                {
-        //                    AppointeeId = UploadDetails.AppointeeId,
-        //                    UploadTypeId = _uploadFileType.UploadTypeId,
-        //                    UploadTypeCode = _uploadFileType.UploadTypeCode,
-        //                    UploadSubTypeCode = UploadDetails.FileSubType,
-        //                    FileName = _uploadFileType.UploadTypeName,
-        //                    UploadPath = _filePath,
-        //                    IsPathRefered = CheckType.yes,
-        //                    MimeType = UploadDetails.mimetype,
-        //                    ActiveStatus = true,
-        //                    CreatedBy = UploadDetails.UserId,
-        //                    CreatedOn = DateTime.Now
-        //                };
-        //                uploadDetails.Add(uploaddata);
-
-        //                //start remove prev file
-        //                AppointeeUploadDetails? _prevdocDetails = _prevDocList.Where(x => x.UploadTypeId == _uploadFileType.UploadTypeId).FirstOrDefault();
-
-        //                await _appointeeContext.uploadFilesNUpdatePrevfiles(uploaddata, _prevdocDetails, UploadDetails.UserId);
-        //                if (_prevdocDetails != null)
-        //                {
-        //                    bool file_removed = RemoveDocFile(_prevdocDetails.UploadPath);
-        //                }
-        //                //end remove prev file
-        //            }
-        //        }
-        //    }
-        //}
         public async Task<FileDetailsResponse> DownloadTrustPassbook(int appointeeId, int userId)
         {
             FileDetailsResponse fileDetails = new();
@@ -754,7 +668,6 @@ namespace VERIDATA.BLL.Context
             {
                 filePath = _docList?.LastOrDefault()?.UploadPath ?? string.Empty;
                 fileExt = _docList?.LastOrDefault()?.MimeType ?? string.Empty;
-
             }
             byte[]? bytes = !string.IsNullOrEmpty(filePath) ? await File.ReadAllBytesAsync(filePath) : null;
 
@@ -764,12 +677,12 @@ namespace VERIDATA.BLL.Context
 
             return fileDetails;
         }
+
         public async Task OfflineKycStatusUpdate(OfflineAadharVarifyStatusUpdateRequest reqObj)
         {
-
             await _appointeeContext.PostOfflineKycStatus(reqObj);
-
         }
+
         public async Task getFiledetailsByAppointeeId(int appointeeId, List<FileDetailsResponse> _FileDataList)
         {
             List<AppointeeUploadDetails> _UploadDetails = await _appointeeContext.GetAppinteeUploadDetails(appointeeId);
@@ -778,17 +691,6 @@ namespace VERIDATA.BLL.Context
                 foreach (var obj in _UploadDetails)
                 {
                     var doc = new FileDetailsResponse();
-
-                    // Retrieving the binary data from the Content column (VARBINARY)
-                    //byte[]? _FileData = obj.Content;
-
-                    //// If the file is stored as a path, fetch the file content from the path instead.
-                    //if (_FileData == null && !string.IsNullOrEmpty(obj.UploadPath))
-                    //{
-                    //    _FileData = await GetFileDataAsync(obj.UploadPath);
-                    //}
-
-                    //doc.FileData = _FileData;
 
                     // Prepare the filename
                     string _fileName = $"{obj?.FileName}";
@@ -806,7 +708,6 @@ namespace VERIDATA.BLL.Context
         public async Task postappointeeReUploadedFiles(AppointeeReUploadFilesAfterSubmitRequest AppointeeDetails)
         {
             await uploadFileDetailsByAppointeeId(AppointeeDetails.FileUploaded, AppointeeDetails.FileDetails, AppointeeDetails.UserId, AppointeeDetails.AppointeeId);
-
         }
 
         private async Task uploadFileDetailsByAppointeeId(string? uploadedFileDetails, List<IFormFile>? fileDetails, int userId, int appointeeId)
@@ -831,12 +732,9 @@ namespace VERIDATA.BLL.Context
                             .GroupBy(x => x.uploadTypeId)
                             .ToDictionary(g => g.Key, g => g.Where(a => a.uploadDetailsId > 0).ToList());
 
-
                         var filesToBeRemoved = _prevDocList.Where(prevDoc => prevDoc != null &&
                         uploadedFilesByType.TryGetValue(prevDoc.UploadTypeId, out var fileList) &&
                         !fileList.Any(file => file.uploadDetailsId.HasValue && file.uploadDetailsId == prevDoc.UploadDetailsId)).ToList();
-
-
 
                         await _appointeeContext.RemovePrevfiles(filesToBeRemoved, userId);
                     }
@@ -877,25 +775,7 @@ namespace VERIDATA.BLL.Context
                                 CreatedOn = DateTime.Now,
                                 Content = fileContent // Store the file content here
                             };
-                            //AppointeeUploadDetails? _prevdocDetails = new();
-                            //if (_fileDetails?.uploadFileId > 0)
-                            //{
-                            //    _prevdocDetails = _prevDocList?.Where(x => x.UploadTypeId == _fileDetails.uploadTypeId && x.UploadDetailsId == _fileDetails.uploadFileId)?.FirstOrDefault();
-
-                            //}
-                            //else
-                            //{
-                            //_prevdocDetails = _prevDocList?.Where(x => x.UploadTypeId == _fileDetails.uploadTypeId)?.FirstOrDefault();
-
-                            //}
                             uploadedFiles.Add(uploaddata);
-
-                            //await _appointeeContext.uploadFilesNUpdatePrevfiles(uploaddata, _prevdocDetails, userId);
-                            //if (_prevdocDetails != null)
-                            //{
-                            //    // Optional: Remove old file if needed
-                            //    bool file_removed = RemoveDocFile(_prevdocDetails.UploadPath);
-                            //}
                         }
                     }
                 }
@@ -913,7 +793,6 @@ namespace VERIDATA.BLL.Context
 
             if ((_UploadDetails?.UploadDetailsId ?? 0) > 0)
             {
-
                 var doc = new FileDetailsResponse();
                 // Retrieving binary data from Content column or the file path
                 byte[]? _FileData = _UploadDetails?.Content;
@@ -930,11 +809,9 @@ namespace VERIDATA.BLL.Context
                 doc.UploadTypeAlias = _UploadDetails?.UploadTypeCode ?? string.Empty;
 
                 _FileDataList = doc;
-
             }
             return _FileDataList;
         }
-
 
         public async Task<UnzipAadharDataResponse> unzipAdharzipFiles(AppointeeAadhaarAadharXmlVarifyRequest AppointeeAdharUploadFileDetails)
         {
@@ -969,7 +846,6 @@ namespace VERIDATA.BLL.Context
                                     isValid = true;
                                 }
                             }
-
                         }
                     }
                 }
@@ -1000,7 +876,6 @@ namespace VERIDATA.BLL.Context
             response.Message = messeege;
             return response;
         }
-
 
         //private async Task<bool> OfflineKycDigitalSignatureCheck(string? xmlFileData)
         //{

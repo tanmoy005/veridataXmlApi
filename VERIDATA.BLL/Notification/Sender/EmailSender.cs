@@ -1,7 +1,7 @@
-﻿using MailKit.Net.Smtp;
+﻿using System.Reflection;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
-using System.Reflection;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
@@ -12,6 +12,7 @@ using VERIDATA.Model.ExchangeModels;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Table.Public;
 using static VERIDATA.DAL.utility.CommonEnum;
+
 //using System.Xml;
 
 namespace VERIDATA.BLL.Notification.Sender
@@ -21,6 +22,7 @@ namespace VERIDATA.BLL.Notification.Sender
         private readonly EmailConfiguration _emailConfig;
         private readonly IAppointeeDalContext _appointeeContext;
         private readonly IMasterDalContext _masterDataContext;
+
         public EmailSender(EmailConfiguration emailConfig, IAppointeeDalContext appointeeContext, IMasterDalContext masterDataContext)
         {
             _emailConfig = emailConfig;
@@ -35,7 +37,7 @@ namespace VERIDATA.BLL.Notification.Sender
                 MailBodyParseDataDetails parsedata = new()
                 {
                     Name = obj?.UserName,
-                    Email=obj?.EmailId,
+                    Email = obj?.EmailId,
                     UserCode = obj?.UserCode,
                     Password = obj?.Password?.ToString() ?? string.Empty,
                     Url = (type == MailType.AdminUserCreate) ? _emailConfig.HostAdminUrl : _emailConfig.HostUrl,
@@ -57,6 +59,7 @@ namespace VERIDATA.BLL.Notification.Sender
                 await SendEmailAsync(message, null);
             }
         }
+
         public async Task SendNotificationMailToEmployer(int appointeeId, string? reason, string type)
         {
             AppointeeDetails? _appointeedetails = await _appointeeContext.GetAppinteeDetailsById(appointeeId);
@@ -107,6 +110,7 @@ namespace VERIDATA.BLL.Notification.Sender
                 await SendMail(mailDetails);
             }
         }
+
         public async Task SendAppointeeMail(string emailId, MailDetails mailDetails)
         {
             mailDetails.ToEmailList = new List<EmailAddress?>();
@@ -121,22 +125,6 @@ namespace VERIDATA.BLL.Notification.Sender
             await SendMail(mailDetails);
         }
 
-        //public async Task SendFileSubmitSuccesMail(string emailId, MailDetails mailDetails) //mGhosh added
-        //{
-        //    mailDetails.ToEmailList = new List<EmailAddress?>();
-        //    mailDetails.ToCcEmailList = new List<EmailAddress?>();
-        //    EmailAddress _emailadd = new()
-        //    {
-        //        DisplayName = mailDetails.ParseData?.Name,
-        //        Address = emailId
-        //    };
-        //    mailDetails.ToEmailList.Add(_emailadd);
-
-        //    await SendMail(mailDetails);
-
-        //}
-
-       
         public async Task SendMail(MailDetails mailDetails)
         {
             MailDetails generateMailDetails = GenarateMailText(mailDetails);
@@ -144,7 +132,6 @@ namespace VERIDATA.BLL.Notification.Sender
             await SendEmailAsync(message, null);
         }
 
-       
         private MailDetails GenarateMailText(MailDetails mailDetails)
         {
             string _filename = string.Empty;
@@ -156,72 +143,86 @@ namespace VERIDATA.BLL.Notification.Sender
                     _filename = "userReprocess";
                     mailSubject = "VERIDATA: PFC User Reprocess";
                     break;
+
                 case MailType.AdhrValidation:
                     _filename = "userValidityRemarks";
                     validtionType = "Aadhaar";
                     mailSubject = "VERIDATA: User Details Verification Failed";
                     break;
+
                 case MailType.UANValidation:
                     _filename = "userValidityRemarks";
                     validtionType = "UAN";
                     mailSubject = "VERIDATA:User Details Verification Failed";
                     break;
+
                 case MailType.Pan:
                     _filename = "userValidityRemarks";
                     validtionType = "PAN";
                     mailSubject = "VERIDATA:User Details Verification Failed";
                     break;
+
                 case MailType.Passport:
                     _filename = "userValidityRemarks";
                     validtionType = "Passport";
                     mailSubject = "VERIDATA: User Details Verification Failed";
                     break;
+
                 case MailType.Remainder:
                     _filename = "userRemainder";
                     mailSubject = "VERIDATA: Verification Process Incomplete";
                     break;
+
                 case MailType.ForceApprove:
                     _filename = "userForcedApproved";
                     mailSubject = "VERIDATA: Verification Details Manually Approved";
                     break;
+
                 case MailType.Reject:
                     _filename = "userReject";
                     mailSubject = "VERIDATA: Verification Rejected";
                     break;
+
                 case MailType.CandidateCreate:
                     _filename = "newusermailsend";
                     mailSubject = "VERIDATA: New User Creation";
                     break;
+
                 case MailType.AdminUserCreate:
                     _filename = "newAdminUserCreate";
                     mailSubject = "VERIDATA: Account Creation Successful";
                     break;
+
                 case MailType.CandidateUpdate:
                     _filename = "updateusermailsend";
                     mailSubject = "VERIDATA: User Reverification";
                     break;
+
                 case MailType.MailResend:
                     _filename = "usermailResend";
                     mailSubject = "VERIDATA: User Mail Resend";
                     break;
+
                 case MailType.SendOTP:
                     _filename = "userOtpAuth";
                     mailSubject = "VERIDATA: User Authentication ";
                     break;
+
                 case MailType.Submit:
                     _filename = "deatilsSubmitted";
                     mailSubject = "VERIDATA: Pre-onboarding Details Submitted successfully";
                     break;
+
                 case MailType.AutoApprove:
                     _filename = "autoVerified";
                     mailSubject = "VERIDATA: Verification Successful";
                     break;
-                    case MailType.Manual:
+
+                case MailType.Manual:
                     _filename = "userValidityRemarks";
                     validtionType = "MANUAL";
                     mailSubject = "VERIDATA:User Details Manual Verification";
                     break;
-
             }
             MailBodyParseDataDetails? parsedata = mailDetails.ParseData;
             parsedata.Type = validtionType;
@@ -233,7 +234,6 @@ namespace VERIDATA.BLL.Notification.Sender
                 ToEmailList = mailDetails.ToEmailList ?? new List<EmailAddress?>(),
                 ToCcEmailList = mailDetails.ToCcEmailList ?? new List<EmailAddress?>(),
                 ParseData = parsedata ?? new MailBodyParseDataDetails(),
-
             };
             return ParsedMailDetails;
         }
@@ -253,6 +253,7 @@ namespace VERIDATA.BLL.Notification.Sender
 
             await SendEmailAsync(message, attachment);
         }
+
         private static MailDetails GenarateMailTextByValidatinType(ValidationType type)
         {
             string mailSubject = string.Empty;
@@ -265,49 +266,58 @@ namespace VERIDATA.BLL.Notification.Sender
                         " Please do the required rectification and reupload these appointee data."}";
                     mailSubject = "VERIDATA: Appointee Data Upload Failure List";
                     break;
+
                 case ValidationType.Duplicate:
                     mailtext = $"{"The appointee details from the latest data upload, present in the attached excel report, are duplicate and are already present in VERIDATA." +
                         " Hence were not uploaded."}";
                     mailSubject = "VERIDATA: Duplicate Appointee Data Rejected";
                     break;
+
                 case ValidationType.ApiCount:
                     mailtext = $"{"Daily API count data is attached in the excel report. Please go throuth it."}";
                     mailSubject = "VERIDATA REPORT: Total API Hit Count";
                     break;
+
                 case ValidationType.AppointeeCount:
                     mailtext = $"{"Appointee uploded count data is attached in the excel report. Please go throuth it."}";
                     mailSubject = "VERIDATA REPORT: Total Appointee Upload Count";
                     break;
+
                 case ValidationType.Critical1week:
                     mailtext = $"{"Only one week left to the Date of Joining of the appointees mentioned in the attached excel report. Please notify these candidate from VERIDATA app."}";
                     mailSubject = "VERIDATA REPORT: 1 Week Left to DOJ";
                     break;
+
                 case ValidationType.Critical2week:
                     mailtext = $"{"Only two week left to the Date of Joining of the appointees mentioned in the attached excel report. Please notify these candidate from VERIDATA app."}";
                     mailSubject = "VERIDATA REPORT: 2 Weeks Left to DOJ";
                     break;
+
                 case ValidationType.NoLinkSent:
                     mailtext = $"{"VERIDATA link has not been yet sent to the appointees, mentioned in the excel report." +
                         " Please note : 'The verification process has not been started till the verification lik sent'."}";
                     mailSubject = "VERIDATA REPORT: Link Not Sent";
                     break;
+
                 case ValidationType.NoResponse:
                     mailtext = $"{"Appointees mentioned in the attached excel report, have not initiated the verification process yet. Please notify these candidate from VERIDATA app."}";
                     mailSubject = "VERIDATA REPORT: No Response from Appointees";
                     break;
+
                 case ValidationType.Processing:
                     mailtext = $"{"Appointee mentioned in the verification excel report, have done some activity but not completed the verification process completely. Please notify these candidate from VERIDATA app."}";
                     mailSubject = "VERIDATA REPORT:Verification Onging Appointees";
                     break;
+
                 case ValidationType.NonExsist:
                     mailtext = $"{"The appointee details from the latest Update data upload, present in the attached excel report, are not present in VERIDATA." +
                         " Hence were not updated."}";
                     mailSubject = "VERIDATA: Non Exsist Appointee Data Rejected";
                     break;
+
                 default:
                     mailtext = string.Empty;
                     break;
-
             }
             MailDetails mailDetails = new()
             {
@@ -319,6 +329,7 @@ namespace VERIDATA.BLL.Notification.Sender
             };
             return mailDetails;
         }
+
         private string ParseMailMessage<T1>(string messageName, T1 payload)
         {
             string content = GetEmbeddedResource($"NotificationTemplates\\{messageName}.txt");
@@ -381,7 +392,6 @@ namespace VERIDATA.BLL.Notification.Sender
             using SmtpClient client = new();
             try
             {
-
                 client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, SecureSocketOptions.StartTls);
                 // client.AuthenticationMechanisms.Remove("XOAUTH2");
                 if (_emailConfig.AllowServerAuth)

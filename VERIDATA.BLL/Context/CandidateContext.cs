@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Net;
+using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.karza;
 using VERIDATA.BLL.apiContext.signzy;
 using VERIDATA.BLL.Interfaces;
@@ -34,9 +34,8 @@ namespace VERIDATA.BLL.Context
         private readonly IMasterDalContext _masterContext;
         private readonly IWorkFlowContext _workFlowContext;
 
-
-        public CandidateContext(ApiConfiguration apiConfig, IFileContext fileContext, IAppointeeDalContext appointeeDalContext, 
-            IMasterDalContext masterDalContext, IEmailSender emailSender, IActivityDalContext activityDalContext, 
+        public CandidateContext(ApiConfiguration apiConfig, IFileContext fileContext, IAppointeeDalContext appointeeDalContext,
+            IMasterDalContext masterDalContext, IEmailSender emailSender, IActivityDalContext activityDalContext,
             IkarzaApiContext karzaApiContext, IsignzyApiContext signzyApiContext, IWorkFlowContext workFlowContext)
         {
             _apiConfig = apiConfig;
@@ -49,6 +48,7 @@ namespace VERIDATA.BLL.Context
             _signzyApiContext = signzyApiContext;
             _workFlowContext = workFlowContext;
         }
+
         public async Task<AppointeeDetailsResponse> GetAppointeeDetailsAsync(int appointeeId)
         {
             string? key = _apiConfig.EncriptKey;
@@ -57,7 +57,7 @@ namespace VERIDATA.BLL.Context
             AppointeeDetailsResponse data = new();
             if (_appointeedetails?.AppointeeDetailsId == null)
             {
-               UnderProcessFileData _appntundrprocessdata = await _appointeeDalContext.GetUnderProcessAppinteeDetailsById(appointeeId);
+                UnderProcessFileData _appntundrprocessdata = await _appointeeDalContext.GetUnderProcessAppinteeDetailsById(appointeeId);
                 if (_appntundrprocessdata?.UnderProcessId != null)
                 {
                     data.AppointeeDetailsId = _appointeedetails?.AppointeeDetailsId ?? 0;
@@ -88,7 +88,6 @@ namespace VERIDATA.BLL.Context
             }
             else
             {
-                // var createdDate = _appointeedetails?.CreatedOn.Value.ToShortDateString() ?? "TEST";
                 data.AppointeeDetailsId = _appointeedetails?.AppointeeDetailsId ?? 0;
                 data.AppointeeId = _appointeedetails?.AppointeeId ?? appointeeId;
                 data.CandidateId = _appointeedetails?.CandidateId;
@@ -142,15 +141,13 @@ namespace VERIDATA.BLL.Context
                 data.SaveStep = _appointeedetails?.SaveStep ?? 0;
                 data.IsSubmit = _appointeedetails?.IsSubmit ?? false;
                 data.IsUanLinkWithAadhar = _appointeedetails?.IsUanAadharLink == null ? "NA" : _appointeedetails?.IsUanAadharLink ?? false ? "Yes" : "No";
-                data.UanAadharLinkStatus = _appointeedetails?.IsUanAadharLink ;
+                data.UanAadharLinkStatus = _appointeedetails?.IsUanAadharLink;
                 data.UserId = _appointeedetails?.CreatedBy ?? 0;
-                data.workFlowStatus = await _workFlowContext?.AppointeeWorkflowCurrentState(appointeeId) ;
-                             //GetFileDataModel
+                data.workFlowStatus = await _workFlowContext?.AppointeeWorkflowCurrentState(appointeeId);
                 string? _paddedName = _appointeedetails?.AppointeeName?.Length > 4 ? _appointeedetails.AppointeeName?[..3] : _appointeedetails?.AppointeeName?.PadRight(3, '0');
                 string candidateFileName = $"{_appointeedetails?.CandidateId}_{_paddedName}";
                 await _fileContext.getFiledetailsByAppointeeId(appointeeId, _FileDataList);
                 data.FileUploaded = _FileDataList;
-
             }
             return data;
         }
@@ -176,7 +173,7 @@ namespace VERIDATA.BLL.Context
                 string? UANNumber = !string.IsNullOrEmpty(validationReq.uanData?.UanNumber) ? CommonUtility.CustomEncryptString(key, validationReq.uanData?.UanNumber) : null;
                 validationReq.uanData.UanNumber = UANNumber;
             }
-            
+
             await _appointeeDalContext.UpdateAppointeeVerifiedData(validationReq);
 
             if (validationReq?.Reasons?.Count > 0)
@@ -184,7 +181,7 @@ namespace VERIDATA.BLL.Context
                 Remarks = await _appointeeDalContext.UpdateRemarksByType(validationReq.AppointeeId, validationReq.Reasons, validationReq?.Type ?? "", validationReq?.UserId ?? 0);
                 if (!validationReq?.Status ?? false)
                 {
-                    string mailtype =CommonUtility.GetMailType(validationReq.Type);
+                    string mailtype = CommonUtility.GetMailType(validationReq.Type);
                     if (!string.IsNullOrEmpty(validationReq?.EmailId))
                     {
                         MailDetails mailDetails = new();
@@ -201,19 +198,20 @@ namespace VERIDATA.BLL.Context
             }
             else
             {
-                await _appointeeDalContext.UpdateRemarksStatusByType(validationReq.AppointeeId, validationReq?.Type ?? "",string.Empty, validationReq?.UserId ?? 0);
+                await _appointeeDalContext.UpdateRemarksStatusByType(validationReq.AppointeeId, validationReq?.Type ?? "", string.Empty, validationReq?.UserId ?? 0);
             }
             Response.IsValid = validationReq.Status ?? false;
             Response.Remarks = Remarks;
 
             return Response;
         }
-      
+
         public async Task<List<GetRemarksResponse>> GetRemarks(int appointeeId)
         {
             List<GetRemarksResponse> remarks = await _appointeeDalContext.GetRemarks(appointeeId);
             return remarks;
         }
+
         public async Task<string?> GetRemarksRemedy(GetRemarksRemedyRequest reqObj)
         {
             string? remarksRemedy = string.Empty;
@@ -233,19 +231,21 @@ namespace VERIDATA.BLL.Context
                             reasonType = RemarksType.UAN;
                             remarksCode = ReasonCode.INACTIVE;
                             break;
+
                         case RemedySubType.ADHAR:
                             reasonType = RemarksType.Adhaar;
                             remarksCode = ReasonCode.DOB;
                             break;
+
                         case RemedySubType.ADHARMBLE:
                             reasonType = RemarksType.Adhaar;
                             remarksCode = ReasonCode.PHNOTPINWITHADH;
                             break;
+
                         default:
                             reasonType = string.Empty;
                             remarksCode = string.Empty;
                             break;
-
                     }
                 }
 
@@ -260,6 +260,7 @@ namespace VERIDATA.BLL.Context
             List<AppointeeActivityDetailsResponse> activityList = await _activityDalContext.GetActivityDetails(appointeeId);
             return activityList;
         }
+
         public async Task<AppointeePassbookDetailsViewResponse> GetPassbookDetailsByAppointeeId(int appointeeId)
         {
             AppointeePassbookDetailsViewResponse passbookDetails = new();
@@ -323,7 +324,6 @@ namespace VERIDATA.BLL.Context
             string? key = _apiConfig.EncriptKey;
             string? UAN = !string.IsNullOrEmpty(UanNumber) ? CommonUtility.CustomEncryptString(key, UanNumber) : null;
             await _appointeeDalContext.UpdateAppointeeUanNumber(appointeeId, UAN);
-
         }
 
         private AppointeePassbookDetailsViewResponse ParsePassbookDetailsSurePass(Surepass_GetUanPassbookResponse PassBookResponse)
@@ -368,6 +368,7 @@ namespace VERIDATA.BLL.Context
 
             return passbookDetails;
         }
+
         private async Task<AppointeePassbookDetailsViewResponse> ParsePassbookDetailsKarza(UanPassbookDetails PassBookResponse, int appointeeId)
         {
             string? key = _apiConfig.EncriptKey;
@@ -418,12 +419,10 @@ namespace VERIDATA.BLL.Context
                         {
                             if (isPensionGapIdentified == false)
                                 isPensionGapIdentified = true;
-
                         }
 
                         index++;
                     }
-
 
                     PfCompanyDetails _companyDetails = new()
                     {
@@ -448,6 +447,7 @@ namespace VERIDATA.BLL.Context
 
             return passbookDetails;
         }
+
         private async Task<AppointeePassbookDetailsViewResponse> ParsePassbookDetailsSignzy(SignzyUanPassbookDetails passBookResponse, int appointeeId)
         {
             string? key = _apiConfig.EncriptKey;
@@ -529,7 +529,6 @@ namespace VERIDATA.BLL.Context
                 // Handle passbook parsing based on provider type
                 passbookDetails = await HandlePassbookParsing(docList.UploadSubTypeCode, passbookData, appointeeId);
                 passbookDetails.isEmployementDetailsAvailable = true;
-
             }
             else
             {
@@ -737,6 +736,7 @@ namespace VERIDATA.BLL.Context
 
             return passbookDetails;
         }
+
         private async Task<AppointeeEmployementDetailsViewResponse> ParseEmployementDetailsKarzaByPassbook(UanPassbookDetails PassBookResponse, int appointeeId)
         {
             string? key = _apiConfig.EncriptKey;
@@ -781,6 +781,7 @@ namespace VERIDATA.BLL.Context
 
             return passbookDetails;
         }
+
         private async Task<AppointeeEmployementDetailsViewResponse> ParseEmployementDetailsKarza(Karza_GetEmployementDetailsByUanResponse? EmpHistResponse, int appointeeId)
         {
             string? key = _apiConfig.EncriptKey;
@@ -826,6 +827,7 @@ namespace VERIDATA.BLL.Context
 
             return passbookDetails;
         }
+
         private async Task<AppointeeEmployementDetailsViewResponse> ParseEmployementDetailsSignzy(Signzy_GetEmployementDetailsByUanResponse? EmpHistResponse, int appointeeId)
         {
             string? key = _apiConfig.EncriptKey;
@@ -871,6 +873,7 @@ namespace VERIDATA.BLL.Context
 
             return passbookDetails;
         }
+
         public static int GetTotalMonths(string startMonthYear, string lastMonthYear, string format)
         {
             // Parse the input strings to DateTime objects
@@ -882,6 +885,7 @@ namespace VERIDATA.BLL.Context
 
             return totalMonths;
         }
+
         public async Task PostAppointeefileUploadAsync(AppointeeFileDetailsRequest AppointeeFileDetails)
         {
             int appointeeId = AppointeeFileDetails.AppointeeId;
@@ -895,10 +899,12 @@ namespace VERIDATA.BLL.Context
                 }
             }
         }
+
         public async Task PostAppointeeTrusUanDetailsAsync(AppointeeUpdatePfUanDetailsRequest AppointeeTrustDetails)
         {
             await _appointeeDalContext.UpdateAppointeeTrustnUanAvailibility(AppointeeTrustDetails.AppointeeId, AppointeeTrustDetails.TrustPassbookAvailable, AppointeeTrustDetails.IsUanAvailable, AppointeeTrustDetails.IsFinalSubmit);
         }
+
         public async Task PostAppointeeHandicapDetailsAsync(AppointeeHadicapFileDetailsRequest AppointeeHandicapDetails)
         {
             await _appointeeDalContext.UpdateAppointeeHandicapDetails(AppointeeHandicapDetails.AppointeeId, AppointeeHandicapDetails.IsHandicap, AppointeeHandicapDetails.HandicapType);
@@ -910,6 +916,7 @@ namespace VERIDATA.BLL.Context
             res = await _appointeeDalContext.PostEmployementDetails(reqObj);
             return res;
         }
+
         private async Task<EmployementHistoryDetailsRespons> GetEmployementHistoryDetails(GetEmployemntDetailsRequest reqObj)
         {
             GetEmployemntDetailsResponse ApiResponse = new();
@@ -940,15 +947,14 @@ namespace VERIDATA.BLL.Context
                 Response.AppointeeId = response.AppointeeId ?? 0;
                 Response.Provider = response.TypeCode;
                 Response.SubType = response.SubTypeCode;
-
             }
             else
             {
-                //await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.UANVERIFIFAILED);
                 Response.Remarks = GenarateErrorMsg((int)ApiResponse.StatusCode, ApiResponse?.ReasonPhrase?.ToString(), "EPFO");
             }
             return Response;
         }
+
         public string GenarateErrorMsg(int statusCode, string reasonCode, string type)
         {
             string msg = statusCode == (int)HttpStatusCode.InternalServerError
@@ -961,7 +967,6 @@ namespace VERIDATA.BLL.Context
         {
             var updatedAppointeeDetails = await _appointeeDalContext.UpdateAppinteePensionById(reqObj);
 
-
             if (updatedAppointeeDetails == null)
             {
                 throw new Exception("Appointee not found.");
@@ -969,61 +974,5 @@ namespace VERIDATA.BLL.Context
 
             return updatedAppointeeDetails;
         }
-
-        //public async Task<AppointeeDetails> VerifyAppointeeManualAsync(AppointeeApproveVerificationRequest reqObj)
-        //{
-        //    var updatedAppointeeDetails = await _appointeeDalContext.VefifyAppinteeManualById(reqObj);
-
-        //    if (updatedAppointeeDetails == null)
-        //    {
-        //        throw new Exception("Appointee not found.");
-        //    }
-
-        //    // Apply the verification updates
-        //    foreach (var update in reqObj.VerificationUpdates)
-        //    {
-        //        switch (update.FieldName.ToLower())
-        //        {
-        //            case "isfnamevarified":
-        //                updatedAppointeeDetails.IsFNameVarified = update.IsVerified;
-        //                break;
-        //            case "ispasssportvarified":
-        //                updatedAppointeeDetails.IsPasssportVarified = update.IsVerified;
-        //                break;
-        //            case "isaadhaarvarified":
-        //                updatedAppointeeDetails.IsAadhaarVarified = update.IsVerified;
-        //                break;
-        //            default:
-        //                throw new Exception($"Unknown field name: {update.FieldName}");
-        //        }
-        //    }
-
-        //    return updatedAppointeeDetails;
-        //}
-
-        //public async Task<AppointeeFileViewDetailResponse> GetNotVeriedfileView(AppointeeNotVerifiedFileViewRequest reqObj)
-        //{
-        //    // Initialize response object
-        //    /*  var response = new AppointeeFileViewDetailResponse();
-
-        //      // Fetch relevant UploadTypeMaster records based on AppointeeId and FileCategory
-        //      var uploadTypeMasters = await _appointeeDalContext.GetAppinteeFileViewDetail(reqObj);
-
-        //      // Filter UploadTypeMaster results based on the specified conditions
-
-        //      response.UploadTypeMasters = uploadTypeMasters
-        //          .Where(u => u.UploadTypeCategory == reqObj.FileCategory &&
-        //          u.UploadTypeCode != null && // Ensure UploadTypeCode is not null
-        //          (u.AppointeeDetails == null || // Check AppointeeDetails conditions if they exist
-        //          (u.AppointeeDetails.IsPasssportVarified == null &&
-        //          u.AppointeeDetails.IsManualPassbook == null &&
-        //          u.AppointeeDetails.IsFNameVarified == null)))
-        //          .ToList();
-
-        //      return response;
-        //    */
-        //    return await _appointeeDalContext.GetAppinteeFileViewDetail(reqObj);
-
-        //}
     }
 }

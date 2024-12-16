@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System.Net;
+﻿using System.Net;
 using System.Xml;
+using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.karza;
 using VERIDATA.BLL.apiContext.signzy;
 using VERIDATA.BLL.apiContext.surepass;
@@ -30,6 +30,7 @@ namespace VERIDATA.BLL.Context
         private readonly IsurepassApiContext _surepassApiContext;
         private readonly IsignzyApiContext _signzyApiContext;
         private readonly ICandidateContext _candidateContext;
+
         public VerifyDataContext(ApiConfiguration apiConfigContext, IMasterDalContext masterContext, IActivityDalContext activityContext, IFileContext fileService,
             IsurepassApiContext surepassApiContext, IkarzaApiContext karzaApiContext, ICandidateContext candidateContext, IsignzyApiContext signzyApiContext)
         {
@@ -50,7 +51,6 @@ namespace VERIDATA.BLL.Context
                 : $"{reasonCode}, {"Please try again later."}";
             return msg;
         }
-
 
         private async Task<CandidateValidateResponse> VarifyPanData(PanDetails request, int appointeeId, string panName)
         {
@@ -76,7 +76,6 @@ namespace VERIDATA.BLL.Context
                 else
                 {
                     _inptdob = Convert.ToDateTime(panDOB);
-
                 }
 
                 if (panName?.ToUpper() == panFullName?.Trim()?.ToUpper() &&
@@ -85,14 +84,6 @@ namespace VERIDATA.BLL.Context
                 {
                     IsValid = true;
                     string maskedPhoneNumber = CommonUtility.MaskedString(phoneNo);
-                    //if (string.IsNullOrEmpty(phoneNo?.ToUpper()))
-                    //{
-                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANMOBILENOTAVAIL, Inputdata = appointeedetail?.MobileNo, Fetcheddata = maskedPhoneNumber });
-                    //}
-                    //if (appointeedetail?.AppointeeName?.Trim()?.ToUpper() != panFullName?.ToUpper())
-                    //{
-                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = panFullName });
-                    //}
                     if (appointeedetail?.MobileNo != phoneNo && !string.IsNullOrEmpty(phoneNo?.ToUpper()))
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.MOBILENTMATCH, Inputdata = appointeedetail?.MobileNo, Fetcheddata = maskedPhoneNumber });
@@ -104,17 +95,10 @@ namespace VERIDATA.BLL.Context
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = panFullName });
                     }
-
-                    //if (panName?.Trim()?.ToUpper() != panFullName?.Trim()?.ToUpper())
-                    //{
-                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = panName, Fetcheddata = panFullName });
-                    //}
-
                     if (appointeedetail?.DateOfBirth != _inptdob && dOBVarified == false)
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PANDOB, Inputdata = appointeedetail?.DateOfBirth?.ToShortDateString(), Fetcheddata = _inptdob.ToShortDateString() });
                     }
-
                 }
                 PanData _panData = new()
                 {
@@ -139,6 +123,7 @@ namespace VERIDATA.BLL.Context
 
             return response;
         }
+
         public async Task<AppointeePanValidateResponse> PanDetailsValidation(AppointeePanValidateRequest reqObj)
         {
             PanDetails _apiResponse = new();
@@ -206,6 +191,7 @@ namespace VERIDATA.BLL.Context
 
             return Response;
         }
+
         public async Task<AppointeePassportValidateResponse> PassportDetailsValidation(AppointeePassportValidateRequest reqObj)
         {
             PassportDetails _apiResponse = new();
@@ -248,6 +234,7 @@ namespace VERIDATA.BLL.Context
 
             return Response;
         }
+
         private async Task<CandidateValidateResponse> VarifyPassportData(PassportDetails request, int appointeeId)
         {
             bool IsValid = false;
@@ -258,8 +245,6 @@ namespace VERIDATA.BLL.Context
             string passportName = request?.Name?.Trim();
             string? passportNo = request?.PassportNumber?.Trim();
             string? passportDOB = request?.DateOfBirth;
-            //string? passportValidFrom = request?.ValidFrom;
-            //string? passportValidTill = request?.ValidTill;
 
             if (appointeedetail.AppointeeDetailsId != null && request != null && !string.IsNullOrEmpty(passportName) && !string.IsNullOrEmpty(passportDOB))
             {
@@ -278,25 +263,6 @@ namespace VERIDATA.BLL.Context
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PASSPRTNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = passportName });
                     }
-                    //if (appointeedetail?.PassportValidFrom  != _inptValidFrom)
-                    //{
-                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PASSPRTNAME, Inputdata = appointeedetail?.PassportValidFrom?.ToShortDateString(), Fetcheddata = passportValidFrom });
-                    //}
-                    //if (appointeedetail?.PassportValidTill  != _inptValidTill)
-                    //{
-                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PASSPRTNAME, Inputdata = appointeedetail?.PassportValidTill?.ToShortDateString(), Fetcheddata = passportValidTill });
-                    //}
-                    //if (string.IsNullOrEmpty(passportNo))
-                    //{
-                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDPASSPRT, Inputdata = appointeedetail?.PassportNo, Fetcheddata = passportDOB });
-
-                    //}
-                    //else
-                    //    if (appointeedetail?.PassportNo != passportNo)
-                    //{
-                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PASSPORTNO, Inputdata = appointeedetail?.PassportNo, Fetcheddata = passportDOB });
-                    //}
-
                 }
 
                 candidateUpdatedDataReq = new CandidateValidateUpdatedDataRequest()
@@ -309,7 +275,6 @@ namespace VERIDATA.BLL.Context
                     UserName = appointeedetail.AppointeeName,
                     PassportFileNo = request.FileNumber,
                     Type = RemarksType.Passport,
-
                 };
                 response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
             }
@@ -317,14 +282,11 @@ namespace VERIDATA.BLL.Context
             {
                 response.IsValid = false;
                 response.Remarks = "No data fetch from passport, please try again later";
-
             }
-
-
-
 
             return response;
         }
+
         public async Task<GetUanResponse> GetUanNumber(GetUanNumberDetailsRequest reqObj)
         {
             GetUanResponse Response = new();
@@ -335,7 +297,6 @@ namespace VERIDATA.BLL.Context
             }
             if (apiProvider?.ToLower() == ApiProviderType.Karza)
             {
-                //Response = await GetPanMobileToUan(reqObj);
                 Response = await GetMobileToUan(reqObj);
             }
             if (apiProvider?.ToLower() == ApiProviderType.Signzy)
@@ -344,6 +305,7 @@ namespace VERIDATA.BLL.Context
             }
             return Response;
         }
+
         private async Task<GetUanResponse> GetAadharToUan(GetUanNumberDetailsRequest reqObj)
         {
             GetUanResponse Response = new();
@@ -371,7 +333,6 @@ namespace VERIDATA.BLL.Context
                         UserName = string.Empty,
                         uanData = _uanDetails,
                         Type = RemarksType.UAN
-
                     };
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
                 }
@@ -380,12 +341,12 @@ namespace VERIDATA.BLL.Context
             }
             else
             {
-                // await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PASPRTVERIFIFAILED);
                 Response.IsUanAvailable = false;
                 Response.Remarks = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "EPFO");
             }
             return Response;
         }
+
         private async Task<GetUanResponse> GetPanMobileToUan(GetUanNumberDetailsRequest reqObj)
         {
             GetUanResponse Response = new();
@@ -414,16 +375,11 @@ namespace VERIDATA.BLL.Context
                     Reasons = ReasonList,
                     uanData = _uanDetails,
                     Type = RemarksType.UAN,
-
                 };
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
-                    //var VerifyResponse = await VerifyUanName(_apiResponse, reqObj.appointeeId, reqObj.userId);
-                    //Response.IsVarified = ;
-                    //Response.Remarks = string.IsNullOrEmpty(Response.Remarks) ? VerifyResponse.Remarks : $"{Response.Remarks}, {VerifyResponse.Remarks}";
                     candidateUpdatedDataReq.Status = false;
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
-
                 }
                 else
                 if (_apiResponse.IsUanAvailable == false && string.IsNullOrEmpty(_apiResponse.UanNumber))
@@ -443,12 +399,12 @@ namespace VERIDATA.BLL.Context
             }
             else
             {
-                // await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PASPRTVERIFIFAILED);
                 Response.IsUanAvailable = false;
                 Response.UserMessage = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "EPFO");
             }
             return Response;
         }
+
         private async Task<GetUanResponse> GetMobileToUan(GetUanNumberDetailsRequest reqObj)
         {
             GetUanResponse Response = new();
@@ -477,25 +433,12 @@ namespace VERIDATA.BLL.Context
                     Reasons = ReasonList,
                     uanData = _uanDetails,
                     Type = RemarksType.UAN,
-
                 };
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
-
                     _uanDetails.IsUanFromMobile = true;
                     _uanDetails.AadharUanLinkYN = true;
 
-                    //CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
-                    //{
-                    //    AppointeeId = reqObj.appointeeId,
-                    //    EmailId = string.Empty,
-                    //    UserId = reqObj.userId,
-                    //    UserName = string.Empty,
-                    //    Reasons = ReasonList,
-                    //    uanData = _uanDetails,
-                    //    Type = RemarksType.UAN
-
-                    //};
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
                 }
                 else
@@ -516,12 +459,12 @@ namespace VERIDATA.BLL.Context
             }
             else
             {
-                // await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PASPRTVERIFIFAILED);
                 Response.IsUanAvailable = false;
                 Response.UserMessage = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "EPFO");
             }
             return Response;
         }
+
         private async Task<GetUanResponse> GetMobilePanToUan(GetUanNumberDetailsRequest reqObj)
         {
             GetUanResponse Response = new();
@@ -550,7 +493,6 @@ namespace VERIDATA.BLL.Context
                         Reasons = ReasonList,
                         uanData = _uanDetails,
                         Type = RemarksType.UAN
-
                     };
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
                 }
@@ -572,15 +514,14 @@ namespace VERIDATA.BLL.Context
                     HttpStatusCode.Conflict => "server is currently busy! Please try again later",
                     _ => string.Empty
                 };
-                // await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PASPRTVERIFIFAILED);
                 Response.IsUanAvailable = false;
                 Response.UserMessage = string.IsNullOrEmpty(msg) ? GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "EPFO") : msg;
             }
             return Response;
         }
+
         public async Task<AadharGenerateOTPDetails> GeneratetAadharOTP(AppointeeAadhaarValidateRequest reqObj)
         {
-
             AadharGenerateOTPDetails Response = new();
             AadharGenerateOTPDetails _apiResponse = new();
 
@@ -601,13 +542,9 @@ namespace VERIDATA.BLL.Context
                 UserName = string.Empty,
                 Type = RemarksType.Adhaar,
                 aadharData = _AaddhaarDetails,
-
             };
             _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
-            //if (apiProvider?.ToLower() == ApiProviderType.Karza)
-            //{
-            //    _apiResponse = await _karzaApiContext.GenerateAadharOTP(reqObj.aaddharNumber, reqObj.userId);
-            //}
+
             if (apiProvider?.ToLower() == ApiProviderType.SurePass)
             {
                 _apiResponse = await _surepassApiContext.GenerateAadharOTP(reqObj.aaddharNumber, reqObj.userId);
@@ -634,7 +571,6 @@ namespace VERIDATA.BLL.Context
                 else
                 {
                     await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.ADHVERIFIFAILED);
-
                 }
                 Response.UserMessage = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "UIDAI (Aadhar)");
                 Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
@@ -642,9 +578,9 @@ namespace VERIDATA.BLL.Context
 
             return Response;
         }
+
         public async Task<AadharSubmitOtpDetails> SubmitAadharOTP(AppointeeAadhaarSubmitOtpRequest reqObj)
         {
-
             AadharSubmitOtpDetails Response = new();
             AadharSubmitOtpDetails _apiResponse = new();
             var apiProvider = await _masterContext.GetApiProviderData(ApiType.Adhaar);
@@ -652,13 +588,11 @@ namespace VERIDATA.BLL.Context
             {
                 AppointeeDetailsResponse appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.appointeeId);
                 string? aadharNo = appointeedetail.AadhaarNumber;
-                //_apiResponse = await _karzaApiContext.SubmitAadharOTP(reqObj.client_id, aadharNo, reqObj.otp, reqObj.userId);
             }
             if (apiProvider?.ToLower() == ApiProviderType.SurePass)
             {
                 _apiResponse = await _surepassApiContext.SubmitAadharOTP(reqObj.client_id, reqObj.otp, reqObj.userId);
             }
-
 
             Response.StatusCode = _apiResponse.StatusCode;
             if (_apiResponse.StatusCode != HttpStatusCode.OK)
@@ -673,6 +607,7 @@ namespace VERIDATA.BLL.Context
             }
             return Response;
         }
+
         public async Task<AadharSubmitOtpDetails> GetAadharDetailsFromXml(string? xmlData)
         {
             AadharSubmitOtpDetails response = new();
@@ -687,7 +622,6 @@ namespace VERIDATA.BLL.Context
 
                 if (personNode != null)
                 {
-
                     XmlNode personalInfoNode = personNode.SelectSingleNode("Poi");
                     XmlNode personalAddresNode = personNode.SelectSingleNode("Poa");
                     string referenceId = root.SelectSingleNode("@referenceId").Value;
@@ -703,12 +637,11 @@ namespace VERIDATA.BLL.Context
                     response.Gender = genderNode;
                     response.AadharNumber = $"{"XXXXXXXX"}{lastFourDigit}";
                     response.MobileNumberHash = hashMobileNo?.Trim();
-                    //response.AadharNumber = referenceId;
-
                 }
             }
             return response;
         }
+
         public async Task<CandidateValidateResponse> VerifyAadharData(AadharValidationRequest reqObj)
         {
             bool IsValid = false;
@@ -730,7 +663,6 @@ namespace VERIDATA.BLL.Context
                 string? appointeeAadhaarNumber = reqObj?.AadharDetails?.AadharNumber;
 
                 _aadharData.AadhaarName = aadharName;
-                //_aadharData.AadhaarNumber = reqObj?.AppointeeAadhaarNo;
                 _aadharData.AadhaarNumber = appointeeAadhaarNumber;
                 _aadharData.NameFromAadhaar = appointeeAadhaarFullName;
                 _aadharData.GenderFromAadhaar = appointeeAadhaarGender;
@@ -746,17 +678,10 @@ namespace VERIDATA.BLL.Context
                         appointeedetail?.Gender?.ToUpper() == appointeeAadhaarGender?.ToUpper() && appointeedetail?.DateOfBirth == _inptdob)//&& validateCareOfName)
 
                     {
-
-                        //if (appointeedetail.AppointeeName?.Trim()?.ToUpper() != appointeeAadhaarFullName?.Trim()?.ToUpper())
-                        //{
-                        //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail.AppointeeName, Fetcheddata = appointeeAadhaarFullName });
-                        //}
-
                         IsValid = true;
                     }
                     else
                     {
-
                         if (!isMobileValid)
                         {
                             ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.MOBILENTMATCH, Inputdata = appointeedetail?.MobileNo, Fetcheddata = string.Empty });
@@ -764,7 +689,6 @@ namespace VERIDATA.BLL.Context
                         if (appointeedetail?.Gender?.ToUpper() != appointeeAadhaarGender?.ToUpper())
                         {
                             ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.GENDER, Inputdata = appointeedetail?.Gender, Fetcheddata = appointeeAadhaarGender });
-
                         }
                         if (appointeedetail?.DateOfBirth != _inptdob)
                         {
@@ -774,11 +698,6 @@ namespace VERIDATA.BLL.Context
                         {
                             ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail.AppointeeName, Fetcheddata = appointeeAadhaarFullName });
                         }
-                        //if (validateCareOfName)
-                        //{
-                        //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.CAREOFNAME, Inputdata = appointeedetail?.MemberName?.ToString(), Fetcheddata = appointeeCareOf });
-                        //}
-
                     }
 
                     string _activityStatus = IsValid ? ActivityLog.ADHVERIFICATIONCMPLTE : ActivityLog.ADHDATAVERIFICATIONFAILED;
@@ -806,9 +725,9 @@ namespace VERIDATA.BLL.Context
 
             response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
 
-
             return response;
         }
+
         public async Task<UanGenerateOtpDetails> GeneratetUANOTP(UanGenerateOtpRequest reqObj)
         {
             UanGenerateOtpDetails Response = new();
@@ -818,17 +737,6 @@ namespace VERIDATA.BLL.Context
             {
                 UanNumber = reqObj.UanNumber,
             };
-            //CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
-            //{
-            //    AppointeeId = reqObj.appointeeId,
-            //    EmailId = string.Empty,
-            //    UserId = reqObj.userId,
-            //    UserName = string.Empty,
-            //    Reasons = ReasonList,
-            //    uanData = _uanDetails,
-            //    Type = RemarksType.UAN
-
-            //};
             await _candidateContext.UpdateCandidateUANData(reqObj.appointeeId, reqObj.UanNumber);
 
             var apiProvider = await _masterContext.GetApiProviderData(ApiType.EPFO);
@@ -863,6 +771,7 @@ namespace VERIDATA.BLL.Context
 
             return Response;
         }
+
         public async Task<GetPassbookDetailsResponse> GetPassbookBySubmitOTP(AppointeeUANSubmitOtpRequest reqObj)
         {
             GetPassbookDetailsRequest getPassbookReq = new();
@@ -891,7 +800,6 @@ namespace VERIDATA.BLL.Context
                     else
                     {
                         isValid = true;
-
                     }
                 }
             }
@@ -944,6 +852,7 @@ namespace VERIDATA.BLL.Context
 
             return GetPassbookDetails;
         }
+
         private async Task<UanSubmitOtpDetails> SubmitUanOTP(AppointeeUANSubmitOtpRequest reqObj, string apiProvider)
         {
             UanSubmitOtpDetails response = new();
@@ -987,6 +896,7 @@ namespace VERIDATA.BLL.Context
 
             return response;
         }
+
         public async Task<GetPassbookDetailsResponse> GetPfPassbookData(GetPassbookDetailsRequest reqObj)
         {
             GetPassbookDetailsResponse Response = new();
@@ -1016,17 +926,7 @@ namespace VERIDATA.BLL.Context
                 UanPassbookDetails? _passBookData = _apiResponse?.KarzaPassbkdata;
                 epsContributionDetails = await _karzaApiContext.CheckEpsContributionConsistencyForkarza(_passBookData);
 
-                //if (_passBookData?.overall_pf_balance != null)
-                //{
-                //    int _pensionshare = _passBookData?.overall_pf_balance?.pension_balance ?? 0;
-                //    if (_pensionshare > 0)
-                //    {
-                //        isPensionApplicable = Convert.ToInt32(_pensionshare) > 0;
-                //        _passBookData.overall_pf_balance.pension_balance = 1;
-                //    }
-                //}
                 passbookJsonData = JsonConvert.SerializeObject(_passBookData);
-
             }
             if (apiProvider?.ToLower() == ApiProviderType.Signzy)
             {
@@ -1042,7 +942,6 @@ namespace VERIDATA.BLL.Context
                     }
                 }
                 passbookJsonData = JsonConvert.SerializeObject(_passBookData);
-
             }
             Response.StatusCode = _apiResponse.StatusCode;
             if (_apiResponse.StatusCode != HttpStatusCode.OK)
@@ -1061,8 +960,6 @@ namespace VERIDATA.BLL.Context
                 }
                 else
                 {
-
-                    //await PostPfPassbookData(reqObj, passbookJsonData, apiProvider?.ToLower());
                     await SavePfPassbookData(reqObj, passbookJsonData, apiProvider?.ToLower());
                     if (apiProvider?.ToLower() == ApiProviderType.SurePass)
                     {
@@ -1081,7 +978,6 @@ namespace VERIDATA.BLL.Context
                         Response.DateOfBirth = _passBookData?.dob ?? string.Empty;
                         Response.IsPensionApplicable = HasEpsContribution(epsContributionDetails);
                         Response.EpsContributionDetails = epsContributionDetails;
-                        //Response.PfUan = _passBookData.pf_uan;
                     }
                     if (apiProvider?.ToLower() == ApiProviderType.Signzy)
                     {
@@ -1102,26 +998,9 @@ namespace VERIDATA.BLL.Context
                 }
             }
 
-
             return Response;
         }
 
-        //private async Task PostPfPassbookData(GetPassbookDetailsRequest reqObj, string apiResponse, string apiProvider)
-        //{
-
-        //    AppointeeDataSaveInFilesRequset uploadreq = new()
-        //    {
-        //        AppointeeId = reqObj.AppointeeId,
-        //        AppointeeCode = reqObj?.AppointeeCode ?? "DEFAULT",
-        //        FileTypeAlias = FileTypealias.PFPassbook,
-        //        FileSubType = apiProvider,
-        //        FileUploaded = apiResponse,
-        //        UserId = reqObj.UserId,
-        //        mimetype = "json"
-        //    };
-
-        //    await _fileService.postAppointeePassbookUpload(uploadreq);
-        //}
         private async Task SavePfPassbookData(GetPassbookDetailsRequest reqObj, string apiResponse, string apiProvider)
         {
             EmployementHistoryDetails uploadReq = new()
@@ -1134,6 +1013,7 @@ namespace VERIDATA.BLL.Context
             };
             await _candidateContext.PostAppointeeEmployementDetailsAsync(uploadReq);
         }
+
         public async Task<CandidateValidateResponse> VerifyUanData(UanValidationRequest reqObj)
         {
             bool IsValid = false;
@@ -1153,15 +1033,9 @@ namespace VERIDATA.BLL.Context
             }
             else if (appointeedetail.AppointeeDetailsId != null && reqObj?.PassbookDetails != null)
             {
-
                 string? AppointeeFullName = string.IsNullOrEmpty(appointeedetail?.NameFromAadhaar) ? appointeedetail?.AppointeeName?.Trim() : appointeedetail?.NameFromAadhaar?.Trim();
-                //_ = Convert.ToDateTime(string.IsNullOrEmpty(appointeedetail?.DobFromAadhaar) ? appointeedetail?.DateOfBirth?.ToString("dd/MM/yyyy") : appointeedetail?.DobFromAadhaar);
-
                 string? fathersName = appointeedetail.MemberName;
-
                 DateTime _inptdob = Convert.ToDateTime(UanDob);
-
-
                 _isFatherNameValidate = !string.IsNullOrEmpty(fathersName) && fathersName.ToUpper() == UanFatherName?.ToUpper();
                 if (AppointeeFullName?.ToUpper() == UanFullName?.ToUpper()
                     && appointeedetail?.DateOfBirth == _inptdob && _isFatherNameValidate && !_IsPensionGapIdentified)
@@ -1170,7 +1044,6 @@ namespace VERIDATA.BLL.Context
                 }
                 else
                 {
-
                     if (AppointeeFullName?.ToUpper() != UanFullName?.ToUpper())
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = AppointeeFullName, Fetcheddata = UanFullName });
@@ -1230,7 +1103,6 @@ namespace VERIDATA.BLL.Context
         public async Task PostActivity(int appointeeId, int userId, string activityCode)
         {
             await _activityContext.PostActivityDetails(appointeeId, userId, activityCode);
-
         }
 
         public async Task<GetUanResponse> GetUanNumberPriorityBase(GetUanNumberDetailsRequest reqObj)
@@ -1257,9 +1129,7 @@ namespace VERIDATA.BLL.Context
                 }
                 else if (apiProvider?.ToLower() == ApiProviderType.Karza)
                 {
-                    //response = await GetPanMobileToUan(reqObj);
                     response = await GetMobileToUan(reqObj);
-
                 }
                 else if (apiProvider?.ToLower() == ApiProviderType.Signzy)
                 {
@@ -1292,13 +1162,14 @@ namespace VERIDATA.BLL.Context
         {
             return epsResults?.Any(result => result.EpsGapfind) ?? false;
         }
+
         public bool HasEpsContribution(List<EpsContributionCheckResult> epsResults)
         {
             return epsResults?.Any(result => result.HasEpsContribution) ?? false;
         }
+
         public async Task<GetAadharMobileLinkDetails> GetAadharMobileLinkStatus(string aadharNo, string mobileNo, int userId)
         {
-
             GetAadharMobileLinkDetails response = new();
             GetAadharMobileLinkDetails _apiResponse = new();
             var apiProvider = await _masterContext.GetApiProviderData(ApiType.Adhaar);
@@ -1306,11 +1177,6 @@ namespace VERIDATA.BLL.Context
             {
                 _apiResponse = await _karzaApiContext.GetMobileAadharLinkStatus(aadharNo, mobileNo, userId);
             }
-            //if (apiProvider?.ToLower() == ApiProviderType.SurePass)
-            //{
-            //    _apiResponse = await _surepassApiContext.GetMobileAadharLinkStatus(reqObj.client_id, reqObj.otp, reqObj.userId);
-            //}
-
 
             response.StatusCode = _apiResponse.StatusCode;
             if (_apiResponse.StatusCode != HttpStatusCode.OK)

@@ -30,8 +30,8 @@ namespace VERIDATA.BLL.apiContext.Common
 
             ApiCountLogRequest ApiCountLogReq = new ApiCountLogRequest()
             {
-                Provider=apiConfig.apiProvider,
-                ApiName=apiConfig.apiName,
+                Provider = apiConfig.apiProvider,
+                ApiName = apiConfig.apiName,
                 Url = apiConfig.apiUrl,
                 Type = "Request",
                 UserId = userId,

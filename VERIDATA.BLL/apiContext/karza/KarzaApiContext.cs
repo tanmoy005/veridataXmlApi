@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System.Net;
+﻿using System.Net;
 using System.Text;
+using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.Services;
 using VERIDATA.Model.DataAccess;
@@ -8,7 +8,6 @@ using VERIDATA.Model.Request;
 using VERIDATA.Model.Request.api.Karza;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
-using static System.Net.WebRequestMethods;
 using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.apiContext.karza
@@ -23,9 +22,9 @@ namespace VERIDATA.BLL.apiContext.karza
             _apicontext = context;
             _apiConfigContext = apiConfigContext;
         }
+
         public async Task<PanDetails> GetPanDetails(string panNo, int userId)
         {
-
             PanDetails res = new();
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Pan, ApiSubTYpeName.Pan, ApiProviderType.Karza);
             Karza_GetPanDetailsRequest request = new()
@@ -66,7 +65,6 @@ namespace VERIDATA.BLL.apiContext.karza
 
         public async Task<GetCandidateUanDetails> GetUanFromMobile(string mobileNo, int userId)
         {
-
             GetCandidateUanDetails res = new();
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.UAN, ApiSubTYpeName.FindUan, ApiProviderType.Karza);
             Karza_GetUanDetailsByMobileRequest request = new()
@@ -116,7 +114,6 @@ namespace VERIDATA.BLL.apiContext.karza
                         //}
                     }
 
-
                     res.StatusCode = _apiResponse.StatusCode;
                     res.IsUanAvailable = !string.IsNullOrEmpty(uan);
                     res.IsInactiveUan = isIanactiveUan;
@@ -136,6 +133,7 @@ namespace VERIDATA.BLL.apiContext.karza
 
             return res;
         }
+
         public async Task<GetCandidateUanDetails> GetUanFromPan(string panNo, string MobileNo, int userId)
         {
             GetCandidateUanDetails res = new();
@@ -155,13 +153,6 @@ namespace VERIDATA.BLL.apiContext.karza
                 List<Employer> activeUanList = new();
                 string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
                 Karza_GetUanDetailsByPanResponse PanToUanResponse = JsonConvert.DeserializeObject<Karza_GetUanDetailsByPanResponse>(apiResponse);
-                //if (PanToUanResponse.statusCode == ((int)KarzaStatusCode.Invalid).ToString() || PanToUanResponse.statusCode == (((int)KarzaStatusCode.NotFound).ToString()))
-                //{
-                //    res.StatusCode = HttpStatusCode.BadRequest;
-                //    res.ReasonPhrase = "Invalid Mobile Number or Combination of Inputs";
-                //}
-                //else
-                //{
                 res.StatusCode = _apiResponse.StatusCode;
                 string? uan = string.Empty;
                 bool multiActiveUanData = false;
@@ -217,7 +208,6 @@ namespace VERIDATA.BLL.apiContext.karza
                     {
                         res.IsUanAvailable = false;
                         res.StatusCode = _apiResponse.StatusCode;
-                        //res.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
                     }
                     else
                     {
@@ -234,6 +224,7 @@ namespace VERIDATA.BLL.apiContext.karza
 
             return res;
         }
+
         public async Task<PassportDetails> GetPassportDetails(AppointeePassportValidateRequest reqObj)
         {
             PassportDetails res = new();
@@ -266,7 +257,6 @@ namespace VERIDATA.BLL.apiContext.karza
                     res.DateOfBirth = reqObj.dateOfBirth.ToString("yyyy-MM-dd");
                     res.FileNumber = reqObj.passportFileNo;
                 }
-
             }
             else
             {
@@ -276,102 +266,7 @@ namespace VERIDATA.BLL.apiContext.karza
 
             return res;
         }
-        //public async Task<AadharGenerateOTPDetails> GenerateAadharOTP(string aadharNumber, int userId)
-        //{
-        //    AadharGenerateOTPDetails Response = new();
-        //    var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Adhaar, ApiSubTYpeName.AadharGenerateOTP, ApiProviderType.Karza);
-        //    Karza_AadhaarGenerateOTPRequest request = new()
-        //    {
-        //        aadhaarNo = aadharNumber,
-        //    };
-        //    StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
-        //    HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
-
-        //    if (_apiResponse.IsSuccessStatusCode)
-        //    {
-        //        string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
-        //        Karza_AadhaarGenerateOtpResponse OTPResponse = JsonConvert.DeserializeObject<Karza_AadhaarGenerateOtpResponse>(apiResponse);
-        //        AadharGenerateOtp? data = OTPResponse?.result;
-        //        if ((string.IsNullOrEmpty(data?.message) && OTPResponse?.statusCode == (int)KarzaStatusCode.Invalid) || (OTPResponse?.statusCode == (int)KarzaStatusCode.MaxTry))
-        //        {
-        //            string msg = (OTPResponse.statusCode == (int)KarzaStatusCode.MaxTry) ? "Max retries exceeded " : "Invalid  Aadhaar Number or Combination of Inputs";
-        //            Response.StatusCode = HttpStatusCode.UnprocessableEntity;
-        //            Response.ReasonPhrase = msg;
-
-        //        }
-        //        else
-        //        {
-        //            Response.StatusCode = _apiResponse.StatusCode;
-        //            Response.if_number = OTPResponse.statusCode != (int)KarzaStatusCode.Invalid;// OTPResponse?.data?.if_number ?? false;
-        //            Response.otp_sent = OTPResponse.statusCode == (int)KarzaStatusCode.Sent;//OTPResponse?.data?.otp_sent ?? false;
-        //            Response.client_id = OTPResponse?.requestId ?? string.Empty;
-        //            Response.valid_aadhaar = true;//OTPResponse?.data?.valid_aadhaar ?? false;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Response.StatusCode = _apiResponse.StatusCode;
-        //        Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
-        //    }
-        //    return Response;
-        //}
-        //public async Task<AadharSubmitOtpDetails> SubmitAadharOTP(string clientId, string aadharNumber, string otp, int userId)
-        //{
-        //    AadharSubmitOtpDetails Response = new();
-        //    var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Adhaar, ApiSubTYpeName.AadharVerifyOTP, ApiProviderType.Karza);
-        //    Karza_AadhaarSubmitOtpRequest request = new()
-        //    {
-        //        accessKey = clientId,
-        //        aadhaarNo = aadharNumber,
-        //        otp = otp
-        //    };
-        //    StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-
-        //    HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
-
-        //    if (_apiResponse.IsSuccessStatusCode)
-        //    {
-        //        string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
-        //        Karza_AadhaarSubmitOtpResponse OTPResponse = JsonConvert.DeserializeObject<Karza_AadhaarSubmitOtpResponse>(apiResponse);
-
-        //        //var appointeeCareOfDetails = OTPResponse?.data?.care_of?.Split(":");
-        //        //var appointeeCareOf = appointeeCareOfDetails?.Count() > 1 ? appointeeCareOfDetails?.LastOrDefault()?.ToUpper()?.Trim() : OTPResponse?.data?.care_of?.ToUpper();
-        //        AadharResult? data = OTPResponse?.result;
-
-        //        if ((OTPResponse?.statusCode ?? 0) == 101)
-        //        {
-        //            if (data?.dataFromAadhaar != null)
-        //            {
-        //                DataFromAadhaar? resData = data?.dataFromAadhaar;
-        //                Response.StatusCode = _apiResponse.StatusCode;
-        //                Response.Name = resData?.name?.Trim();
-        //                Response.Gender = resData?.gender?.Trim();
-        //                Response.Dob = resData?.dob?.Trim();
-        //                Response.AadharNumber = aadharNumber.Trim();
-        //                Response.CareOf = resData?.fatherName;
-        //            }
-        //            else
-        //            {
-        //                Response.StatusCode = HttpStatusCode.UnprocessableEntity;
-        //                Response.ReasonPhrase = "No records found for the given Aadhar";
-        //            }
-        //        }
-        //        else
-        //        {
-        //            string msg = (OTPResponse.statusCode == (int)KarzaStatusCode.MaxTry) ? "Max retries exceeded " :
-        //                (OTPResponse.statusCode == (int)KarzaStatusCode.NotFound) ? "No records found for the given Aadhar" : string.Empty;
-        //            Response.StatusCode = HttpStatusCode.UnprocessableEntity;
-        //            Response.ReasonPhrase = OTPResponse.statusCode == (int)KarzaStatusCode.Invalid ? "Invalid  OTP " : msg;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Response.StatusCode = _apiResponse.StatusCode;
-        //        Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
-        //    }
-        //    return Response;
-        //}
         public async Task<UanGenerateOtpDetails> GenerateUANOTP(string UanNumber, int userId)
         {
             UanGenerateOtpDetails Response = new();
@@ -398,7 +293,6 @@ namespace VERIDATA.BLL.apiContext.karza
                         string msg = (_statusCode == (int)KarzaStatusCode.MaxTry) ? "Max retries exceeded " : "Invalid UAN Number or Combination of Inputs";
                         Response.StatusCode = HttpStatusCode.BadRequest;
                         Response.ReasonPhrase = msg;
-
                     }
                     else if (_statusCode == (int)KarzaStatusCode.NotFound)
                     {
@@ -424,10 +318,10 @@ namespace VERIDATA.BLL.apiContext.karza
             {
                 Response.StatusCode = _apiResponse.StatusCode;
                 Response.ReasonPhrase = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
-                //Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
             }
             return Response;
         }
+
         public async Task<PfPassbookDetails> GetPassbookBySubmitUanOTP(string clientId, string otp, int userId)
         {
             PfPassbookDetails Response = new();
@@ -459,11 +353,9 @@ namespace VERIDATA.BLL.apiContext.karza
             {
                 Response.StatusCode = _apiResponse.StatusCode;
                 Response.ReasonPhrase = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
-                //Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
             }
 
             return Response;
-
         }
 
         public async Task<GetEmployemntDetailsResponse> GetEmployementDetais(string uan, int userId)
@@ -626,11 +518,6 @@ namespace VERIDATA.BLL.apiContext.karza
                     Response.ReasonPhrase = "Invalid Aadhar Number or Combination of Inputs";
                     return Response;
                 }
-                //if (OTPResponse?.result?.validId?.ToLower() == "yes" && OTPResponse?.result?.isMobileLinked?.ToLower() == "yes")
-                //{
-                //    Response.validId = true;
-                //}
-                //else
                 if (OTPResponse?.result?.isMobileLinked?.ToLower() != "yes")
                 {
                     Response.StatusCode = HttpStatusCode.BadRequest;
@@ -641,13 +528,11 @@ namespace VERIDATA.BLL.apiContext.karza
                 Response.StatusCode = _apiResponse.StatusCode;
                 Response.validId = OTPResponse?.result?.validId?.ToLower() == "yes";
                 Response.validMobileNo = OTPResponse?.result?.isMobileLinked?.ToLower() == "yes";
-                // Response.KarzaPassbkdata = UpdateEpsContribution(OTPResponse?.result ?? new UanPassbookDetails());
             }
             else
             {
                 Response.StatusCode = _apiResponse.StatusCode;
                 Response.ReasonPhrase = "Site Not Reachable. Please try again after some time";
-                //Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
             }
 
             return Response;
