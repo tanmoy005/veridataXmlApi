@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
+﻿using System.Data;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.utility;
 using VERIDATA.Model.Base;
@@ -24,9 +24,7 @@ namespace PfcAPI.Controllers.Report
         {
             _reportContext = reportContext;
             _workflowcontext = workflowcontext;
-
         }
-
 
         [Authorize]
         [HttpPost]
@@ -36,7 +34,6 @@ namespace PfcAPI.Controllers.Report
             try
             {
                 filter.ToDate = filter?.ToDate != null ? filter?.ToDate.Value.AddDays(1) : filter?.ToDate;
-                //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
                 string reportname = $"Verified_Appointee_{_currDateString}.xlsx";
@@ -56,15 +53,12 @@ namespace PfcAPI.Controllers.Report
 
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
                 }
-
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
-
 
         [Authorize]
         [HttpPost]
@@ -94,14 +88,13 @@ namespace PfcAPI.Controllers.Report
 
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
                 }
-
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
+
         [Authorize]
         [HttpPost]
         [Route("GetPfCreationApponteeReport")]
@@ -116,7 +109,6 @@ namespace PfcAPI.Controllers.Report
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -151,7 +143,6 @@ namespace PfcAPI.Controllers.Report
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -183,12 +174,10 @@ namespace PfcAPI.Controllers.Report
 
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
                 }
-
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -220,12 +209,10 @@ namespace PfcAPI.Controllers.Report
 
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
                 }
-
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -237,7 +224,6 @@ namespace PfcAPI.Controllers.Report
             try
             {
                 ApiCountReportResponse res = new();
-                //List<ApiCountJobResponse> apiList = new();
                 Filedata _Filedata = new();
                 ToDate = ToDate != null ? ToDate.Value.AddDays(1) : ToDate;
                 DateTime _currDate = DateTime.Now;
@@ -256,7 +242,6 @@ namespace PfcAPI.Controllers.Report
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -270,7 +255,6 @@ namespace PfcAPI.Controllers.Report
                 AppointeeCountJobResponse Response = new();
                 reqObj.ToDate = reqObj.ToDate != null ? reqObj.ToDate.Value.AddDays(1) : reqObj.ToDate;
                 List<DataTable> _exportdt = new();
-                //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
                 string reportname = $"Appointee_Count_Report_{_currDateString}.xlsx";
@@ -282,8 +266,6 @@ namespace PfcAPI.Controllers.Report
                     _exportdt.Add(_exportdt1);
                     _exportdt.Add(_exportdt2);
                     byte[] exportbytes = CommonUtility.ExportFromDataTableListToExcel(_exportdt);
-                    //var _file = file(exportbytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", reportname);
-                    //var _filedata = new Filedata() { FileData = pdf, FileName = reportname, FileType = "pdf" };
                     Filedata _filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
                     Response.AppointeeCountDateWises = apiList.AppointeeCountDateWise;
                     Response.AppointeeCountListDetails = apiList.AppointeeCountDetails;
@@ -294,7 +276,6 @@ namespace PfcAPI.Controllers.Report
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -308,7 +289,6 @@ namespace PfcAPI.Controllers.Report
                 AppointeeCountJobResponse Response = new();
                 reqObj.ToDate = reqObj.ToDate != null ? reqObj.ToDate.Value.AddDays(1) : reqObj.ToDate;
                 List<DataTable> _exportdt = new();
-                //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
                 string reportname = $"Appointee_Count_Report_{_currDateString}.xlsx";
@@ -320,22 +300,18 @@ namespace PfcAPI.Controllers.Report
                     _exportdt.Add(_exportdt1);
                     _exportdt.Add(_exportdt2);
                     byte[] exportbytes = CommonUtility.ExportFromDataTableListToExcel(_exportdt);
-                    //var _file = file(exportbytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", reportname);
                     Filedata _filedata = new() { FileData = exportbytes, FileName = "sheet", FileType = "xlsx" };
                     Response.AppointeeCountDateWises = apiList.AppointeeCountDateWise;
                     Response.Filedata = _filedata;
                 }
                 return Ok(new BaseResponse<AppointeeCountJobResponse>(HttpStatusCode.OK, Response));
-                //   return Ok(new BaseResponse<AppointeeCountDateWiseDetails>(HttpStatusCode.OK, apiList));
-
             }
             catch (Exception)
             {
                 throw;
-
             }
-
         }
+
         [Authorize]
         [HttpPost]
         [Route("AppointeeAgingFilterReport")]
@@ -345,7 +321,6 @@ namespace PfcAPI.Controllers.Report
             {
                 GetAgingReportResponse Response = new();
                 List<DataTable> _exportdt = new();
-                //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
                 string reportname = $"Appointee_Aging_Report_{_currDateString}.xlsx";
@@ -356,7 +331,6 @@ namespace PfcAPI.Controllers.Report
 
                     DataTable _exportdt1 = CommonUtility.ToDataTable<AppointeeAgingDataExcelReportDetails>(_appointeeList);
                     byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportname, reqObj.FilePassword ?? string.Empty);
-                    //var _file = file(exportbytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", reportname);
                     Filedata _filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
                     Response.AppointeeDetails = appointeeList;
                     Response.Filedata = _filedata;
@@ -368,9 +342,9 @@ namespace PfcAPI.Controllers.Report
             catch (Exception)
             {
                 throw;
-
             }
         }
+
         [Authorize]
         [HttpPost]
         [Route("NationalityFilterReport")]
@@ -384,7 +358,6 @@ namespace PfcAPI.Controllers.Report
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
                 string reportname = $"Appointee_Nationality_Report_{_currDateString}.xlsx";
 
-                // Fetching the appointee nationality data
                 List<AppointeeNationalityDataReportDetails>? appointeeList = Task.Run(async () => await _reportContext.AppointeeNationalityDetailsReport(reqObj)).GetAwaiter().GetResult();
 
                 if (appointeeList?.Count > 0)
@@ -402,8 +375,8 @@ namespace PfcAPI.Controllers.Report
             {
                 throw;
             }
-
         }
+
         [Authorize]
         [HttpPost]
         [Route("AppointeeDataFilterReport")]
@@ -413,7 +386,6 @@ namespace PfcAPI.Controllers.Report
             {
                 AppointeeDataFilterReportResponse Response = new();
                 List<DataTable> _exportdt = new();
-                //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
                 string reportname = $"Appointee_Data_{_currDateString}.xlsx";
@@ -434,7 +406,6 @@ namespace PfcAPI.Controllers.Report
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -448,7 +419,6 @@ namespace PfcAPI.Controllers.Report
             {
                 AppointeePfPensionFilterReportResponse Response = new();
                 List<DataTable> _exportdt = new();
-                //string reportname = $"approved_appointee_{_currDateString}.xlsx";
                 DateTime _currDate = DateTime.Now;
                 string _currDateString = $"{_currDate.Day}_{_currDate.Month}_{_currDate.Year}";
                 string reportname = $"PF_Pension_Data_{_currDateString}.xlsx";
@@ -470,10 +440,8 @@ namespace PfcAPI.Controllers.Report
             catch (Exception)
             {
                 throw;
-
             }
         }
-
 
         [Authorize]
         //[AllowAnonymous]
@@ -504,14 +472,8 @@ namespace PfcAPI.Controllers.Report
             }
             catch (Exception)
             {
-
                 throw;
             }
-
-
         }
-
     }
-
-
 }

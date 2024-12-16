@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.Model.Base;
 using VERIDATA.Model.Configuration;
@@ -30,7 +30,6 @@ namespace PfcAPI.Controllers.RestApi
             _fileContext = fileContext;
         }
 
-
         [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
         //[AllowAnonymous]
         [HttpPost]
@@ -39,18 +38,16 @@ namespace PfcAPI.Controllers.RestApi
         {
             try
             {
-
                 Task.Run(async () => await _fileContext.OfflineKycStatusUpdate(reqObj)).GetAwaiter().GetResult();
-
 
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
+
         [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
         //[AllowAnonymous]
         [HttpPost]
@@ -80,7 +77,6 @@ namespace PfcAPI.Controllers.RestApi
                             isValidAdhar = true,
                             AppointeeId = reqObj.appointeeId,
                             AppointeeAadhaarName = reqObj.aadharName,
-                            //AppointeeAadhaarNo = reqObj.aadharNumber,
                             sharePhrase = reqObj.shareCode
                         };
                         var VerifyAadhar = Task.Run(async () => await _varifyCandidate.VerifyAadharData(VarifyReq)).GetAwaiter().GetResult();
@@ -91,14 +87,12 @@ namespace PfcAPI.Controllers.RestApi
                             Remarks = VerifyAadhar?.Remarks
                         };
                     }
-
                 }
                 else
                 {
                     _ErrorResponse.ErrorCode = (int)HttpStatusCode.InternalServerError;
                     _ErrorResponse.UserMessage = "server is temporarily shutdown by the admin;please contact with administrator";
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _ErrorResponse));
-
                 }
                 return Ok(new BaseResponse<VarificationStatusResponse>(HttpStatusCode.OK, response));
             }
@@ -129,15 +123,12 @@ namespace PfcAPI.Controllers.RestApi
                         _ErrorResponse.InternalMessage = Response?.ReasonPhrase ?? string.Empty;
                         return Ok(new BaseResponse<ErrorResponse>(Response?.StatusCode ?? HttpStatusCode.InternalServerError, _ErrorResponse));
                     }
-
                 }
                 else
                 {
                     Response.IsUanAvailable = false;
                     Response.Remarks = "server is temporarily shutdown by the admin;please contact with administrator";
-
                 }
-
 
                 return Ok(new BaseResponse<GetUanResponse>(HttpStatusCode.OK, Response));
             }
@@ -146,7 +137,6 @@ namespace PfcAPI.Controllers.RestApi
                 string msg = _varifyCandidate.GenarateErrorMsg((int)HttpStatusCode.InternalServerError, "", "UIDAI (Aadhar)");
                 CustomException excp = new(msg, ex);
                 throw excp;
-
             }
         }
 
@@ -194,7 +184,6 @@ namespace PfcAPI.Controllers.RestApi
                     _ErrorResponse.ErrorCode = (int)HttpStatusCode.InternalServerError;
                     _ErrorResponse.UserMessage = "server is temporarily shutdown by the admin;please contact with administrator";
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _ErrorResponse));
-
                 }
 
                 return Ok(new BaseResponse<UanGenerateOtpResponse>(HttpStatusCode.OK, Response));
@@ -203,7 +192,6 @@ namespace PfcAPI.Controllers.RestApi
             {
                 Task.Run(async () => await _varifyCandidate.PostActivity(reqObj.appointeeId, reqObj.userId, ActivityLog.UANVERIFIFAILED)).GetAwaiter().GetResult();
                 throw;
-
             }
         }
 
@@ -244,14 +232,12 @@ namespace PfcAPI.Controllers.RestApi
                             Remarks = VerifyUan.Remarks
                         };
                     }
-
                 }
                 else
                 {
                     _ErrorResponse.ErrorCode = (int)HttpStatusCode.InternalServerError;
                     _ErrorResponse.UserMessage = "server is temporarily shutdown by the admin;please contact with administrator";
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _ErrorResponse));
-
                 }
                 return Ok(new BaseResponse<VarificationStatusResponse>(HttpStatusCode.OK, response));
             }
@@ -287,7 +273,6 @@ namespace PfcAPI.Controllers.RestApi
                 {
                     Response.IsValid = false;
                     Response.Remarks = "server is temporarily shutdown by the admin;please contact with administrator";
-
                 }
                 return Ok(new BaseResponse<AppointeePassportValidateResponse>(HttpStatusCode.OK, Response));
             }
@@ -295,9 +280,7 @@ namespace PfcAPI.Controllers.RestApi
             {
                 Task.Run(async () => await _varifyCandidate.PostActivity(reqobj.appointeeId, reqobj.userId, ActivityLog.PASPRTVERIFIFAILED)).GetAwaiter().GetResult();
                 throw;
-
             }
-
         }
 
         //[AllowAnonymous]
@@ -324,7 +307,6 @@ namespace PfcAPI.Controllers.RestApi
                 {
                     Response.IsValid = false;
                     Response.Remarks = "server is temporarily shutdown by the admin;please contact with administrator";
-
                 }
                 return Ok(new BaseResponse<AppointeePanValidateResponse>(HttpStatusCode.OK, Response));
             }
@@ -333,42 +315,6 @@ namespace PfcAPI.Controllers.RestApi
                 Task.Run(async () => await _varifyCandidate.PostActivity(reqobj.appointeeId, reqobj.userId, ActivityLog.PANVERIFIFAILED)).GetAwaiter().GetResult();
                 throw;
             }
-
         }
-
-        //[Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
-        //[HttpPost]
-        //[Route("GenerateEmployemntDetails")]
-        //public IActionResult GenerateEmployemntDetails(GetEmployemntDetailsRequest reqobj)
-        //{
-        //    try
-        //    {
-        //        AppointeePanValidateResponse Response = new();
-        //        if (_apiConfig.IsApiCall)
-        //        {
-        //            Task.Run(async () => await _varifyCandidate.GetEmployementHistoryDetails(reqobj)).GetAwaiter().GetResult();
-        //            if (Response.StatusCode != HttpStatusCode.OK)
-        //            {
-        //                _ErrorResponse.ErrorCode = (int)Response.StatusCode;
-        //                _ErrorResponse.UserMessage = Response?.Remarks ?? string.Empty;
-        //                _ErrorResponse.InternalMessage = Response?.Remarks ?? string.Empty;
-        //                return Ok(new BaseResponse<ErrorResponse>(Response.StatusCode, _ErrorResponse));
-        //            }
-        //        }
-        //        else
-        //        {
-        //            Response.IsValid = false;
-        //            Response.Remarks = "server is temporarily shutdown by the admin;please contact with administrator";
-
-        //        }
-        //        return Ok(new BaseResponse<AppointeePanValidateResponse>(HttpStatusCode.OK, Response));
-        //    }
-        //    catch (Exception)
-        //    {
-        //        //Task.Run(async () => await _varifyCandidate.PostActivity(reqobj.appointeeId, reqobj.userId, ActivityLog.PANVERIFIFAILED)).GetAwaiter().GetResult();
-        //        throw;
-        //    }
-
-        //}
     }
 }

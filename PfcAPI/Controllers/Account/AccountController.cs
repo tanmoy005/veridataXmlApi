@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Services;
 using VERIDATA.Model.Base;
@@ -16,7 +16,6 @@ namespace PfcAPI.Controllers.Account
     [ApiController]
     public class AccountController : ControllerBase
     {
-
         private readonly IUserContext _userContext;
         private readonly ISetupConfigarationContext _setupConfigarationContext;
         private readonly ErrorResponse _ErrorResponse = new();
@@ -89,7 +88,6 @@ namespace PfcAPI.Controllers.Account
             }
         }
 
-
         [AllowAnonymous]
         [HttpPost]
         [Route("UserSignInDetailsByEmail")]
@@ -143,9 +141,6 @@ namespace PfcAPI.Controllers.Account
                 ChangePasswordGenerateOTPRes.clientId = res.clientId;
                 ChangePasswordGenerateOTPRes.userId = validateUserResponse.userId;
                 ChangePasswordGenerateOTPRes.dbUserType = res.dbUserType;
-                //forgetPasswordRes.clientId = "Test_abcd";
-                //forgetPasswordRes.userId = 34;
-                //forgetPasswordRes.dbUserType = 2;
                 return Ok(new BaseResponse<ChangePasswordGenerateOTPResponse>(HttpStatusCode.OK, ChangePasswordGenerateOTPRes));
             }
             catch (Exception)
@@ -153,8 +148,6 @@ namespace PfcAPI.Controllers.Account
                 throw;
             }
         }
-
-
 
         [AllowAnonymous]
         [HttpPost]
@@ -183,10 +176,10 @@ namespace PfcAPI.Controllers.Account
                 throw;
             }
         }
+
         [AllowAnonymous]
         [HttpPost]
         [Route("PostPasswordChange")]
-
         public ActionResult PostPasswordChange(SetNewPasswordRequest req)
         {
             try
@@ -210,11 +203,9 @@ namespace PfcAPI.Controllers.Account
             }
         }
 
-
         [Authorize]
         [HttpPost]
         [Route("ValidateProfilePassword")]
-
         public ActionResult ValidateProfilePassword(ValidateProfilePasswordRequest req)
         {
             try
@@ -252,6 +243,7 @@ namespace PfcAPI.Controllers.Account
                 throw;
             }
         }
+
         [Authorize]
         [HttpPost]
         [Route("signOut")]
@@ -387,6 +379,7 @@ namespace PfcAPI.Controllers.Account
                 throw;
             }
         }
+
         [Authorize]
         [HttpGet]
         [Route("GetAppointeeStatusDetails")]
@@ -404,14 +397,11 @@ namespace PfcAPI.Controllers.Account
             }
         }
 
-
-
         [Authorize]
         [HttpGet]
         [Route("GetSetupConfigData")]
         public ActionResult GetSetupConfigData()
         {
-            //var _ErrorResponse = new ErrorResponse();
             try
             {
                 GeneralSetupDetailsResponse _data = new();
@@ -435,10 +425,7 @@ namespace PfcAPI.Controllers.Account
             }
             try
             {
-
                 Task.Run(async () => await _setupConfigarationContext.PostSetupData(Request)).GetAwaiter().GetResult();
-
-
 
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
             }
@@ -448,16 +435,13 @@ namespace PfcAPI.Controllers.Account
             }
         }
 
-
         [AllowAnonymous]
         [HttpGet]
         [Route("GetApiConfigData")]
         public ActionResult GetApiConfigData()
         {
-            //var _ErrorResponse = new ErrorResponse();
             try
             {
-                //ApiConfigResponse _data = new();
                 var _data = _apiConfigService.GetApiConfigDetails();
                 return Ok(new BaseResponse<ApiConfigResponse>(HttpStatusCode.OK, _data));
             }

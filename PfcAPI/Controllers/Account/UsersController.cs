@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.utility;
 using VERIDATA.Model.Base;
@@ -18,13 +18,13 @@ namespace PfcAPI.Controllers.Account
         private readonly ErrorResponse _ErrorResponse = new();
         private readonly ApiConfiguration _aadhaarConfig;
         private readonly string key;
+
         public UsersController(IUserContext userContext, ApiConfiguration aadhaarConfig)
         {
             _userContext = userContext;
             _aadhaarConfig = aadhaarConfig;
             key = aadhaarConfig?.EncriptKey ?? string.Empty;
         }
-
 
         ////[Authorize(Roles = $"{RoleTypeAlias.SuperAdmin},{RoleTypeAlias.CompanyAdmin},{RoleTypeAlias.GeneralAdmin}")]
         [Authorize]
@@ -40,7 +40,6 @@ namespace PfcAPI.Controllers.Account
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -66,9 +65,9 @@ namespace PfcAPI.Controllers.Account
             catch (Exception)
             {
                 throw;
-
             }
         }
+
         [Authorize]
         [HttpGet("GetUserByUserId")]
         public ActionResult GetUserByUserId(int userId)
@@ -77,12 +76,10 @@ namespace PfcAPI.Controllers.Account
             {
                 UserDetailsResponse userDetails = Task.Run(async () => await _userContext.getUserDetailsAsyncbyId(userId)).GetAwaiter().GetResult();
                 return Ok(new BaseResponse<UserDetailsResponse>(HttpStatusCode.OK, userDetails));
-
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -98,9 +95,9 @@ namespace PfcAPI.Controllers.Account
             catch (Exception)
             {
                 throw;
-
             }
         }
+
         [Authorize]
         [HttpPost("RemoveAdminUser")]
         public IActionResult RemoveAdminUsers(int id, int userId)
@@ -116,7 +113,6 @@ namespace PfcAPI.Controllers.Account
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -124,7 +120,6 @@ namespace PfcAPI.Controllers.Account
         [HttpPost("ValidateUserCode")]
         public ActionResult ValidateUserCode(string userCode)
         {
-
             try
             {
                 if (string.IsNullOrEmpty(userCode))
@@ -153,29 +148,10 @@ namespace PfcAPI.Controllers.Account
             }
         }
 
-        //[Authorize]
-        //[HttpPost("CreateRole")]
-        //public ActionResult CreateRole(CreateUsereRoleRequest _roleDetails)
-        //{
-        //    try
-        //    {
-        //        Task.Run(async () => await _userContext.createRole(_roleDetails)).GetAwaiter().GetResult();
-
-        //        return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
-
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-
-        //    }
-        //}
-
         [Authorize]
         [HttpPost("AppointeeConsentUpdate")]
         public ActionResult SubmitConsent(AppointeeConsentSubmitRequest consentRequest)
         {
-
             try
             {
                 if (consentRequest == null)
@@ -187,7 +163,6 @@ namespace PfcAPI.Controllers.Account
                     Task.Run(async () => await _userContext.updateAppointeeConsent(consentRequest)).GetAwaiter().GetResult();
 
                     return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
-
                 }
             }
             catch (Exception)
@@ -200,7 +175,6 @@ namespace PfcAPI.Controllers.Account
         [HttpPost("AppointeePrerequisiteUpdate")]
         public ActionResult SubmitPrerequisiteStatus(AppointeeConsentSubmitRequest consentRequest)
         {
-
             try
             {
                 if (consentRequest == null)
@@ -212,7 +186,6 @@ namespace PfcAPI.Controllers.Account
                     Task.Run(async () => await _userContext.updateAppointeePrerequisite(consentRequest)).GetAwaiter().GetResult();
 
                     return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
-
                 }
             }
             catch (Exception)
@@ -230,14 +203,13 @@ namespace PfcAPI.Controllers.Account
                 string encriptData = CommonUtility.CustomEncryptString(key, data);
 
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, encriptData));
-
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
+
         [AllowAnonymous]
         [HttpPost("DecriptData")]
         public ActionResult DecriptData(string data)
@@ -247,14 +219,11 @@ namespace PfcAPI.Controllers.Account
                 string decriptData = CommonUtility.DecryptString(key, data);
 
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, decriptData));
-
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
-
     }
 }

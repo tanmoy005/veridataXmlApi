@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using VERIDATA.BLL.Context;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.Model.Base;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
-using VERIDATA.Model.Table.Public;
 using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace PfcAPI.Controllers.Company
@@ -19,6 +17,7 @@ namespace PfcAPI.Controllers.Company
     {
         private readonly IFileContext _fileService;
         private readonly IWorkFlowContext _workflowcontext;
+
         public FileUploadController(IFileContext fileService, IWorkFlowContext workflowcontext)
         {
             _fileService = fileService;
@@ -43,9 +42,9 @@ namespace PfcAPI.Controllers.Company
             catch (Exception)
             {
                 throw;
-
             }
         }
+
         [Authorize]
         [HttpPost]
         [Route("DownloadUpdateSampleXlsFile")]
@@ -64,9 +63,9 @@ namespace PfcAPI.Controllers.Company
             catch (Exception)
             {
                 throw;
-
             }
         }
+
         [Authorize]
         [HttpPost]
         [Route("DownloadPassbookFile")]
@@ -86,10 +85,8 @@ namespace PfcAPI.Controllers.Company
             catch (Exception)
             {
                 throw;
-
             }
         }
-
 
         /// <summary>
         /// Single xls File Upload
@@ -141,7 +138,6 @@ namespace PfcAPI.Controllers.Company
             }
         }
 
-
         // GET: api/FileUpload/GetRawFileData
         [Authorize]
         [HttpGet("GetRawFileData")]
@@ -158,10 +154,11 @@ namespace PfcAPI.Controllers.Company
                 throw;
             }
         }
+
         [AllowAnonymous]
         //[Authorize]
         [HttpGet("getUploadFileData")]
-        public ActionResult getUploadFileData(int appointeeId)
+        public ActionResult GetUploadFileData(int appointeeId)
         {
             try
             {
@@ -210,7 +207,6 @@ namespace PfcAPI.Controllers.Company
         {
             if (reqObj != null)
             {
-
                 try
                 {
                     Task.Run(async () => await _workflowcontext.PostAppointeeFileReuploadDetailsAsync(reqObj)).GetAwaiter().GetResult();
@@ -220,14 +216,12 @@ namespace PfcAPI.Controllers.Company
                 catch (Exception)
                 {
                     throw;
-
                 }
             }
             else
             {
                 return BadRequest();
             }
-
         }
     }
 }

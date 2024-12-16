@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Experimental.FileAccess;
-using System.Data;
+﻿using System.Data;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.utility;
 using VERIDATA.Model.Base;
@@ -10,7 +9,6 @@ using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
-using VERIDATA.Model.Response.api.Signzy;
 using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace PfcAPI.Controllers.Appoientee
@@ -33,7 +31,6 @@ namespace PfcAPI.Controllers.Appoientee
             _reportingContext = reportingContext;
         }
 
-
         /// <summary>
         /// Single xls File Upload
         /// </summary>
@@ -52,13 +49,11 @@ namespace PfcAPI.Controllers.Appoientee
                 List<UnderProcessDetailsResponse> response = new();
                 response = Task.Run(async () => await _workflowContext.ProcessRawData(rawdfileata)).GetAwaiter().GetResult();
 
-
                 return Ok(new BaseResponse<UnderProcessDetailsResponse>(HttpStatusCode.OK, response));
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -66,14 +61,12 @@ namespace PfcAPI.Controllers.Appoientee
         [HttpPost("CompanyAppointeeDetailsUpdate")]
         public ActionResult PostCompanyAppointeeDetailsUpdate(CompanySaveAppointeeDetailsRequest AppointeeDetails)
         {
-            ////// TODO check ui request
             if (AppointeeDetails == null)
             {
                 return BadRequest();
             }
             try
             {
-
                 Task.Run(async () => await _workflowContext.UpdateAppointeeDojByAdmin(AppointeeDetails)).GetAwaiter().GetResult();
 
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
@@ -81,7 +74,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -102,7 +94,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -112,12 +103,10 @@ namespace PfcAPI.Controllers.Appoientee
         {
             if (AppointeeDetails != null)
             {
-
                 try
                 {
                     bool? _isSubmit = AppointeeDetails?.IsSubmit;
 
-                    //Task.Run(async () => await _fileService.postappointeeUploadedFiles(AppointeeDetails)).GetAwaiter().GetResult();
                     Task.Run(async () => await _workflowContext.PostAppointeeFileDetailsAsync(AppointeeDetails)).GetAwaiter().GetResult();
 
                     return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
@@ -125,7 +114,6 @@ namespace PfcAPI.Controllers.Appoientee
                 catch (Exception)
                 {
                     throw;
-
                 }
             }
             else
@@ -157,7 +145,6 @@ namespace PfcAPI.Controllers.Appoientee
         {
             try
             {
-
                 reqObj.FilterType = string.IsNullOrEmpty(reqObj?.FilterType) ? string.Empty : reqObj?.FilterType;
                 List<UnderProcessDetailsResponse> _getunderProcessData = Task.Run(async () => await _workflowContext.GetUnderProcessDataAsync(reqObj)).GetAwaiter().GetResult();
                 return Ok(new BaseResponse<UnderProcessDetailsResponse>(HttpStatusCode.OK, _getunderProcessData));
@@ -165,7 +152,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -175,7 +161,6 @@ namespace PfcAPI.Controllers.Appoientee
         {
             try
             {
-
                 reqObj.FilterType = "NORES";
                 List<UnderProcessDetailsResponse> _getunderProcessData = Task.Run(async () => await _workflowContext.GetUnderProcessDataAsync(reqObj)).GetAwaiter().GetResult();
                 return Ok(new BaseResponse<UnderProcessDetailsResponse>(HttpStatusCode.OK, _getunderProcessData));
@@ -183,7 +168,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -199,7 +183,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -209,14 +192,12 @@ namespace PfcAPI.Controllers.Appoientee
         {
             try
             {
-
                 List<RawFileDataDetailsResponse> _getunProcessData = Task.Run(async () => await _workflowContext.GetNonProcessDataAsync(reqObj)).GetAwaiter().GetResult();
                 return Ok(new BaseResponse<RawFileDataDetailsResponse>(HttpStatusCode.OK, _getunProcessData));
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -242,14 +223,12 @@ namespace PfcAPI.Controllers.Appoientee
             {
                 throw;
             }
-
         }
 
         [Authorize(Roles = $"{RoleTypeAlias.SuperAdmin},{RoleTypeAlias.CompanyAdmin},{RoleTypeAlias.GeneralAdmin}")]
         [HttpPost("PostAppointeeRejected")]
         public ActionResult PostAppointeeRejected(AppointeeApproverRequest request)
         {
-
             try
             {
                 string Remarks = string.Empty;
@@ -275,7 +254,6 @@ namespace PfcAPI.Controllers.Appoientee
         [HttpPost("PostAppointeeClose")]
         public ActionResult PostAppointeeClose(AppointeeApproverRequest request)
         {
-
             try
             {
                 Task.Run(async () => await _workflowContext.PostAppointeeClose(request)).GetAwaiter().GetResult();
@@ -284,7 +262,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -302,7 +279,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -319,7 +295,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -335,7 +310,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -351,7 +325,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -384,6 +357,7 @@ namespace PfcAPI.Controllers.Appoientee
                 throw;
             }
         }
+
         [Authorize]
         [HttpPost("PostRemainderMail")]
         public ActionResult PostRemainderMail(int AppointeeId, int UserId)
@@ -396,11 +370,9 @@ namespace PfcAPI.Controllers.Appoientee
                     _ErrorResponse.ErrorCode = (int)HttpStatusCode.BadRequest;
                     _ErrorResponse.UserMessage = validateMailRequest.Remarks;
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
-
                 }
                 Task.Run(async () => await _workflowContext.PostRemainderMail(AppointeeId, UserId)).GetAwaiter().GetResult();
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
-
             }
             catch (Exception)
             {
@@ -418,7 +390,6 @@ namespace PfcAPI.Controllers.Appoientee
             }
             try
             {
-
                 List<GetAppointeeGlobalSearchResponse> appointeeSearchList = Task.Run(async () => await _workflowContext.GetAppointeeSearchGlobal(appointeeName)).GetAwaiter().GetResult();
 
                 return Ok(new BaseResponse<GetAppointeeGlobalSearchResponse>(HttpStatusCode.OK, appointeeSearchList));
@@ -453,13 +424,11 @@ namespace PfcAPI.Controllers.Appoientee
             try
             {
                 AppointeePassbookDetailsViewResponse passbookDetails = Task.Run(async () => await _candidateContext.GetPassbookDetailsByAppointeeId(AppointeeId)).GetAwaiter().GetResult();
-                //var _Filedata = new Filedata() { FileData = fileDetails.FileData, FileName = fileDetails.FileData != null ? fileDetails.FileName : string.Empty, FileType = fileDetails.FileData != null ? fileDetails.FileExtention : string.Empty };
                 return Ok(new BaseResponse<AppointeePassbookDetailsViewResponse>(HttpStatusCode.OK, passbookDetails));
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -476,14 +445,12 @@ namespace PfcAPI.Controllers.Appoientee
                     _ErrorResponse.ErrorCode = (int)HttpStatusCode.BadRequest;
                     _ErrorResponse.UserMessage = employementDetails.remarks;
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
-
                 }
                 return Ok(new BaseResponse<AppointeeEmployementDetailsViewResponse>(HttpStatusCode.OK, employementDetails));
             }
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -514,7 +481,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -546,7 +512,6 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
         }
 
@@ -564,11 +529,9 @@ namespace PfcAPI.Controllers.Appoientee
                     _ErrorResponse.ErrorCode = (int)HttpStatusCode.BadRequest;
                     _ErrorResponse.UserMessage = validateMailRequest.Remarks;
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
-
                 }
                 Task.Run(async () => await _workflowContext.PostMailResend(AppointeeId, UserId)).GetAwaiter().GetResult();
                 return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
-
             }
             catch (Exception)
             {
@@ -595,7 +558,6 @@ namespace PfcAPI.Controllers.Appoientee
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -611,17 +573,16 @@ namespace PfcAPI.Controllers.Appoientee
             }
             try
             {
-               var isvalid= Task.Run(async () => await _workflowContext.VerifyAppointeeManualAsync(reqObj)).GetAwaiter().GetResult();
+                var isvalid = Task.Run(async () => await _workflowContext.VerifyAppointeeManualAsync(reqObj)).GetAwaiter().GetResult();
 
                 return Ok(new BaseResponse<bool>(HttpStatusCode.OK, isvalid));
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
-        
+
         [Authorize]
         [HttpPost("GetAppointeeUploadedUnverifiedFiles")]
         public ActionResult GetAppointeeUploadedUnverifiedFiles(int AppointeeId)
@@ -630,21 +591,15 @@ namespace PfcAPI.Controllers.Appoientee
             {
                 List<FileCategoryResponse> _fileData = Task.Run(async () => await _workflowContext.GetNotVeriedfileView(AppointeeId)).GetAwaiter().GetResult();
 
-                // Filter out entries where fileCategory is null
                 var filteredFileData = _fileData
                     .Where(fileCategoryResponse => fileCategoryResponse.FileCategory != null)
                     .ToList();
-
-                // Return the filtered list in the response
                 return Ok(new BaseResponse<FileCategoryResponse>(HttpStatusCode.OK, filteredFileData));
-
             }
             catch (Exception)
             {
                 throw;
-
             }
-
         }
 
         [Authorize]
@@ -663,11 +618,9 @@ namespace PfcAPI.Controllers.Appoientee
                 Response.ManualVerificationList = _getunderProcessData;
                 if (_getunderProcessData.Count > 0)
                 {
-
                     List<ManualVerificationExcelDataResponse> excelData = Task.Run(async () => await _reportingContext.GetAppointeeManualVerificationExcelReport(_getunderProcessData)).GetAwaiter().GetResult();
                     if (excelData.Count > 0)
                     {
-
                         DataTable _exportdt1 = CommonUtility.ToDataTable<ManualVerificationExcelDataResponse>(excelData);
                         byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt1, reportName, string.Empty);
 
@@ -675,7 +628,6 @@ namespace PfcAPI.Controllers.Appoientee
 
                         Response.Filedata = _filedata;
                     }
-                    
                 }
 
                 return Ok(new BaseResponse<ManualVerificationDataResponse>(HttpStatusCode.OK, Response));
@@ -683,10 +635,7 @@ namespace PfcAPI.Controllers.Appoientee
             catch (Exception)
             {
                 throw;
-
             }
-
-
         }
     }
 }
