@@ -3,7 +3,6 @@ using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
 using VERIDATA.DAL.utility;
 using VERIDATA.Model.Configuration;
-using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
@@ -18,11 +17,13 @@ namespace VERIDATA.DAL.DataAccess.Context
     {
         private readonly DbContextDalDB _dbContextClass;
         private readonly ApiConfiguration _config;
+
         public ReportingDalContext(DbContextDalDB dbContextClass, ApiConfiguration config)
         {
             _dbContextClass = dbContextClass;
             _config = config;
         }
+
         public async Task<List<ProcessedDataReportDetailsResponse>> GetProcessedAppointeeReportDetailsAsync(List<ProcessedDataDetailsResponse> AppointeeList)
         {
             ReasonMaser? othRsnCatgry = await _dbContextClass.ReasonMaser.FirstOrDefaultAsync(x => x.ReasonType.Equals(RemarksType.Others));
@@ -63,7 +64,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                                    };
             List<ProcessedDataReportDetailsResponse> Response = remarksquerydata.ToList().GroupBy(x => x.AppointeeId).Select(r => new ProcessedDataReportDetailsResponse
             {
-
                 CandidateId = r.FirstOrDefault()?.data?.CandidateId,
                 AppointeeName = r.FirstOrDefault()?.data?.AppointeeName,
                 DateOfBirth = r.FirstOrDefault()?.data?.AppointeeData?.DateOfBirth?.ToShortDateString(),
@@ -135,11 +135,10 @@ namespace VERIDATA.DAL.DataAccess.Context
         {
             List<ApiCounter> totalApiList = await _dbContextClass.ApiCounter.Where(m => (FromDate == null || m.CreatedOn >= FromDate) && (ToDate == null || m.CreatedOn <= ToDate)).ToListAsync();
             return totalApiList;
-
         }
+
         public async Task<List<NonProcessCandidateReportDataResponse>> GetNonProcessCandidateReport(AppointeeCountReportSearchRequest reqObj)
         {
-
             IQueryable<NonProcessCandidateReportDataResponse> nonProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
  .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
              && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
@@ -214,19 +213,11 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             List<NationalityQueryDataResponse> list = await querydata.ToListAsync().ConfigureAwait(false);
 
-            //if (list == null || list.Count == 0)
-            //{
-            //    throw new Exception("No records found based on the query parameters.");
-            //}
-
             return list;
-
-
         }
+
         public async Task<List<UnderProcessCandidateReportDataResponse>> GetUnderProcessCandidateReport(AppointeeCountReportSearchRequest reqObj, string? _statusCode, bool? _intSubmitCode, int? _intSubStatusCode)
         {
-
-
             IQueryable<UnderProcessCandidateReportDataResponse> underProcessQueryData = from ap in _dbContextClass.UploadAppointeeCounter
                                                                                         .Where(m => (reqObj.FromDate == null || m.CreatedOn >= reqObj.FromDate)
                                                                                         && (reqObj.ToDate == null || m.CreatedOn <= reqObj.ToDate))
@@ -267,11 +258,10 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                         };
 
             return await underProcessQueryData.ToListAsync();
-
         }
+
         public async Task<List<ManualVerificationProcessDetailsResponse>> GetManualVerificationProcessReportDataAsync(List<ManualVerificationProcessDetailsResponse> AppointeeListDetails)
         {
-
             var querydata = from ap in AppointeeListDetails
                             join rp in _dbContextClass.AppointeeReasonMappingData
                                 on ap.appointeeId equals rp.AppointeeId
@@ -309,8 +299,8 @@ namespace VERIDATA.DAL.DataAccess.Context
                         select new { up, c };
 
             // Apply filters based on the request
-           
-            if(reqJob.FromDate.HasValue)
+
+            if (reqJob.FromDate.HasValue)
             {
                 query = query.Where(x => x.up.CreatedOn >= reqJob.FromDate.Value.Date);
             }

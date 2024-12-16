@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
-using Mustache;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
 using VERIDATA.DAL.utility;
@@ -18,20 +17,24 @@ namespace VERIDATA.DAL.DataAccess.Context
     public class AppointeeDalContext : IAppointeeDalContext
     {
         private readonly DbContextDalDB _dbContextClass;
+
         public AppointeeDalContext(DbContextDalDB dbContextClass)
         {
             _dbContextClass = dbContextClass;
         }
+
         public async Task<AppointeeDetails> GetAppinteeDetailsById(int appointeeId)
         {
             AppointeeDetails _appointeedetails = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true);
             return _appointeedetails;
         }
+
         public async Task<UnderProcessFileData> GetUnderProcessAppinteeDetailsById(int appointeeId)
         {
             UnderProcessFileData? data = await _dbContextClass.UnderProcessFileData.FirstOrDefaultAsync(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true) ?? new UnderProcessFileData();
             return data;
         }
+
         public async Task<List<AppointeeUploadDetails>> GetAppinteeUploadDetails(int appointeeId)
         {
             List<AppointeeUploadDetails> _uploadDetails = await _dbContextClass.AppointeeUploadDetails
@@ -39,8 +42,8 @@ namespace VERIDATA.DAL.DataAccess.Context
            .ToListAsync();
 
             return _uploadDetails;
-
         }
+
         // mGhosh New code
         public async Task<List<AppointeeUploadDetails>> GetAppinteeUploadDetails(int appointeeId, string? uploadTypeCode = null)
         {
@@ -54,6 +57,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return await query.ToListAsync();
         }
+
         public async Task<AppointeeUploadDetails> GetAppinteeUploadDetailsById(int appointeeId, int? uploadFileId)
         {
             AppointeeUploadDetails _fileDetails = new();
@@ -62,11 +66,13 @@ namespace VERIDATA.DAL.DataAccess.Context
             _fileDetails = await query.FirstOrDefaultAsync();
             return _fileDetails;
         }
+
         public async Task<List<ReasonMaser>> GetAllRemarksByType(string Type)
         {
             List<ReasonMaser> AllResonDetails = await _dbContextClass.ReasonMaser.Where(x => x.ReasonType.Equals(Type) && x.ActiveStatus == true).ToListAsync();
             return AllResonDetails;
         }
+
         public async Task UpdateAppointeeVerifiedData(CandidateValidateUpdatedDataRequest validationReq)
         {
             AppointeeDetails _appointeedetails = await GetAppinteeDetailsById(validationReq.AppointeeId);
@@ -78,20 +84,16 @@ namespace VERIDATA.DAL.DataAccess.Context
                     _appointeedetails.IsAadhaarVarified = validationReq.Status;
                     _appointeedetails.AadhaarName = validationReq?.aadharData?.AadhaarName;
                     _appointeedetails.AadhaarNumber = validationReq?.aadharData?.AadhaarNumber;
-                    //_appointeedetails.AadhaarNumber = validationReq?.aadharData?.AadhaarNumberView;
                     _appointeedetails.AadhaarNumberView = validationReq?.aadharData?.AadhaarNumberView;
                     _appointeedetails.NameFromAadhaar = validationReq?.aadharData?.NameFromAadhaar;
                     _appointeedetails.GenderFromAadhaar = validationReq?.aadharData?.GenderFromAadhaar;
                     _appointeedetails.DobFromAadhaar = validationReq?.aadharData?.DobFromAadhaar;
-
                 }
                 if (validationReq.Type == RemarksType.UAN)
                 {
                     _appointeedetails.IsPensionApplicable = validationReq.uanData?.IsPensionApplicable;
                     _appointeedetails.IsPensionGap = validationReq.uanData?.IsPensionGap;
-                    //var uanVerifiedStatus = _appointeedetails.IsUanVarified;
                     _appointeedetails.IsUanVarified = validationReq.Status;
-                    //_appointeedetails.IsUanAvailable = validationReq.Status;
                     _appointeedetails.IsPassbookFetch = validationReq.uanData?.IsPassbookFetch;
                     _appointeedetails.UANNumber = validationReq.uanData?.UanNumber;
                     _appointeedetails.IsFNameVarified = validationReq.uanData?.IsFNameVarified;
@@ -112,12 +114,10 @@ namespace VERIDATA.DAL.DataAccess.Context
                     _appointeedetails.PANName = validationReq?.panData?.PanName;
                     _appointeedetails.FathersNameFromPan = validationReq?.panData?.PanFatherName;
                 }
-
-
             }
             _ = await _dbContextClass.SaveChangesAsync();
-
         }
+
         public async Task UpdateAppointeeUanNumber(int appointeeId, string uanNumber)
         {
             AppointeeDetails _appointeedetails = await GetAppinteeDetailsById(appointeeId);
@@ -125,11 +125,10 @@ namespace VERIDATA.DAL.DataAccess.Context
             if (_appointeedetails?.AppointeeDetailsId != null)
             {
                 _appointeedetails.UANNumber = uanNumber;
-
             }
             _ = await _dbContextClass.SaveChangesAsync();
-
         }
+
         public async Task<string> UpdateRemarksByType(int AppointeeId, List<ReasonRemarks> Reasons, string Type, int UserId)
         {
             string AllRemarks = string.Empty;
@@ -142,11 +141,11 @@ namespace VERIDATA.DAL.DataAccess.Context
                                       on rm.ReasonCode equals r.ReasonCode
                                       select new RemarksDetails { ReasonName = rm.ReasonName, ReasonCode = rm.ReasonCode, ReasonId = rm.ReasonId, Inputdata = r.Inputdata, Fetcheddata = r.Fetcheddata, Remarks = r.Remarks };
                 var ResonDetails = reasonListquery.ToList();
-                // var ResonDetails = AllResonDetails.Where(x => ReasonCodeList.Contains(x.ReasonCode)).ToList();
                 AllRemarks = await RemarksUpdateByType_SubType(AppointeeId, UserId, AllRemarks, AllResonDetails, AllPrevReason, ResonDetails, string.Empty);
             }
             return AllRemarks;
         }
+
         public async Task<string> UpdateRemarksByType(int AppointeeId, List<ReasonRemarks> Reasons, string Type, int UserId, string subType)
         {
             string AllRemarks = string.Empty;
@@ -177,12 +176,11 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             return AllRemarks;
         }
+
         private async Task<string> RemarksUpdateByType_SubType(int AppointeeId, int UserId, string AllRemarks, List<ReasonMaser> AllResonDetails, List<AppointeeReasonMappingData> AllPrevReason, List<RemarksDetails> ResonDetails, string? subType)
         {
             if (ResonDetails?.Count > 0)
             {
-
-                //var CurrReasonIdList = ResonDetails.Select(x => x.ReasonId).ToList();
                 List<int> AllReasonIdList = AllResonDetails.Select(x => x.ReasonId).ToList();
                 List<AppointeeReasonMappingData> PrevReason = AllPrevReason.Where(x => AllReasonIdList.Contains(x.ReasonId)).ToList();
                 List<AppointeeReasonMappingData>? _resaonList = ResonDetails?.Select(x => new AppointeeReasonMappingData
@@ -201,14 +199,11 @@ namespace VERIDATA.DAL.DataAccess.Context
                 {
                     if (string.IsNullOrEmpty(subType))
                     {
-
                         PrevReason.ForEach(x => x.ActiveStatus = false);
-
                     }
                     else
                     {
                         PrevReason.Where(x => x.ReasonSubType == subType).ToList().ForEach(x => x.ActiveStatus = false);
-
                     }
                 }
                 if (_resaonList.Count > 0)
@@ -223,13 +218,11 @@ namespace VERIDATA.DAL.DataAccess.Context
                     List<int> allreasonIdByType = AllResonDetails.Select(x => x.ReasonId).ToList();
                     if (string.IsNullOrEmpty(subType))
                     {
-
                         AllPrevReason.Where(x => allreasonIdByType.Contains(x.ReasonId)).ToList().ForEach(x => x.ActiveStatus = false);
                     }
                     else
                     {
                         AllPrevReason.Where(x => allreasonIdByType.Contains(x.ReasonId) && x.ReasonSubType == subType).ToList().ForEach(x => x.ActiveStatus = false);
-
                     }
                 }
             }
@@ -245,7 +238,6 @@ namespace VERIDATA.DAL.DataAccess.Context
             var AllReasonId = AllResonDetails?.Select(x => x.ReasonId)?.ToList();
             List<AppointeeReasonMappingData> AllPrevReason = await _dbContextClass.AppointeeReasonMappingData.Where(x => x.AppointeeId.Equals(AppointeeId) && x.ActiveStatus == true && AllReasonId.Contains(x.ReasonId)).ToListAsync();
 
-            // var ResonDetails = AllResonDetails.Where(x => ReasonCodeList.Contains(x.ReasonCode)).ToList();
             if (AllPrevReason?.Count > 0)
             {
                 if (string.IsNullOrEmpty(subType))
@@ -259,20 +251,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 await _dbContextClass.SaveChangesAsync();
             }
         }
-        //public async Task uploadFilesNUpdatePrevfiles(AppointeeUploadDetails uploadDetails, AppointeeUploadDetails prevDocDetails, int userId)
-        //{
-        //    //using var transaction = _dbContextClass.Database.BeginTransaction();
-        //    //try
-        //    //{
-        //    //await uploadfiles(uploadDetails);
-        //    await RemovePrevfiles(prevDocDetails, userId);
-        //    //    transaction.Commit();
-        //    //}
-        //    //catch (Exception)
-        //    //{
-        //    //    throw;
-        //    //}
-        //}
+
         public async Task Uploadfiles(List<AppointeeUploadDetails> uploadDetails)
         {
             if (uploadDetails.Count > 0)
@@ -280,11 +259,10 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _dbContextClass.AppointeeUploadDetails.AddRange(uploadDetails);
                 _ = await _dbContextClass.SaveChangesAsync();
             }
-
         }
+
         public async Task RemovePrevfiles(List<AppointeeUploadDetails> prevDocDetails, int userId)
         {
-
             if (prevDocDetails.Count > 0)
             {
                 foreach (var doc in prevDocDetails)
@@ -296,16 +274,16 @@ namespace VERIDATA.DAL.DataAccess.Context
 
                 await _dbContextClass.SaveChangesAsync();
             }
-
         }
+
         public async Task UpdateAppointeeSubmit(int AppointeeId, bool IsSubmit, bool? IsManualPassbookUploaded)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
             appointeeDetails.IsSubmit = IsSubmit;
             appointeeDetails.IsManualPassbook = IsManualPassbookUploaded;
-            //appointeeDetails.IsTrustPension = TrustPensionAvailable;
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task UpdateAppointeeTrustnUanAvailibility(int AppointeeId, bool? TrustPassbookAvailable, bool? IsUanAvailable, bool? IsFinalSubmit)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
@@ -318,6 +296,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }
+
         public async Task UpdateAppointeeHandicapDetails(int AppointeeId, string? IsHandicap, string? HandicapType)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(AppointeeId);
@@ -329,6 +308,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }
+
         public async Task<List<GetRemarksResponse>> GetRemarks(int appointeeId)
         {
             List<GetRemarksResponse> remarks = new();
@@ -343,38 +323,41 @@ namespace VERIDATA.DAL.DataAccess.Context
             {
                 remarks = list.Select(x => new GetRemarksResponse
                 {
-
                     RemarksId = x.ReasonId,
                     RemarksCode = x.ReasonCode,
                     RemarksCategory = x.ReasonCategory,
                     Remarks = x.Remarks
                 }).ToList();
-
             }
             return remarks;
         }
+
         public async Task<string?> GetRemarksRemedy(int remarksId)
         {
             string remedyhtml = await _dbContextClass.ReasonMaser?.Where(x => x.ReasonId == remarksId)?.Select(y => y.ReasonRemedy).FirstOrDefaultAsync();
             return remedyhtml;
         }
+
         public async Task<string?> GetRemarksRemedyByCode(string ReasonType, string remarksCode)
         {
             string remedyhtml = await _dbContextClass.ReasonMaser?.Where(x => x.ReasonCode == remarksCode.Trim() && x.ReasonType == ReasonType.Trim())?.Select(y => y.ReasonRemedy).FirstOrDefaultAsync();
             return remedyhtml;
         }
+
         public async Task<UploadTypeMaster> getFileTypeDataByAliasAsync(string? fileTypeAlias)
         {
             UploadTypeMaster? uploadFileType = await _dbContextClass.UploadTypeMaster.Where(x => x.UploadTypeCode.Equals(fileTypeAlias) && x.ActiveStatus == true).FirstOrDefaultAsync() ?? new UploadTypeMaster();
 
             return uploadFileType;
         }
+
         public async Task<AppointeeConsentMapping> getAppointeeContestAsync(int? appointeeId)
         {
             AppointeeConsentMapping? consentStatus = await _dbContextClass.AppointeeConsentMapping.Where(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true).FirstOrDefaultAsync() ?? new AppointeeConsentMapping();
 
             return consentStatus;
         }
+
         public async Task postAppointeeContestAsync(AppointeeConsentSubmitRequest req)
         {
             ///// note : ConsentStatus ==1 : consent Given ; 2=consent  decline;3 =consent  revoke , 4 = Prerequisite data available ;5 = Prerequisite data not available
@@ -397,12 +380,14 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             return;
         }
+
         public async Task PostOfflineKycStatus(OfflineAadharVarifyStatusUpdateRequest reqObj)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(reqObj.AppointeeId);
             appointeeDetails.IsOfflineKyc = reqObj.OfflineKycStatus;
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task PostMailTransDetails(mailTransactionRequest reqObj)
         {
             MailTransaction mailTransaction = new();
@@ -414,6 +399,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             _dbContextClass.AppointeeMailTransaction.Add(mailTransaction);
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task<List<mailTransactionResponse>> GetMailTransDetails(int appointeeId, int userId)
         {
             List<mailTransactionResponse> response = new();
@@ -429,6 +415,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             return response;
         }
+
         public async Task<AppointeeEmployementDetails> PostEmployementDetails(EmployementHistoryDetails reqObj)
         {
             AppointeeDetails appointeeDetails = await GetAppinteeDetailsById(reqObj.AppointeeId);
@@ -468,14 +455,11 @@ namespace VERIDATA.DAL.DataAccess.Context
             return empHistData;
         }
 
-
         public async Task<AppointeeEmployementDetails> GetEmployementDetails(int appointeeId, string type)
         {
             var res = await _dbContextClass.AppointeeEmployementDetails?.Where(x => x.AppointeeId == appointeeId && x.SubTypeCode == type && x.ActiveStatus == true).ToListAsync();
             return res?.LastOrDefault();
         }
-
-
 
         public async Task<UserCredetialDetailsResponse> GetUserCredentialInfo(int RefAppointeeId)
         {
@@ -501,7 +485,6 @@ namespace VERIDATA.DAL.DataAccess.Context
 
         public async Task<AppointeeDetails> UpdateAppinteePensionById(AppointeeApprovePensionRequest reqObj)
         {
-
             var updatePension = await _dbContextClass.AppointeeDetails
          .FirstOrDefaultAsync(x => x.AppointeeId == reqObj.appointeeId && x.ActiveStatus == true && x.IsManualPassbook == true);
 
@@ -513,10 +496,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _ = await _dbContextClass.SaveChangesAsync();
             }
 
-            // Save changes to the database
-            //await _dbContextClass.SaveChangesAsync();
-
-            // Return the updated record
             return updatePension;
         }
 
@@ -537,6 +516,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return appointeeDetails;
         }
+
         public async Task<AppointeeDetails> VefifyAppinteePfDetailsManualById(AppointeePfVerificationRequest reqObj)
         {
             var appointeeDetails = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.AppointeeId == reqObj.AppointeeId && x.ActiveStatus == true);

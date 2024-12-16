@@ -13,21 +13,25 @@ namespace VERIDATA.DAL.DataAccess.Context
     public class MasterDalContext : IMasterDalContext
     {
         private readonly DbContextDalDB _dbContextClass;
+
         public MasterDalContext(DbContextDalDB dbContextClass)
         {
             _dbContextClass = dbContextClass;
         }
+
         public async Task<GeneralSetup> GetGeneralSetupData()
         {
             GeneralSetup? generalSetup = await _dbContextClass.GeneralSetup.FirstOrDefaultAsync(m => m.ActiveStatus.Equals(true)) ?? new GeneralSetup();
             return generalSetup;
         }
+
         public async Task<List<MenuMaster>> GetMasterMenuData()
         {
             List<MenuMaster> menuDataList = new();
             menuDataList = await _dbContextClass.MenuMaster.Where(m => m.ActiveStatus == true).ToListAsync();
             return menuDataList;
         }
+
         public async Task<List<WorkflowApprovalStatusMaster>> GetAllApprovalStateMaster()
         {
             List<WorkflowApprovalStatusMaster> approvalStateList = new();
@@ -35,6 +39,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             approvalStateList = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
             return approvalStateList;
         }
+
         public async Task<List<EscalationLevelMasterDataResponse>> GetEscalationLevelMasterData()
         {
             List<EscalationLevelMasterDataResponse> data = new();
@@ -52,11 +57,11 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                   Emailaddress = b.Email
                                                                               };
 
-
             data = await getlevelquerydata.ToListAsync().ConfigureAwait(false);
 
             return data;
         }
+
         public async Task<List<DropDownDetailsResponse>> getCountryDataAsync()
         {
             List<NationilityMaster> _countrymaster = await _dbContextClass.NationilityMaster.Where(m => m.ActiveStatus.Equals(true)).ToListAsync();
@@ -68,9 +73,9 @@ namespace VERIDATA.DAL.DataAccess.Context
             }).ToList();
             return _countryList;
         }
+
         public async Task<List<DropDownDetailsResponse>> getNationilityDataAsync()
         {
-
             List<NationilityMaster> _nationilitymaster = await _dbContextClass.NationilityMaster.Where(m => m.ActiveStatus.Equals(true)).ToListAsync();
             List<DropDownDetailsResponse>? _nationalityList = _nationilitymaster.Select(x => new DropDownDetailsResponse
             {
@@ -81,6 +86,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return _nationalityList;
         }
+
         public async Task<List<DropDownDetailsResponse>> getGenderDataAsync()
         {
             List<GenderMaster> _gendermaster = await _dbContextClass.GenderMaster.Where(m => m.ActiveStatus.Equals(true)).ToListAsync();
@@ -92,6 +98,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }).ToList();
             return _genderList;
         }
+
         public async Task<List<DropDownDetailsResponse>> getDisabilityDataAsync()
         {
             List<DisabilityMaster> _disabilitymaster = await _dbContextClass.DisabilityMaster.Where(m => m.ActiveStatus.Equals(true)).ToListAsync();
@@ -103,6 +110,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }).ToList();
             return _disabilityList;
         }
+
         public async Task<List<DropDownDetailsResponse>> getMaratialStatusDataAsync()
         {
             List<MaritalStatusMaster> _maratialstatmaster = await _dbContextClass.MaratialStatusMaster.Where(m => m.ActiveStatus.Equals(true)).ToListAsync();
@@ -114,6 +122,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }).ToList();
             return _maratialstatList;
         }
+
         public async Task<List<DropDownDetailsResponse>> getFileTypeDataAsync()
         {
             List<UploadTypeMaster> _masterdata = await _dbContextClass.UploadTypeMaster.Where(m => m.ActiveStatus.Equals(true)).ToListAsync();
@@ -137,6 +146,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }).ToList();
             return _dataList;
         }
+
         public async Task<List<DropDownDetailsResponse>> getUserRoleAsync()
         {
             List<RoleMaster> _rolemaster = await _dbContextClass.RoleMaster.Where(m => m.ActiveStatus.Equals(true) && m.IsCompanyAdmin == true).ToListAsync();
@@ -149,6 +159,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return __rolemasterList ?? new List<DropDownDetailsResponse>();
         }
+
         public async Task<RoleDetailsResponse> getRoleDetailsByRoleAlias(string roleAlias)
         {
             RoleDetailsResponse RoleDetails = new();
@@ -159,6 +170,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             RoleDetails.RoleAlias = _roledata.RolesAlias;
             return RoleDetails;
         }
+
         public async Task<List<EscalationLevelCaseDetails>> GetEscalationCaseMasterDetails()
         {
             List<EscalationLevelCaseDetails> levelCaseDataRes = new();
@@ -181,10 +193,10 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                EmailId = a.EmailId
                                                                            };
 
-
             levelCaseDataRes = await getcasesetupquerydata.ToListAsync().ConfigureAwait(false);
             return levelCaseDataRes;
         }
+
         public async Task<List<CaseSetupDetails>> GetCaseDetails()
         {
             List<CaseSetupDetails>? caseListDetails = new();
@@ -194,12 +206,11 @@ namespace VERIDATA.DAL.DataAccess.Context
                 SetupCaseId = x.CaseId,
                 SetupCaseDesc = x.SetupDesc,
                 SetupAlias = x.SetupAlias,
-
             })?.OrderBy(x => x.SetupCaseId)?.ToListAsync();
-
 
             return caseListDetails;
         }
+
         public async Task PostSetupData(GeneralSetupSubmitRequest setupRequest)
         {
             //using var transaction = _dbContextClass.Database.BeginTransaction();
@@ -246,14 +257,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                                     ActiveStatus = true,
                                 }).ToList();
 
-                                //var currMailsetup = new EscalationLevelEmailMapping
-                                //{
-                                //    Email = _currNewMail,
-                                //    LevelId = x.LevelId,
-                                //    CreatedBy = setupRequest.UserId,
-                                //    CreatedOn = DateTime.Now,
-                                //    ActiveStatus = true,
-                                //};
                                 if (currMailsetup.Count > 0)
                                 {
                                     newMailsetup.AddRange(currMailsetup);
@@ -261,10 +264,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                             }
                         });
                     }
-
                 });
-
-                /*     var levelMailData = _dbContextClass.EscalationLevelEmailMapping?.Where(x => _EscalatedEmailSetup.x.LevelId)*/
 
                 //case setup  update
                 List<EmailEscalationSetupMapping> EmailEscalationList = new();
@@ -293,7 +293,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                         }
                         return true;
                     });
-
                 });
 
                 GeneralSetup? generalsetupData = await _dbContextClass.GeneralSetup?.Where(x => x.ActiveStatus == true)?.FirstOrDefaultAsync();
@@ -310,20 +309,15 @@ namespace VERIDATA.DAL.DataAccess.Context
                     }
                     generalsetupData.UpdatedBy = setupRequest.UserId;
                     generalsetupData.UpdatedOn = DateTime.Now;
-
                 }
-
 
                 if (newMailsetup.Count > 0)
                 {
-                    //await _dbContextClass.SaveChangesAsync();
                     _dbContextClass.EscalationLevelEmailMapping.AddRange(newMailsetup);
                 }
                 if (EmailEscalationList.Count > 0)
                 {
-                    // await _dbContextClass.SaveChangesAsync();
                     _dbContextClass.EmailEscalationSetupMapping.AddRange(EmailEscalationList);
-
                 }
                 _ = await _dbContextClass.SaveChangesAsync();
             }
@@ -333,35 +327,8 @@ namespace VERIDATA.DAL.DataAccess.Context
             //{
             //    throw;
             //}
-
         }
 
-        //public async Task<ApiConfigResponse> GetApiConfigData(string apiType, string apiName, string provider)
-        //{
-        //    ApiConfigResponse response = new();
-        //    string? _apiType = apiType?.ToUpper()?.Trim();
-
-        //    if (!string.IsNullOrEmpty(_apiType) && !string.IsNullOrEmpty(apiName))
-        //    {
-        //        var getApiSetupQueryData = from a in _dbContextClass.ApiTypeMaster
-        //                                   join b in _dbContextClass.ApiTypeMapping
-        //                                       on a.Id equals b.TypeId
-        //                                   where a.ActiveStatus == true && b.ActiveStatus == true && a.Provider.ToLower() == provider.Trim().ToLower()
-        //                                   && a.TypeCode.Trim().ToLower() == apiType.Trim().ToLower() && b.ApiName.Trim().ToLower() == apiName.Trim().ToLower()
-        //                                   select new ApiConfigResponse
-        //                                   {
-        //                                       apiName = b.ApiName,
-        //                                       apiBaseUrl = b.BaseUrl,
-        //                                       apiUrl = b.Url,
-        //                                       apiProvider = a.Provider,
-
-        //                                   };
-        //        var responseData = await getApiSetupQueryData.ToListAsync().ConfigureAwait(false);
-
-        //        response = responseData?.FirstOrDefault();
-        //    }
-        //    return response;
-        //}
         public async Task<List<ApiConfigResponse>> GetApiConfigDataAll()
         {
             List<ApiConfigResponse> response = new();
@@ -377,7 +344,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                                            apiProvider = a.Provider,
                                            typeCode = a.TypeCode,
                                            activeStatus = b.ActiveStatus,
-
                                        };
             var responseData = await getApiSetupQueryData.ToListAsync().ConfigureAwait(false);
 
@@ -385,11 +351,13 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return responseData;
         }
+
         public async Task<string> GetApiProviderData(string? apiType)
         {
             var response = await GetApiProviderDataPriorityBase(apiType, 1);
             return response;
         }
+
         public async Task<string> GetApiProviderData(string? apiType, int prioriy)
         {
             string response = string.Empty;
@@ -397,17 +365,14 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             if (!string.IsNullOrEmpty(_apiType))
             {
-
                 var responseData = await _dbContextClass.ApiTypeMaster?.FirstOrDefaultAsync(x => x.ActiveStatus == true && x.TypeCode.ToLower().Trim() == _apiType);
                 response = responseData.Provider;
-
             }
             return response;
         }
 
         public async Task<string> GetApiProviderDataPriorityBase(string? apiType, int? apiPriority) //mGhosh new method
         {
-
             string response = string.Empty;
             string? _apiType = apiType?.ToLower()?.Trim();
 
@@ -417,7 +382,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                 && x.apiPriotity == (apiPriority ?? 1)
                 );
                 //response = responseData.Provider;
-               
 
                 if (responseData != null)
                 {
@@ -426,6 +390,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             return response;
         }
+
         public async Task<List<FaqDetailsResponse>> GetAllFaqMaster()
         {
             var responseData = await _dbContextClass.FaqMaster?.Where(x => x.ActiveStatus == true)?.
@@ -434,11 +399,12 @@ namespace VERIDATA.DAL.DataAccess.Context
                     FaqId = y.FaqId,
                     FaqName = y.FaqName,
                     FaqDescription = y.FaqDesc,
-                    Contenttype=y.textType.Trim()
+                    Contenttype = y.textType.Trim()
                 })?.ToListAsync();
             //response = responseData.Provider;
             return responseData;
         }
+
         public async Task<List<CompanyEntityDetailsResponse>> GetAllCompanyEntityMaster()
         {
             var responseData = await _dbContextClass.CompanyDetails?.Where(x => x.ActiveStatus == true)?.
@@ -452,6 +418,5 @@ namespace VERIDATA.DAL.DataAccess.Context
             //response = responseData.Provider;
             return responseData;
         }
-
     }
 }

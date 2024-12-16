@@ -1,6 +1,4 @@
-﻿
-using VERIDATA.Model.DataAccess;
-using VERIDATA.Model.DataAccess.Response;
+﻿using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Table.Config;

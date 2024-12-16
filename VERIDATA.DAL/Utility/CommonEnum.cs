@@ -15,11 +15,13 @@
             Company = 2,
             Appoientee = 3
         }
+
         public static class CheckType
         {
             public const string yes = "Y";
             public const string no = "N";
         }
+
         public static class AadhaarData
         {
             public const string CanNotRead = "CNR";
@@ -31,6 +33,7 @@
             Email,
             SMS
         }
+
         public enum ValidationType
         {
             Invalid = 1,
@@ -43,8 +46,9 @@
             Processing = 8,
             NoLinkSent = 9,
             NonExsist = 10,
-            ManuVerification=11,
+            ManuVerification = 11,
         }
+
         public static class MailType
         {
             public const string SendOTP = "OTPSEND";
@@ -64,18 +68,17 @@
             public const string Submit = "SUBMIT";
             public const string AutoApprove = "AUTOAPPROVE";
             public const string Manual = "MANUAL";
-
         }
+
         public static class WorkFlowType
         {
             public const string sendMail = "SM";
             public const string UploadDetails = "UD";
             public const string DataVarified = "DV";
-         
         }
+
         public static class WorkFlowStatusType
         {
-         
             public const string Approved = "AP";
             public const string ForcedApproved = "FA";
             public const string Rejected = "RJ";
@@ -86,6 +89,7 @@
             public const string ManualReVerification = "MRV";
             public const string ReuploadDocument = "RD";
         }
+
         public static class MasterDataType
         {
             public const string COUNTRY = "CON";
@@ -109,8 +113,8 @@
             public const string PFPassbookExcel = "EPFPSBKEXCL";
             public const string PFPassbookTrust = "EPFPSBKTRUST";
             public const string HandicapCert = "HANDCERT";
-
         }
+
         public static class RemarksType
         {
             public const string UAN = "UAN";
@@ -120,22 +124,22 @@
             public const string Others = "OTH";
             public const string Manual = "MNAL";
             public const string AadharUanLink = "AdhrUanLnk";
-
         }
+
         public static class RemedyType
         {
             public const string Issue = "ISSU";
             public const string Others = "OTH";
-
         }
+
         public static class RemedySubType
         {
             public const string INACTIVEUAN = "INACTUAN";
             public const string ADHAR = "ADHAR";
             public const string ADHARMBLE = "ADHARMBLE";
             public const string Others = "OTH";
-
         }
+
         public static class ApiType
         {
             public const string UAN = "UAN";
@@ -144,8 +148,8 @@
             public const string Pan = "PAN";
             public const string EPFO = "EPFO";
             public const string EPFOUAN = "EPFOUAN";
-
         }
+
         public static class ApiSubTYpeName
         {
             public const string Pan = "PanDetails";
@@ -158,14 +162,15 @@
             public const string UANSubmitOTP = "UanSubmitOTP";
             public const string UanPassbook = "UanPassbook";
             public const string UanValidation = "UanValidation";
-
         }
+
         public static class ApiProviderType
         {
             public const string Karza = "karza";
             public const string Signzy = "signzy";
             public const string SurePass = "surepass";
         }
+
         public static class RoleTypeAlias
         {
             public const string Appointee = "APNTE";
@@ -173,8 +178,8 @@
             public const string CompanyAdmin = "CADMN";
             public const string GeneralAdmin = "GADMN";
             public const string AppUser = "APUSR";
-
         }
+
         public enum RejectState
         {
             ApprovalReject = 1,
@@ -212,6 +217,7 @@
             //public const string QUALIFICATION = "QUA";
             //public const string ROLE = "RLE";
         }
+
         public static class FilterCode
         {
             public const string All = "All";
@@ -226,12 +232,14 @@
             public const string MANUALVERFICATIONREQ = "009";
             public const string REUPLOADREQUEST = "010";
         }
+
         public static class EscalationLevel
         {
             public const string Level1 = "LVL1";
             public const string Level2 = "LVL2";
             public const string Level3 = "LVL3";
         }
+
         public static class EscalationCase
         {
             public const string NoLinkSend = "NOLINK";
@@ -240,6 +248,7 @@
             public const string DOJ1Week = "DOJ1W";
             public const string DOJ2Week = "DOJ2W";
         }
+
         public static class ActivityLog
         {
             public const string LOGIN = "LOGIN";
@@ -279,6 +288,7 @@
             public const string DOCUMENTREUPLOADRQST = "DCRUPLDRQ";
             public const string DOCUMENTREUPLED = "DCRUPLD";
         }
+
         public static class MenuCode
         {
             public const string HOME = "HOME";
@@ -296,8 +306,8 @@
             public const string CRITICAL = "CRITCL";
             public const string SETUP = "SETUP";
             public const string MANUALVERIFICATION = "MANUVERI";
-
         }
+
         public static class UpdateType
         {
             public const string DOJ = "DOJ";
@@ -305,6 +315,7 @@
             public const string MOBILE = "MOBILE";
             public const string EMAIL = "EMAIL";
         }
+
         public static class CandidateUpdateTableType
         {
             public const string Raw = "rawData";
@@ -312,6 +323,7 @@
             public const string linknotsend = "linknotsend";
             public const string userMaster = "userMaster";
         }
+
         public static class CandidateIdType
         {
             public const string All = "All";
@@ -320,6 +332,7 @@
             public const string Raw = "Raw";
             public const string Processed = "Varified";
         }
+
         public static class ReportFilterStatus
         {
             public const string ProcessIniSubmit = "PISUB";
@@ -329,23 +342,26 @@
             public const string Approved = "AP";
             public const string Rejected = "RJ";
             public const string ForcedApproved = "FA";
-
         }
+
         public static class NationalityType
         {
             public const string All = "All";
             public const string Indian = "IN";
             public const string NonIndian = "OTH";
-
         }
+
         public enum KarzaStatusCode
         {
             Invalid = 102,
             Sent = 101,
+
             //NotSent = 10,
             NotFound = 103,
+
             MaxTry = 104,
         }
+
         public enum SignzyStatusCode
         {
             Invalid = 400,
@@ -353,6 +369,7 @@
             UpServerDown = 409,
             Succed = 101,
         }
+
         //public enum ConsentStatus
         //{
         //    Agree = 1,
@@ -367,6 +384,7 @@
             PrerequisiteYes = 4,
             PrerequisiteNo = 5,
         }
+
         //public static class LogLevel
         //{
         //    public const string Error = "Error";
@@ -380,37 +398,39 @@
             No = 2,
             NA = 3
         }
+
         public enum PfType
         {
             TrustPassbook = 1,
             EpfoPassBook = 2,
             Na = 3,
             EPFnTrus = 4,
-
         }
 
         public enum EpsGap
         {
             Yes = 1,
-            No= 2,
-            NA= 3,
+            No = 2,
+            NA = 3,
         }
+
         public static class JsonTypeAlias
         {
             public const string EmployementHist = "EMPHIST";
             public const string EmployeePassBook = "EMPPSBK";
-
-
         }
-        public static class Priority  // mGhosh 
+
+        public static class Priority  // mGhosh
         {
             public const string api_Priority = "1";
         }
+
         public static class ManualVerificationType
         {
             public const string FathersName = "FTHR";
             public const string EpfoPassbook = "EPFO";
         }
+
         public static class ManualVerificationSubType
         {
             public const string EpfPassbook = "EPFPSSBKMNL";
@@ -419,6 +439,7 @@
             public const string TENTHCERT = "10THCERT";
             public const string OTHID = "OTHID";
         }
+
         public static class ManualVerificationFieldType
         {
             public const string FathersName = "isfnamevarified";

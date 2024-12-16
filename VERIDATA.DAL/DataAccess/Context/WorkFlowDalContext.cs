@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
-using VERIDATA.DAL.utility;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
@@ -19,11 +18,13 @@ namespace VERIDATA.DAL.DataAccess.Context
     {
         private readonly DbContextDalDB _dbContextClass;
         private readonly IActivityDalContext _dbContextDalActivity;
+
         public WorkFlowDalContext(DbContextDalDB dbContextClass, IActivityDalContext dbContextDalActivity)
         {
             _dbContextClass = dbContextClass;
             _dbContextDalActivity = dbContextDalActivity;
         }
+
         public async Task<WorkflowApprovalStatusMaster?> GetApprovalState(string approvalStatus)
         {
             WorkflowApprovalStatusMaster? approvalState = new();
@@ -31,18 +32,21 @@ namespace VERIDATA.DAL.DataAccess.Context
             approvalState = await _dbContextClass.WorkflowApprovalStatusMaster.FirstOrDefaultAsync(x => x.AppvlStatusCode.Equals(approvalStatus) && x.ActiveStatus == true);
             return approvalState;
         }
+
         public async Task<WorkFlowDetails?> GetCurrentApprovalStateByAppointeeId(int appointeeId)
         {
             WorkFlowDetails? getcurrentState = new();
             getcurrentState = await _dbContextClass.WorkFlowDetails.FirstOrDefaultAsync(x => x.AppointeeId.Equals(appointeeId) && x.ActiveStatus == true);
             return getcurrentState;
         }
+
         public async Task<int> GetWorkFlowStateIdByAlias(string StateAlias)
         {
             WorkFlowStateMaster? getData = await _dbContextClass.WorkFlowStateMaster.FirstOrDefaultAsync(x => x.StateAlias.Equals(StateAlias) && x.ActiveStatus == true);
 
             return getData?.StateId ?? 0;
         }
+
         public async Task<List<ProcessedDataDetailsResponse>> GetProcessedAppointeeDetailsAsync(ProcessedFilterRequest filter)
         {
             WorkflowApprovalStatusMaster _processClosed = await GetApprovalState(WorkFlowStatusType.ProcessClose);
@@ -78,7 +82,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                     && (filter.IsManualPassbook == null || (filter.IsManualPassbook == true && a.IsManualPassbook == true) || (filter.IsManualPassbook == false && a.IsPassbookFetch == true))
                                                                  select new ProcessedDataDetailsResponse
                                                                  {
-
                                                                      AppointeeData = a,
                                                                      CompanyId = u.CompanyId,
                                                                      CandidateId = u.CandidateId,
@@ -96,6 +99,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             List<ProcessedDataDetailsResponse> appointeelist = await querydata.ToListAsync().ConfigureAwait(false);
             return appointeelist;
         }
+
         public async Task<List<RejectedDataDetailsResponse>> GetRejectedAppointeeDetailsAsync(FilterRequest filter)
         {
             DateTime? _ToDate = filter.ToDate != null ? filter.ToDate?.AddDays(1) : null;
@@ -154,6 +158,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             List<RejectedDataDetailsResponse> rejectedAppointeeList = await querydata.ToListAsync().ConfigureAwait(false);
             return rejectedAppointeeList;
         }
+
         public async Task<List<UnderProcessQueryDataResponse>> GetUnderProcessDataAsync(AppointeeSeacrhFilterRequest reqObj)
         {
             string CurrDate = DateTime.Now.ToShortDateString();
@@ -165,9 +170,6 @@ namespace VERIDATA.DAL.DataAccess.Context
             WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
             WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
             WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
-            //WorkflowApprovalStatusMaster? ReuploadState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
-            //WorkflowApprovalStatusMaster? ManualVerificationState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualVerification?.Trim());
-            //WorkflowApprovalStatusMaster? ManualVerificationProcess = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualReVerification?.Trim());
 
             IQueryable<UnderProcessQueryDataResponse> querydata = from b in _dbContextClass.UnderProcessFileData
                                                                   join w in _dbContextClass.WorkFlowDetails
@@ -181,9 +183,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                   where !(w.AppvlStatusId == CloseState.AppvlStatusId
                                                                          || w.AppvlStatusId == ApproveState.AppvlStatusId
                                                                          || w.AppvlStatusId == RejectState.AppvlStatusId)
-                                                                  //|| w.AppvlStatusId == ReuploadState.AppvlStatusId
-                                                                  //|| w.AppvlStatusId == ManualVerificationState.AppvlStatusId
-                                                                  //|| w.AppvlStatusId == ManualVerificationProcess.AppvlStatusId)
                                                                   && (p.IsProcessed.Equals(false) || p.IsProcessed == null)
                                                                   && (string.IsNullOrEmpty(reqObj.AppointeeName) || b.AppointeeName.Contains(reqObj.AppointeeName))
                                                                   && (string.IsNullOrEmpty(reqObj.CandidateId) || b.CandidateId.Contains(reqObj.CandidateId))
@@ -200,13 +199,13 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                       AppointeeId = b.AppointeeId,
                                                                       ConsentStatusId = c.ConsentStatus,
                                                                       IsJoiningDateLapsed = b.DateOfJoining < _CurrDate,
-                                                                      //IsReupload = w.AppvlStatusId == ReuploadState.AppvlStatusId
                                                                   };
 
             List<UnderProcessQueryDataResponse> list = await querydata.ToListAsync().ConfigureAwait(false);
 
             return list;
         }
+
         public async Task<List<UnderProcessQueryDataResponse>> GetUnderProcessDataByDOJAsync(DateTime? startDate, DateTime? endDate, DateTime? FromDate, DateTime? ToDate)
         {
             List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
@@ -214,7 +213,6 @@ namespace VERIDATA.DAL.DataAccess.Context
             WorkflowApprovalStatusMaster? CloseState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
             WorkflowApprovalStatusMaster? RejectState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
             WorkflowApprovalStatusMaster? ApproveState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
-
 
             IQueryable<UnderProcessQueryDataResponse> querydata = from b in _dbContextClass.UnderProcessFileData
                                                                   join w in _dbContextClass.WorkFlowDetails
@@ -242,12 +240,12 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return list;
         }
+
         public async Task<List<int?>?> GetTotalOfferAppointeeList(int FilterDays)
         {
             int filterdaysrange = FilterDays;
             DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
             DateTime? startDate = filterdaysrange > 0 ? _currDate.AddDays(-filterdaysrange) : null;
-
 
             var querydata = from w in _dbContextClass.WorkFlowDetailsHist
                             join u in _dbContextClass.UnderProcessFileData
@@ -259,6 +257,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             List<int?>? appinteeList = workfdata?.DistinctBy(x => x.AppointeeId).Select(x => x.AppointeeId).ToList();
             return appinteeList;
         }
+
         public async Task<int> PostUploadedXSLfileAsync(string? fileName, string? filepath, int? companyid)
         {
             UploadedXSLfile _postobj = new()
@@ -277,6 +276,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             int fileId = _postobj.FileId;
             return fileId;
         }
+
         public async Task PostRawfiledataAsync(RawdataSubmitRequest data)
         {
             int? _userId = data?.UserId;
@@ -332,8 +332,8 @@ namespace VERIDATA.DAL.DataAccess.Context
             _ = await _dbContextClass.UploadAppointeeCounter.AddAsync(_totalrawfileData);
 
             _ = await _dbContextClass.SaveChangesAsync();
-
         }
+
         public async Task<List<RawFileData>> GetRawfiledataByIdAsync(int? fileId, int companyId)
         {
             List<RawFileData> _companydetails = new();
@@ -342,6 +342,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 : await _dbContextClass.RawFileData.Where(x => x.ActiveStatus == true && x.FileId.Equals(fileId)).ToListAsync();
             return _companydetails;
         }
+
         public async Task<List<UnProcessedFileData>> GetUnProcessDataAsync(AppointeeSeacrhFilterRequest reqObj)
         {
             List<UnProcessedFileData> nonProcessData = new();
@@ -358,6 +359,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             && (reqObj.ToDate == null || x.CreatedOn < _ToDate)).ToListAsync();
             return nonProcessData;
         }
+
         public async Task<List<RawFileData>> GetRawfiledataAsync()
         {
             List<RawFileData> rawDataList = new();
@@ -371,12 +373,14 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return rejectedData;
         }
+
         public async Task<List<UnProcessedFileData>> GetCriticalUnProcessDataAsync(DateTime? startDate, DateTime? endDate, DateTime? FromDate, DateTime? ToDate)
         {
             List<UnProcessedFileData> unProcessedData = await _dbContextClass.UnProcessedFileData.Where(m => m.DateOfJoining <= endDate && m.DateOfJoining >= startDate && m.ActiveStatus == true
                 && (FromDate == null || m.CreatedOn >= FromDate) && (ToDate == null || m.CreatedOn < ToDate)).ToListAsync();
             return unProcessedData;
         }
+
         public async Task<List<WorkFlowDetailsHist>> GetTotalDataAsync(DateTime? startDate)
         {
             List<WorkFlowDetailsHist> totalData = new();
@@ -390,6 +394,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             totalData = data.Select(x => x.w).ToList();
             return totalData;
         }
+
         public async Task<List<RawFileDataDetailsResponse>> GetRawfiledetailsByTypeId(List<RawDataRequest> rawDataList, int? userId, int type)
         {
             List<RawFileDataDetailsResponse> _rawData = new();
@@ -483,6 +488,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             return _rawData;
         }
+
         public async Task<List<UnderProcessFileData>> PostUnderProcessDataAsync(List<RawFileDataDetailsResponse> underprocessdata, int userId)
         {
             List<UnderProcessFileData> _underProcessList = new();
@@ -535,6 +541,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             _ = await _dbContextClass.SaveChangesAsync();
             return _underProcessList;
         }
+
         public async Task PostNonProcessDataAsync(List<RawFileDataDetailsResponse> unprocessdata, int userId)
         {
             List<UnProcessedFileData> _unProcessdata = unprocessdata.Select(row => new UnProcessedFileData
@@ -562,6 +569,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             _dbContextClass.UnProcessedFileData.AddRange(_unProcessdata);
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task RemoveRawDataAsync(List<int> RemoveRawId)
         {
             List<RawFileData> getRawData = await _dbContextClass.RawFileData.Where(x => RemoveRawId.Contains(x.RawFileId)).ToListAsync();
@@ -572,6 +580,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }
+
         public async Task RemoveUnprocessedDataAsync(List<int> RemoveRawId)
         {
             List<UnProcessedFileData> getRawData = await _dbContextClass.UnProcessedFileData.Where(x => RemoveRawId.Contains(x.UnProcessedId)).ToListAsync();
@@ -582,6 +591,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }
+
         public async Task AppointeeWorkflowIniAsync(List<int?> appointeeList, int workflowState, int userId)
         {
             WorkflowApprovalStatusMaster approvalState = await GetApprovalState(WorkFlowStatusType.ProcessIni);
@@ -628,8 +638,8 @@ namespace VERIDATA.DAL.DataAccess.Context
 
                 _ = await _dbContextClass.SaveChangesAsync();
             }
-
         }
+
         public async Task UpdateAppointeeDojByAdmin(CompanySaveAppointeeDetailsRequest appointeeDetails)
         {
             List<AppointeeUpdateLog> updateLogList = new();
@@ -641,17 +651,14 @@ namespace VERIDATA.DAL.DataAccess.Context
             {
                 if (appointeeId != 0)
                 {
-
                     UnderProcessFileData? _appntundrprocessdata = await _dbContextClass.UnderProcessFileData.FirstOrDefaultAsync(x => x.AppointeeId.Equals(appointeeId)) ?? null;
                     if (_appntundrprocessdata != null)
                     {
                         updateLogList.Add(new AppointeeUpdateLog { CandidateId = _appntundrprocessdata.CandidateId, UpdateType = "DateOfJoining", UpdateValue = appointeeDetails.DateOfJoining?.ToString(), CreatedBy = appointeeDetails.UserId, CreatedOn = DateTime.Now });
 
-                        //_appntundrprocessdata.EPFWages = appointeeDetails?.EPFWages ?? _appntundrprocessdata.EPFWages;
                         _appntundrprocessdata.DateOfJoining = appointeeDetails?.DateOfJoining;
                         _appntundrprocessdata.UpdatedBy = appointeeDetails?.UserId;
                         _appntundrprocessdata.UpdatedOn = DateTime.Now;
-
                     }
                     AppointeeDetails? _appnteDetailsData = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.AppointeeId.Equals(appointeeId)) ?? null;
                     if (_appnteDetailsData != null)
@@ -659,7 +666,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                         _appnteDetailsData.DateOfJoining = appointeeDetails?.DateOfJoining;
                         _appnteDetailsData.UpdatedBy = appointeeDetails?.UserId;
                         _appnteDetailsData.UpdatedOn = DateTime.Now;
-
                     }
                 }
                 else
@@ -668,17 +674,14 @@ namespace VERIDATA.DAL.DataAccess.Context
                     if (_appntNonprocessdata != null)
                     {
                         updateLogList.Add(new AppointeeUpdateLog { CandidateId = _appntNonprocessdata.CandidateId, UpdateType = "DateOfJoining", UpdateValue = appointeeDetails.DateOfJoining?.ToString(), CreatedBy = appointeeDetails.UserId, CreatedOn = DateTime.Now });
-                        //  _appntundrprocessdata.EPFWages = AppointeeDetails?.EPFWages ?? _appntundrprocessdata.EPFWages;
                         _appntNonprocessdata.DateOfJoining = appointeeDetails?.DateOfJoining;
                         _appntNonprocessdata.UpdatedBy = appointeeDetails?.UserId;
                         _appntNonprocessdata.UpdatedOn = DateTime.Now;
-
                     }
                 }
                 if (updateLogList?.Count() > 0)
                 {
                     _dbContextClass.AppointeeUpdateLog.AddRange(updateLogList);
-
                 }
                 _ = await _dbContextClass.SaveChangesAsync();
             }
@@ -709,6 +712,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             //}
         }
+
         private async Task PostAppointeePersonalDetailsAsync(AppointeeSaveDetailsRequest AppointeeDetails)
         {
             if (AppointeeDetails != null)
@@ -721,15 +725,12 @@ namespace VERIDATA.DAL.DataAccess.Context
                 UnderProcessFileData? _appntundrprocessdata = await _dbContextClass.UnderProcessFileData.FirstOrDefaultAsync(x => x.AppointeeId.Equals(appointeeId)) ?? null;
                 if (_appointeedetails == null)
                 {
-
                     AppointeeDetails data = new()
                     {
                         AppointeeId = appointeeId,
                         CandidateId = AppointeeDetails?.CandidateId,
                         AppointeeName = AppointeeDetails?.AppointeeName,
                         AppointeeEmailId = AppointeeDetails?.AppointeeEmailId,
-                        //PANNumber = AppointeeDetails?.PANNumber,
-                        //PANName = AppointeeDetails?.PANName,
                         CompanyId = AppointeeDetails.CompanyId,
                         CompanyName = AppointeeDetails.CompanyName,
                         DateOfBirth = AppointeeDetails.DateOfBirth,
@@ -766,17 +767,13 @@ namespace VERIDATA.DAL.DataAccess.Context
                     };
 
                     _ = _dbContextClass.AppointeeDetails.Add(data);
-
                 }
                 else
                 {
                     _appointeedetails.CandidateId = AppointeeDetails.CandidateId;
                     _appointeedetails.AppointeeName = AppointeeDetails.AppointeeName ?? string.Empty;
                     _appointeedetails.AppointeeEmailId = AppointeeDetails.AppointeeEmailId;
-                    //_appointeedetails.PANNumber = AppointeeDetails.PANNumber;
-                    //_appointeedetails.PANName = AppointeeDetails.PANName;
                     _appointeedetails.CompanyId = AppointeeDetails.CompanyId;
-                    //_appointeedetails.CompanyName = AppointeeDetails.CompanyName;
                     _appointeedetails.DateOfBirth = AppointeeDetails.DateOfBirth;
                     _appointeedetails.DateOfJoining = AppointeeDetails.DateOfJoining;
                     _appointeedetails.Gender = AppointeeDetails.Gender;
@@ -805,7 +802,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                     _appointeedetails.UpdatedOn = DateTime.Now;
                 }
                 _ = await _dbContextClass.SaveChangesAsync();
-
             }
         }
 
@@ -813,7 +809,6 @@ namespace VERIDATA.DAL.DataAccess.Context
         {
             WorkflowApprovalStatusMaster? approvalState = new();
             int _reprocessCount = 0;
-
 
             List<WorkflowApprovalStatusMaster> getapprovalStatus = await _dbContextClass.WorkflowApprovalStatusMaster.Where(x => x.ActiveStatus == true).ToListAsync();
             if (!string.IsNullOrEmpty(WorkFlowRequest.approvalStatus))
@@ -824,7 +819,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                  WorkFlowStatusType.Rejected or WorkFlowStatusType.ProcessClose)
                 {
                     await AppointeeWorkflowProcessdAsync(WorkFlowRequest, approvalState.AppvlStatusId);
-
                 }
 
                 if (WorkFlowRequest.approvalStatus == WorkFlowStatusType.Reprocess)
@@ -846,14 +840,13 @@ namespace VERIDATA.DAL.DataAccess.Context
                 {
                     _reprocessCount = _workFlow_det?.ReprocessCount ?? 0 + 1;
                 }
-
-                // await _dbContextClass.SaveChangesAsync();
             }
             if (WorkFlowRequest?.approvalStatus?.ToLower()?.Trim() != _workFlow_det?.StateAlias?.ToLower()?.Trim())
             {
                 await workflowdataUpdate(WorkFlowRequest, approvalState, _reprocessCount, _workFlow_det);
             }
         }
+
         private async Task AppointeeWorkflowReProcessdAsync(int appointeeId, int StatusId, int userId)
         {
             UserMaster? _userdata = await _dbContextClass.UserMaster.FirstOrDefaultAsync(x => x.RefAppointeeId == appointeeId);
@@ -866,12 +859,12 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _appointeedetails.IsPasssportVarified = null;
                 _appointeedetails.IsAadhaarVarified = null;
                 _appointeedetails.IsUanVarified = null;
-
             }
             _userdata.UpdatedOn = DateTime.Now;
             _userdata.UpdatedBy = userId;
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         private async Task AppointeeWorkflowProcessdAsync(WorkFlowDataRequest workFlowRequest, int StatusId)
         {
             UserMaster? _userdata = await _dbContextClass.UserMaster.FirstOrDefaultAsync(x => x.RefAppointeeId == workFlowRequest.appointeeId);
@@ -893,7 +886,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                     CreatedOn = DateTime.Now,
                 };
                 _ = _dbContextClass.ProcessedFileData.Add(_processeddata);
-
             }
 
             if (workFlowRequest.approvalStatus == WorkFlowStatusType.Rejected)
@@ -915,6 +907,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             _userdata.UpdatedBy = workFlowRequest.userId;
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task workflowdataUpdate(WorkFlowDataRequest WorkFlowRequest, WorkflowApprovalStatusMaster? approvalState, int _reprocessCount, WorkFlowDetails? _workFlow_det)
         {
             WorkFlowDetails _genarateWorkflowdata = new()
@@ -950,6 +943,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task<List<GlobalSearchAppointeeData>> GetUnderProcessAppointeeSearch(string Name)
         {
             List<GlobalSearchAppointeeData> appointeeList = new();
@@ -967,6 +961,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             appointeeList = await querydata.ToListAsync().ConfigureAwait(false);
             return appointeeList;
         }
+
         public async Task<List<GlobalSearchAppointeeData>> GetAppointeeSearchDetails(string name, string type)
         {
             List<GlobalSearchAppointeeData> appointeeList = new();
@@ -1029,7 +1024,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                 AppointeeId = latestActivity.at.AppointeeId ?? 0
             })?.ToList();
 
-
             // Main query with the prepared activityList
             IQueryable<UnderProcessWithActionQueryDataResponse> mainQueryData = from b in _dbContextClass.UnderProcessFileData
                                                                                 join w in _dbContextClass.WorkFlowDetails
@@ -1072,7 +1066,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                             IsJoiningDateLapsed = m.IsJoiningDateLapsed
                         }).ToList();
 
-
             return list;
         }
 
@@ -1112,8 +1105,6 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return await query.ToListAsync();
         }
-
-
 
         public async Task<List<FileCategoryResponse>> getFileTypeCode(int appointeeId)
         {
@@ -1197,7 +1188,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                                                                                    WorkflowCreatedDate = w.CreatedOn,
                                                                                    Status = wm.AppvlStatusDesc,
                                                                                    VerificationAttempted = verificationAttemptCounts.ContainsKey(b.AppointeeId) ? verificationAttemptCounts[b.AppointeeId] : 0
-
                                                                                };
 
             List<ManualVerificationProcessQueryDataResponse> list = await querydata.ToListAsync().ConfigureAwait(false);
@@ -1207,20 +1197,14 @@ namespace VERIDATA.DAL.DataAccess.Context
 
         public async Task UpdateReuploadFathersName(AppointeeReUploadFilesAfterSubmitRequest reqObj)
         {
-
             AppointeeDetails AppointeeDetailsData = await _dbContextClass.AppointeeDetails.FirstOrDefaultAsync(x => x.ActiveStatus.Value.Equals(true) && x.AppointeeId == reqObj.AppointeeId);
             {
-
                 AppointeeDetailsData.IsFNameVarified = (reqObj.FathersName?.Trim() == (AppointeeDetailsData.MemberName?.Trim())) ? AppointeeDetailsData.IsFNameVarified : null;
                 AppointeeDetailsData.MemberName = !string.IsNullOrEmpty(reqObj.FathersName) ? reqObj.FathersName?.Trim() : AppointeeDetailsData.MemberName;
                 AppointeeDetailsData.UpdatedBy = reqObj.UserId;
                 AppointeeDetailsData.UpdatedOn = DateTime.Now;
                 _ = await _dbContextClass.SaveChangesAsync();
             }
-
         }
     }
 }
-
-
-
