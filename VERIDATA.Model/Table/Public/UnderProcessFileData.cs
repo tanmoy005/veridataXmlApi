@@ -6,10 +6,8 @@ using VERIDATA.Model.utility;
 namespace VERIDATA.Model.Table.Public
 {
     [Table("under_process_file_data")]
-
     public class UnderProcessFileData
     {
-
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("underprocess_id", TypeName = DbDataType._biginteger)]
@@ -24,7 +22,6 @@ namespace VERIDATA.Model.Table.Public
         public int FileId { get; set; }
 
         [Column("company_id", TypeName = DbDataType._integer)]
-        //[ForeignKey("company_id")]
         public int CompanyId { get; set; }
 
         [Column("company_name", TypeName = DbDataType._text50)]
@@ -88,6 +85,5 @@ namespace VERIDATA.Model.Table.Public
 
         [Column("updated_on", TypeName = DbDataType._datetime)]
         public DateTime? UpdatedOn { get; set; }
-
     }
 }

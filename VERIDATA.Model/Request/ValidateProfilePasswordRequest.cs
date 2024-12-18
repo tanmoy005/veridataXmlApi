@@ -6,6 +6,7 @@ namespace VERIDATA.Model.Request
     {
         [PasswordPropertyText]
         public string? ProfilePassword { get; set; }
+
         public int UserId { get; set; }
     }
 }

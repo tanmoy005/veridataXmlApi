@@ -7,7 +7,6 @@ namespace VERIDATA.Model.Table.Public
     [Table("upload_appointee_counter")]
     public class UploadAppointeeCounter
     {
-
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id", TypeName = DbDataType._biginteger)]
@@ -24,7 +23,5 @@ namespace VERIDATA.Model.Table.Public
 
         [Column("created_on", TypeName = DbDataType._datetime)]
         public DateTime? CreatedOn { get; set; }
-
-
     }
 }

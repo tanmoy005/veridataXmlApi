@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Request.api.Karza.Base;
+﻿using VERIDATA.Model.Request.api.Karza.Base;
 
 namespace VERIDATA.Model.Request.api.Karza
 {
@@ -7,6 +6,5 @@ namespace VERIDATA.Model.Request.api.Karza
     {
         public string? uan { get; set; }
         public string? mobile_no { get; set; }
-
     }
 }

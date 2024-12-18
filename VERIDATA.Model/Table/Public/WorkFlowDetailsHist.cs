@@ -55,4 +55,3 @@ namespace VERIDATA.Model.Table.Public
         public DateTime? UpdatedOn { get; set; }
     }
 }
-

@@ -1,5 +1,4 @@
-﻿
-namespace VERIDATA.Model.DataAccess.Response
+﻿namespace VERIDATA.Model.DataAccess.Response
 {
     public class ApiConfigResponse
     {

@@ -7,6 +7,5 @@
         public string? approvalStatus { get; set; }
         public string? remarks { get; set; }
         public int userId { get; set; }
-
     }
 }

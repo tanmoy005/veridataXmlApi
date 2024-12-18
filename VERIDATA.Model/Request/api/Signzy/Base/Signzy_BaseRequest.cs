@@ -1,5 +1,4 @@
-﻿
-namespace VERIDATA.Model.Request.api.Signzy.Base
+﻿namespace VERIDATA.Model.Request.api.Signzy.Base
 {
     public class Signzy_BaseRequest
     {
@@ -7,9 +6,11 @@ namespace VERIDATA.Model.Request.api.Signzy.Base
         {
             consent = "Y";
         }
+
         public ClientData? clientData { get; set; }
         public string? consent { get; set; }
     }
+
     public class ClientData
     {
         public string caseId { get; set; }

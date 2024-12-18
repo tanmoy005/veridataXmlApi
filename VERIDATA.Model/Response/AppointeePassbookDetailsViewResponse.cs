@@ -9,6 +9,7 @@
         public string? dob { get; set; }
         public List<PfCompanyDetails>? companies { get; set; }
     }
+
     public class PfCompanyDetails
     {
         public string? companyName { get; set; }
@@ -22,6 +23,7 @@
         public string? LastPensionDate { get; set; }
         public List<CompanyPassbookDetails>? passbook { get; set; }
     }
+
     public class CompanyPassbookDetails
     {
         public int? id { get; set; }

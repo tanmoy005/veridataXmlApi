@@ -8,6 +8,7 @@
         public int GracePeriod { get; set; }
         public int UserId { get; set; }
     }
+
     public class EmailEscalationLevel
     {
         public int LevelId { get; set; }
@@ -15,6 +16,7 @@
         public int NoOfDays { get; set; }
         //public string SetupAlias { get; set; }
     }
+
     public class EmailEscalationSetup
     {
         public int LevelId { get; set; }

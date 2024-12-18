@@ -1,6 +1,4 @@
-﻿
-
-namespace VERIDATA.Model.DataAccess.Request
+﻿namespace VERIDATA.Model.DataAccess.Request
 {
     public class CandidateValidateUpdatedDataRequest
     {
@@ -10,6 +8,7 @@ namespace VERIDATA.Model.DataAccess.Request
             panData = new PanData();
             uanData = new UanData();
         }
+
         public int AppointeeId { get; set; }
         public string? Type { get; set; }
         public string? EmailId { get; set; }
@@ -22,6 +21,7 @@ namespace VERIDATA.Model.DataAccess.Request
         public PanData? panData { get; set; }
         public UanData? uanData { get; set; }
     }
+
     public class AadharDetailsData
     {
         public string? AadhaarNumber { get; set; }
@@ -31,13 +31,14 @@ namespace VERIDATA.Model.DataAccess.Request
         public string? GenderFromAadhaar { get; set; }
         public string? DobFromAadhaar { get; set; }
     }
+
     public class PanData
     {
         public string? PanNumber { get; set; }
         public string? PanName { get; set; }
         public string? PanFatherName { get; set; }
-
     }
+
     public class UanData
     {
         public bool? IsPensionApplicable { get; set; }

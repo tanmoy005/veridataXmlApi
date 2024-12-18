@@ -22,6 +22,7 @@ namespace VERIDATA.DAL.DataAccess.Context
         private readonly TokenConfiguration _tokenConfig;
         private readonly ApiConfiguration _apiConfig;
         private readonly IMasterDalContext _dbContextMaster;
+
         public UserDalContext(DbContextDalDB dbContextClass, TokenConfiguration tokenConfig, IMasterDalContext dbContextMaster, ApiConfiguration apiConfig)
         {
             _dbContextClass = dbContextClass;
@@ -67,9 +68,9 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             return candidateIdList;
         }
+
         public async Task<UserDetailsResponse> GetUserDetailsAsyncbyId(int uid)
         {
-
             List<WorkflowApprovalStatusMaster> _getapprovalStatus = await _dbContextMaster.GetAllApprovalStateMaster();
             WorkflowApprovalStatusMaster? closeState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ProcessClose?.Trim());
             WorkflowApprovalStatusMaster? verifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
@@ -110,21 +111,25 @@ namespace VERIDATA.DAL.DataAccess.Context
                         status = "Approved";
                         statusCode = "APPRVD";
                         break;
+
                     case bool _ when _userStatusDetails.AppvlStatusId == rejectedState.AppvlStatusId:
                         status = "Rejected";
                         statusCode = "REJCT";
 
                         break;
+
                     case bool _ when _userStatusDetails.AppvlStatusId == reuploadDocument.AppvlStatusId:
                         status = "Doc Reupload";
                         statusCode = "DCRUPLD";
 
                         break;
+
                     case bool _ when _userDetails?.IsSubmit ?? false:
                         status = "Submitted";
                         statusCode = "SUBMT";
 
                         break;
+
                     case bool _ when _userDetails?.SaveStep == 1:
                         status = "Ongoing";
                         statusCode = "ONGNG";
@@ -159,6 +164,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return userDetails;
         }
+
         public async Task PostAppointeeUpdateLog(List<UpdatedAppointeeBasicInfo> updatedList, int userId)
         {
             List<AppointeeUpdateLog> updateLogList = new();
@@ -184,8 +190,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                 //{
                 //    updateLogList.Add(new AppointeeUpdateLog { CandidateId = updatedobj.CandidateID, UpdateType = "Company", UpdateValue = updatedobj.CompanyName, CreatedBy = UserId, CreatedOn = DateTime.Now });
                 //}
-
-
             }
             if (updateLogList.Count > 0)
             {
@@ -193,6 +197,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }
+
         public async Task UpdateUserMasterCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId)
         {
             List<UserMaster> rawData = await _dbContextClass.UserMaster.Where(x => x.ActiveStatus.Value.Equals(true) && candidateIdList.Contains(x.CandidateId)).ToListAsync();
@@ -206,6 +211,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task UpdateRawCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId)
         {
             List<RawFileData> rawData = await _dbContextClass.RawFileData.Where(x => x.ActiveStatus.Value.Equals(true) && candidateIdList.Contains(x.CandidateId)).ToListAsync();
@@ -222,6 +228,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task UpdateUnderProcessCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId)
         {
             List<UnderProcessFileData> UnderProcessData = await _dbContextClass.UnderProcessFileData.Where(x => x.ActiveStatus.Value.Equals(true) && candidateIdList.Contains(x.CandidateId))?.ToListAsync();
@@ -285,11 +292,11 @@ namespace VERIDATA.DAL.DataAccess.Context
                 obj.ContactNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.ContactNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.ContactNo;
                 obj.UpdatedBy = UserId;
                 obj.UpdatedOn = DateTime.Now;
-
             }
 
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task UpdateNonProcessCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId)
         {
             List<UnProcessedFileData> NonProcessData = await _dbContextClass.UnProcessedFileData.Where(x => x.ActiveStatus.Value.Equals(true) && candidateIdList.Contains(x.CandidateId))?.ToListAsync();
@@ -306,6 +313,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task<List<UserDetailsResponse>> getAllAdminUser()
         {
             IQueryable<UserDetailsResponse> querydata = from um in _dbContextClass.UserMaster
@@ -336,18 +344,21 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return userlist;
         }
+
         public async Task<UserMaster?> getUserByUserCode(string? userCode)
         {
             UserMaster? dbusers = await _dbContextClass.UserMaster.FirstOrDefaultAsync(m => m.UserCode == userCode);
 
             return dbusers;
         }
+
         public async Task<UserMaster?> getUserByUserId(int userId)
         {
             UserMaster? dbusers = await _dbContextClass.UserMaster.FirstOrDefaultAsync(m => m.UserId.Equals(userId));
 
             return dbusers;
         }
+
         public async Task<UserAuthentication?> getAuthUserDetailsByPassword(int userId, string password)
         {
             string _password = CommonDalUtility.hashPassword(password: password);
@@ -356,30 +367,35 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return authDbUser;
         }
+
         public async Task<UserAuthentication> getAuthUserDetailsById(int userId)
         {
             UserAuthentication? authDbUser = await _dbContextClass.UserAuthentication.FirstOrDefaultAsync(m => m.UserId.Equals(userId) && m.ActiveStatus == true) ?? new UserAuthentication();
 
             return authDbUser;
         }
+
         public async Task<UserAuthenticationHist?> getAuthHistUserDetailsById(int? userId)
         {
             UserAuthenticationHist? authDbUser = await _dbContextClass.UserAuthenticationHist.OrderByDescending(x => x.AuthoHistId).FirstOrDefaultAsync(m => m.UserId == userId && m.ActiveStatus == true);
 
             return authDbUser;
         }
+
         public async Task<UserAuthenticationHist?> getAuthHistUserDetailsByClientId(string? clientId)
         {
             UserAuthenticationHist? authDbUser = await _dbContextClass.UserAuthenticationHist.OrderByDescending(x => x.AuthoHistId).FirstOrDefaultAsync(m => m.ClientId == clientId && m.ActiveStatus == true);
 
             return authDbUser;
         }
+
         public async Task<int> getUserIdByMailId(string? emailId)
         {
             UserMaster? authDbUser = await _dbContextClass.UserMaster.FirstOrDefaultAsync(m => m.EmailId == emailId && m.ActiveStatus == true);
 
             return authDbUser?.UserId ?? 0;
         }
+
         public async Task createNewUserwithRole(List<CreateUserDetailsRequest> userList, int userId)
         {
             List<UserAuthentication> UserAuthList = new();
@@ -439,6 +455,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             _dbContextClass.RoleUserMapping.AddRange(UserRoleMappingList);
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task updateAdminUser(AdminUserUpdateRequest userDetails)
         {
             List<RoleUserMapping> UserRoleMappingList = new();
@@ -478,6 +495,7 @@ namespace VERIDATA.DAL.DataAccess.Context
             }
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task deleteUserDetails(int uid, int userId)
         {
             UserMaster? applicationUsers = await _dbContextClass.UserMaster.FindAsync(uid);
@@ -489,6 +507,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }
+
         public async Task postUserAuthDetailsAsyncbyId(UserAuthDetailsRequest req)
         {
             List<UserAuthenticationHist> usersauthdata = await _dbContextClass.UserAuthenticationHist.Where(m => m.UserId.Equals(req.UserId) && m.ActiveStatus == true).ToListAsync();
@@ -516,17 +535,20 @@ namespace VERIDATA.DAL.DataAccess.Context
             _ = _dbContextClass.UserAuthenticationHist.Add(_userAuthHis);
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task updateUserAuthDetailsAsyncbyId(int UserId)
         {
             List<UserAuthenticationHist> usersauthdata = await _dbContextClass.UserAuthenticationHist.Where(m => m.UserId.Equals(UserId) && m.ActiveStatus == true).ToListAsync();
             usersauthdata?.ForEach(x => x.ActiveStatus = false);
             _ = await _dbContextClass.SaveChangesAsync();
         }
+
         public async Task<List<UserAuthenticationHist>> getUserOtpTryDetailsAsyncbyId(int UserId)
         {
             List<UserAuthenticationHist> usersauthdata = await _dbContextClass.UserAuthenticationHist.Where(m => m.UserId.Equals(UserId) && m.ActiveStatus == true).ToListAsync();
             return usersauthdata;
         }
+
         public async Task postUserTokenDetailsAsyncbyId(int userId, string token)
         {
             var timeOutTime = DateTime.Now.AddMinutes(_tokenConfig?.Timeout ?? 0);
@@ -538,6 +560,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }
+
         public async Task postUserSignOutDetailsAsyncbyId(int userId)
         {
             List<UserAuthenticationHist> usersauthdata = await _dbContextClass.UserAuthenticationHist.Where(m => m.UserId.Equals(userId) && m.ActiveStatus == true).ToListAsync();
@@ -548,6 +571,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 _ = await _dbContextClass.SaveChangesAsync();
             }
         }
+
         public async Task postUserPasswordChangeAsyncbyId(int userId, string password)
         {
             UserAuthentication usersauthdata = await _dbContextClass.UserAuthentication.FirstOrDefaultAsync(m => m.UserId.Equals(userId) && m.ActiveStatus == true);
@@ -564,6 +588,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 await _dbContextClass.SaveChangesAsync();
             }
         }
+
         public async Task editUserProfile(EditUserProfileRequest req)
         {
             string _password = CommonDalUtility.hashPassword(password: req.ProfilePassword);
@@ -591,9 +616,9 @@ namespace VERIDATA.DAL.DataAccess.Context
                 }
             }
         }
+
         public async Task<RoleDetailsResponse> GetUserRole(int userid)
         {
-
             RoleDetailsResponse? roleDetails = new();
             IQueryable<RoleDetailsResponse> querydata = from p in _dbContextClass.RoleUserMapping
                                                         join a in _dbContextClass.RoleMaster
@@ -611,6 +636,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
             return roleDetails ?? new RoleDetailsResponse();
         }
+
         public async Task<List<MenuNodeDetails>> GetMenuLeafNodeList(int roleId)
         {
             var _menudata = from r in _dbContextClass.MenuRoleMapping
@@ -666,7 +692,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                 EmailId = m.EmailId,
                 ContactNo = m.ContactNo,
                 CandidateId = m.CandidateId,
-
             })?.ToList();
 
             return response;

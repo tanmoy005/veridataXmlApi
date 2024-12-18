@@ -17,8 +17,11 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<List<AppointeeActivityDetailsResponse>> GetActivityDetails(int appointeeId);
 
         public Task PostActivityDetails(int appointeeId, int userId, string? activityCode);
+
         public Task PostApiActivity(ApiCountLogRequest req);
+
         public Task<List<ApiCounter>> GetTotalApiCountByDate(DateTime startDate);
+
         public Task<List<UploadAppointeeCounter>> GetTotalAppointeeCountByDate(DateTime startDate);
     }
 }

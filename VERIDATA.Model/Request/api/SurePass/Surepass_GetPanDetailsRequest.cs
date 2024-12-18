@@ -1,5 +1,4 @@
-﻿
-namespace VERIDATA.Model.Request.api.surepass
+﻿namespace VERIDATA.Model.Request.api.surepass
 {
     public class Surepass_GetPanDetailsRequest
     {

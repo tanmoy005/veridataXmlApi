@@ -8,7 +8,6 @@ namespace VERIDATA.Model.Table.Public
     [Table("appointee_employement_details")]
     public class AppointeeEmployementDetails
     {
-
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("employement_det_id", TypeName = DbDataType._biginteger)]
@@ -42,6 +41,5 @@ namespace VERIDATA.Model.Table.Public
 
         [Column("updated_on", TypeName = DbDataType._datetime)]
         public DateTime? UpdatedOn { get; set; }
-
     }
 }

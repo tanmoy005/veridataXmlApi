@@ -17,7 +17,5 @@ namespace VERIDATA.Model.Table.Config
 
         [Column("log_date")]
         public DateTime LogDate { get; set; }
-
     }
-
 }

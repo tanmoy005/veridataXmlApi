@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Response.api.surepass.Base;
+﻿using VERIDATA.Model.Response.api.surepass.Base;
 
 namespace VERIDATA.Model.Response.api.surepass
 {
@@ -7,6 +6,7 @@ namespace VERIDATA.Model.Response.api.surepass
     {
         public PanDataDetails data { get; set; }
     }
+
     public class PanDataDetails
     {
         public string client_id { get; set; }
@@ -26,6 +26,7 @@ namespace VERIDATA.Model.Response.api.surepass
         public string category { get; set; }
         public bool less_info { get; set; }
     }
+
     public class PanAddress
     {
         public string line_1 { get; set; }

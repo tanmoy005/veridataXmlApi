@@ -8,7 +8,6 @@ namespace VERIDATA.Model.Table.Activity
     [Table("activity_transaction", Schema = "activity")]
     public class ActivityTransaction
     {
-
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("activity_trans_id", TypeName = DbDataType._integer)]

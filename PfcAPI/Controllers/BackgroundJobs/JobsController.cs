@@ -21,7 +21,6 @@ namespace PfcAPI.Controllers.BackgroundJobs
         ////[HttpPost("schedule-job")]
         ////public ActionResult ScheduleJob()
         ////{
-
         ////    // Schedule the background job to run immediately
         ////    //RecurringJob.AddOrUpdate(() => _workerService.DoSomething(), Cron.Minutely);
 
@@ -74,7 +73,5 @@ namespace PfcAPI.Controllers.BackgroundJobs
             RecurringJob.AddOrUpdate("case-escalation-appointee", () => _workerService.CaseBasedEscalation(), Cron.Weekly);
             return Ok("Job scheduled successfully!");
         }
-
-
     }
 }

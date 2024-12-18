@@ -142,7 +142,6 @@ namespace VERIDATA.BLL.apiContext.surepass
                 res.PassportNumber = PassportResponse?.data?.passport_number?.Trim();
                 res.DateOfBirth = PassportResponse?.data?.dob?.Trim();
                 res.FileNumber = PassportResponse?.data?.file_number?.Trim();
-
             }
             else
             {
@@ -181,7 +180,6 @@ namespace VERIDATA.BLL.apiContext.surepass
                     res.IsUanAvailable = true;
                     res.UanNumber = UanResponse?.data?.pf_uan;
                 }
-
             }
             else
             {
@@ -242,7 +240,6 @@ namespace VERIDATA.BLL.apiContext.surepass
 
                 Response.StatusCode = _apiResponse.StatusCode;
                 Response.ClientId = OTPResponse?.data?.client_id?.Trim();
-
             }
             else
             {
@@ -271,8 +268,6 @@ namespace VERIDATA.BLL.apiContext.surepass
                 Surepass_GetUanPassbookResponse PassbookResponse = JsonConvert.DeserializeObject<Surepass_GetUanPassbookResponse>(apiResponse);
                 res.StatusCode = _apiResponse.StatusCode;
                 res.Passbkdata = PassbookResponse?.data;
-
-
             }
             else
             {

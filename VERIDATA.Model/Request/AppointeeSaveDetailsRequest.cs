@@ -40,8 +40,6 @@ namespace VERIDATA.Model.Request
         [RequiredIfSubmitString]
         public string? MobileNo { get; set; } //number that varified with aadhar
 
-
-
         [RequiredIfSubmit]
         [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? DateOfJoining { get; set; }
@@ -99,8 +97,8 @@ namespace VERIDATA.Model.Request
         [Futuredate]
         [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? PassportValidTill { get; set; }
-        [StringLength(1)]
 
+        [StringLength(1)]
         [DisplayName("Is Physically handicap")]
         [RequiredIfSubmitString]
         public string? IsHandicap { get; set; } // yes="Y",no="N"
@@ -111,7 +109,6 @@ namespace VERIDATA.Model.Request
         public string? HandicapeType { get; set; }
 
         [DisplayName("PF Verification Required")]
-        //[Required]
         public bool? IsPFverificationReq { get; set; }
 
         //[RequiredIfSubmitString]
@@ -133,6 +130,7 @@ namespace VERIDATA.Model.Request
         //[RegularExpression("[A-Z]{5}[0-9]{4}[A-Z]{1}", ErrorMessage = "Pan Number must be properly formatted.")]
         //public string? PANNumber { get; set; }
         public bool? IsAadhaarVarified { get; set; }
+
         public bool? IsUanVarified { get; set; }
         public bool IsSubmit { get; set; }
         public int UserId { get; set; }

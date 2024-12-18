@@ -10,6 +10,5 @@
         public bool? IsManual { get; set; }
         public bool? IsPensionApplicable { get; set; }
         public bool? IsPensionGap { get; set; }
-
     }
 }

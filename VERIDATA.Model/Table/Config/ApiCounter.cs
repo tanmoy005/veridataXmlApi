@@ -4,7 +4,6 @@ using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Config
 {
-
     [Table("api_couter_log", Schema = "config")]
     public class ApiCounter
     {
@@ -36,7 +35,5 @@ namespace VERIDATA.Model.Table.Config
 
         [Column("created_by", TypeName = DbDataType._biginteger)]
         public int CreatedBy { get; set; }
-
     }
-
 }

@@ -13,6 +13,5 @@
         public string? CandidateId { get; set; }
         public string? StatusCode { get; set; }
         public bool? IssueFilter { get; set; }
-
     }
 }

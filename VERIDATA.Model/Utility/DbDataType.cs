@@ -4,8 +4,10 @@
     {
         public const string _integer = "int";
         public const string _biginteger = "bigint";
+
         ////public const string _boolean = "Boolean";
         public const string _boolean = "bit";
+
         public const string _numeric = "numeric(18,2)";
         public const string _text10 = "nvarchar(10)";
         public const string _text20 = "nvarchar(20)";
@@ -18,6 +20,7 @@
         public const string _bytea = "Bytea";
         public const string _varbinary = "VARBINARY(max)";
     }
+
     //public static class DbDataType
     //{
     //    public const string _integer = "Integer";

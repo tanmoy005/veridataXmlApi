@@ -7,6 +7,5 @@ namespace VERIDATA.Model.Response
         public HttpStatusCode StatusCode { get; set; }
         public bool IsValid { get; set; }
         public string? Remarks { get; set; }
-
     }
 }

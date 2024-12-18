@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using VERIDATA.Model.utility;
 
-
 namespace VERIDATA.Model.Table.Config
 {
     [Table("logs", Schema = "config")]
@@ -39,6 +38,5 @@ namespace VERIDATA.Model.Table.Config
 
         [Column("url", TypeName = DbDataType._textmax)]
         public string? Url { get; set; }
-
     }
 }

@@ -5,11 +5,9 @@ using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Activity
 {
-
     [Table("activity_master", Schema = "activity")]
     public class ActivityMaster
     {
-
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("activity_id", TypeName = DbDataType._integer)]

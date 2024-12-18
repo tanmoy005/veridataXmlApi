@@ -5,8 +5,8 @@ namespace VERIDATA.Model.Response.api.Karza
     public class Karza_GetUanDetailsByPanResponse : Karza_BaseResponse
     {
         public UanResult? result { get; set; }
-
     }
+
     public class Employer
     {
         public string? name { get; set; }
@@ -46,18 +46,21 @@ namespace VERIDATA.Model.Response.api.Karza
         public PersonalInfo? personalInfo { get; set; }
         public Summary? summary { get; set; }
     }
+
     public class Uan
     {
         public string? uan { get; set; }
         public string? uanSource { get; set; }
         public List<Employer>? employer { get; set; }
     }
+
     public class Summary
     {
         public NameLookup nameLookup { get; set; }
         public UanLookup uanLookup { get; set; }
         public bool waiveFi { get; set; }
     }
+
     public class UanLookup
     {
         public string currentEmployer { get; set; }
@@ -65,6 +68,7 @@ namespace VERIDATA.Model.Response.api.Karza
         //public object result { get; set; }
         //public object uanNameMatch { get; set; }
     }
+
     public class NameLookup
     {
         public string? matchName { get; set; }

@@ -6,7 +6,6 @@ using VERIDATA.Model.utility;
 namespace VERIDATA.Model.Table.Public
 {
     [Table("rejected_file_data")]
-
     public class RejectedFileData
     {
         [Key, Required]

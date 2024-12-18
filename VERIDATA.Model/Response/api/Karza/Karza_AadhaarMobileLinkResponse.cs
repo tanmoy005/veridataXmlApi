@@ -6,12 +6,12 @@ namespace VERIDATA.Model.Response.api.Karza
     {
         public AadharMobileLinkData? result { get; set; }
     }
+
     public class AadharMobileLinkData
     {
         public string? validId { get; set; }
         public string? isMobileLinked { get; set; }
         public string? isVerified { get; set; }
         public string? isPanLinked { get; set; }
-
     }
 }

@@ -6,6 +6,5 @@
         public string? Inputdata { get; set; }
         public string? Fetcheddata { get; set; }
         public string? Remarks { get; set; }
-
     }
 }

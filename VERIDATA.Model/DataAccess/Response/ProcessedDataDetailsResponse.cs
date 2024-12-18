@@ -16,6 +16,5 @@ namespace VERIDATA.Model.DataAccess.Response
         public int? ProcessedId { get; set; }
         public string? StateAlias { get; set; }
         public DateTime? CreatedDate { get; set; }
-
     }
 }

@@ -1,6 +1,4 @@
-﻿
-
-namespace VERIDATA.Model.Request.api.Signzy
+﻿namespace VERIDATA.Model.Request.api.Signzy
 {
     public class Signzy_GetUanDetailsByPanRequest
     {
@@ -13,6 +11,7 @@ namespace VERIDATA.Model.Request.api.Signzy
             employerName = string.Empty;
             nameMatchMethod = string.Empty;
         }
+
         public string panNumber { get; set; }
         public string mobileNumber { get; set; }
         public string dateOfBirth { get; set; }
@@ -20,7 +19,5 @@ namespace VERIDATA.Model.Request.api.Signzy
         public string employeeName { get; set; }
         public string employerName { get; set; }
         public string nameMatchMethod { get; set; }
-
-
     }
 }

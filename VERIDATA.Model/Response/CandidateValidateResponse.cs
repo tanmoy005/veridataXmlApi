@@ -1,5 +1,4 @@
-﻿
-namespace VERIDATA.Model.Response
+﻿namespace VERIDATA.Model.Response
 {
     public class CandidateValidateResponse
     {

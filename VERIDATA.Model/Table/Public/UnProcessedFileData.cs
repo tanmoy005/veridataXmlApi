@@ -6,7 +6,6 @@ using VERIDATA.Model.utility;
 namespace VERIDATA.Model.Table.Public
 {
     [Table("unprocessed_file_data")]
-
     public class UnProcessedFileData
     {
         [Key, Required]
@@ -20,16 +19,13 @@ namespace VERIDATA.Model.Table.Public
         public int FileId { get; set; }
 
         [Column("company_id", TypeName = DbDataType._integer)]
-        //[ForeignKey("company_id")]
         public int CompanyId { get; set; }
 
         [Column("company_name", TypeName = DbDataType._text50)]
         public string? CompanyName { get; set; }
 
-
         [Column("candidate_id", TypeName = DbDataType._text100)]
         public string? CandidateId { get; set; }
-
 
         [Column("appointee_name", TypeName = DbDataType._text100)]
         public string? AppointeeName { get; set; }

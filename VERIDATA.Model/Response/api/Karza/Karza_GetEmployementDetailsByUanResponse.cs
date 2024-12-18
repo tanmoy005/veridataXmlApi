@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Response.api.Karza.Base;
+﻿using VERIDATA.Model.Response.api.Karza.Base;
 
 namespace VERIDATA.Model.Response.api.Karza
 {
@@ -9,8 +8,8 @@ namespace VERIDATA.Model.Response.api.Karza
         public EmploymentResult Result { get; set; }
         public int StatusCode { get; set; }
         public ClientData ClientData { get; set; }
-
     }
+
     public class EmploymentResult
     {
         public List<EmployerHistory> Employers { get; set; }
@@ -68,5 +67,4 @@ namespace VERIDATA.Model.Response.api.Karza
     //{
     //    public string CaseId { get; set; }
     //}
-
 }

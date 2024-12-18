@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Request.api.Karza.Base;
+﻿using VERIDATA.Model.Request.api.Karza.Base;
 
 namespace VERIDATA.Model.Request.api.Karza
 {
@@ -13,8 +12,8 @@ namespace VERIDATA.Model.Request.api.Karza
             isDirector = "N";
             isSoleProp = "N";
             fathersName = "Y";
-
         }
+
         public string? pan { get; set; }
         public string? aadhaarLastFour { get; set; }
         public string? dob { get; set; }

@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Response.api.surepass.Base;
+﻿using VERIDATA.Model.Response.api.surepass.Base;
 
 namespace VERIDATA.Model.Response.api.surepass
 {
@@ -31,20 +30,22 @@ namespace VERIDATA.Model.Response.api.surepass
     public class CandidatePassbook
     {
         public string member_id { get; set; }
+
         //public string credit_debit_flag { get; set; }
         //public string doe_epf { get; set; }
         //public string doe_eps { get; set; }
         //public string doj_epf { get; set; }
         public object office { get; set; }
+
         //public string transaction_approved { get; set; }
         //public string transaction_category { get; set; }
         //public string employee_share { get; set; }
         //public string employer_share { get; set; }
         public string pension_share { get; set; }
+
         public string approved_on { get; set; }
         public string year { get; set; }
         public string month { get; set; }
         public string description { get; set; }
     }
-
 }

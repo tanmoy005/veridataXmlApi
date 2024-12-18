@@ -30,17 +30,17 @@ namespace VERIDATA.BLL.Authentication
             string Token = GenerateAccessToken(claims);
             return Token;
         }
+
         private static long ToUnixEpochDate(DateTime date)
 
         {
-
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             var timeSpan = date - epoch;
 
             return (long)timeSpan.TotalSeconds;
-
         }
+
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
             SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_tokenConfig?.Key));

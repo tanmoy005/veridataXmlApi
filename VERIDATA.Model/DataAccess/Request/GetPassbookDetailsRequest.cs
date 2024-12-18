@@ -1,5 +1,4 @@
-﻿
-namespace VERIDATA.Model.DataAccess.Request
+﻿namespace VERIDATA.Model.DataAccess.Request
 {
     public class GetPassbookDetailsRequest
     {

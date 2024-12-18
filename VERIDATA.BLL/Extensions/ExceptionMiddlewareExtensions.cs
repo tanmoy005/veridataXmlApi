@@ -11,6 +11,7 @@ namespace VERIDATA.BLL.Extensions
     public static class ExceptionMiddlewareExtensions
     {
         public static readonly ILogger _logger;
+
         public static void ConfigureExceptionHandler(this IApplicationBuilder app)
         {
             _ = app.UseExceptionHandler(appError =>
@@ -23,7 +24,6 @@ namespace VERIDATA.BLL.Extensions
                     IExceptionHandlerFeature? contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature != null)
                     {
-
                         ErrorResponse _errorResponse = new()
                         {
                             ErrorCode = context.Response.StatusCode,

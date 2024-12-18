@@ -17,13 +17,13 @@ namespace VERIDATA.BLL.Services
 {
     public class WorkerService : IWorkerService
     {
-
         private readonly IActivityDalContext _activityDalContext;
         private readonly ILogger<WorkerService> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IFileContext _fileService;
         private readonly IWorkFlowDalContext _dbContextWorkflow;
         private readonly ISetupConfigarationContext _setupConfigarationContext;
+
         public WorkerService(ILogger<WorkerService> logger, IEmailSender emailSender, IActivityDalContext activityDalContext, IFileContext fileService, ISetupConfigarationContext setupConfigarationContext, IWorkFlowDalContext dbContextWorkflow)
         {
             _logger = logger;
@@ -84,11 +84,11 @@ namespace VERIDATA.BLL.Services
                 List<Filedata> attachtData = new() { filedata };
                 await _emailSender.SendMailWithAttachtment("Tanmoy", "pfcsrver005@gmail.com", attachtData, ValidationType.ApiCount);
                 //TODO
-
             }
 
             // This method will be executed asynchronously by Hangfire.
         }
+
         public async Task ApponteeCountMailAsync()
         {
             DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
@@ -105,7 +105,6 @@ namespace VERIDATA.BLL.Services
             Filedata filedata = _fileService.GenerateDataTableTofile(_exportdt, "Report", ValidationType.AppointeeCount);
             List<Filedata> attachtData = new() { filedata };
             await _emailSender.SendMailWithAttachtment("Tanmoy", "pfcsrver005@gmail.com", attachtData, ValidationType.AppointeeCount);
-
         }
 
         public async Task CriticalAppointeeMail()
@@ -114,6 +113,7 @@ namespace VERIDATA.BLL.Services
             await criticalAppointeeCaseWise(EscalationCase.DOJ1Week, escalationSetupData);
             await criticalAppointeeCaseWise(EscalationCase.DOJ2Week, escalationSetupData);
         }
+
         private async Task criticalAppointeeCaseWise(string caseCode, GeneralSetupDetailsResponse escalationSetupData)
         {
             ValidationType criticality = ValidationType.Critical1week;
@@ -125,20 +125,22 @@ namespace VERIDATA.BLL.Services
                     criticalDays = 7;
                     criticality = ValidationType.Critical1week;
                     break;
+
                 case EscalationCase.DOJ2Week:
                     criticalDays = 14;
                     criticality = ValidationType.Critical2week;
                     break;
+
                 default:
                     criticalDays = 7;
                     break;
-
             }
 
             await criticalAppointeeLevelWise(caseCode, EscalationLevel.Level1, criticalDays, criticality, escalationSetupData);
             await criticalAppointeeLevelWise(caseCode, EscalationLevel.Level2, criticalDays, criticality, escalationSetupData);
             await criticalAppointeeLevelWise(caseCode, EscalationLevel.Level3, criticalDays, criticality, escalationSetupData);
         }
+
         private async Task criticalAppointeeLevelWise(string caseCode, string levelType, int criticalDays, ValidationType type, GeneralSetupDetailsResponse escalationSetupData)
         {
             EmailEscalationLevelDetails? _escalationlevelData = escalationSetupData?.EmailEscalationLevelDetails?.Where(x => x.LevelCode == levelType)?.FirstOrDefault();
@@ -158,9 +160,8 @@ namespace VERIDATA.BLL.Services
                     //escalationMailSend(EscalationLevel.Level2, caseCode, filePath, criticality);
                 }
             }
-
-
         }
+
         private static CaseOptionDetails GetCaseOption(GeneralSetupDetailsResponse escalationSetupData, string level, string caseCode)
         {
             EmailEscalationLevelDetails? _escalationlevelData = escalationSetupData.EmailEscalationLevelDetails.FirstOrDefault(x => x.LevelCode.Equals(level));
@@ -171,7 +172,6 @@ namespace VERIDATA.BLL.Services
 
         private async Task<List<AppointeeJobDetails>> GetCriticalAppointeeList(int criticalDays)
         {
-
             int filterDaysrange = criticalDays;
             string currDate = DateTime.Now.ToShortDateString();
             DateTime _currDate = Convert.ToDateTime(currDate);
@@ -221,6 +221,7 @@ namespace VERIDATA.BLL.Services
             }
             return actionRequiredListdata;
         }
+
         private Dictionary<string, List<AppointeeJobDetails>> generateCaseBasedData(string levelType, Dictionary<string, List<AppointeeJobDetails>>? _userList,
           List<AppointeeJobDetails>? _appointeeData, string? EscalatedEmailAddress, ValidationType type)
         {
@@ -255,19 +256,17 @@ namespace VERIDATA.BLL.Services
                     _exportdt = CommonUtility.ToDataTable(_getViewData);
                 }
 
-
                 Filedata fileDetails = _fileService.GenerateDataTableTofile(_exportdt, "report", type);
                 _ = caseBasedEscalationMailSend(mailaddress, fileDetails, type);
             }
 
             return _userList;
         }
+
         private static List<UnderProcessJobResponse> GetUnderProcessData(List<AppointeeJobDetails> appointeeList)
         {
-
             List<UnderProcessJobResponse>? _underProcessViewdata = appointeeList?.Select(row => new UnderProcessJobResponse
             {
-
                 appointeeName = row?.appointeeName,
                 appointeeEmailId = row?.appointeeEmailId,
                 mobileNo = row?.mobileNo,
@@ -277,12 +276,11 @@ namespace VERIDATA.BLL.Services
                 CreatedDate = row?.CreatedDate?.ToString("dd/mm/yyyy"),
             }).ToList();
 
-
             return _underProcessViewdata;
         }
+
         private static List<CriticalAppointeeJobResponse> GetCriticalProcessData(List<AppointeeJobDetails> appointeeList)
         {
-
             List<CriticalAppointeeJobResponse>? _criticalViewdata = appointeeList.Select(row => new CriticalAppointeeJobResponse
             {
                 candidateId = row.candidateId,
@@ -295,9 +293,9 @@ namespace VERIDATA.BLL.Services
                 CreatedDate = row.CreatedDate?.ToString("dd/mm/yyyy")
             })?.ToList();
 
-
             return _criticalViewdata;
         }
+
         private async Task caseBasedEscalationMailSend(string emailaddress, Filedata fileData, ValidationType type)
         {
             if (!string.IsNullOrEmpty(emailaddress))
@@ -322,13 +320,8 @@ namespace VERIDATA.BLL.Services
         ////        }
         ////    }
 
-
-
         ////    // This method will be executed asynchronously by Hangfire.
         ////}
-
-
-
 
         public async Task CaseBasedEscalation()
         {
@@ -341,7 +334,6 @@ namespace VERIDATA.BLL.Services
             await LinkNotSend(escalationSetupData, EscalationLevel.Level1);
             await LinkNotSend(escalationSetupData, EscalationLevel.Level2);
             await LinkNotSend(escalationSetupData, EscalationLevel.Level3);
-
         }
 
         private async Task UnderProcessListMailsend(GeneralSetupDetailsResponse escalationSetupData, string levelType)
@@ -361,7 +353,6 @@ namespace VERIDATA.BLL.Services
                 if (_noResData.Count > 0)
                 {
                     _userList = generateCaseBasedData(levelType, _userList, _noResData, EscalatedEmailAddress, ValidationType.NoResponse);
-
                 }
             }
             CaseOptionDetails _processingcaseStatus = GetCaseOption(escalationSetupData, levelType, EscalationCase.ResponsedNotSubmitted);
@@ -374,12 +365,9 @@ namespace VERIDATA.BLL.Services
                 if (_processingData.Count > 0)
                 {
                     _userList = generateCaseBasedData(levelType, _userList, _processingData, EscalatedEmailAddress, ValidationType.Processing);
-
                 }
             }
-
         }
-
 
         private async Task LinkNotSend(GeneralSetupDetailsResponse escalationSetupData, string levelType)
         {
@@ -401,7 +389,6 @@ namespace VERIDATA.BLL.Services
                 {
                     List<AppointeeJobDetails>? _NoLinkViewdata = nolinkdata?.Select(row => new AppointeeJobDetails
                     {
-
                         appointeeName = row?.AppointeeName,
                         appointeeEmailId = row?.AppointeeEmailId,
                         mobileNo = row?.MobileNo,
@@ -413,12 +400,10 @@ namespace VERIDATA.BLL.Services
                         lvl1Email = row?.lvl1Email,
                         lvl2Email = row?.lvl2Email,
                         lvl3Email = row?.lvl3Email,
-
                     }).ToList();
                     _userList = generateCaseBasedData(levelType, _userList, _NoLinkViewdata, EscalatedEmailAddress, ValidationType.NoLinkSent);
                 }
             }
-
         }
 
         private async Task<List<AppointeeJobDetails>> GetUnderProcessedAppointeeList(int FilterDays)
@@ -455,10 +440,7 @@ namespace VERIDATA.BLL.Services
                 lvl3Email = row?.UnderProcess?.lvl3Email,
             }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
 
-
             return _underProcessViewdata;
         }
-
-
     }
 }

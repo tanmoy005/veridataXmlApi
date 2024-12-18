@@ -9,6 +9,7 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("Name")]
         public string? AppointeeName { get; set; }
+
         [DisplayName("Email")]
         public string? EmailId { get; set; }
 

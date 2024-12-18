@@ -6,9 +6,9 @@ namespace VERIDATA.Model.Response.api.Karza
     {
         public UanGenerateOtp? result { get; set; }
     }
+
     public class UanGenerateOtp
     {
         public string? message { get; set; }
-
     }
 }

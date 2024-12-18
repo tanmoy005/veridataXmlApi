@@ -10,33 +10,59 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
     public interface IUserDalContext
     {
         public Task<UserDetailsResponse> GetUserDetailsAsyncbyId(int uid);
+
         public Task<List<string?>> GetAllCandidateId(string type);
+
         public Task PostAppointeeUpdateLog(List<UpdatedAppointeeBasicInfo> updatedList, int userId);
+
         public Task UpdateUserMasterCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId);
+
         public Task UpdateRawCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId);
+
         public Task UpdateUnderProcessCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId);
+
         public Task UpdateNonProcessCandidateData(List<UpdatedAppointeeBasicInfo> _appointeeList, List<string> candidateIdList, int UserId);
+
         public Task<List<UserDetailsResponse>> getAllAdminUser();
+
         public Task<UserMaster?> getUserByUserCode(string? userCode);
+
         public Task<UserMaster?> getUserByUserId(int userId);
+
         public Task<UserAuthentication?> getAuthUserDetailsByPassword(int userId, string password);
+
         public Task<UserAuthentication> getAuthUserDetailsById(int userId);
+
         public Task<UserAuthenticationHist?> getAuthHistUserDetailsByClientId(string? clientId);
+
         public Task<int> getUserIdByMailId(string? emailId);
+
         public Task<UserAuthenticationHist?> getAuthHistUserDetailsById(int? userId);
+
         public Task createNewUserwithRole(List<CreateUserDetailsRequest> userList, int userId);
+
         public Task updateAdminUser(AdminUserUpdateRequest userDetails);
+
         public Task deleteUserDetails(int uid, int userId);
+
         public Task postUserAuthDetailsAsyncbyId(UserAuthDetailsRequest req);
+
         public Task updateUserAuthDetailsAsyncbyId(int UserId);
+
         public Task<List<UserAuthenticationHist>> getUserOtpTryDetailsAsyncbyId(int UserId);
+
         public Task postUserTokenDetailsAsyncbyId(int userId, string token);
+
         public Task postUserSignOutDetailsAsyncbyId(int userId);
+
         public Task postUserPasswordChangeAsyncbyId(int userId, string password);
 
         public Task editUserProfile(EditUserProfileRequest req);
+
         public Task<RoleDetailsResponse> GetUserRole(int userid);
+
         public Task<List<MenuNodeDetails>> GetMenuLeafNodeList(int roleId);
+
         public Task<List<CreateUserDetailsRequest>> GetCandidateDetailsBycandidateId(List<string> CandidateList);
     }
 }

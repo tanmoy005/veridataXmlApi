@@ -11,6 +11,7 @@ namespace VERIDATA.Model.DataAccess
             Passbkdata = new PassbookData();
             KarzaPassbkdata = new UanPassbookDetails();
         }
+
         public PassbookData? Passbkdata { get; set; }
         public UanPassbookDetails? KarzaPassbkdata { get; set; }
         public SignzyUanPassbookDetails? SignzyPassbkdata { get; set; }

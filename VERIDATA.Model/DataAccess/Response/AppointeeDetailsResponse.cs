@@ -1,6 +1,4 @@
-﻿
-
-namespace VERIDATA.Model.DataAccess.Response
+﻿namespace VERIDATA.Model.DataAccess.Response
 {
     public class AppointeeDetailsResponse
     {
@@ -60,6 +58,7 @@ namespace VERIDATA.Model.DataAccess.Response
         public bool IsSubmit { get; set; }
         public int UserId { get; set; }
         public string workFlowStatus { get; set; }
+
         //public List<string>? UploadedFileType { get; set; }
         public List<FileDetailsResponse>? FileUploaded { get; set; }
     }

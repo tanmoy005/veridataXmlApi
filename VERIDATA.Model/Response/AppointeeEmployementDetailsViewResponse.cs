@@ -11,6 +11,7 @@
         public bool? isEmployementDetailsAvailable { get; set; }
         public string? remarks { get; set; }
     }
+
     public class PfEmployementDetails
     {
         public string? companyName { get; set; }
@@ -26,5 +27,4 @@
         public int? WorkForMonth { get; set; }
         public string? memberId { get; set; }
     }
-
 }

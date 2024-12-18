@@ -1,5 +1,4 @@
-﻿
-namespace VERIDATA.BLL.apiContext.Common
+﻿namespace VERIDATA.BLL.apiContext.Common
 {
     public class ApiRoute
     {

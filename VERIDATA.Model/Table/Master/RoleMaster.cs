@@ -6,7 +6,6 @@ using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Master
 {
-
     [Table("role_master", Schema = "master")]
     public class RoleMaster
     {

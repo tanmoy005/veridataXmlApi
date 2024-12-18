@@ -1,11 +1,9 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Config
 {
-
     [Table("appointee_update_log", Schema = "config")]
     public class AppointeeUpdateLog
     {
@@ -31,6 +29,5 @@ namespace VERIDATA.Model.Table.Config
 
         [Column("created_by", TypeName = DbDataType._biginteger)]
         public int CreatedBy { get; set; }
-
     }
 }

@@ -1,9 +1,7 @@
-﻿
-namespace VERIDATA.Model.DataAccess
+﻿namespace VERIDATA.Model.DataAccess
 {
     public class MenuNodeDetails
     {
-
         public int MenuId { get; set; }
         public int ParentMenuId { get; set; }
         public string? MenuTitle { get; set; }

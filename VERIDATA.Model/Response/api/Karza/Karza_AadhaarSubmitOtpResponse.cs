@@ -6,6 +6,7 @@ namespace VERIDATA.Model.Response.api.Karza
     {
         public AadharResult result { get; set; }
     }
+
     public class AadharAddress
     {
         public SplitAddress splitAddress { get; set; }
@@ -54,6 +55,4 @@ namespace VERIDATA.Model.Response.api.Karza
         public string country { get; set; }
         public string pincode { get; set; }
     }
-
-
 }

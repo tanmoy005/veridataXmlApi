@@ -22,7 +22,5 @@ namespace VERIDATA.Model.Table.Admin
         [Column("active_status", TypeName = DbDataType._boolean)]
         [DefaultValue(true)]
         public bool? ActiveStatus { get; set; }
-
-
     }
 }

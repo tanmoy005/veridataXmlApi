@@ -4,6 +4,5 @@
     {
         public UserDetailsResponse? UserDetails { get; set; }
         public TokenDetailsResponse? TokenDetails { get; set; }
-
     }
 }

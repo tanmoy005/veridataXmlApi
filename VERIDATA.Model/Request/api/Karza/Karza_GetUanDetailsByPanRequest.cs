@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Request.api.Karza.Base;
+﻿using VERIDATA.Model.Request.api.Karza.Base;
 
 namespace VERIDATA.Model.Request.api.Karza
 {
@@ -10,11 +9,10 @@ namespace VERIDATA.Model.Request.api.Karza
             runPanFlow = true;
             showFailures = true;
         }
+
         public bool runPanFlow { get; set; }
         public string pan { get; set; }
         public string mobile { get; set; }
         public bool showFailures { get; set; }
-
-
     }
 }

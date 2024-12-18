@@ -44,6 +44,7 @@ namespace VERIDATA.Model.Extensions
                 return ValidationResult.Success;
             }
         }
+
         public class RequiredIfSubmitString : ValidationAttribute
         {
             protected override ValidationResult? IsValid(object value, ValidationContext validationContext)
@@ -60,6 +61,7 @@ namespace VERIDATA.Model.Extensions
                 return ValidationResult.Success;
             }
         }
+
         public class RequiredIfPassportString : ValidationAttribute
         {
             protected override ValidationResult? IsValid(object value, ValidationContext validationContext)
@@ -67,7 +69,6 @@ namespace VERIDATA.Model.Extensions
                 var Appointee = (AppointeeSaveDetailsRequest)validationContext.ObjectInstance;
                 if (Appointee.IsSubmit && Appointee.IsPassportAvailable == "Y")
                 {
-
                     var msg = ValidateString((string)value, validationContext.DisplayName);
 
                     return (string.IsNullOrEmpty(msg))
@@ -114,6 +115,7 @@ namespace VERIDATA.Model.Extensions
                 return ValidationResult.Success;
             }
         }
+
         private static string ValidateString(string value, string? name)
         {
             var msg = string.Empty;
@@ -121,6 +123,7 @@ namespace VERIDATA.Model.Extensions
                 msg = ($"{name} {"field is required, "}{"Please fill the "}{name}{" feild."}");
             return msg;
         }
+
         public class RequiredAadhaarIfSubmit : ValidationAttribute
         {
             protected override ValidationResult? IsValid(object value, ValidationContext validationContext)
@@ -128,7 +131,6 @@ namespace VERIDATA.Model.Extensions
                 var Appointee = (AppointeeFileDetailsRequest)validationContext.ObjectInstance;
                 if (Appointee.IsSubmit ?? false)
                 {
-
                     var msg = ValidateString((string)value, validationContext.DisplayName);
 
                     return (string.IsNullOrEmpty(msg))
@@ -164,6 +166,7 @@ namespace VERIDATA.Model.Extensions
                 return ValidationResult.Success;
             }
         }
+
         public class Pastdate : ValidationAttribute
         {
             protected override ValidationResult? IsValid(object value, ValidationContext validationContext)
@@ -189,6 +192,5 @@ namespace VERIDATA.Model.Extensions
                 return ValidationResult.Success;
             }
         }
-
     }
 }

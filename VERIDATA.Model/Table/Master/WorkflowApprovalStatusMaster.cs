@@ -5,7 +5,6 @@ using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Master
 {
-
     [Table("workflow_approval_status_master", Schema = "master")]
     public class WorkflowApprovalStatusMaster
     {

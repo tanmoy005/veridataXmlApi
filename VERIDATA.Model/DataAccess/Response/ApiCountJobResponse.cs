@@ -24,7 +24,5 @@ namespace VERIDATA.Model.DataAccess.Response
 
         [DisplayName("Invalid")]
         public int? TotalUnprocessableEntityCount { get; set; }
-
-
     }
 }

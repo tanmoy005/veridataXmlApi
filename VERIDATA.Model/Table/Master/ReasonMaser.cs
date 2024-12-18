@@ -5,11 +5,9 @@ using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Master
 {
-
     [Table("reason_master", Schema = "master")]
     public class ReasonMaser
     {
-
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("reason_id", TypeName = DbDataType._integer)]

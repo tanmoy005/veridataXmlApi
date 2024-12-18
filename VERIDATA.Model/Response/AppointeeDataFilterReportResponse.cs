@@ -6,6 +6,5 @@ namespace VERIDATA.Model.Response
     {
         public List<AppointeeDataFilterReportDetails>? AppointeeDetails { get; set; }
         public Filedata? Filedata { get; set; }
-
     }
 }

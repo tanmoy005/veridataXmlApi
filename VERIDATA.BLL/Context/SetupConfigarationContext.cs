@@ -23,9 +23,7 @@ namespace VERIDATA.BLL.Context
 
             List<EmailEscalationLevelDetails> levelres = new();
 
-
             List<EscalationLevelMasterDataResponse> leveldatares = await _masterDalContext.GetEscalationLevelMasterData();
-
 
             List<IGrouping<int, EscalationLevelMasterDataResponse>> levelGroupdata = leveldatares.GroupBy(x => x.LevelId).ToList();
 
@@ -43,7 +41,6 @@ namespace VERIDATA.BLL.Context
                     SetupAlias = x.FirstOrDefault()?.SetupAlias ?? string.Empty,
                     NoOfDays = x.FirstOrDefault()?.NoOfDays ?? 0,
                     Emailaddress = _data ?? new List<string>(),
-
                 };
                 levelres.Add(leveldata);
             }
@@ -89,8 +86,8 @@ namespace VERIDATA.BLL.Context
         public async Task PostSetupData(GeneralSetupSubmitRequest setupRequest)
         {
             await _masterDalContext.PostSetupData(setupRequest);
-
         }
+
         public async Task<List<FaqDetailsResponse>> GetFaqData()
         {
             List<FaqDetailsResponse> response = await _masterDalContext.GetAllFaqMaster();

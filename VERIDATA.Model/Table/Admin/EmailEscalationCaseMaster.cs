@@ -10,7 +10,6 @@ namespace VERIDATA.Model.Table.Admin
     {
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
         [Column("case_id", TypeName = DbDataType._integer)]
         public int CaseId { get; set; }
 

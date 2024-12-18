@@ -34,7 +34,5 @@ namespace VERIDATA.Model.Table.Master
 
         [Column("updated_on", TypeName = DbDataType._datetime)]
         public DateTime? UpdatedOn { get; set; }
-
     }
 }
-

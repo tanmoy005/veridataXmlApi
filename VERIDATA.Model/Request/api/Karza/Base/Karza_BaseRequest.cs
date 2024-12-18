@@ -1,5 +1,4 @@
-﻿
-namespace VERIDATA.Model.Request.api.Karza.Base
+﻿namespace VERIDATA.Model.Request.api.Karza.Base
 {
     public class Karza_BaseRequest
     {
@@ -7,9 +6,11 @@ namespace VERIDATA.Model.Request.api.Karza.Base
         {
             consent = "Y";
         }
+
         public ClientData? clientData { get; set; }
         public string? consent { get; set; }
     }
+
     public class ClientData
     {
         public string caseId { get; set; }

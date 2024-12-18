@@ -21,6 +21,7 @@ namespace VERIDATA.BLL.Context
         private readonly IReportingDalContext _reportingDalContext;
         private readonly ApiConfiguration _aadhaarConfig;
         private readonly string key;
+
         public ReportingContext(IWorkFlowDalContext workFlowDetailsContext, ApiConfiguration aadhaarConfig, IReportingDalContext reportingDalContext)
         {
             _workFlowDetailsContext = workFlowDetailsContext;
@@ -28,6 +29,7 @@ namespace VERIDATA.BLL.Context
             _aadhaarConfig = aadhaarConfig;
             key = aadhaarConfig?.EncriptKey ?? string.Empty;
         }
+
         public async Task<List<ProcessedDataReportDetailsResponse>> GetApporvedAppointeeDetails(ProcessedFilterRequest filter)
         {
             List<ProcessedDataReportDetailsResponse> res = new();
@@ -75,7 +77,6 @@ namespace VERIDATA.BLL.Context
                         AadhaarNumber = string.IsNullOrEmpty(r.AadhaarNumberView) ? "NA" : r.AadhaarNumberView,
                         //AadhaarNumber = string.IsNullOrEmpty(r.AadhaarNumber) ? "NA" : CommonUtility.DecryptString(key, r.AadhaarNumber),
                         Remarks = Remarks
-
                     }).FirstOrDefault();
                 response.Add(_data);
             }
@@ -106,7 +107,6 @@ namespace VERIDATA.BLL.Context
                     status = row?.ProcessData?.DataUploaded ?? false ? "Downloaded" : "NA",
                     isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     uanAadharLink = row?.AppointeeData?.IsUanAadharLink == null ? "NA" : row?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
-
                 })?.ToList();
             }
             return response;
@@ -118,14 +118,12 @@ namespace VERIDATA.BLL.Context
             List<PfCreateAppointeeDetailsResponse>? processeddata = new();
             List<PfCreationProcessedReportResponse>? proceesedAppointeeList = await _reportingDalContext.GetPfCreationProcessedReportDetailsAsync(filter);
 
-
             List<ProcessedFileData>? processedList = proceesedAppointeeList?.Select(x => x.ProcessData).ToList();
 
             await _reportingDalContext.UpdateDownloadedProcessData(processedList);
 
             if (proceesedAppointeeList.Count > 0)
             {
-
                 processeddata = proceesedAppointeeList?.DistinctBy(x => x.AppointeeData.AppointeeId)?
                    .OrderBy(x => x.AppointeeData.DateOfJoining)?.Select(r => new PfCreateAppointeeDetailsResponse
                    {
@@ -160,6 +158,7 @@ namespace VERIDATA.BLL.Context
 
             return processeddata;
         }
+
         public List<UnderProcessedDataReportDetails> GetUnderProcessDetails(List<UnderProcessDetailsResponse> reqList)
         {
             List<UnderProcessedDataReportDetails>? response = new();
@@ -179,7 +178,6 @@ namespace VERIDATA.BLL.Context
             }
             return response;
         }
-
 
         public async Task<ApiCountReportResponse> ApiCountReport(DateTime? FromDate, DateTime? ToDate)
         {
@@ -221,8 +219,6 @@ namespace VERIDATA.BLL.Context
                         TotalApiCount = y?.ToList()?.Count() ?? 0,
                     })?.ToList();
 
-
-
                     TotalUnproceesbleApiCount = DateWiseTotalResponseApiList?.Where(x => x?.Status == (int)HttpStatusCode.UnprocessableEntity && x.ApiName?.ToLower() == obj.Key?.ToLower())?.GroupBy(x => x.ProviderName)?.Select(y => new ApiCountJobResponse
                     {
                         ProviderName = y.Key,
@@ -245,7 +241,6 @@ namespace VERIDATA.BLL.Context
                         TotalSuccessApiCount = y?.ToList()?.Count() ?? 0,
                     })?.ToList();
 
-
                     foreach (ApiCountJobResponse? obj1 in TotalApiCountProviderWise)
                     {
                         var _unprocessebleEntity = TotalUnproceesbleApiCount?.Where(x => x.ProviderName?.ToLower() == obj1?.ProviderName?.ToLower())?.FirstOrDefault()?.TotalUnprocessableEntityCount ?? 0;
@@ -259,12 +254,11 @@ namespace VERIDATA.BLL.Context
                     }
                     DetailedReportRes.AddRange(TotalApiCountProviderWise);
                 }
-
-
             }
 
             return DetailedReportRes;
         }
+
         private List<ConsolidateApiCountJobResponse> GetApiProvider_NameWiseApiCountDetails(List<ApiCounter>? totalApiList)
         {
             List<ConsolidateApiCountJobResponse> ConsolidateReportRes = new();
@@ -296,13 +290,12 @@ namespace VERIDATA.BLL.Context
                     obj.TotalFailureCount = TotalFaliureApiCount?.Count() ?? 0;
 
                     ConsolidateReportRes.Add(obj);
-
                 }
-
             }
 
             return ConsolidateReportRes;
         }
+
         public async Task<AppointeeCountDateWiseDetails> AppointeeCountReport(AppointeeCountReportSearchRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
         {
             AppointeeCountDateWiseDetails _response = new();
@@ -312,8 +305,6 @@ namespace VERIDATA.BLL.Context
             List<AppointeeCountDateWise> _appointeeNonProcessDateWise = new();
             if (reqObj.StatusCode == ReportFilterStatus.LinkNotSent || string.IsNullOrEmpty(reqObj.StatusCode))
             {
-
-
                 List<NonProcessCandidateReportDataResponse> nonProcessAppointeeList = await _reportingDalContext.GetNonProcessCandidateReport(reqObj);
 
                 List<IGrouping<string?, NonProcessCandidateReportDataResponse>>? _noProcessAppointeeCountdateWise = nonProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToShortDateString())?.ToList();
@@ -363,30 +354,34 @@ namespace VERIDATA.BLL.Context
                             _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
                             _intSubStatusCode = 0;
                             break;
+
                         case ReportFilterStatus.ProcessIniOnGoing:
                             _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
                             _intSubStatusCode = 1;
                             break;
+
                         case ReportFilterStatus.ProcessIniSubmit:
                             _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
                             _intSubmitCode = true;
                             break;
+
                         case ReportFilterStatus.Approved:
                             _statusCode = WorkFlowStatusType.Approved?.Trim();
                             break;
+
                         case ReportFilterStatus.Rejected:
                             _statusCode = WorkFlowStatusType.Rejected?.Trim();
                             break;
+
                         case ReportFilterStatus.ForcedApproved:
                             _statusCode = WorkFlowStatusType.ForcedApproved?.Trim();
                             break;
+
                         default:
                             _statusCode = reqObj.StatusCode;
                             break;
-
                     }
                 }
-
 
                 List<UnderProcessCandidateReportDataResponse> underProcessAppointeeList = await _reportingDalContext.GetUnderProcessCandidateReport(reqObj, _statusCode, _intSubmitCode, _intSubStatusCode);
 
@@ -401,7 +396,6 @@ namespace VERIDATA.BLL.Context
                                                                                                                  let _currAppointeeCount = new AppointeeTotalCount()
                                                                                                                  select (_currdata, _totalCount, _currDate, _currDateWiseCount, _nonProcessExsistingData, _currAppointeeCount))
                 {
-
                     //var _date = _currdata;
                     List<AppointeeCountDetails>? _apntListDetails = new();
                     List<AppointeeCountDetails>? _apntDetails = _currdata?.Select(x => new AppointeeCountDetails
@@ -436,8 +430,6 @@ namespace VERIDATA.BLL.Context
                         _appointeeCountDateWises.Add(_currDateWiseCount);
                         _appointeeTotalCountList.Add(_currAppointeeCount);
                     }
-
-
                 }
             }
             _response.AppointeeCountDateWise = _appointeeCountDateWises;
@@ -508,17 +500,15 @@ namespace VERIDATA.BLL.Context
                     LastActivityDesc = row?.ActivityDesc,
                 }).OrderByDescending(y => y.DateOfJoining).ToList();
                 _response = _underProcessViewdata;
-
             }
             return _response;
         }
+
         public async Task<List<AppointeeAgingDataExcelReportDetails>> AppointeeAgingDetailsExcelReport(List<AppointeeAgingDataReportDetails> reqObj)
         {
-
             List<AppointeeAgingDataExcelReportDetails> _response = new();
             if (reqObj.Count > 0)
             {
-
                 var _listData = reqObj?.Select(row => new AppointeeAgingDataExcelReportDetails
                 {
                     AppointeeName = row?.AppointeeName,
@@ -536,6 +526,7 @@ namespace VERIDATA.BLL.Context
 
             return _response;
         }
+
         public async Task<List<AppointeeNationalityDataReportDetails>> AppointeeNationalityDetailsReport(GetNationalityReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
         {
             List<AppointeeNationalityDataReportDetails> _response = new();
@@ -552,7 +543,6 @@ namespace VERIDATA.BLL.Context
             var Indian = "Indian";
             if (reqObj.nationalityType == NationalityType.Indian)
             {
-
                 List<NationalityQueryDataResponse>? nationalityDataList = nationalityData?.Where(x => x.AppointeeDetails?.Nationality?.ToUpper() == Indian.ToUpper())?.ToList();
                 List<AppointeeNationalityDataReportDetails>? _IndianList = GetNationalityList(nationalityDataList);
                 _response = _IndianList;
@@ -562,13 +552,11 @@ namespace VERIDATA.BLL.Context
                 List<NationalityQueryDataResponse>? nationalityDataList = nationalityData?.Where(x => x.AppointeeDetails?.Nationality?.ToUpper() != Indian.ToUpper())?.ToList();
                 List<AppointeeNationalityDataReportDetails>? _OthersList = GetNationalityList(nationalityDataList);
                 _response = _OthersList;
-
             }
             else
             {
                 List<AppointeeNationalityDataReportDetails>? _AllList = GetNationalityList(nationalityData);
                 _response = _AllList;
-
             }
             return _response;
         }
@@ -587,13 +575,11 @@ namespace VERIDATA.BLL.Context
                 StartDate = row?.AppointeeDetails?.PassportValidFrom?.ToShortDateString() ?? "N/A",
                 ExpiryDate = row?.AppointeeDetails?.PassportValidTill?.ToShortDateString() ?? "N/A",
                 PassportNumber = string.IsNullOrEmpty(row?.AppointeeDetails?.PassportNo) ? "N/A" : CommonUtility.DecryptString(key, row?.AppointeeDetails?.PassportNo),
-
             }).OrderByDescending(y => y.candidateId).ToList();
         }
 
         public async Task<List<AppointeeDataFilterReportDetails>> AppointeeDetailsReport(AppointeeDataFilterReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
         {
-
             DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
             DateTime CurrDate = Convert.ToDateTime(_currDate);
             string status = string.Empty;
@@ -656,7 +642,6 @@ namespace VERIDATA.BLL.Context
                 ToDate = reqObj.ToDate,
                 AppointeeName = reqObj.AppointeeName,
                 CandidateId = reqObj.CandidateId,
-
             };
 
             List<UnderProcessQueryDataResponse> underProcessData = await _workFlowDetailsContext.GetUnderProcessDataAsync(UnderProcessfilterRequest);
@@ -678,7 +663,6 @@ namespace VERIDATA.BLL.Context
             }
             if (reqObj.StatusCode == FilterCode.UNDERPROCESS || _IsAllData)
             {
-
                 List<AppointeeDataFilterReportDetails>? _underProcessViewdata = underProcessData?.Where(X => !X.IsJoiningDateLapsed)?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeDataFilterReportDetails
                 {
                     // AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
@@ -691,7 +675,6 @@ namespace VERIDATA.BLL.Context
                     Status = string.IsNullOrEmpty(status) ? row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response" : status,
                 }).ToList();
                 _response.AddRange(_underProcessViewdata);
-
             }
             var res = _response?.OrderByDescending(y => y?.DateOfJoining)?.ToList();
             return res;
@@ -699,11 +682,9 @@ namespace VERIDATA.BLL.Context
 
         public async Task<List<AppointeeDataExcelReportDetails>> AppointeeDetailsExcelReport(List<AppointeeDataFilterReportDetails> reqObj)
         {
-
             List<AppointeeDataExcelReportDetails> _response = new();
             if (reqObj.Count > 0)
             {
-
                 var _listData = reqObj?.Select(row => new AppointeeDataExcelReportDetails
                 {
                     candidateId = row?.candidateId,
@@ -720,9 +701,9 @@ namespace VERIDATA.BLL.Context
 
             return _response;
         }
+
         public async Task<List<AppointeeDataPfReportResponse>> AppointeePfDetailsReport(AppointeeDataFilterReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
         {
-
             DateTime _currDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
             DateTime CurrDate = Convert.ToDateTime(_currDate);
             string status = string.Empty;
@@ -756,20 +737,16 @@ namespace VERIDATA.BLL.Context
             _response.AddRange(_processPfViewdata);
             //}
 
-
             var res = _response?.OrderByDescending(y => y?.DateOfJoining)?.ToList();
             return res;
         }
 
-
         public async Task<List<AppointeePfStatusDataFilterReportResponse>> AppointeePfDetailsFileterReport(AppointeePfDataFilterReportRequest reqObj)
         {
-
             List<AppointeePfStatusDataFilterReportResponse> responseList = new();
 
             try
             {
-
                 bool? isTrusPassbook = null;
                 bool? EpfoPassbook = null;
                 bool? manualPassbook = reqObj.IsManual switch
@@ -793,6 +770,7 @@ namespace VERIDATA.BLL.Context
                         isTrusPassbook = false;
                         EpfoPassbook = false;
                         break;
+
                     case (int)CommonEnum.PfType.EPFnTrus:
                         isTrusPassbook = true;
                         EpfoPassbook = true;
@@ -824,10 +802,7 @@ namespace VERIDATA.BLL.Context
                         epsGap = null;
                         epsGap = null;
                         break;
-
                 }
-
-
 
                 var filterRequest = new PfDataFilterReportRequest
                 {
@@ -838,7 +813,6 @@ namespace VERIDATA.BLL.Context
                     FromDate = reqObj.FromDate,
                     ToDate = reqObj.ToDate,
                     IsPensionGap = epsGap,
-
                 };
 
                 // Fetch the processed data based on the filter
@@ -877,12 +851,10 @@ namespace VERIDATA.BLL.Context
             }
             catch (Exception ex)
             {
-
                 return new List<AppointeePfStatusDataFilterReportResponse>();
             }
-
-
         }
+
         public async Task<List<AppointeePfDataExcelRespopnse>> GetAppointeePfDataExcelReport(List<AppointeePfStatusDataFilterReportResponse> appointeeStatusList)
         {
             var excelDataList = appointeeStatusList.Select(x => new AppointeePfDataExcelRespopnse
@@ -900,7 +872,6 @@ namespace VERIDATA.BLL.Context
                 PensionGapIdentified = x.PensionStatus,
                 AadharuanLink = x.IsUanAadharLink,
                 EpsMember = x.isEpsMember
-
             }).ToList();
 
             return excelDataList;

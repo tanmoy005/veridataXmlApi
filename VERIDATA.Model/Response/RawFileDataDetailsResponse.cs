@@ -5,8 +5,10 @@ namespace VERIDATA.Model.Response
     public class RawFileDataDetailsResponse
     {
         public int id { get; set; }
+
         [Required]
         public int companyId { get; set; }
+
         public int fileId { get; set; }
 
         //[Required]
@@ -16,6 +18,7 @@ namespace VERIDATA.Model.Response
         [Required]
         [StringLength(50, ErrorMessage = "Appointee Name length must be less than or equal 50 characters.")]
         public string? appointeeName { get; set; }
+
         public string? companyName { get; set; }
 
         [Required]

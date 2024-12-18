@@ -1,6 +1,4 @@
-﻿
-
-using VERIDATA.Model.Response.api.Signzy.Base;
+﻿using VERIDATA.Model.Response.api.Signzy.Base;
 
 namespace VERIDATA.Model.Response.api.Signzy
 {
@@ -25,6 +23,7 @@ namespace VERIDATA.Model.Response.api.Signzy
         public string? PanStatus { get; set; }
         public string? PanStatusCode { get; set; }
     }
+
     public class Address
     {
         public string? FullAddress { get; set; }
@@ -36,6 +35,4 @@ namespace VERIDATA.Model.Response.api.Signzy
         public string? Pincode { get; set; }
         public string? Country { get; set; }
     }
-
-
 }

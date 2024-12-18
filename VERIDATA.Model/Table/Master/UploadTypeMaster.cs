@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using VERIDATA.Model.Table.Public;
 using VERIDATA.Model.utility;
 
-
 namespace VERIDATA.Model.Table.Master
 {
     [Table("upload_type_master", Schema = "master")]
@@ -29,7 +28,6 @@ namespace VERIDATA.Model.Table.Master
 
         [Column("category_name", TypeName = DbDataType._text50)]
         public string? CategoryName { get; set; }
-
 
         [Column("active_status", TypeName = DbDataType._boolean)]
         [DefaultValue(true)]

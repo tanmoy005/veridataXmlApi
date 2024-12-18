@@ -6,7 +6,6 @@ using VERIDATA.Model.utility;
 namespace VERIDATA.Model.Table.Master
 {
     [Table("company_wise_upld_master", Schema = "master")]
-
     public class CompanyWiseUpldMaster
     {
         [Key, Required]
@@ -44,6 +43,5 @@ namespace VERIDATA.Model.Table.Master
 
         //[ForeignKey("req_document_id")]
         //public ICollection<AppointeeUploadDetails> AppointeeUploadDetails { get; set; }
-
     }
 }

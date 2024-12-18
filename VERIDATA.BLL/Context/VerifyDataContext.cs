@@ -1047,7 +1047,7 @@ namespace VERIDATA.BLL.Context
                 DateTime _inptdob = Convert.ToDateTime(UanDob);
                 _isFatherNameValidate = !string.IsNullOrEmpty(fathersName) && fathersName.ToUpper() == UanFatherName?.ToUpper();
                 if (AppointeeFullName?.ToUpper() == UanFullName?.ToUpper()
-                    && appointeedetail?.DateOfBirth == _inptdob && _isFatherNameValidate && !_IsPensionGapIdentified )
+                    && appointeedetail?.DateOfBirth == _inptdob && _isFatherNameValidate && !_IsPensionGapIdentified)
                 {
                     IsValid = true;
                 }

@@ -18,8 +18,5 @@ namespace VERIDATA.Model.ExchangeModels
             Subject = subject;
             Content = content;
         }
-
     }
-
-
 }

@@ -5,8 +5,8 @@ namespace VERIDATA.DAL.Utility
 {
     public class Transactions
     {
-
-        private Transactions() { }
+        private Transactions()
+        { }
 
         public static void Run(DbContext dbContext, Func<IDbContextTransaction, bool> act)
         {
@@ -16,11 +16,9 @@ namespace VERIDATA.DAL.Utility
 
                 executionStrategy.Execute(() =>
                 {
-
                     using IDbContextTransaction ret = dbContext.Database.BeginTransaction();
                     if (ret != null)
                     {
-
                         try
                         {
                             if (act.Invoke(ret))
@@ -33,16 +31,13 @@ namespace VERIDATA.DAL.Utility
                             ret.Rollback();
                             throw new Exception("Error during transaction, rolling back");
                         }
-
                     }
                     else
                     {
                         throw new Exception("Error while starting transaction");
                     }
-
                 });
             }
         }
-
     }
 }

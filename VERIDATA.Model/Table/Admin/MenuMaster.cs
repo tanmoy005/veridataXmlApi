@@ -6,7 +6,6 @@ using VERIDATA.Model.utility;
 namespace VERIDATA.Model.Table.Admin
 {
     [Table("menu_master", Schema = "admin")]
-
     public class MenuMaster
     {
         [Key, Required]
@@ -22,7 +21,6 @@ namespace VERIDATA.Model.Table.Admin
 
         [Column("menu_alias", TypeName = DbDataType._text20)]
         public string? MenuAlias { get; set; }
-
 
         [Column("menu_desc", TypeName = DbDataType._text100)]
         public string? MenuDesc { get; set; }
@@ -57,6 +55,5 @@ namespace VERIDATA.Model.Table.Admin
 
         [ForeignKey("menu_id")]
         public ICollection<MenuRoleMapping> MenuRoleMapping { get; set; }
-
     }
 }

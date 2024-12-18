@@ -4,7 +4,6 @@ using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Config
 {
-
     [Table("api_logs", Schema = "config")]
     public class ApiLogs
     {
@@ -33,7 +32,5 @@ namespace VERIDATA.Model.Table.Config
 
         [Column("created_by", TypeName = DbDataType._biginteger)]
         public int CreatedBy { get; set; }
-
     }
-
 }

@@ -6,8 +6,8 @@ namespace VERIDATA.Model.Request
     {
         [Required]
         public int AppointeeId { get; set; }
+
         public int UserId { get; set; }
         public bool? IsSubmit { get; set; }
-
     }
 }

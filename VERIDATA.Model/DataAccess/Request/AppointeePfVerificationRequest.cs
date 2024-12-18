@@ -14,7 +14,8 @@
 
         public int UserId { get; set; }
 
-        public AppointeePfVerificationRequest() { }
+        public AppointeePfVerificationRequest()
+        { }
 
         public AppointeePfVerificationRequest(int appointeeId, bool? isValid, string type, bool? isPensionApplicable, bool? isPensionGapFind, int userId)
         {

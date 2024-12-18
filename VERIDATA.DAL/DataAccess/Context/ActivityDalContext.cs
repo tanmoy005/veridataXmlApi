@@ -9,7 +9,6 @@ using VERIDATA.Model.Table.Public;
 
 namespace VERIDATA.DAL.DataAccess.Context
 {
-
     public class ActivityDalContext : IActivityDalContext
     {
         private readonly DbContextDalDB _dbContextClass;
@@ -37,8 +36,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                                     at.CreatedOn,
                                 };
 
-
-
             var activityList = await activityQuery.ToListAsync().ConfigureAwait(false);
 
             List<AppointeeActivityDetailsResponse>? _activityViewdata = activityList?.Select(row => new AppointeeActivityDetailsResponse
@@ -49,7 +46,6 @@ namespace VERIDATA.DAL.DataAccess.Context
                 ActivityInfo = row.ActivityInfo,
                 Color = row.ActivityColor,
                 CreatedOn = row.CreatedOn
-
             }).OrderBy(x => x.CreatedOn)?.ToList();
 
             return _activityViewdata ?? new List<AppointeeActivityDetailsResponse>();
@@ -71,9 +67,9 @@ namespace VERIDATA.DAL.DataAccess.Context
 
                 _ = await _dbContextClass.ActivityTransaction.AddAsync(activtydata);
                 _ = await _dbContextClass.SaveChangesAsync();
-
             }
         }
+
         public async Task PostApiActivity(ApiCountLogRequest req)
         {
             List<string>? ApiNameData = !string.IsNullOrEmpty(req.Url) ? req.Url?.Split("/")?.ToList() : null;
@@ -95,7 +91,6 @@ namespace VERIDATA.DAL.DataAccess.Context
 
                 _ = await _dbContextClass.ApiCounter.AddAsync(apiActivty);
                 _ = await _dbContextClass.SaveChangesAsync();
-
             }
         }
 

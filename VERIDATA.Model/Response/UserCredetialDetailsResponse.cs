@@ -6,6 +6,7 @@ namespace VERIDATA.Model.Response
     {
         [Required]
         public int AppointeeId { get; set; }
+
         public int UserId { get; set; }
         public int CompanyId { get; set; }
         public string? UserName { get; set; }

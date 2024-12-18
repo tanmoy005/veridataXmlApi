@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Request.api.Karza.Base;
+﻿using VERIDATA.Model.Request.api.Karza.Base;
 
 namespace VERIDATA.Model.Request.api.Karza
 {
@@ -11,6 +10,7 @@ namespace VERIDATA.Model.Request.api.Karza
             partial_data = "N";
             epf_balance = "Y";
         }
+
         public string? request_id { get; set; }
         public string? otp { get; set; }
         public string? is_pdf_required { get; set; }

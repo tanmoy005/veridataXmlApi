@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Request.api.Signzy.Base;
+﻿using VERIDATA.Model.Request.api.Signzy.Base;
 
 namespace VERIDATA.Model.Request.api.Signzy
 {
@@ -9,6 +8,7 @@ namespace VERIDATA.Model.Request.api.Signzy
         {
             getStatusInfo = true;
         }
+
         public string? panNumber { get; set; }
         public bool? getStatusInfo { get; set; }
     }

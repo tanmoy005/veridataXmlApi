@@ -5,7 +5,6 @@ using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Master
 {
-
     [Table("user_types", Schema = "master")]
     public class UserTypes
     {

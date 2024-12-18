@@ -4,7 +4,6 @@ namespace VERIDATA.Model.Response
 {
     public class AppointeeAgingDataReportDetails
     {
-
         [DisplayName("Candidate ID")]
         public string? candidateId { get; set; }
 
@@ -23,7 +22,6 @@ namespace VERIDATA.Model.Response
         [DisplayName("Date Of Joining")]
         public DateTime? DateOfJoining { get; set; }
 
-
         [DisplayName("Link Sent Date")]
         public DateTime? CreatedDate { get; set; }
 
@@ -35,7 +33,5 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("Last Activity Info")]
         public string? LastActivityDesc { get; set; }
-
-
     }
 }

@@ -5,7 +5,6 @@ using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Public
 {
-
     [Table("raw_file_history_data")]
     public class RawFileHistoryData
     {
@@ -20,8 +19,8 @@ namespace VERIDATA.Model.Table.Public
         public int FileId { get; set; }
 
         [Column("company_id", TypeName = DbDataType._integer)]
-        //[ForeignKey("company_id")]
         public int CompanyId { get; set; }
+
         [Column("company_name", TypeName = DbDataType._text50)]
         public string? CompanyName { get; set; }
 

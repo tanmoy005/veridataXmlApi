@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Request.api.Karza.Base;
+﻿using VERIDATA.Model.Request.api.Karza.Base;
 
 namespace VERIDATA.Model.Request.api.Karza
 {

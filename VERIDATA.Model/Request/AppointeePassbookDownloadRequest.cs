@@ -6,8 +6,10 @@ namespace VERIDATA.Model.Request
     {
         [Required]
         public int AppointeeId { get; set; }
+
         [Required]
         public int UserId { get; set; }
+
         public string? Type { get; set; }
     }
 }

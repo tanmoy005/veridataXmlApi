@@ -1,5 +1,4 @@
-﻿
-namespace VERIDATA.Model.Request
+﻿namespace VERIDATA.Model.Request
 {
     public class ManualVeificationProcessDataRequest
     {

@@ -6,6 +6,7 @@ namespace VERIDATA.Model.Response.api.surepass
     {
         public PassportData data { get; set; }
     }
+
     public class PassportData
     {
         public string date_of_application { get; set; }

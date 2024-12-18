@@ -18,10 +18,12 @@ namespace VERIDATA.Model.Response.api.surepass
             public string full_name { get; set; }
             public string zip_data { get; set; }
             public string care_of { get; set; }
+
             //public string profile_image { get; set; }
             //public string raw_xml { get; set; }
             public string share_code { get; set; }
         }
+
         public class Address
         {
             public string loc { get; set; }
@@ -34,6 +36,5 @@ namespace VERIDATA.Model.Response.api.surepass
             public string street { get; set; }
             public string dist { get; set; }
         }
-
     }
 }

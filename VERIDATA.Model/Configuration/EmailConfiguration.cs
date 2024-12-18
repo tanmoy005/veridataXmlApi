@@ -15,6 +15,5 @@
         public string? HostAdminUrl { get; set; }
         public int ReminderResendLockDuration { get; set; }
         public int ReminderAttempt { get; set; }
-
     }
 }

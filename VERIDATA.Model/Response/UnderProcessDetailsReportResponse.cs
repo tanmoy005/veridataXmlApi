@@ -4,8 +4,6 @@ namespace VERIDATA.Model.Response
 {
     public class UnderProcessDetailsReportResponse
     {
-
-
         [DisplayName("Candidate Id")]
         public string? candidateId { get; set; }
 
@@ -29,8 +27,5 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("Status")]
         public string? Status { get; set; }
-
-
-
     }
 }

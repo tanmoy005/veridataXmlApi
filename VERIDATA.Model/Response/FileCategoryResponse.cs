@@ -1,6 +1,5 @@
 ﻿namespace VERIDATA.Model.Response
 {
-
     public class FileCategoryResponse
     {
         public string? FileCategory { get; set; } // Represents upload_doc_type
@@ -18,5 +17,4 @@
         public int? UploadDetailId { get; set; }
         public string? FileName { get; set; }
     }
-
 }

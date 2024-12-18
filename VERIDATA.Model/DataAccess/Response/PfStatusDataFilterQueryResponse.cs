@@ -2,7 +2,6 @@
 {
     public class PfStatusDataFilterQueryResponse
     {
-
         public int ProcessedId { get; set; }
         public int? AppointeeId { get; set; }
 

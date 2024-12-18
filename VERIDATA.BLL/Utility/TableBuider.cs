@@ -7,11 +7,9 @@ namespace VERIDATA.BLL.utility
     {
         private readonly StringBuilder builder = new();
 
-
         public DataRowCollection BodyData { get; set; }
         public DataColumnCollection HeaderData { get; set; }
         public int BodyRows { get; set; }
-
 
         public TableBuider(DataTable dt)
         {
@@ -94,12 +92,12 @@ namespace VERIDATA.BLL.utility
             _ = builder.Append(input);
             _ = builder.Append("</" + tag + ">");
         }
+
         private void AppendSpanTag(string tag, string input)
         {
             _ = builder.Append("<" + tag + "> <span>");
             _ = builder.Append(input);
             _ = builder.Append("</span> </" + tag + ">");
         }
-
     }
 }

@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Response.api.Signzy.Base;
+﻿using VERIDATA.Model.Response.api.Signzy.Base;
 
 namespace VERIDATA.Model.Response.api.Signzy
 {
@@ -7,6 +6,7 @@ namespace VERIDATA.Model.Response.api.Signzy
     {
         public ResultData? Result { get; set; }
     }
+
     public class ResultData
     {
         public int HttpResponseCode { get; set; }

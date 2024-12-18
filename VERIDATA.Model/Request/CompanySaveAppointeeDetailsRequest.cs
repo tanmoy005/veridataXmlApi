@@ -4,9 +4,9 @@ namespace VERIDATA.Model.Request
 {
     public class CompanySaveAppointeeDetailsRequest
     {
-
         [Required]
         public int Id { get; set; }
+
         public int AppointeeId { get; set; }
         public string? CandidateId { get; set; }
 

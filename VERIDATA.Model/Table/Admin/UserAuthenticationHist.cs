@@ -5,7 +5,6 @@ using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Admin
 {
-
     [Table("user_authentication_hist", Schema = "admin")]
     public class UserAuthenticationHist
     {

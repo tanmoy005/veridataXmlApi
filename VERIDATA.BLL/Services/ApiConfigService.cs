@@ -45,8 +45,8 @@ namespace VERIDATA.BLL.Services
             });
 
             return apiConfig;
-
         }
+
         public async Task<ApiConfigResponse> GetApiConfigData(string apiType, string apiName, string provider)
         {
             ApiConfigResponse response = new();
@@ -58,8 +58,6 @@ namespace VERIDATA.BLL.Services
 
                 var responseData = _data.Where(x => x.apiProvider.ToLower() == provider.Trim().ToLower()
                                            && x.typeCode.Trim().ToLower() == apiType.Trim().ToLower() && x.apiName.Trim().ToLower() == apiName.Trim().ToLower()).ToList();
-
-
 
                 response = responseData?.FirstOrDefault();
             }

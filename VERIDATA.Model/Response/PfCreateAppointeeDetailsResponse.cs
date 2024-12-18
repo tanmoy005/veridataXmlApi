@@ -9,6 +9,7 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("Name")]
         public string? AppointeeName { get; set; }
+
         [DisplayName("Email")]
         public string? EmailId { get; set; }
 
@@ -17,7 +18,6 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("Gender")]
         public string? Gender { get; set; }
-
 
         [DisplayName("Mobile No.")]
         public string? MobileNo { get; set; } //number that varified with aadhar
@@ -34,7 +34,6 @@ namespace VERIDATA.Model.Response
         [DisplayName("Relation")]
         public string? MemberRelation { get; set; }
 
-
         [DisplayName("Nationality")]
         public string? Nationality { get; set; }
 
@@ -44,11 +43,8 @@ namespace VERIDATA.Model.Response
         [DisplayName("Qualification")]
         public string? Qualification { get; set; }
 
-
-
         [DisplayName("Maratial Status")]
         public string? MaratialStatus { get; set; }
-
 
         [DisplayName("Is International Worker")]
         public string? IsInternationalWorker { get; set; }

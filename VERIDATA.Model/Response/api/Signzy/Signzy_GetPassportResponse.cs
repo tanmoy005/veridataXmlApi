@@ -5,8 +5,8 @@ namespace VERIDATA.Model.Response.api.Signzy
     public class Signzy_GetPassportResponse : Signzy_BaseResponse
     {
         public PassportResult? Result { get; set; }
-
     }
+
     public class PassportResult
     {
         public string? FileNumber { get; set; }

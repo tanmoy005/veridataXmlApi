@@ -8,6 +8,7 @@ namespace VERIDATA.Model.Response.api.Karza
 
         //public ClientData clientData { get; set; }
     }
+
     public class DateOfIssue
     {
         public string? dispatchedOnFromSource { get; set; }

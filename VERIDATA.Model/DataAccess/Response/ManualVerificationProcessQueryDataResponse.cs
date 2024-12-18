@@ -7,8 +7,10 @@ namespace VERIDATA.Model.DataAccess.Response
         public UnderProcessFileData? UnderProcess { get; set; }
         public AppointeeDetails? AppointeeDetails { get; set; }
         public DateTime? WorkflowCreatedDate { get; set; }
+
         //public int? AppvlStatusId { get; set; }
         public int? VerificationAttempted { get; set; }
+
         public int? AppointeeId { get; set; }
         public bool IsJoiningDateLapsed { get; set; }
         public string? Status { get; set; }

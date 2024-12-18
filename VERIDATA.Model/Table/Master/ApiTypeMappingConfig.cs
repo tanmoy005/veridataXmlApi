@@ -40,6 +40,5 @@ namespace VERIDATA.Model.Table.Master
 
         [Column("created_by", TypeName = DbDataType._biginteger)]
         public int CreatedBy { get; set; }
-
     }
 }

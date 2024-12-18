@@ -10,9 +10,9 @@ namespace VERIDATA.Model.Table.Admin
     {
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
         [Column("id", TypeName = DbDataType._integer)]
         public int Id { get; set; }
+
         [Column("critical_no_days", TypeName = DbDataType._integer)]
         public int? CriticalNoOfDays { get; set; }
 
@@ -37,6 +37,5 @@ namespace VERIDATA.Model.Table.Admin
 
         [Column("appointee_count_rate", TypeName = DbDataType._integer)]
         public int? AppointeCountRate { get; set; }
-
     }
 }

@@ -11,7 +11,9 @@ namespace VERIDATA.DAL.DBContext
     {
         public DbContextDalDB(DbContextOptions<DbContextDalDB> options) : base(options)
         { }
+
         #region admin
+
         public DbSet<UserMaster> UserMaster { get; set; }
 
         public DbSet<UserAuthentication> UserAuthentication { get; set; }
@@ -28,18 +30,24 @@ namespace VERIDATA.DAL.DBContext
         public DbSet<EscalationLevelEmailMapping> EscalationLevelEmailMapping { get; set; }
         public DbSet<EmailEscalationSetupMapping> EmailEscalationSetupMapping { get; set; }
         public DbSet<CompanyInfo> CompanyDetails { get; set; }
-        #endregion
+
+        #endregion admin
 
         #region Public
+
         public DbSet<AppointeeIdGen> AppointeeIdGen { get; set; }
         public DbSet<UploadedXSLfile> UploadedXSLfile { get; set; }
+
         ////  public DbSet<AppointeeUsers> AppointeeUsers { get; set; }
         public DbSet<RawFileData> RawFileData { get; set; }
+
         public DbSet<RawFileHistoryData> RawFileHistoryData { get; set; }
         public DbSet<UnderProcessFileData> UnderProcessFileData { get; set; }
         public DbSet<UnProcessedFileData> UnProcessedFileData { get; set; }
+
         ////   public DbSet<AppointeeProcess> AppointeeProcess { get; set; }
         public DbSet<AppointeeMaster> AppointeeMaster { get; set; }
+
         public DbSet<AppointeeDetails> AppointeeDetails { get; set; }
         public DbSet<AppointeeUploadDetails> AppointeeUploadDetails { get; set; }
         public DbSet<WorkFlowDetails> WorkFlowDetails { get; set; }
@@ -49,9 +57,11 @@ namespace VERIDATA.DAL.DBContext
         public DbSet<AppointeeReasonMappingData> AppointeeReasonMappingData { get; set; }
         public DbSet<AppointeeConsentMapping> AppointeeConsentMapping { get; set; }
         public DbSet<AppointeeEmployementDetails> AppointeeEmployementDetails { get; set; }
-        #endregion
+
+        #endregion Public
 
         #region Master
+
         public DbSet<UserTypes> UserTypes { get; set; }
         public DbSet<RoleMaster> RoleMaster { get; set; }
         public DbSet<DisabilityMaster> DisabilityMaster { get; set; }
@@ -67,23 +77,25 @@ namespace VERIDATA.DAL.DBContext
         public DbSet<ApiTypeMappingConfig> ApiTypeMapping { get; set; }
         public DbSet<FaqMaster> FaqMaster { get; set; }
 
-        #endregion
+        #endregion Master
 
         #region Configuration
 
         public DbSet<Logs> Logs { get; set; }
         public DbSet<CustomError> ErrorLogs { get; set; }
         public DbSet<ApiLogs> ApiLogs { get; set; }
-        #endregion
+
+        #endregion Configuration
 
         #region Acitivity
+
         public DbSet<ActivityMaster> ActivityMaster { get; set; }
         public DbSet<ActivityTransaction> ActivityTransaction { get; set; }
         public DbSet<ApiCounter> ApiCounter { get; set; }
         public DbSet<UploadAppointeeCounter> UploadAppointeeCounter { get; set; }
         public DbSet<AppointeeDetailsUpdateActivity> AppointeeDetailsUpdateActivity { get; set; }
         public DbSet<MailTransaction> AppointeeMailTransaction { get; set; }
-        #endregion
 
+        #endregion Acitivity
     }
 }

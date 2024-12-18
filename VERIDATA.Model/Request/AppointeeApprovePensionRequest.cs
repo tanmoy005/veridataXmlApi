@@ -9,6 +9,7 @@ namespace VERIDATA.Model.Request
 
         [Required]
         public bool IsPensionApplicable { get; set; }
+
         [Required]
         public int userId { get; set; }
     }

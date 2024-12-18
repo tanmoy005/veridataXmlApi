@@ -19,7 +19,6 @@ namespace VERIDATA.Model.Response
         [DisplayName("Date of Joining")]
         public string? dateOfJoining { get; set; }
 
-
         [DisplayName("Link Sent Date")]
         public string? CreatedDate { get; set; }
 

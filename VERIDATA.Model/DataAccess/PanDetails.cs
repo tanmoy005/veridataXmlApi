@@ -7,6 +7,5 @@
         public string? DateOfBirth { get; set; }
         public string? MobileNumber { get; set; }
         //public string? UanNumber { get; set; }
-
     }
 }

@@ -13,6 +13,5 @@
         public string? AppointeeName { get; set; }
         public string? CandidateId { get; set; }
         public string? StatusCode { get; set; }
-
     }
 }

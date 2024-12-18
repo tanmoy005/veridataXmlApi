@@ -4,7 +4,6 @@ namespace VERIDATA.Model.Response
 {
     public class AppointeePfStatusDataFilterReportResponse
     {
-
         [DisplayName("Candidate Id")]
         public string? candidateId { get; set; }
 
@@ -46,6 +45,5 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("EPS Membership")]
         public string? isEpsMember { get; set; }
-
     }
 }

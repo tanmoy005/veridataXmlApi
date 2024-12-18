@@ -17,6 +17,5 @@ namespace VERIDATA.Model.Request
 
         //[StringLength(50)]
         //public string? BrowserName { get; set; }
-
     }
 }

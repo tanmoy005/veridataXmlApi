@@ -121,10 +121,8 @@ namespace VERIDATA.BLL.utility
                     return tnew;
                 });
 
-
             //Send it back
             return collection;
         }
-
     }
 }

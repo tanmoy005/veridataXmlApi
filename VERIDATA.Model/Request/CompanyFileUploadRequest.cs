@@ -7,8 +7,10 @@ namespace VERIDATA.Model.Request
     {
         [Required]
         public int CompanyId { get; set; }
+
         [Required]
         public IFormFile? FileDetails { get; set; }
+
         [Required]
         public int UserId { get; set; }
 

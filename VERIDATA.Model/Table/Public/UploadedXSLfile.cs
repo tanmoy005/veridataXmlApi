@@ -10,7 +10,6 @@ namespace VERIDATA.Model.Table.Public
     {
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
         [Column("file_id", TypeName = DbDataType._biginteger)]
         public int FileId { get; set; }
 
@@ -21,7 +20,6 @@ namespace VERIDATA.Model.Table.Public
         public string? FilePath { get; set; }
 
         [Column("company_id", TypeName = DbDataType._integer)]
-        // [ForeignKey("company_id")]
         public int? CompanyId { get; set; }
 
         [Column("active_status", TypeName = DbDataType._boolean)]
@@ -51,6 +49,5 @@ namespace VERIDATA.Model.Table.Public
 
         [ForeignKey("file_id")]
         public ICollection<ProcessedFileData> ProcessedFileData { get; set; }
-
     }
 }

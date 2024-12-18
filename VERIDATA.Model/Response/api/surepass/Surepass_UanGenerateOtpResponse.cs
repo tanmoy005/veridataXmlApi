@@ -5,6 +5,7 @@ namespace VERIDATA.Model.Response.api.surepass
     public class Surepass_UanGenerateOtpResponse : Surepass_BaseResponse
     {
         public GenerateOtp data { get; set; }
+
         public class GenerateOtp
         {
             public string client_id { get; set; }

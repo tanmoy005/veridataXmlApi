@@ -33,9 +33,5 @@ namespace VERIDATA.Model.Response
 
         [DisplayName("EPFO Passbook Status")]
         public string? EPFOPassBookStatus { get; set; }
-
-
-
-
     }
 }

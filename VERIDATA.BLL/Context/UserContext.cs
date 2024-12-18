@@ -33,7 +33,6 @@ namespace VERIDATA.BLL.Context
         public UserContext(IEmailSender emailSender, IUserDalContext userDalContext, IAppointeeDalContext appointeeDalContext, IMasterDalContext masterDalContext,
             IActivityDalContext activityDalContext, IWorkFlowDalContext workflowDalContext, ITokenAuth tokenAuth, ApiConfiguration apiConfiguration)
         {
-
             _emailSender = emailSender;
             _userDalContext = userDalContext;
             _appointeeDalContext = appointeeDalContext;
@@ -43,6 +42,7 @@ namespace VERIDATA.BLL.Context
             _workflowDalContext = workflowDalContext;
             _configSetup = apiConfiguration;
         }
+
         public async Task<List<AppointeeBasicInfo>> validateExistingUser(List<AppointeeBasicInfo> _appointeeList)
         {
             List<AppointeeBasicInfo>? exstinguserList = new();
@@ -62,7 +62,6 @@ namespace VERIDATA.BLL.Context
                 if (exstinguserList?.Count() > 0)
                 {
                     duplicateCheckUsersList = _appointeeList.Except(exstinguserList).ToList();
-
                 }
                 //duplicate checking in non process data
 
@@ -103,9 +102,9 @@ namespace VERIDATA.BLL.Context
             }
             return exstinguserList?.Distinct()?.ToList();
         }
+
         public async Task<List<UpdatedAppointeeBasicInfo>> updateExistingUser(List<UpdatedAppointeeBasicInfo> _appointeeList, int userId)
         {
-
             List<UpdatedAppointeeBasicInfo>? UpdateUsersList = new();
 
             if (_appointeeList.Count != 0)
@@ -142,9 +141,7 @@ namespace VERIDATA.BLL.Context
                     {
                         UpdateUsersList = UpdateUsersList?.Except(underProcessUserList)?.ToList();
                         await updateCandidateDataStatusWise(underProcessUserList, CandidateUpdateTableType.underProcess, userId);
-
                     }
-
                 }
                 if (UpdateUsersList?.Count != 0)
                 {
@@ -155,38 +152,36 @@ namespace VERIDATA.BLL.Context
             }
             return UpdateUsersList;
         }
+
         private async Task updateCandidateDataStatusWise(List<UpdatedAppointeeBasicInfo> _appointeeList, string type, int userId)
         {
             List<string>? candidateIdList = _appointeeList?.Select(x => x.CandidateID).ToList();
             if (type == CandidateUpdateTableType.Raw && candidateIdList?.Count > 0)
             {
                 await _userDalContext.UpdateRawCandidateData(_appointeeList, candidateIdList, userId);
-
             }
             if (type == CandidateUpdateTableType.linknotsend && candidateIdList?.Count > 0)
             {
-
                 await _userDalContext.UpdateNonProcessCandidateData(_appointeeList, candidateIdList, userId);
-
             }
             if (type == CandidateUpdateTableType.underProcess && candidateIdList?.Count > 0)
             {
                 await _userDalContext.UpdateUnderProcessCandidateData(_appointeeList, candidateIdList, userId);
                 var userDetails = await _userDalContext.GetCandidateDetailsBycandidateId(candidateIdList);
                 await _emailSender.SendAppointeeLoginMail(userDetails, MailType.CandidateUpdate);
-
             }
             if (type == CandidateUpdateTableType.userMaster && candidateIdList?.Count > 0)
             {
                 await _userDalContext.UpdateUserMasterCandidateData(_appointeeList, candidateIdList, userId);
-
             }
         }
+
         public async Task<List<UserDetailsResponse>> getAllAdminUser()
         {
             List<UserDetailsResponse> userList = await _userDalContext.getAllAdminUser();
             return userList;
         }
+
         public async Task<bool> validateUserByCode(string? userCode)
         {
             bool isValidUser = false;
@@ -199,6 +194,7 @@ namespace VERIDATA.BLL.Context
 
             return isValidUser;
         }
+
         public async Task<bool> validateUserByMail(string? userMail)
         {
             bool isValidUser = false;
@@ -211,6 +207,7 @@ namespace VERIDATA.BLL.Context
 
             return isValidUser;
         }
+
         public async Task<bool> validateUserById(int id)
         {
             bool isValidUser = false;
@@ -223,12 +220,14 @@ namespace VERIDATA.BLL.Context
 
             return isValidUser;
         }
+
         public async Task<UserDetailsResponse> getUserDetailsAsyncbyId(int id)
         {
             _ = new UserDetailsResponse();
             UserDetailsResponse response = await _userDalContext.GetUserDetailsAsyncbyId(id);
             return response;
         }
+
         public async Task<bool> createNewUserwithRole(CreateUserDetailsRequest userdetails)
         {
             bool ValidateUser = await validateUserByMail(userdetails.EmailId);
@@ -255,10 +254,12 @@ namespace VERIDATA.BLL.Context
             }
             return isCreateUser;
         }
+
         public async Task editAdminUser(AdminUserUpdateRequest userDetails)
         {
             await _userDalContext.updateAdminUser(userDetails);
         }
+
         public async Task<bool> removeUserDetails(int uid, int userId)
         {
             bool validateUser = await validateUserById(uid);
@@ -270,6 +271,7 @@ namespace VERIDATA.BLL.Context
             await _userDalContext.deleteUserDetails(uid, userId);
             return true;
         }
+
         public async Task<ValidateUserDetails> validateUserSign(UserSignInRequest user)
         {
             string _otp = string.Empty;
@@ -305,11 +307,11 @@ namespace VERIDATA.BLL.Context
                     return validateUserResponse;
                 }
                 validateUserResponse.otp = _otp;
-
             }
             validateUserResponse.StatusCode = HttpStatusCode.OK;
             return validateUserResponse;
         }
+
         public async Task<ValidateUserDetails> validateUserChangePassword(ChangePasswordGenerateOTPRequest user)
         {
             string _otp = string.Empty;
@@ -350,6 +352,7 @@ namespace VERIDATA.BLL.Context
             validateUserResponse.StatusCode = HttpStatusCode.OK;
             return validateUserResponse;
         }
+
         public async Task<ValidateUserSignInResponse> postUserAuthdetails(ValidateUserDetails req)
         {
             _ = new ValidateUserSignInResponse();
@@ -363,6 +366,7 @@ namespace VERIDATA.BLL.Context
             };
             return res;
         }
+
         public async Task updateUserAuthdetails(int userId)
         {
             await _userDalContext.updateUserAuthDetailsAsyncbyId(userId);
@@ -372,10 +376,12 @@ namespace VERIDATA.BLL.Context
         {
             await _userDalContext.postUserSignOutDetailsAsyncbyId(userId);
         }
+
         public async Task postUserPasswordChange(SetNewPasswordRequest req)
         {
             await _userDalContext.postUserPasswordChangeAsyncbyId(req.UserId, req.Password);
         }
+
         private async Task<ValidateUserDetails> validateUserSignDataAsync(UserSignInRequest user)
         {
             ValidateUserDetails res = new();
@@ -399,7 +405,6 @@ namespace VERIDATA.BLL.Context
                     {
                         int validateDbUserId = await validateOtpAttempt(dbusers.UserId, "");
 
-
                         UnderProcessFileData _userDetails = await _appointeeDalContext.GetUnderProcessAppinteeDetailsById(dbusers.RefAppointeeId ?? 0);
                         if (_userDetails.DateOfJoining?.AddDays(GeneralSetup?.GracePeriod ?? 0) < DateTime.Now)
                         {
@@ -409,7 +414,6 @@ namespace VERIDATA.BLL.Context
                         {
                             dbuserStatusId = validateDbUserId;
                         }
-
                     }
                 }
             }
@@ -422,6 +426,7 @@ namespace VERIDATA.BLL.Context
             res.userId = dbusers?.UserId ?? 0;
             return res;
         }
+
         private async Task<ValidateUserDetails> validateUserForgetPasswordDataAsync(string userCode)
         {
             ValidateUserDetails res = new();
@@ -435,12 +440,10 @@ namespace VERIDATA.BLL.Context
                 dbuserStatusId = (!(dbusers.ActiveStatus ?? false)) ? -2 : !(dbusers.CurrStatus ?? false) ? -4 : dbuserStatusId;
                 if (dbuserStatusId == -1)
                 {
-
                     dbuserStatusId = dbusers?.UserId ?? dbuserStatusId;
                     if (dbusers.RefAppointeeId != null)
                     {
                         int validateDbUserId = await validateOtpAttempt(dbusers.UserId, "");
-
 
                         //UnderProcessFileData _userDetails = await _appointeeDalContext.GetUnderProcessAppinteeDetailsById(dbusers.RefAppointeeId ?? 0);
                         //if (_userDetails.DateOfJoining?.AddDays(GeneralSetup?.GracePeriod ?? 0) < DateTime.Now)
@@ -451,7 +454,6 @@ namespace VERIDATA.BLL.Context
                         {
                             dbuserStatusId = validateDbUserId;
                         }
-
                     }
                 }
             }
@@ -487,6 +489,7 @@ namespace VERIDATA.BLL.Context
             }
             return dbuserStatusId;
         }
+
         private async Task<string> candidateSigninGenerateOtp(ValidateUserDetails user)
         {
             string otp = string.Empty;
@@ -502,10 +505,10 @@ namespace VERIDATA.BLL.Context
                 mailDetails.MailType = MailType.SendOTP;
                 mailDetails.ParseData = bodyDetails;
                 await _emailSender.SendAppointeeMail(user.userMailId, mailDetails);
-
             }
             return otp;
         }
+
         public async Task<bool> validateProfilePasswowrdAsync(ValidateProfilePasswordRequest req)
         {
             string dycriptPassword = CommonUtility.DecryptString(_configSetup.EncriptKey, req.ProfilePassword);
@@ -515,6 +518,7 @@ namespace VERIDATA.BLL.Context
             bool Isvalidate = _authenticatedPassword?.UserProfilePwd == _password;
             return Isvalidate;
         }
+
         public async Task<int> validateUserByOtp(string? clientId, string? otp, int userType)
         {
             int _userId = 0;
@@ -568,6 +572,7 @@ namespace VERIDATA.BLL.Context
 
             return _userId;
         }
+
         public async Task<AuthenticatedUserResponse> getValidatedSigninUserDetails(int userId)
         {
             AuthenticatedUserResponse authUsertDetails = new()
@@ -595,6 +600,7 @@ namespace VERIDATA.BLL.Context
             authUsertDetails.TokenDetails = tokenDetails;
             return authUsertDetails;
         }
+
         public async Task<TokenDetailsResponse> getRefreshToken(RefreshTokenRequest reqObj)
         {
             TokenDetailsResponse response = new();
@@ -614,7 +620,6 @@ namespace VERIDATA.BLL.Context
                     UserAuthenticationHist? user = await _userDalContext.getAuthHistUserDetailsById(userId);
                     if (!(user == null || user.TokenNo != refreshToken) || user.RefreshTokenExpiryTime <= DateTime.Now)
                     {
-
                         var newAccessToken = _tokenAuth.GenerateAccessToken(principal.Claims);
                         var newRefreshToken = _tokenAuth.GenerateRefreshToken();
 
@@ -632,7 +637,6 @@ namespace VERIDATA.BLL.Context
         public async Task editUserProfile(EditUserProfileRequest req)
         {
             await _userDalContext.editUserProfile(req);
-
         }
 
         public async Task<List<MenuNodeResponse>> GetMenuData(int userid)
@@ -641,9 +645,9 @@ namespace VERIDATA.BLL.Context
             List<MenuNodeResponse> _data = data.DistinctBy(x => x.Id).OrderBy(x => x.Id).ToList();
             List<MenuNodeResponse>? mainMenuLst = _data.Where(x => x.Pid == 0 && x.Level == 1)?.ToList();
 
-
             return mainMenuLst;
         }
+
         private async Task<List<MenuNodeResponse>> GetMenuLeafNodeList(int userid)
         {
             RoleDetailsResponse userRole = await _userDalContext.GetUserRole(userid);
@@ -687,6 +691,7 @@ namespace VERIDATA.BLL.Context
             //data = data.Where(x => x.Level == 1).ToList();
             return data;
         }
+
         private List<MenuNodeResponse> GenerateNestedMenuNodes(List<MenuNodeResponse> menus)
         {
             List<MenuNodeResponse>? uniqueMenus = menus.Where(x => x.IsMenu).DistinctBy(x => x.Id)?.ToList();
@@ -704,6 +709,7 @@ namespace VERIDATA.BLL.Context
 
             return result;
         }
+
         private List<MenuNodeResponse> findChild(List<MenuNodeResponse> lst, int chldlevel, int pid)
         {
             List<MenuNodeResponse>? chldLst = new();
@@ -713,7 +719,6 @@ namespace VERIDATA.BLL.Context
                 {
                     x.Children = findChild(lst, x.Level + 1, x.Id);
                     chldLst.Add(x);
-
                 }
             });
             chldLst = chldLst.Any() ? chldLst : null;
@@ -737,21 +742,27 @@ namespace VERIDATA.BLL.Context
                 case CommonEnum.MasterDataType.GENDER:
                     _dataList = await _masterDalContext.getGenderDataAsync();
                     break;
+
                 case CommonEnum.MasterDataType.MARATIALSTAT:
                     _dataList = await _masterDalContext.getMaratialStatusDataAsync();
                     break;
+
                 case CommonEnum.MasterDataType.DISABILITY:
                     _dataList = await _masterDalContext.getDisabilityDataAsync();
                     break;
+
                 case CommonEnum.MasterDataType.FILETYPE:
                     _dataList = await _masterDalContext.getFileTypeDataAsync();
                     break;
+
                 case CommonEnum.MasterDataType.QUALIFICATION:
                     _dataList = await _masterDalContext.getQualificationDataAsync();
                     break;
+
                 case CommonEnum.MasterDataType.ROLE:
                     _dataList = await _masterDalContext.getUserRoleAsync();
                     break;
+
                 case CommonEnum.MasterDataType.ENTITY:
                     var _companyList = await _masterDalContext.GetAllCompanyEntityMaster();
                     _dataList = _companyList?.Select(x => new DropDownDetailsResponse
@@ -761,9 +772,9 @@ namespace VERIDATA.BLL.Context
                         Value = x.CompanyName
                     })?.ToList();
                     break;
+
                 default:
                     return _dataList;
-
             }
 
             return _dataList;
@@ -790,6 +801,7 @@ namespace VERIDATA.BLL.Context
             Wizdata.Add(_lonkNotSentdata);
             return Wizdata;
         }
+
         private async Task<WidgetTotalOfferDetails> GetTotalOffer(int filterDays)
         {
             WidgetTotalOfferDetails Response = new();
@@ -840,6 +852,7 @@ namespace VERIDATA.BLL.Context
             Response.AppointeeList = appinteeList;
             return Response;
         }
+
         private async Task<DashboardWidgetResponse> GetVerifiedData(int filterDays, bool isfilterd, List<int?> appointeeList)
         {
             DashboardWidgetResponse Response = new();
@@ -859,7 +872,6 @@ namespace VERIDATA.BLL.Context
             List<ProcessedDataDetailsResponse> list = await _workflowDalContext.GetProcessedAppointeeDetailsAsync(processedFilterRequest);
 
             List<AppointeeDetails>? data = list.Where(x => appointeeList.Contains(x.AppointeeId)).DistinctBy(x => x.AppointeeId)?.Select(x => x.AppointeeData).ToList();
-
 
             VerifiedData.WidgetTypeValue = data?.Count ?? 0;
 
@@ -886,6 +898,7 @@ namespace VERIDATA.BLL.Context
             Response.WidgetValue = VerifiedData;
             return Response;
         }
+
         private async Task<List<UnderProcessDetailsResponse>> GetUnderProcessedAppointeeList(int filterDays, List<int?> appointeeList)
         {
             int filterDaysrange = filterDays;
@@ -895,7 +908,6 @@ namespace VERIDATA.BLL.Context
 
             AppointeeSeacrhFilterRequest reqObj = new() { FromDate = startDate };
             List<UnderProcessQueryDataResponse> underProcessAppointeeList = await _workflowDalContext.GetUnderProcessDataAsync(reqObj);
-
 
             List<UnderProcessDetailsResponse>? _underProcessViewdata = underProcessAppointeeList?.DistinctBy(x => x.AppointeeId).Where(x => appointeeList.Contains(x.AppointeeId)).Select(row => new UnderProcessDetailsResponse
             {
@@ -918,9 +930,9 @@ namespace VERIDATA.BLL.Context
                 createdDate = row.UnderProcess?.CreatedOn
             }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
 
-
             return _underProcessViewdata;
         }
+
         private DashboardWidgetResponse GetNoResponsedData(int filterDays, List<UnderProcessDetailsResponse> appointeeList)
         {
             DashboardWidgetResponse Response = new();
@@ -957,6 +969,7 @@ namespace VERIDATA.BLL.Context
             Response.WidgetValue = UnderProcessedData;
             return Response;
         }
+
         private DashboardWidgetResponse GetUnderProcessedData(int filterDays, List<UnderProcessDetailsResponse> appointeeList)
         {
             DashboardWidgetResponse Response = new();
@@ -996,6 +1009,7 @@ namespace VERIDATA.BLL.Context
             Response.WidgetValue = UnderProcessedData;
             return Response;
         }
+
         private static DashboardWidgetResponse GetLapsedData(int filterDays, List<UnderProcessDetailsResponse> appointeeList)
         {
             DashboardWidgetResponse Response = new();
@@ -1032,6 +1046,7 @@ namespace VERIDATA.BLL.Context
             Response.WidgetValue = UnderProcessedData;
             return Response;
         }
+
         private async Task<DashboardWidgetResponse> GetLinkNotSentData(int filterDays)
         {
             DashboardWidgetResponse Response = new();
@@ -1056,7 +1071,6 @@ namespace VERIDATA.BLL.Context
                 Date = x.Key
             })?.ToList();
 
-
             List<int> ChartData = new();
             if (startDate != null)
             {
@@ -1073,6 +1087,7 @@ namespace VERIDATA.BLL.Context
             Response.WidgetValue = LinkNotSentData;
             return Response;
         }
+
         public async Task<CriticalAppointeeWidgetResponse> GetCriticalData()
         {
             CriticalAppointeeWidgetResponse returnObj = new();
@@ -1095,6 +1110,7 @@ namespace VERIDATA.BLL.Context
             returnObj.CriticalDaysNo = filterDaysrange;
             return returnObj;
         }
+
         public async Task<WidgetProgressDataResponse> GetTotalProgressWidgetData()
         {
             WidgetProgressDataResponse widgetData = new();
@@ -1148,23 +1164,27 @@ namespace VERIDATA.BLL.Context
                 case FilterCode.UNDERPROCESS:
                     wizdata = await GeTop5tUnderProcessDataAsync(5);
                     break;
+
                 case FilterCode.LINKNOTSENT:
                     wizdata = await GetTop5NonProcessDataAsync(5);
                     break;
+
                 case FilterCode.VERIFIED:
                     wizdata = await GetTop5ProcessDataAsync(5);
                     break;
+
                 case FilterCode.REJECTED:
                     wizdata = await GetTop5RejectedDataAsync(5);
                     break;
+
                 case FilterCode.LAPSED:
                     wizdata = await GetTop5LapsedDataAsync(5);
                     break;
-
             }
 
             return wizdata;
         }
+
         private async Task<List<AppointeeStatusWizResponse>> GeTop5tUnderProcessDataAsync(int numbers)
         {
             string currDate = DateTime.Now.ToShortDateString();
@@ -1189,9 +1209,9 @@ namespace VERIDATA.BLL.Context
                 CreatedDate = row?.UnderProcess?.CreatedOn
             })?.ToList();
 
-
             return _underProcessViewdata;
         }
+
         private async Task<List<AppointeeStatusWizResponse>> GetTop5NonProcessDataAsync(int numbers)
         {
             AppointeeSeacrhFilterRequest req = new();
@@ -1214,9 +1234,9 @@ namespace VERIDATA.BLL.Context
                 CreatedDate = row.CreatedOn
             })?.ToList();
 
-
             return _unProcessViewdata;
         }
+
         private async Task<List<AppointeeStatusWizResponse>> GetTop5ProcessDataAsync(int numbers)
         {
             ProcessedFilterRequest processedFilterRequest = new();
@@ -1237,9 +1257,9 @@ namespace VERIDATA.BLL.Context
                 StatusCode = 3,
             })?.ToList();
 
-
             return _processViewdata;
         }
+
         private async Task<List<AppointeeStatusWizResponse>> GetTop5RejectedDataAsync(int numbers)
         {
             FilterRequest filterRequest = new();
@@ -1261,6 +1281,7 @@ namespace VERIDATA.BLL.Context
 
             return _rejectedViewdata;
         }
+
         private async Task<List<AppointeeStatusWizResponse>> GetTop5LapsedDataAsync(int numbers)
         {
             string currDate = DateTime.Now.ToShortDateString();
@@ -1283,21 +1304,19 @@ namespace VERIDATA.BLL.Context
                 StatusCode = 5,
             })?.ToList();
 
-
             return _lapsedViewdata;
         }
+
         public async Task updateAppointeeConsent(AppointeeConsentSubmitRequest req)
         {
             await _activityDalContext.PostActivityDetails(req.AppointeeId, req.UserId, req.ConsentStatusCode);
             await _appointeeDalContext.postAppointeeContestAsync(req);
-
         }
 
         public async Task updateAppointeePrerequisite(AppointeeConsentSubmitRequest req)
         {
             // await _activityDalContext.PostActivityDetails(req.AppointeeId, req.UserId, req.ConsentStatusCode);
             await _appointeeDalContext.postAppointeeContestAsync(req);
-
         }
     }
 }

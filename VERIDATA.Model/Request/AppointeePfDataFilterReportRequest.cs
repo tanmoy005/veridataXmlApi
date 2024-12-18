@@ -8,6 +8,5 @@
         public int? IsManual { get; set; }
         public bool? PensionStatus { get; set; }
         public int? EpsGap { get; set; }
-
     }
 }

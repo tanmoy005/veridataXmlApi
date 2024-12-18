@@ -8,8 +8,8 @@ namespace VERIDATA.Model.DataAccess.Response
         {
             AppointeeData = new AppointeeDetails();
             ProcessData = new ProcessedFileData();
-
         }
+
         public AppointeeDetails? AppointeeData { get; set; }
         public ProcessedFileData? ProcessData { get; set; }
     }

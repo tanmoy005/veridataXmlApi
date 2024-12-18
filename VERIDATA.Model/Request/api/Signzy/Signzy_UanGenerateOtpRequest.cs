@@ -4,6 +4,5 @@
     {
         //public string? uan { get; set; }
         public string? phoneNumber { get; set; }
-
     }
 }

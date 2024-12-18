@@ -6,6 +6,7 @@ namespace VERIDATA.Model.Response.api.surepass
     {
         public AadharGenerateOtp data { get; set; }
     }
+
     public class AadharGenerateOtp
     {
         public string client_id { get; set; }

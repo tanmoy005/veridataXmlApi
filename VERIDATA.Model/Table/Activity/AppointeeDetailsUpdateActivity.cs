@@ -5,11 +5,9 @@ using VERIDATA.Model.utility;
 
 namespace VERIDATA.Model.Table.Activity
 {
-
     [Table("appointee_update_activity", Schema = "activity")]
     public class AppointeeDetailsUpdateActivity
     {
-
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("activity_id", TypeName = DbDataType._integer)]
@@ -33,6 +31,5 @@ namespace VERIDATA.Model.Table.Activity
 
         [Column("created_on", TypeName = DbDataType._datetime)]
         public DateTime? CreatedOn { get; set; }
-
     }
 }

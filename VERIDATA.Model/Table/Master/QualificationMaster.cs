@@ -8,7 +8,6 @@ namespace VERIDATA.Model.Table.Master
     [Table("qualification_master", Schema = "master")]
     public class QualificationMaster
     {
-
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("qualification_id", TypeName = DbDataType._integer)]

@@ -4,7 +4,6 @@ namespace VERIDATA.Model.DataAccess.Response
 {
     public class ConsolidateApiCountJobResponse
     {
-
         [DisplayName("Provider Name")]
         public string? ProviderName { get; set; }
 
@@ -22,7 +21,5 @@ namespace VERIDATA.Model.DataAccess.Response
 
         [DisplayName("Api Unprocessable Count")]
         public int? TotalUnprocessableEntityCount { get; set; }
-
-
     }
 }

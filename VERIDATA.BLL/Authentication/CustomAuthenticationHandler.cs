@@ -1,5 +1,4 @@
-﻿
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -15,6 +14,7 @@ namespace VERIDATA.BLL.Authentication
     public class CustomAuthenticationHandler : AuthenticationHandler<CustomAuthenticationOptions>
     {
         public static TokenConfiguration config;
+
         public CustomAuthenticationHandler(IOptionsMonitor<CustomAuthenticationOptions> options, TokenConfiguration Configuration, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
             : base(options, logger, encoder, clock)
         {
@@ -49,7 +49,6 @@ namespace VERIDATA.BLL.Authentication
             {
                 var handler = new JwtSecurityTokenHandler();
                 var user = handler.ValidateToken(token, validationParameters, out var validatedToken);
-
 
                 var claims = user?.Claims?.ToList();
 

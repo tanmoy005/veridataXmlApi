@@ -1,5 +1,4 @@
-﻿
-namespace VERIDATA.Model.DataAccess
+﻿namespace VERIDATA.Model.DataAccess
 {
     public class GetCandidateUanDetails : BaseApiResponse
     {

@@ -1,6 +1,4 @@
-﻿
-
-using VERIDATA.Model.Response.api.Signzy.Base;
+﻿using VERIDATA.Model.Response.api.Signzy.Base;
 
 namespace VERIDATA.Model.Response.api.Signzy
 {
@@ -8,6 +6,7 @@ namespace VERIDATA.Model.Response.api.Signzy
     {
         public List<EmploymentHistoryDetail>? Result { get; set; }
     }
+
     public class EmploymentHistoryDetail
     {
         public string? DateOfExit { get; set; }
@@ -18,6 +17,4 @@ namespace VERIDATA.Model.Response.api.Signzy
         public string? Name { get; set; }
         public string? Uan { get; set; }
     }
-
-
 }

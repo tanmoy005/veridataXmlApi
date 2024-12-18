@@ -12,9 +12,9 @@ namespace VERIDATA.Model.Table.Admin
     {
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
         [Column("company_id", TypeName = DbDataType._integer)]
         public int Id { get; set; }
+
         [Column("company_name", TypeName = DbDataType._text100)]
         public string? CompanyName { get; set; }
 
@@ -50,7 +50,7 @@ namespace VERIDATA.Model.Table.Admin
         //public ICollection<CompanyUsers> CompanyUsers { get; set; }
 
         //[ForeignKey("company_id")]
-        //public ICollection<CompanyAppUserMapping> CompanyAppUserMapping { get; set; } 
+        //public ICollection<CompanyAppUserMapping> CompanyAppUserMapping { get; set; }
 
         [ForeignKey("company_id")]
         public ICollection<AppointeeDetails> AppointeeDetails { get; set; }
@@ -66,7 +66,5 @@ namespace VERIDATA.Model.Table.Admin
 
         [ForeignKey("company_id")]
         public ICollection<AppointeeUploadDetails> AppointeeUploadDetails { get; set; }
-
-
     }
 }

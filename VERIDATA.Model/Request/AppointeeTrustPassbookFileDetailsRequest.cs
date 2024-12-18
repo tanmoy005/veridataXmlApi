@@ -6,7 +6,7 @@ namespace VERIDATA.Model.Request
     {
         [Required]
         public AppointeeFileDetailsRequest FileRequest { get; set; }
-        public bool? TrustPassbookAvailable { get; set; }
 
+        public bool? TrustPassbookAvailable { get; set; }
     }
 }

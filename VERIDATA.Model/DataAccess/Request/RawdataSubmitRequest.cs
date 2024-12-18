@@ -1,5 +1,4 @@
-﻿
-using VERIDATA.Model.Response;
+﻿using VERIDATA.Model.Response;
 
 namespace VERIDATA.Model.DataAccess.Request
 {

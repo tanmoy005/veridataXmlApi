@@ -8,7 +8,6 @@ namespace VERIDATA.Model.Table.Admin
     [Table("escalationlevel_master", Schema = "admin")]
     public class EscalationLevelMaster
     {
-
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("level_id", TypeName = DbDataType._integer)]

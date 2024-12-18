@@ -8,5 +8,4 @@ namespace VERIDATA.Model.Response.api.Signzy
         public string? ClientRefNum { get; set; }
         public string? TxnId { get; set; }
     }
-
 }

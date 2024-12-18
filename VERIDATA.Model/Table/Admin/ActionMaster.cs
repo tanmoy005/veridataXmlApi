@@ -28,6 +28,5 @@ namespace VERIDATA.Model.Table.Admin
 
         [Column("created_on", TypeName = DbDataType._datetime)]
         public DateTime? CreatedOn { get; set; }
-
     }
 }

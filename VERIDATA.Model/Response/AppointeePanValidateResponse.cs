@@ -1,5 +1,4 @@
-﻿
-using System.Net;
+﻿using System.Net;
 
 namespace VERIDATA.Model.Response
 {
@@ -11,6 +10,5 @@ namespace VERIDATA.Model.Response
         public string? UanNumber { get; set; }
         public bool? IsUanAvailable { get; set; }
         public bool IsUanFetchCall { get; set; }
-
     }
 }

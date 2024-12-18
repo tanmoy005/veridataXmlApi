@@ -1,5 +1,4 @@
-﻿
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using Mustache;
 
@@ -41,6 +40,7 @@ namespace VERIDATA.DAL.utility
             }
             return string.Empty;
         }
+
         public static string DecryptString(string key, string cipherText)
         {
             string data = string.Empty;
@@ -65,7 +65,5 @@ namespace VERIDATA.DAL.utility
             }
             return data;
         }
-
     }
-
 }

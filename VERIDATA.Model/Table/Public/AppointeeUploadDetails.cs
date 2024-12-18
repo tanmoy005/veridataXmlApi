@@ -8,7 +8,6 @@ namespace VERIDATA.Model.Table.Public
     [Table("upload_details")]
     public class AppointeeUploadDetails
     {
-
         [Key, Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("upload_det_id", TypeName = DbDataType._biginteger)]
