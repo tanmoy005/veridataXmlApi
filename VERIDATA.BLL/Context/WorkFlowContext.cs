@@ -20,6 +20,7 @@ namespace VERIDATA.BLL.Context
     {
         //private readonly DbContextDalDB _dbContextClass;
         private readonly IFileContext _fileContext;
+
         private readonly IWorkFlowDalContext _dbContextWorkflow;
         private readonly IUserDalContext _dbContextUser;
         private readonly IMasterDalContext _dbContextMaster;
@@ -29,6 +30,7 @@ namespace VERIDATA.BLL.Context
         private readonly ApiConfiguration _aadhaarConfig;
         private readonly EmailConfiguration _emailConfig;
         private readonly string key;
+
         public WorkFlowContext(IWorkFlowDalContext dbContextWorkflow, IMasterDalContext dbContextMaster, IUserDalContext dbContextUser, IAppointeeDalContext dbContextCandiate,
             IFileContext fileContext, IEmailSender emailSender, ApiConfiguration aadhaarConfig, EmailConfiguration emailConfig, IActivityDalContext dbContextActivity)
         {
@@ -44,6 +46,7 @@ namespace VERIDATA.BLL.Context
             key = aadhaarConfig.EncriptKey;
             _emailConfig = emailConfig;
         }
+
         public async Task<List<ProcessDataResponse>> GetProcessDataAsync(ProcessedFilterRequest filter)
         {
             List<ProcessDataResponse>? _processViewdata = new();
@@ -103,15 +106,14 @@ namespace VERIDATA.BLL.Context
                     passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "Auto" : "NA",
                     passbookStatusCode = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? string.Empty : row?.AppointeeData?.IsManualPassbook ?? false ? "MNL" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AF" : string.Empty,
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
-
                 }).ToList();
             }
 
             return _processViewdata;
         }
+
         public async Task<List<RejectedDataResponse>> GetRejectedDataAsync(FilterRequest filter)
         {
-
             List<RejectedDataDetailsResponse> rejectedAppointeeList = await _dbContextWorkflow.GetRejectedAppointeeDetailsAsync(filter);
             List<RejectedDataResponse> response = new();
             List<IGrouping<int?, RejectedDataDetailsResponse>> GroupData = rejectedAppointeeList.GroupBy(x => x.AppointeeId).ToList();
@@ -142,6 +144,7 @@ namespace VERIDATA.BLL.Context
 
             return response;
         }
+
         public async Task<List<UnderProcessDetailsResponse>> GetUnderProcessDataAsync(AppointeeSeacrhFilterRequest reqObj)
         {
             List<UnderProcessDetailsResponse>? _underProcessViewdata = new();
@@ -176,7 +179,6 @@ namespace VERIDATA.BLL.Context
                         passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "Auto" : "NA",
                         createdDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
-
                 }
                 else
                 {
@@ -220,11 +222,10 @@ namespace VERIDATA.BLL.Context
                 {
                     _underProcessViewdata = reqObj.IssueFilter == true ? _underProcessViewdata?.Where(x => x.isNoIsuueinVerification == false)?.ToList() : _underProcessViewdata?.Where(x => x.isNoIsuueinVerification == true)?.ToList();
                 }
-
-
             }
             return _underProcessViewdata;
         }
+
         public async Task<List<UnderProcessDetailsResponse>> GetExpiredProcessDataAsync(AppointeeSeacrhFilterRequest reqObj)
         {
             List<UnderProcessDetailsResponse>? _expiredProcessViewdata = new();
@@ -236,7 +237,6 @@ namespace VERIDATA.BLL.Context
             {
                 if (!(reqObj.IsFiltered ?? false))
                 {
-
                     _expiredProcessViewdata = list.Select(row => new UnderProcessDetailsResponse
                     {
                         id = row.UnderProcess.UnderProcessId,
@@ -289,6 +289,7 @@ namespace VERIDATA.BLL.Context
             }
             return _expiredProcessData;
         }
+
         public async Task<List<CriticalAppointeeResponse>> GetCriticalAppointeeList(CriticalFilterDataRequest reqObj)
         {
             //  var filterdaysrange = _configSetup.CriticalDaysLimit;
@@ -304,7 +305,6 @@ namespace VERIDATA.BLL.Context
 
             List<CriticalAppointeeResponse>? _underProcessViewdata = underProcessData?.Select(row => new CriticalAppointeeResponse
             {
-
                 id = row?.UnderProcess?.UnderProcessId ?? 0,
                 fileId = row?.UnderProcess?.FileId ?? 0,
                 companyId = row?.UnderProcess?.CompanyId ?? 0,
@@ -348,6 +348,7 @@ namespace VERIDATA.BLL.Context
             }
             return actionRequiredListdata;
         }
+
         public async Task<List<RawFileDataDetailsResponse>> getRawfileData(int? fileId, int companyId)
         {
             List<RawFileData> _rawdataList = await _dbContextWorkflow.GetRawfiledataByIdAsync(fileId, companyId);
@@ -381,10 +382,10 @@ namespace VERIDATA.BLL.Context
 
             return RawFileData;
         }
+
         public async Task<List<RawFileDataDetailsResponse>> GetNonProcessDataAsync(AppointeeSeacrhFilterRequest reqObj)
         {
             List<UnProcessedFileData> _unProcessData = await _dbContextWorkflow.GetUnProcessDataAsync(reqObj);
-
 
             List<RawFileDataDetailsResponse> unProcessViewdata = new();
 
@@ -406,10 +407,11 @@ namespace VERIDATA.BLL.Context
 
             return unProcessViewdata;
         }
+
         public async Task<List<UnderProcessDetailsResponse>> ProcessRawData(RawDataProcessRequest rawdfileata)
         {
             List<UnderProcessDetailsResponse> _underProcessViewdata = await MoveDatatoUnderProcessAsync(rawdfileata);
-            //end Remove from rawdatalist 
+            //end Remove from rawdatalist
             RoleDetailsResponse _roleDetails = await _dbContextMaster.getRoleDetailsByRoleAlias(RoleTypeAlias.Appointee);
             //begin Appointee User Create
             List<CreateUserDetailsRequest>? userList = new();
@@ -451,6 +453,7 @@ namespace VERIDATA.BLL.Context
             }
             return _underProcessViewdata;
         }
+
         private async Task<List<UnderProcessDetailsResponse>> MoveDatatoUnderProcessAsync(RawDataProcessRequest rawRequestData)
         {
             List<RawFileDataDetailsResponse> _underProcessData = new();
@@ -459,7 +462,6 @@ namespace VERIDATA.BLL.Context
             if (rawRequestData?.IsUnprocessed ?? false)
             {
                 _underProcessData = await _dbContextWorkflow.GetNonProcessedDetailsByTypeId(rawRequestData?.RawDataList, rawRequestData?.UserId);
-
             }
             else
             {
@@ -504,6 +506,7 @@ namespace VERIDATA.BLL.Context
             //end underprocess and unprocess  insert
             return _underProcessViewdata;
         }
+
         public async Task PostAppointeeSaveDetailsAsync(AppointeeSaveDetailsRequest AppointeeDetails)
         {
             if (AppointeeDetails != null)
@@ -514,6 +517,7 @@ namespace VERIDATA.BLL.Context
                 await _dbContextWorkflow.PostAppointeeSaveDetailsAsync(AppointeeDetails);
             }
         }
+
         public async Task UpdateAppointeeDojByAdmin(CompanySaveAppointeeDetailsRequest AppointeeDetails)
         {
             if (AppointeeDetails != null)
@@ -521,6 +525,7 @@ namespace VERIDATA.BLL.Context
                 await _dbContextWorkflow.UpdateAppointeeDojByAdmin(AppointeeDetails);
             }
         }
+
         public async Task PostAppointeeFileDetailsAsync(AppointeeFileDetailsRequest AppointeeFileDetails)
         {
             _ = _aadhaarConfig.EncriptKey;
@@ -551,13 +556,11 @@ namespace VERIDATA.BLL.Context
                 }
                 if ((AppointeeFileDetails.IsSubmit ?? false) && !_isSubmit)
                 {
-
                     //if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsPanVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false))
                     if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false))
                     {
                         mailType = MailType.AutoApprove;
                         await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeFileDetails?.UserId ?? 0, true);//isapprove set true
-
                     }
                     else if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && string.IsNullOrEmpty(_appointeedetails.UANNumber) && _appointeedetails.IsUanAvailable == false)
                     {
@@ -575,12 +578,10 @@ namespace VERIDATA.BLL.Context
                 }
 
                 await PostMailFileSubmisstionSuccess(_appointeedetails.AppointeeId ?? 0, AppointeeFileDetails?.UserId ?? 0, mailType);
-
             }
 
             await _dbContextActivity.PostActivityDetails(AppointeeFileDetails?.AppointeeId ?? 0, AppointeeFileDetails?.UserId ?? 0, ActivityLog.DATASBMT);
         }
-
 
         private async Task DataUploadAndApproved(int? appointeeId, int userId, bool IsApproved)
         {
@@ -593,7 +594,6 @@ namespace VERIDATA.BLL.Context
                 approvalStatus = string.Empty,
                 remarks = string.Empty,
                 userId = userId
-
             };
             await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(workFlowDataRequest);
             if (IsApproved)
@@ -611,6 +611,7 @@ namespace VERIDATA.BLL.Context
                 await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(workFlowApproveDataRequest);
             }
         }
+
         public async Task<List<GetAppointeeGlobalSearchResponse>> GetAppointeeSearchGlobal(string Name)
         {
             List<GetAppointeeGlobalSearchResponse> searchedDataRes = new();
@@ -648,7 +649,6 @@ namespace VERIDATA.BLL.Context
                     CandidateId = obj.CandidateId,
                     AppointeePath = (obj.AppvlStatusId == verifiedState.AppvlStatusId || obj.AppvlStatusId == forcedVerifiedState.AppvlStatusId) ? verifiedMenu.menu_action : obj.AppvlStatusId == rejectedState.AppvlStatusId ? rejectedMenu.menu_action : "",
                     PathName = (obj.AppvlStatusId == verifiedState.AppvlStatusId || obj.AppvlStatusId == forcedVerifiedState.AppvlStatusId) ? verifiedMenu.MenuTitle : obj.AppvlStatusId == rejectedState.AppvlStatusId ? rejectedMenu.MenuTitle : "",
-
                 }).ToList();
 
             if (_allProcessedData.Count > 0)
@@ -672,7 +672,6 @@ namespace VERIDATA.BLL.Context
             List<GetAppointeeGlobalSearchResponse> _allUnderProcessedData = appointeelist.DistinctBy(x => x.AppointeeId).Where(x => !(x.AppvlStatusId == verifiedState.AppvlStatusId || x.AppvlStatusId == rejectedState.AppvlStatusId || x.AppvlStatusId == forcedVerifiedState.AppvlStatusId))
                 .Select(obj => new GetAppointeeGlobalSearchResponse
                 {
-
                     AppointeeName = obj.AppointeeName,
                     CandidateId = obj.CandidateId,
                     AppointeePath = (obj.DateOfJoining < _currDate) ? lapsedMenu.menu_action : processingMenu.menu_action,
@@ -712,6 +711,7 @@ namespace VERIDATA.BLL.Context
 
             return searchedDataRes;
         }
+
         public async Task<List<DropDownDetailsResponse>> GetAllReportFilterStatus()
         {
             List<DropDownDetailsResponse> dataList = new();
@@ -757,6 +757,7 @@ namespace VERIDATA.BLL.Context
             dataList.Add(linkNtSent);
             return dataList;
         }
+
         public async Task<string?> AppointeeWorkflowCurrentState(int appointeeId)
         {
             WorkFlowDetails? getcurrentState = await _dbContextWorkflow.GetCurrentApprovalStateByAppointeeId(appointeeId);
@@ -766,6 +767,7 @@ namespace VERIDATA.BLL.Context
 
             return getApprovalStatus?.AppvlStatusCode;
         }
+
         public async Task PostAppointeeApprove(AppointeeApproverRequest request)
         {
             string AllRemarks = string.Empty;
@@ -793,8 +795,8 @@ namespace VERIDATA.BLL.Context
             }
 
             await _emailSender.SendNotificationMailToEmployer(request.appointeeId, AllRemarks, MailType.ForceApprove);
-
         }
+
         public async Task PostAppointeeRejected(AppointeeApproverRequest request)
         {
             string remarks = string.Empty;
@@ -818,6 +820,7 @@ namespace VERIDATA.BLL.Context
             await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
             await _emailSender.SendNotificationMailToEmployer(request.appointeeId, remarks, MailType.Reject);
         }
+
         public async Task PostAppointeeClose(AppointeeApproverRequest request)
         {
             WorkFlowDataRequest _WorkFlowDataRequest = new();
@@ -831,6 +834,7 @@ namespace VERIDATA.BLL.Context
 
             await _dbContextWorkflow.AppointeeWorkflowUpdateAsync(_WorkFlowDataRequest);
         }
+
         public async Task PostRemainderMail(int appointeeId, int UserId)
         {
             UnderProcessFileData? appointeeDetails = await _dbContextCandiate.GetUnderProcessAppinteeDetailsById(appointeeId);
@@ -853,8 +857,8 @@ namespace VERIDATA.BLL.Context
                 transReq.Type = "REMDR";
                 await _dbContextCandiate.PostMailTransDetails(transReq);
             }
-
         }
+
         public async Task<VarificationStatusResponse> ValidateRemainderMail(int appointeeId, int UserId)
         {
             VarificationStatusResponse response = new();
@@ -902,7 +906,6 @@ namespace VERIDATA.BLL.Context
                 transReq.Type = "RESEND";
                 await _dbContextCandiate.PostMailTransDetails(transReq);
             }
-
         }
 
         private async Task PostMailFileSubmisstionSuccess(int appointeeId, int UserId, string type)
@@ -925,9 +928,7 @@ namespace VERIDATA.BLL.Context
 
                 // Use existing SendAppointeeMail function
                 await _emailSender.SendAppointeeMail(appointeeDetails.AppointeeEmailId, mailDetails);
-
             }
-
         }
 
         public async Task<List<FileCategoryResponse>> getFileType(int appointeeId)
@@ -966,6 +967,7 @@ namespace VERIDATA.BLL.Context
                     }
                     updatedAppointeeDetails = await _dbContextCandiate.VefifyAppinteeFathersNameManualById(reqObj.AppointeeId, isDataValid, reqObj.VerificationCategory, reqObj.UserId);
                     break;
+
                 case ManualVerificationType.EpfoPassbook:
                     if (isDataVerificationReq)
                     {
@@ -995,10 +997,10 @@ namespace VERIDATA.BLL.Context
 
                     await PostMailFileSubmisstionSuccess(updatedAppointeeDetails.AppointeeId ?? 0, reqObj?.UserId ?? 0, MailType.AutoApprove);
                 }
-
             }
             return isDataValid ?? false;
         }
+
         private async Task<bool> VefifyDocValidityManual(int appointeeId, List<VerificationUpdatesubCategory>? docValidity, int userId, string? VerificationCategory)// TODO
         {
             bool isVerificationRequired = true;
@@ -1011,28 +1013,23 @@ namespace VERIDATA.BLL.Context
                 inputData = obj.SubCategory == ManualVerificationSubType.FathersName || obj.SubCategory == ManualVerificationSubType.TENTHCERT || obj.SubCategory == ManualVerificationSubType.OTHID ? "Father's Name Verification" : obj.SubCategory == ManualVerificationSubType.EpfHistory ? "EPFO Service History" : obj.SubCategory == ManualVerificationSubType.EpfPassbook ? "EPFO Passbook(s)" : string.Empty;
                 foreach (var questions in obj?.VerificationQueries)
                 {
-
-
                     switch (questions.FieldName.ToLower())
                     {
                         case ManualVerificationFieldType.DocIncomplete:
                             if (!questions.Value)
                             {
-
-
                                 reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INCMPLTDOC, Inputdata = inputData, Fetcheddata = string.Empty });
                                 isVerificationRequired = false;
                             }
                             break;
+
                         case ManualVerificationFieldType.DocInvalid:
                             if (!questions.Value)
                             {
                                 reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INVDDOC, Inputdata = inputData, Fetcheddata = string.Empty });
                                 isVerificationRequired = false;
-
                             }
                             break;
-
                     }
                 }
                 if (!isVerificationRequired)
@@ -1044,17 +1041,14 @@ namespace VERIDATA.BLL.Context
                 else
                 {
                     await _dbContextCandiate.UpdateRemarksStatusByType(appointeeId, RemarksType.Manual, obj.SubCategory, userId);
-
                 }
             }
 
             //if (!isVerificationRequired)
             //{
-
             //}
 
             return isVerificationRequired;
-
         }
 
         private async Task docReuploadRequested(int appointeeId, int userId, string remarks, string subType)
@@ -1090,10 +1084,8 @@ namespace VERIDATA.BLL.Context
                         {
                             ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.CAREOFNAME, Inputdata = _appointeedetails.MemberName, Fetcheddata = string.Empty });
                             isDataValid = false;
-
                         }
                         break;
-
                 }
             }
             // Save the changes to the database
@@ -1128,7 +1120,6 @@ namespace VERIDATA.BLL.Context
                             isDataValid = false;
                         }
                         break;
-
                 }
             }
             // Save the changes to the database
@@ -1145,9 +1136,8 @@ namespace VERIDATA.BLL.Context
             }
             await _dbContextActivity.PostActivityDetails(appointeeId, userId, activityType);
             return isDataValid;
-
-
         }
+
         private async Task RemarksMailSend(int appointeeId, string Remarks, string type, int? userId)
         {
             AppointeeDetails _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
@@ -1165,7 +1155,6 @@ namespace VERIDATA.BLL.Context
                 mailDetails.ParseData = bodyDetails;
                 await _emailSender.SendAppointeeMail(_appointeedetails?.AppointeeEmailId, mailDetails);
             }
-
         }
 
         public async Task<List<FileCategoryResponse>> GetNotVeriedfileView(int appointeeId)
@@ -1189,7 +1178,6 @@ namespace VERIDATA.BLL.Context
             List<ManualVerificationProcessQueryDataResponse> UnderProcessAppointeeList = await _dbContextWorkflow.GetManualVerificationProcessDataAsync(reqObj);
             //if (UnderProcessAppointeeList.Count > 0)
             //{
-
             var _underProcessdata = UnderProcessAppointeeList?.Where(z => z.IsJoiningDateLapsed.Equals(false))?.Select(row => new ManualVerificationProcessDetailsResponse
             {
                 id = row.UnderProcess.UnderProcessId,
@@ -1202,11 +1190,10 @@ namespace VERIDATA.BLL.Context
                 dateOfOffer = row.UnderProcess?.DateOfOffer,
                 dateOfJoining = row.AppointeeDetails?.DateOfJoining ?? row.UnderProcess?.DateOfJoining,
                 isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
-                isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false|| row.AppointeeDetails?.IsFNameVarified == false),
+                isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false || row.AppointeeDetails?.IsFNameVarified == false),
                 verificationAttempted = row?.VerificationAttempted ?? 0,
                 createdDate = row?.WorkflowCreatedDate,
                 status = row?.Status
-
             }).OrderByDescending(x => x.createdDate).ThenBy(y => y.dateOfJoining).ToList();
 
             return _underProcessdata;
@@ -1237,8 +1224,6 @@ namespace VERIDATA.BLL.Context
                     ActivityLog.DOCUMENTREUPLED
                 );
             }
-
         }
     }
-
 }
