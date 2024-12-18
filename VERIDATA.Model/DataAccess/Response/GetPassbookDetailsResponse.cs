@@ -7,7 +7,8 @@
         public string? DateOfBirth { get; set; }
         public string? PfUan { get; set; }
         public bool? IsPensionApplicable { get; set; }
-        public List<EpsContributionCheckResult>? EpsContributionDetails { get; set; }
+        public bool? IsDualEmployement { get; set; }
+        public List<EpsContributionSummary>? EpsContributionDetails { get; set; }
         public bool? IsPFverificationReq { get; set; }
     }
 }

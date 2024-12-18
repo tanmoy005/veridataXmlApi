@@ -2,10 +2,11 @@
 {
     public class EpsContributionCheckResult
     {
-        public string Company { get; set; }
-        //public string EstablismentId { get; set; }
-        public string StartDate { get; set; }
-        public bool EpsGapfind { get; set; }
-        public bool HasEpsContribution { get; set; }
+        //public string Company { get; set; }
+        ////public string EstablismentId { get; set; }
+        //public string StartDate { get; set; }
+        public List<EpsContributionSummary> EpsContributionSummary { get; set; }
+
+        public bool? HasDualEmplyement { get; set; }
     }
 }

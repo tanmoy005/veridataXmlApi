@@ -48,5 +48,6 @@ namespace VERIDATA.Model.DataAccess.Request
         public bool? IsFNameVarified { get; set; }
         public bool? IsUanFromMobile { get; set; }
         public bool? AadharUanLinkYN { get; set; }
+        public bool? IsDualEmployementIdentified { get; set; }
     }
 }

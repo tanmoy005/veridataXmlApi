@@ -212,6 +212,7 @@
             public const string PENSIONGAPFIND = "121";
             public const string INVDDOC = "122";
             public const string INCMPLTDOC = "123";
+            public const string DUALEMPNT = "124";
             //public const string MANUALOVERRIDE = "121";
             //public const string REJECT = "122";
             //public const string QUALIFICATION = "QUA";

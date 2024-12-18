@@ -901,7 +901,8 @@ namespace VERIDATA.BLL.Context
         {
             GetPassbookDetailsResponse Response = new();
             PfPassbookDetails _apiResponse = new();
-            List<EpsContributionCheckResult>? epsContributionDetails = new();
+            EpsContributionCheckResult? epsContributionDetails = new();
+            List<EpsContributionSummary>? epsContributionSummary = new();
             var apiProvider = await _masterContext.GetApiProviderData(ApiType.EPFO);
             bool isPensionApplicable = false;
             string passbookJsonData = string.Empty;
@@ -932,15 +933,18 @@ namespace VERIDATA.BLL.Context
             {
                 _apiResponse = await _signzyApiContext.GetPassbook(reqObj.OtpDetails.ClientId, reqObj.UserId);
                 SignzyUanPassbookDetails? _passBookData = _apiResponse?.SignzyPassbkdata;
-                if (_passBookData?.Companies.Count > 0)
-                {
-                    int _pensionshare = _passBookData?.Companies?.FirstOrDefault().Value?.PensionTotal ?? 0;
-                    if (_pensionshare > 0)
-                    {
-                        isPensionApplicable = Convert.ToInt32(_pensionshare) > 0;
-                        _passBookData.Companies.FirstOrDefault().Value.PensionTotal = 1;
-                    }
-                }
+                epsContributionDetails = await _signzyApiContext.CheckEpsContributionConsistency(_passBookData);
+
+                // TO DO EPS Contribution
+                //if (_passBookData?.EstDetails.Count > 0)
+                //{
+                //    int _pensionshare = _passBookData?.EstDetails?.FirstOrDefault().PensionTotal ?? 0;
+                //    if (_pensionshare > 0)
+                //    {
+                //        isPensionApplicable = Convert.ToInt32(_pensionshare) > 0;
+                //        _passBookData.EstDetails.FirstOrDefault().Value.PensionTotal = 1;
+                //    }
+                //}
                 passbookJsonData = JsonConvert.SerializeObject(_passBookData);
             }
             Response.StatusCode = _apiResponse.StatusCode;
@@ -976,17 +980,21 @@ namespace VERIDATA.BLL.Context
                         Response.FathersName = _passBookData?.father_name ?? string.Empty;
                         Response.Name = _passBookData?.member_name ?? string.Empty;
                         Response.DateOfBirth = _passBookData?.dob ?? string.Empty;
-                        Response.IsPensionApplicable = HasEpsContribution(epsContributionDetails);
-                        Response.EpsContributionDetails = epsContributionDetails;
+                        Response.IsPensionApplicable = HasEpsContribution(epsContributionDetails?.EpsContributionSummary);
+                        Response.EpsContributionDetails = epsContributionDetails.EpsContributionSummary;
+                        Response.IsDualEmployement = epsContributionDetails?.HasDualEmplyement ?? false;
+                        Response.PfUan = reqObj.UanNumber;
                     }
                     if (apiProvider?.ToLower() == ApiProviderType.Signzy)
                     {
                         SignzyUanPassbookDetails _passBookData = _apiResponse.SignzyPassbkdata;
-                        Response.FathersName = _passBookData?.FatherName ?? string.Empty;
-                        Response.Name = _passBookData?.FullName;
-                        Response.DateOfBirth = _passBookData?.Dob.ToShortDateString() ?? string.Empty;
-                        Response.IsPensionApplicable = isPensionApplicable;
-                        Response.PfUan = _passBookData.Uan;
+                        Response.FathersName = _passBookData?.EmployeeDetails?.FatherName ?? string.Empty;
+                        Response.Name = _passBookData?.EmployeeDetails?.MemberName;
+                        Response.DateOfBirth = _passBookData?.EmployeeDetails?.DOB ?? string.Empty;
+                        Response.IsPensionApplicable = HasEpsContribution(epsContributionDetails?.EpsContributionSummary);
+                        Response.EpsContributionDetails = epsContributionDetails?.EpsContributionSummary;
+                        Response.IsDualEmployement = epsContributionDetails?.HasDualEmplyement ?? false;
+                        Response.PfUan = reqObj.UanNumber;
                     }
 
                     if (string.IsNullOrEmpty(Response.Name) || string.IsNullOrEmpty(Response.DateOfBirth))
@@ -1026,6 +1034,7 @@ namespace VERIDATA.BLL.Context
             string? UanDob = reqObj?.PassbookDetails?.DateOfBirth;
             bool _IsPensionApplicable = reqObj?.PassbookDetails?.IsPensionApplicable ?? false;
             bool _IsPensionGapIdentified = HasEpsGap(reqObj?.PassbookDetails?.EpsContributionDetails);
+            bool _IsDualEmployementIdentified = reqObj?.PassbookDetails?.IsDualEmployement ?? false;
             bool _isFatherNameValidate = false;
             if (!reqObj.IsUanActive)
             {
@@ -1038,7 +1047,7 @@ namespace VERIDATA.BLL.Context
                 DateTime _inptdob = Convert.ToDateTime(UanDob);
                 _isFatherNameValidate = !string.IsNullOrEmpty(fathersName) && fathersName.ToUpper() == UanFatherName?.ToUpper();
                 if (AppointeeFullName?.ToUpper() == UanFullName?.ToUpper()
-                    && appointeedetail?.DateOfBirth == _inptdob && _isFatherNameValidate && !_IsPensionGapIdentified)
+                    && appointeedetail?.DateOfBirth == _inptdob && _isFatherNameValidate && !_IsPensionGapIdentified )
                 {
                     IsValid = true;
                 }
@@ -1060,6 +1069,14 @@ namespace VERIDATA.BLL.Context
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PENSIONGAPFIND, Inputdata = string.Empty, Fetcheddata = string.Empty });
                     }
+                    if (_IsPensionGapIdentified)
+                    {
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PENSIONGAPFIND, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                    }
+                    //if (_IsDualEmployementIdentified)
+                    //{
+                    //    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.DUALEMPNT, Inputdata = string.Empty, Fetcheddata = string.Empty });
+                    //}
                 }
 
                 if (!(appointeedetail.IsPFverificationReq ?? true))
@@ -1078,6 +1095,7 @@ namespace VERIDATA.BLL.Context
                 UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? appointeedetail?.UANNumber : reqObj?.PassbookDetails?.PfUan,
                 IsEmployementVarified = IsValid,
                 IsFNameVarified = _isFatherNameValidate,
+                IsDualEmployementIdentified = _IsDualEmployementIdentified,
             };
             CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
             {
@@ -1158,12 +1176,12 @@ namespace VERIDATA.BLL.Context
             return response;
         }
 
-        public bool HasEpsGap(List<EpsContributionCheckResult> epsResults)
+        public bool HasEpsGap(List<EpsContributionSummary> epsResults)
         {
             return epsResults?.Any(result => result.EpsGapfind) ?? false;
         }
 
-        public bool HasEpsContribution(List<EpsContributionCheckResult> epsResults)
+        public bool HasEpsContribution(List<EpsContributionSummary> epsResults)
         {
             return epsResults?.Any(result => result.HasEpsContribution) ?? false;
         }

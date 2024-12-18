@@ -168,7 +168,7 @@ namespace VERIDATA.BLL.Context
                         dateOfJoining = row.AppointeeDetails?.DateOfJoining ?? row.UnderProcess?.DateOfJoining,
                         isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                         isReprocess = false,
-                        isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
+                        isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false || row.AppointeeDetails?.IsFNameVarified == false),
                         status = (row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument) ? "Submitted" : (row.AppointeeDetails?.IsSubmit ?? false) ? "Submitted" : (row?.AppvlStatusCode == WorkFlowStatusType.ManualVerification) || (row?.AppvlStatusCode == WorkFlowStatusType.ManualReVerification) || row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         statusCode = row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         verificationStatusCode = row?.AppvlStatusCode,
@@ -198,7 +198,7 @@ namespace VERIDATA.BLL.Context
                         dateOfJoining = row.AppointeeDetails?.DateOfJoining ?? row.UnderProcess?.DateOfJoining,
                         isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                         isReprocess = false,
-                        isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
+                        isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false || row.AppointeeDetails?.IsFNameVarified == false),
                         //Status = row?.IsReupload ?? false ? "Reupload Requested" : row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         status = (row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument) ? "Submitted" : (row.AppointeeDetails?.IsSubmit ?? false) ? "Submitted" : (row?.AppvlStatusCode == WorkFlowStatusType.ManualVerification) || (row?.AppvlStatusCode == WorkFlowStatusType.ManualReVerification) || row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
                         statusCode = row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
@@ -623,9 +623,9 @@ namespace VERIDATA.BLL.Context
             WorkflowApprovalStatusMaster? verifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Approved?.Trim());
             WorkflowApprovalStatusMaster? forcedVerifiedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ForcedApproved?.Trim());
             WorkflowApprovalStatusMaster? rejectedState = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.Rejected?.Trim());
-            WorkflowApprovalStatusMaster? manuVerification = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualVerification?.Trim());
-            WorkflowApprovalStatusMaster? manuReVerification = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualReVerification?.Trim());
-            WorkflowApprovalStatusMaster? manuReUpload = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
+            //WorkflowApprovalStatusMaster? manuVerification = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualVerification?.Trim());
+            //WorkflowApprovalStatusMaster? manuReVerification = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ManualReVerification?.Trim());
+            //WorkflowApprovalStatusMaster? manuReUpload = _getapprovalStatus.Find(x => x.AppvlStatusCode?.Trim() == WorkFlowStatusType.ReuploadDocument?.Trim());
 
             List<MenuMaster> menuDataList = await _dbContextMaster.GetMasterMenuData();
             MenuMaster? verifiedMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.VERIFIED);
@@ -635,7 +635,7 @@ namespace VERIDATA.BLL.Context
             //var criticalMenu = menuDataList.FirstOrDefault(x => x.MenuAlias == MenuCode.CRITICAL);
             MenuMaster? linkntsendMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.LINKNOTSENT);
             MenuMaster? uploadedDataMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.UPLOADEDDATA);
-            MenuMaster? manualVeriMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.MANUALVERIFICATION);
+            //MenuMaster? manualVeriMenu = menuDataList.Find(x => x.MenuAlias == MenuCode.MANUALVERIFICATION);
 
             //var appointeeData = await _dbContextClass.AppointeeMaster.Where(m => m.AppointeeName.Contains(Name) && m.ActiveStatus == true).ToListAsync();
 
@@ -655,22 +655,21 @@ namespace VERIDATA.BLL.Context
             {
                 searchedDataRes.AddRange(_allProcessedData);
             }
-            List<GetAppointeeGlobalSearchResponse> _allManualVerificationData = appointeelist.DistinctBy(x => x.AppointeeId).Where(x => (x.AppvlStatusId == manuVerification.AppvlStatusId || x.AppvlStatusId == manuReVerification.AppvlStatusId || x.AppvlStatusId == manuReUpload.AppvlStatusId))
-               .Select(obj => new GetAppointeeGlobalSearchResponse
-               {
-
-                   AppointeeName = obj.AppointeeName,
-                   CandidateId = obj.CandidateId,
-                   AppointeePath = manualVeriMenu.menu_action,
-                   PathName = manualVeriMenu.MenuTitle,
-               }).ToList();
-            if (_allManualVerificationData.Count > 0)
-            {
-                searchedDataRes.AddRange(_allManualVerificationData);
-            }
-            var manualCandidateList = _allManualVerificationData.Select(y => y.CandidateId).ToList();
-            var currentAppointeeList = appointeelist.Where(x => !manualCandidateList.Contains(x.CandidateId))?.ToList();
-            List<GetAppointeeGlobalSearchResponse> _allUnderProcessedData = currentAppointeeList.DistinctBy(x => x.AppointeeId).Where(x => !(x.AppvlStatusId == verifiedState.AppvlStatusId || x.AppvlStatusId == rejectedState.AppvlStatusId || x.AppvlStatusId == forcedVerifiedState.AppvlStatusId))
+            //List<GetAppointeeGlobalSearchResponse> _allManualVerificationData = appointeelist.DistinctBy(x => x.AppointeeId).Where(x => (x.AppvlStatusId == manuVerification.AppvlStatusId || x.AppvlStatusId == manuReVerification.AppvlStatusId || x.AppvlStatusId == manuReUpload.AppvlStatusId))
+            //   .Select(obj => new GetAppointeeGlobalSearchResponse
+            //   {
+            //       AppointeeName = obj.AppointeeName,
+            //       CandidateId = obj.CandidateId,
+            //       AppointeePath = manualVeriMenu.menu_action,
+            //       PathName = manualVeriMenu.MenuTitle,
+            //   }).ToList();
+            //if (_allManualVerificationData.Count > 0)
+            //{
+            //    searchedDataRes.AddRange(_allManualVerificationData);
+            //}
+            //var manualCandidateList = _allManualVerificationData.Select(y => y.CandidateId).ToList();
+            //var currentAppointeeList = appointeelist.Where(x => !manualCandidateList.Contains(x.CandidateId))?.ToList();
+            List<GetAppointeeGlobalSearchResponse> _allUnderProcessedData = appointeelist.DistinctBy(x => x.AppointeeId).Where(x => !(x.AppvlStatusId == verifiedState.AppvlStatusId || x.AppvlStatusId == rejectedState.AppvlStatusId || x.AppvlStatusId == forcedVerifiedState.AppvlStatusId))
                 .Select(obj => new GetAppointeeGlobalSearchResponse
                 {
 
@@ -1203,7 +1202,7 @@ namespace VERIDATA.BLL.Context
                 dateOfOffer = row.UnderProcess?.DateOfOffer,
                 dateOfJoining = row.AppointeeDetails?.DateOfJoining ?? row.UnderProcess?.DateOfJoining,
                 isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
-                isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false),
+                isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false|| row.AppointeeDetails?.IsFNameVarified == false),
                 verificationAttempted = row?.VerificationAttempted ?? 0,
                 createdDate = row?.WorkflowCreatedDate,
                 status = row?.Status

@@ -457,25 +457,25 @@ namespace VERIDATA.BLL.Context
             if (passBookResponse != null)
             {
                 passbookDetails.clientId = "NA";
-                passbookDetails.fullName = passBookResponse?.FullName;
-                passbookDetails.fatherName = passBookResponse?.FatherName;
+                passbookDetails.fullName = passBookResponse?.EmployeeDetails?.MemberName;
+                passbookDetails.fatherName = passBookResponse?.EmployeeDetails?.FatherName;
                 passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, appointeeDetails?.UANNumber));
-                passbookDetails.dob = passBookResponse?.Dob.ToShortDateString();
+                passbookDetails.dob = passBookResponse?.EmployeeDetails?.DOB;
 
                 List<PfCompanyDetails> companyDetailsList = new();
 
-                foreach (var company in passBookResponse.Companies)
+                foreach (var company in passBookResponse.EstDetails)
                 {
-                    var estDetails = company.Value;
+                    var estDetails = company;
 
                     DateTime transMonth = Convert.ToDateTime(estDetails.Passbook.LastOrDefault()?.ApprovedOn);
                     PfCompanyDetails companyDetails = new()
                     {
                         passbook = new List<CompanyPassbookDetails>(),
-                        companyName = estDetails.CompanyName,
-                        establishmentId = estDetails.EstablishmentId,
-                        memberId = estDetails.Passbook.FirstOrDefault()?.MemberId,
-                        LastTransactionApprovedOn = estDetails.Passbook.LastOrDefault()?.ApprovedOn.ToShortDateString(),
+                        companyName = estDetails.EstName,
+                        establishmentId = "NA",
+                        memberId = estDetails?.MemberId,
+                        LastTransactionApprovedOn = estDetails.Passbook.LastOrDefault()?.ApprovedOn,
                         LastTransactionMonth = CommonUtility.getMonthName(transMonth.Month),
                         LastTransactionYear = transMonth.Year.ToString()
                     };
@@ -483,8 +483,8 @@ namespace VERIDATA.BLL.Context
                     List<CompanyPassbookDetails> passbookDetailsList = estDetails.Passbook.Select((x, index) => new CompanyPassbookDetails
                     {
                         id = index + 1,
-                        approvedOn = x.ApprovedOn.ToShortDateString(),
-                        description = x.Description,
+                        approvedOn = x.ApprovedOn,
+                        description = x?.Particular,
                         month = CommonUtility.getMonthName(Convert.ToDateTime(x.ApprovedOn).Month),
                         year = Convert.ToDateTime(x.ApprovedOn).Year.ToString()
                     }).ToList();

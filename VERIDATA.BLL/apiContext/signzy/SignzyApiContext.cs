@@ -23,9 +23,9 @@ namespace VERIDATA.BLL.apiContext.signzy
             _apicontext = context;
             _apiConfigContext = apiConfigContext;
         }
+
         public async Task<PanDetails> GetPanDetails(string panNo, int userId)
         {
-
             PanDetails res = new();
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Pan, ApiSubTYpeName.Pan, ApiProviderType.Signzy);
             Signzy_GetPanDetailsRequest request = new()
@@ -54,6 +54,7 @@ namespace VERIDATA.BLL.apiContext.signzy
 
             return res;
         }
+
         public async Task<GetCandidateUanDetails> GetUanFromMobilenPan(string panNo, string mobileNo, int userId)
         {
             GetCandidateUanDetails res = new();
@@ -80,7 +81,6 @@ namespace VERIDATA.BLL.apiContext.signzy
                 if (uanList != null && uanList.Count > 0)
                 {
                     uan = PanToUanResponse?.Result?.Result?.Summary?.MatchingUan;
-
                 }
                 res.StatusCode = _apiResponse.StatusCode;
                 res.IsUanAvailable = !string.IsNullOrEmpty(uan);
@@ -95,6 +95,7 @@ namespace VERIDATA.BLL.apiContext.signzy
 
             return res;
         }
+
         public async Task<PassportDetails> GetPassportDetails(AppointeePassportValidateRequest reqObj)
         {
             PassportDetails res = new();
@@ -117,7 +118,6 @@ namespace VERIDATA.BLL.apiContext.signzy
                 res.PassportNumber = string.Empty;
                 res.DateOfBirth = (Convert.ToDateTime(passportData.Dob)).ToString("yyy-MM-dd");
                 res.FileNumber = passportData.FileNumber;
-
             }
             else
             {
@@ -127,6 +127,7 @@ namespace VERIDATA.BLL.apiContext.signzy
 
             return res;
         }
+
         public async Task<UanGenerateOtpDetails> GenerateUANOTP(string UanNumber, string PhoneNumber, int userId)
         {
             UanGenerateOtpDetails Response = new();
@@ -151,7 +152,6 @@ namespace VERIDATA.BLL.apiContext.signzy
                         string msg = "Invalid Mobile Number or Combination of Inputs";
                         Response.StatusCode = HttpStatusCode.BadRequest;
                         Response.ReasonPhrase = msg;
-
                     }
                     //else if (OTPResponse.statusCode == (int)KarzaStatusCode.NotFound)
                     //{
@@ -175,12 +175,12 @@ namespace VERIDATA.BLL.apiContext.signzy
             }
             else
             {
-
                 Response.StatusCode = _apiResponse.StatusCode;
                 Response.ReasonPhrase = OTPResponse?.Error?.Message?.ToString() ?? OTPResponse?.Message;
             }
             return Response;
         }
+
         public async Task<UanSubmitOtpDetails> SubmitUanOTP(string clientId, string otp, int userId)
         {
             UanSubmitOtpDetails Response = new();
@@ -196,7 +196,6 @@ namespace VERIDATA.BLL.apiContext.signzy
             Signzy_UanSubmitOtpResponse OTPResponse = JsonConvert.DeserializeObject<Signzy_UanSubmitOtpResponse>(apiResponse);
             if (_apiResponse.IsSuccessStatusCode)
             {
-
                 Response.StatusCode = _apiResponse.StatusCode;
                 Response.ClientId = OTPResponse?.TxnId;
                 Response.OtpValidated = true;
@@ -209,8 +208,8 @@ namespace VERIDATA.BLL.apiContext.signzy
             }
 
             return Response;
-
         }
+
         public async Task<PfPassbookDetails> GetPassbook(string clientId, int userId)
         {
             PfPassbookDetails Response = new();
@@ -237,8 +236,8 @@ namespace VERIDATA.BLL.apiContext.signzy
             }
 
             return Response;
-
         }
+
         public async Task<GetEmployemntDetailsResponse> GetEmploymentHistoryByUan(string Uan, int userId)
         {
             GetEmployemntDetailsResponse res = new();
@@ -268,79 +267,85 @@ namespace VERIDATA.BLL.apiContext.signzy
 
             return res;
         }
-        public async Task<List<EpsContributionCheckResult>> CheckEpsContributionConsistency(SignzyUanPassbookDetails uanPassbookDetails)
-        {
-            var result = new List<EpsContributionCheckResult>();
-            DateTime? lastCompanyEndDate = null;
 
-            if (uanPassbookDetails?.Companies == null)
+        public async Task<EpsContributionCheckResult> CheckEpsContributionConsistency(SignzyUanPassbookDetails uanPassbookDetails)
+        {
+            var result = new EpsContributionCheckResult();
+            var epsContributionSummary = new List<EpsContributionSummary>();
+            DateTime? lastCompanyEndDate = null;
+            bool isDualEmployement = false;
+
+            if (uanPassbookDetails?.EstDetails == null)
             {
                 return result; // Return an empty list if there are no establishment details
             }
-            //var sortedEstDetails = uanPassbookDetails.est_details.OrderBy(estDetail => DateTime.TryParse(estDetail.doj_epf, out var dojDate) ? dojDate : DateTime.MinValue).ToList();
-            //foreach (var estDetail in sortedEstDetails)
-            //{
-            //    string companyName = estDetail?.est_name;
-            //    var passbookEntries = estDetail?.passbook;
+            var sortedEstDetails = uanPassbookDetails.EstDetails.OrderBy(estDetail => DateTime.TryParse(estDetail.DocEpf, out var dojDate) ? dojDate : DateTime.MinValue).ToList();
+            foreach (var estDetail in sortedEstDetails)
+            {
+                string companyName = estDetail?.EstName;
+                var passbookEntries = estDetail?.Passbook;
+                string? _epsStartData = estDetail?.DojEpf;
+                string? _epsEndData = null;
 
-            //    if (passbookEntries != null && passbookEntries.Count > 0)
-            //    {
-            //        // Sort passbook entries by "approved_on" date in ascending order with null check
-            //        var sortedEntries = passbookEntries
-            //            .OrderBy(entry => DateTime.TryParse(entry.approved_on, out var date) ? date : DateTime.MinValue)
-            //            .ToList();
+                if (passbookEntries != null && passbookEntries.Count > 0)
+                {
+                    // Sort passbook entries by "approved_on" date in ascending order with null check
+                    var sortedEntries = passbookEntries
+                        .OrderBy(entry => DateTime.TryParse(entry.ApprovedOn, out var date) ? date : DateTime.MinValue)
+                        .ToList();
 
-            //        bool hasEpsContribution = false;
-            //        bool gapDetected = false;
-            //        DateTime? startDate = null;
+                    bool hasEpsContribution = false;
+                    bool gapDetected = false;
+                    DateTime? startDate = null;
 
-            //        foreach (var entry in sortedEntries)
-            //        {
-            //            if (entry?.db_cr_flag == "C" && (entry?.particular.ToLower().Contains("cont.") ?? false))
-            //            {
-            //                int crPenBal = int.TryParse(entry.cr_pen_bal, out var balance) ? balance : 0;
+                    foreach (var entry in sortedEntries)
+                    {
+                        if (entry?.DbCrFlag == "C" && (entry?.Particular.ToLower().Contains("cont.") ?? false))
+                        {
+                            int crPenBal = int.TryParse(entry.CrPenBal, out var balance) ? balance : 0;
+                            _epsEndData = entry?.ApprovedOn ?? string.Empty;
+                            if (crPenBal >= 1)
+                            {
+                                if (startDate == null && DateTime.TryParse(entry.ApprovedOn, out var approvedDate))
+                                {
+                                    startDate = approvedDate;
+                                }
+                                hasEpsContribution = true;
+                            }
+                            else if (hasEpsContribution)
+                            {
+                                // If we encounter a 0 after starting contributions, mark as a gap
+                                gapDetected = true;
+                                break;
+                            }
+                        }
+                    }
+                    //    DateTime.TryParse(_epsStartData, out var FirstApprovedDate);
+                    // Check if this company has consistent EPS contribution from the start date
+                    if (hasEpsContribution && !isDualEmployement && lastCompanyEndDate.HasValue && startDate < lastCompanyEndDate)
+                    {
+                        isDualEmployement = true;
+                    }
 
-            //                if (crPenBal >= 1)
-            //                {
-            //                    if (startDate == null && DateTime.TryParse(entry.approved_on, out var approvedDate))
-            //                    {
-            //                        startDate = approvedDate;
-            //                    }
-            //                    hasEpsContribution = true;
-            //                }
-            //                else if (hasEpsContribution)
-            //                {
-            //                    // If we encounter a 0 after starting contributions, mark as a gap
-            //                    gapDetected = true;
-            //                    break;
-            //                }
-            //            }
-            //        }
+                    // Record the response for this company
+                    epsContributionSummary.Add(new EpsContributionSummary
+                    {
+                        Company = companyName,
+                        StartDate = startDate?.ToString("dd/MM/yyyy"),
+                        EpsGapfind = gapDetected,
+                        HasEpsContribution = hasEpsContribution
+                    });
 
-            //        // Check if this company has consistent EPS contribution from the start date
-            //        if (hasEpsContribution && lastCompanyEndDate.HasValue && startDate < lastCompanyEndDate)
-            //        {
-            //            gapDetected = true;
-            //        }
-
-            //        // Record the response for this company
-            //        result.Add(new EpsContributionCheckResult
-            //        {
-            //            Company = companyName,
-            //            StartDate = startDate?.ToString("dd/MM/yyyy"),
-            //            EpsGapfind = gapDetected,
-            //            HasEpsContribution = hasEpsContribution
-            //        });
-
-            //        // Update last company's end date for comparison with the next company, with null check
-            //        if (sortedEntries.LastOrDefault()?.approved_on != null &&
-            //            DateTime.TryParse(sortedEntries.Last().approved_on, out var lastApprovedDate))
-            //        {
-            //            lastCompanyEndDate = lastApprovedDate;
-            //        }
-            //    }
-            //}
-
+                    // Update last company's end date for comparison with the next company, with null check
+                    if (_epsEndData != null &&
+                        DateTime.TryParse(_epsEndData, out var lastApprovedDate))
+                    {
+                        lastCompanyEndDate = lastApprovedDate;
+                    }
+                }
+            }
+            result.EpsContributionSummary = epsContributionSummary;
+            result.HasDualEmplyement = isDualEmployement;
             return result;
         }
     }

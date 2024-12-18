@@ -418,10 +418,12 @@ namespace VERIDATA.BLL.apiContext.karza
             return uanPassbookDetails; // Return the modified object
         }
 
-        public async Task<List<EpsContributionCheckResult>> CheckEpsContributionConsistencyForkarza(UanPassbookDetails uanPassbookDetails)
+        public async Task<EpsContributionCheckResult> CheckEpsContributionConsistencyForkarza(UanPassbookDetails uanPassbookDetails)
         {
-            var result = new List<EpsContributionCheckResult>();
+            var result = new EpsContributionCheckResult();
+            var epsSummary = new List<EpsContributionSummary>();
             DateTime? lastCompanyEndDate = null;
+            bool isDualEmployement = false;
 
             if (uanPassbookDetails?.est_details == null)
             {
@@ -432,6 +434,7 @@ namespace VERIDATA.BLL.apiContext.karza
             {
                 string companyName = estDetail?.est_name;
                 var passbookEntries = estDetail?.passbook;
+                string? _epsStartData = estDetail?.doj_epf;
 
                 if (passbookEntries != null && passbookEntries.Count > 0)
                 {
@@ -443,11 +446,14 @@ namespace VERIDATA.BLL.apiContext.karza
                     bool hasEpsContribution = false;
                     bool gapDetected = false;
                     DateTime? startDate = null;
+                    string? _epsEndData = null;
 
                     foreach (var entry in sortedEntries)
                     {
                         if (entry?.db_cr_flag == "C" && (entry?.particular.ToLower().Contains("cont.") ?? false))
                         {
+                            _epsEndData = entry?.approved_on ?? string.Empty;
+
                             int crPenBal = int.TryParse(entry.cr_pen_bal, out var balance) ? balance : 0;
 
                             if (crPenBal >= 1)
@@ -466,15 +472,20 @@ namespace VERIDATA.BLL.apiContext.karza
                             }
                         }
                     }
-
+                    //DateTime.TryParse(_epsStartData, out var FirstApprovedDate);
                     // Check if this company has consistent EPS contribution from the start date
-                    if (hasEpsContribution && lastCompanyEndDate.HasValue && startDate < lastCompanyEndDate)
+                    if (hasEpsContribution && !isDualEmployement && lastCompanyEndDate.HasValue && startDate < lastCompanyEndDate)
                     {
-                        gapDetected = true;
+                        isDualEmployement = true;
                     }
+                    // Check if this company has consistent EPS contribution from the start date
+                    //if (hasEpsContribution && lastCompanyEndDate.HasValue && startDate < lastCompanyEndDate)
+                    //{
+                    //    gapDetected = true;
+                    //}
 
                     // Record the response for this company
-                    result.Add(new EpsContributionCheckResult
+                    epsSummary.Add(new EpsContributionSummary
                     {
                         Company = companyName,
                         StartDate = startDate?.ToString("dd/MM/yyyy"),
@@ -483,14 +494,15 @@ namespace VERIDATA.BLL.apiContext.karza
                     });
 
                     // Update last company's end date for comparison with the next company, with null check
-                    if (sortedEntries.LastOrDefault()?.approved_on != null &&
-                        DateTime.TryParse(sortedEntries.Last().approved_on, out var lastApprovedDate))
+                    if (_epsEndData != null &&
+                        DateTime.TryParse(_epsEndData, out var lastApprovedDate))
                     {
                         lastCompanyEndDate = lastApprovedDate;
                     }
                 }
             }
-
+            result.EpsContributionSummary = epsSummary;
+            result.HasDualEmplyement = isDualEmployement;
             return result;
         }
 

@@ -97,6 +97,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     _appointeedetails.IsPassbookFetch = validationReq.uanData?.IsPassbookFetch;
                     _appointeedetails.UANNumber = validationReq.uanData?.UanNumber;
                     _appointeedetails.IsFNameVarified = validationReq.uanData?.IsFNameVarified;
+                    _appointeedetails.IsDualEmployement = validationReq.uanData?.IsDualEmployementIdentified;
                     if (validationReq.uanData?.IsUanFromMobile ?? false)
                     {
                         _appointeedetails.IsUanAadharLink = validationReq.uanData?.AadharUanLinkYN;

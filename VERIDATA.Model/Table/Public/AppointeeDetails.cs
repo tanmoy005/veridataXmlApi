@@ -20,7 +20,6 @@ namespace VERIDATA.Model.Table.Public
 
         [Required]
         [Column("company_id", TypeName = DbDataType._integer)]
-        // [ForeignKey("company_id")]
         public int CompanyId { get; set; }
 
         [Column("company_name", TypeName = DbDataType._text50)]
@@ -149,27 +148,22 @@ namespace VERIDATA.Model.Table.Public
         public bool? IsPasssportVarified { get; set; }
 
         [Column("is_fnamevarified", TypeName = DbDataType._boolean)]
-
         [DefaultValue(false)]
         public bool? IsFNameVarified { get; set; }
 
         [Column("is_uanvarified", TypeName = DbDataType._boolean)]
-
         [DefaultValue(false)]
         public bool? IsUanVarified { get; set; }
 
         [Column("is_manual_passbook", TypeName = DbDataType._boolean)]
-
         [DefaultValue(false)]
         public bool? IsManualPassbook { get; set; }
 
         [Column("is_panvarified", TypeName = DbDataType._boolean)]
-
         [DefaultValue(false)]
         public bool? IsPanVarified { get; set; }
 
         [Column("is_trustpassbook", TypeName = DbDataType._boolean)]
-
         [DefaultValue(false)]
         public bool? IsTrustPassbook { get; set; }
 
@@ -177,7 +171,6 @@ namespace VERIDATA.Model.Table.Public
         public int? SaveStep { get; set; }
 
         [Column("process_status", TypeName = DbDataType._integer)]
-
         [DefaultValue(false)]
         public int? ProcessStatus { get; set; }
 
@@ -217,14 +210,20 @@ namespace VERIDATA.Model.Table.Public
 
         [Column("updated_on", TypeName = DbDataType._datetime)]
         public DateTime? UpdatedOn { get; set; }
+
         [Column("is_uan_available", TypeName = DbDataType._boolean)]
         public bool? IsUanAvailable { get; set; }
 
         [Column("is_passbook_fetch", TypeName = DbDataType._boolean)]
         [DefaultValue(false)]
         public bool? IsPassbookFetch { get; set; }
+
         [Column("is_uan_aadhar_link", TypeName = DbDataType._boolean)]
         [DefaultValue(false)]
         public bool? IsUanAadharLink { get; set; }
+
+        [Column("is_dual_employement", TypeName = DbDataType._boolean)]
+        [DefaultValue(false)]
+        public bool? IsDualEmployement { get; set; }
     }
 }
