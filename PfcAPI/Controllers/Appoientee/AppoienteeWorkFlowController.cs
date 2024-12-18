@@ -491,19 +491,19 @@ namespace PfcAPI.Controllers.Appoientee
         {
             try
             {
-                if (reqObj?.FileDetails?.Count > 0)
+                //if (reqObj?.FileDetails?.Count > 0)
+                //{
+                AppointeeFileDetailsRequest fileReqObj = new()
                 {
-                    AppointeeFileDetailsRequest fileReqObj = new()
-                    {
-                        FileDetails = reqObj.FileDetails,
-                        FileUploaded = reqObj.FileUploaded,
-                        AppointeeCode = reqObj.AppointeeCode,
-                        AppointeeId = reqObj.AppointeeId,
-                        IsSubmit = false,
-                        UserId = reqObj.UserId,
-                    };
-                    Task.Run(async () => await _candidateContext.PostAppointeefileUploadAsync(fileReqObj)).GetAwaiter().GetResult();
-                }
+                    FileDetails = reqObj?.FileDetails,
+                    FileUploaded = reqObj?.FileUploaded,
+                    AppointeeCode = reqObj?.AppointeeCode,
+                    AppointeeId = reqObj.AppointeeId,
+                    IsSubmit = false,
+                    UserId = reqObj.UserId,
+                };
+                Task.Run(async () => await _candidateContext.PostAppointeefileUploadAsync(fileReqObj)).GetAwaiter().GetResult();
+                //}
 
                 Task.Run(async () => await _candidateContext.PostAppointeeTrusUanDetailsAsync(reqObj)).GetAwaiter().GetResult();
 

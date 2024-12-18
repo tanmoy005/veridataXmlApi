@@ -714,7 +714,7 @@ namespace VERIDATA.BLL.Context
         {
             List<IFormFile>? fileUploaded = fileDetails;
             int _appointeeId = appointeeId;
-            if (!string.IsNullOrEmpty(uploadedFileDetails) && fileUploaded?.Count > 0 && _appointeeId != 0)
+            if (!string.IsNullOrEmpty(uploadedFileDetails) && _appointeeId != 0)
             {
                 List<AppointeeUploadDetails>? _removeDocList = new();
                 List<AppointeeUploadDetails>? _prevDocList = await _appointeeContext.GetAppinteeUploadDetails(_appointeeId);
@@ -745,7 +745,7 @@ namespace VERIDATA.BLL.Context
         private async Task<List<AppointeeUploadDetails>> FileUploadDataModelCreate(List<FileUploadDataModel>? uploadedFileDetails, int userId, int appointeeId, List<IFormFile>? fileUploaded, List<AppointeeUploadDetails>? _prevDocList)
         {
             List<AppointeeUploadDetails> uploadedFiles = new();
-            if (uploadedFileDetails?.Count > 0)
+            if (uploadedFileDetails?.Count > 0 && fileUploaded?.Count > 0)
             {
                 foreach (IFormFile obj in fileUploaded)
                 {
