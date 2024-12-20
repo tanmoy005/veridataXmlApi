@@ -440,7 +440,7 @@ namespace VERIDATA.BLL.apiContext.karza
                 {
                     // Sort passbook entries by "approved_on" date in ascending order with null check
                     var sortedEntries = passbookEntries
-                        .OrderBy(entry => DateTime.TryParse(entry.approved_on, out var date) ? date : DateTime.MinValue)
+                        .OrderBy(entry => DateTime.TryParse(entry.tr_date_my, out var date) ? date : DateTime.MinValue)
                         .ToList();
 
                     bool hasEpsContribution = false;
@@ -452,13 +452,13 @@ namespace VERIDATA.BLL.apiContext.karza
                     {
                         if (entry?.db_cr_flag == "C" && (entry?.particular.ToLower().Contains("cont.") ?? false))
                         {
-                            _epsEndData = entry?.approved_on ?? string.Empty;
+                            _epsEndData = entry?.tr_date_my ?? string.Empty;
 
                             int crPenBal = int.TryParse(entry.cr_pen_bal, out var balance) ? balance : 0;
 
                             if (crPenBal >= 1)
                             {
-                                if (startDate == null && DateTime.TryParse(entry.approved_on, out var approvedDate))
+                                if (startDate == null && DateTime.TryParse(entry.tr_date_my, out var approvedDate))
                                 {
                                     startDate = approvedDate;
                                 }

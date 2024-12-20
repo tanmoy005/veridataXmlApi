@@ -291,7 +291,7 @@ namespace VERIDATA.BLL.apiContext.signzy
                 {
                     // Sort passbook entries by "approved_on" date in ascending order with null check
                     var sortedEntries = passbookEntries
-                        .OrderBy(entry => DateTime.TryParse(entry.ApprovedOn, out var date) ? date : DateTime.MinValue)
+                        .OrderBy(entry => DateTime.TryParse(entry.TrDateMy, out var date) ? date : DateTime.MinValue)
                         .ToList();
 
                     bool hasEpsContribution = false;
@@ -303,10 +303,10 @@ namespace VERIDATA.BLL.apiContext.signzy
                         if (entry?.DbCrFlag == "C" && (entry?.Particular.ToLower().Contains("cont.") ?? false))
                         {
                             int crPenBal = int.TryParse(entry.CrPenBal, out var balance) ? balance : 0;
-                            _epsEndData = entry?.ApprovedOn ?? string.Empty;
+                            _epsEndData = entry?.TrDateMy ?? string.Empty;
                             if (crPenBal >= 1)
                             {
-                                if (startDate == null && DateTime.TryParse(entry.ApprovedOn, out var approvedDate))
+                                if (startDate == null && DateTime.TryParse(entry.TrDateMy, out var approvedDate))
                                 {
                                     startDate = approvedDate;
                                 }
