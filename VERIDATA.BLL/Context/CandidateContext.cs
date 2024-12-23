@@ -460,7 +460,7 @@ namespace VERIDATA.BLL.Context
                 passbookDetails.fullName = passBookResponse?.EmployeeDetails?.MemberName;
                 passbookDetails.fatherName = passBookResponse?.EmployeeDetails?.FatherName;
                 passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, appointeeDetails?.UANNumber));
-                passbookDetails.dob = passBookResponse?.EmployeeDetails?.DOB;
+                passbookDetails.dob = passBookResponse?.EmployeeDetails?.Dob;
 
                 List<PfCompanyDetails> companyDetailsList = new();
 

@@ -216,21 +216,25 @@ namespace VERIDATA.BLL.apiContext.signzy
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.EPFO, ApiSubTYpeName.UanPassbook, ApiProviderType.Signzy);
             Signzy_UanPassbookFetchRequest request = new()
             {
-                TxnId = clientId,
+                txnId = clientId,
             };
             StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
             HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
             string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
-            Signzy_UanPassbookFetchResponse OTPResponse = JsonConvert.DeserializeObject<Signzy_UanPassbookFetchResponse>(apiResponse);
+            //Signzy_UanPassbookFetchResponse OTPResponse = JsonConvert.DeserializeObject<Signzy_UanPassbookFetchResponse>(apiResponse);
 
             if (_apiResponse.IsSuccessStatusCode)
             {
+                SignzyUanPassbookDetails OTPResponse = JsonConvert.DeserializeObject<SignzyUanPassbookDetails>(apiResponse);
+
                 Response.StatusCode = _apiResponse.StatusCode;
-                Response.SignzyPassbkdata = OTPResponse.Data;
+                Response.SignzyPassbkdata = OTPResponse;
             }
             else
             {
+                Signzy_UanPassbookFetchResponse OTPResponse = JsonConvert.DeserializeObject<Signzy_UanPassbookFetchResponse>(apiResponse);
+
                 Response.StatusCode = _apiResponse.StatusCode;
                 Response.ReasonPhrase = OTPResponse?.Error?.Message?.ToString();
             }

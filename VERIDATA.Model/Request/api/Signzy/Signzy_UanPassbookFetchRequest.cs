@@ -2,6 +2,6 @@
 {
     public class Signzy_UanPassbookFetchRequest
     {
-        public string? TxnId { get; set; }
+        public string? txnId { get; set; }
     }
 }

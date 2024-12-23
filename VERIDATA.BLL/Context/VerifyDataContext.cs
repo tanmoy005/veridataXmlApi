@@ -16,6 +16,7 @@ using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
 using VERIDATA.Model.Response.api.Signzy;
 using VERIDATA.Model.Response.api.surepass;
+using VERIDATA.Model.Table.Public;
 using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.Context
@@ -469,6 +470,8 @@ namespace VERIDATA.BLL.Context
         {
             GetUanResponse Response = new();
             GetCandidateUanDetails _apiResponse = await _signzyApiContext.GetUanFromMobilenPan(reqObj.panNumber, reqObj.mobileNumber, reqObj.userId);
+            AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.appointeeId);
+
             Response.StatusCode = _apiResponse.StatusCode;
             if (_apiResponse.StatusCode == HttpStatusCode.OK || _apiResponse.StatusCode == HttpStatusCode.NotFound)
             {
@@ -477,23 +480,31 @@ namespace VERIDATA.BLL.Context
                 Response.UanNumber = _apiResponse.UanNumber;
                 Response.Remarks = !(_apiResponse.IsUanAvailable ?? false) ? "UAN Not available" : string.Empty;
                 List<ReasonRemarks> ReasonList = new();
-
+                UanData _uanDetails = new UanData
+                {
+                    UanNumber = _apiResponse.UanNumber,
+                };
+                CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
+                {
+                    AppointeeId = reqObj.appointeeId,
+                    EmailId = string.Empty,
+                    UserId = reqObj.userId,
+                    UserName = string.Empty,
+                    Reasons = ReasonList,
+                    uanData = _uanDetails,
+                    Type = RemarksType.UAN,
+                };
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
-                    UanData _uanDetails = new UanData
-                    {
-                        UanNumber = Response.UanNumber,
-                    };
-                    CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
-                    {
-                        AppointeeId = reqObj.appointeeId,
-                        EmailId = string.Empty,
-                        UserId = reqObj.userId,
-                        UserName = string.Empty,
-                        Reasons = ReasonList,
-                        uanData = _uanDetails,
-                        Type = RemarksType.UAN
-                    };
+                    _uanDetails.IsUanFromMobile = true;
+                    _uanDetails.AadharUanLinkYN = true;
+
+                    _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+                }
+                else
+                if (_apiResponse.IsUanAvailable == false && appointeedetail.IsUanAvailable == false && string.IsNullOrEmpty(_apiResponse.UanNumber))
+                {
+                    candidateUpdatedDataReq.Status = true;
                     _ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
                 }
                 if (_apiResponse.IsInactiveUan ?? false)
@@ -990,7 +1001,7 @@ namespace VERIDATA.BLL.Context
                         SignzyUanPassbookDetails _passBookData = _apiResponse.SignzyPassbkdata;
                         Response.FathersName = _passBookData?.EmployeeDetails?.FatherName ?? string.Empty;
                         Response.Name = _passBookData?.EmployeeDetails?.MemberName;
-                        Response.DateOfBirth = _passBookData?.EmployeeDetails?.DOB ?? string.Empty;
+                        Response.DateOfBirth = _passBookData?.EmployeeDetails?.Dob ?? string.Empty;
                         Response.IsPensionApplicable = HasEpsContribution(epsContributionDetails?.EpsContributionSummary);
                         Response.EpsContributionDetails = epsContributionDetails?.EpsContributionSummary;
                         Response.IsDualEmployement = epsContributionDetails?.HasDualEmplyement ?? false;
