@@ -55,13 +55,13 @@ namespace VERIDATA.BLL.apiContext.signzy
             return res;
         }
 
-        public async Task<GetCandidateUanDetails> GetUanFromMobilenPan(string panNo, string mobileNo, int userId)
+        public async Task<GetCandidateUanDetails> GetUanFromMobilenPan(string? panNo, string mobileNo, int userId)
         {
             GetCandidateUanDetails res = new();
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.UAN, ApiSubTYpeName.FindUan, ApiProviderType.Signzy);
             Signzy_GetUanDetailsByPanRequest request = new()
             {
-                panNumber = panNo,
+                panNumber = panNo??"",
                 mobileNumber = mobileNo,
             };
             StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");

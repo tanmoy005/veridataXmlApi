@@ -453,46 +453,75 @@ namespace VERIDATA.BLL.Context
             string? key = _apiConfig.EncriptKey;
             AppointeePassbookDetailsViewResponse passbookDetails = new();
             AppointeeDetails appointeeDetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
-
             if (passBookResponse != null)
             {
                 passbookDetails.clientId = "NA";
-                passbookDetails.fullName = passBookResponse?.EmployeeDetails?.MemberName;
-                passbookDetails.fatherName = passBookResponse?.EmployeeDetails?.FatherName;
-                passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, appointeeDetails?.UANNumber));
-                passbookDetails.dob = passBookResponse?.EmployeeDetails?.Dob;
+                passbookDetails.fullName = passBookResponse?.EmployeeDetails?.MemberName ?? "NA";
+                passbookDetails.fatherName = passBookResponse?.EmployeeDetails?.FatherName ?? "NA";
+                passbookDetails.pfUan = string.IsNullOrEmpty(appointeeDetails?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, appointeeDetails?.UANNumber));
+                passbookDetails.dob = passBookResponse?.EmployeeDetails?.Dob ?? "NA";
 
                 List<PfCompanyDetails> companyDetailsList = new();
+                var sortedEstDetails = passBookResponse.EstDetails.OrderByDescending(estDetail => DateTime.TryParse(estDetail.DojEpf, out var dojDate) ? dojDate : DateTime.MinValue).ToList();
 
-                foreach (var company in passBookResponse.EstDetails)
+                foreach (var obj in sortedEstDetails)
                 {
-                    var estDetails = company;
+                    bool? isPensionApplicable = null;
+                    bool? isPensionGapIdentified = null;
+                    DateTime? LastPensionDate = null;
+                    string LastApprovedOn = obj?.Passbook?.LastOrDefault().ApprovedOn;
+                    string LastPensionApprovedOn = obj?.Passbook?.LastOrDefault(x => Convert.ToInt32(x.CrPenBal ?? "0") > 0 && x.Particular.ToLower().Contains("cont.")).ApprovedOn;
 
-                    DateTime transMonth = Convert.ToDateTime(estDetails.Passbook.LastOrDefault()?.ApprovedOn);
-                    PfCompanyDetails companyDetails = new()
+                    DateTime transMonth = Convert.ToDateTime(obj.Passbook.LastOrDefault()?.ApprovedOn);
+                    //DateTime transMonth = string.IsNullOrEmpty(LastApprovedOn) ? Convert.ToDateTime(obj.doe_epf) : Convert.ToDateTime(LastApprovedOn);
+                    List<CompanyPassbookDetails> passbookDetailsList = new();
+
+                    int index = 0;
+                    foreach (var x in obj.Passbook ?? new List<PassbookEntry>())
                     {
-                        passbook = new List<CompanyPassbookDetails>(),
-                        companyName = estDetails.EstName,
-                        establishmentId = "NA",
-                        memberId = estDetails?.MemberId,
-                        LastTransactionApprovedOn = estDetails.Passbook.LastOrDefault()?.ApprovedOn,
+                        bool? penstionContribution = x.Particular.ToLower().Contains("cont.") ? Convert.ToInt32(x?.CrPenBal) > 0 ? true : false : null;
+                        CompanyPassbookDetails pssbkData = new()
+                        {
+                            id = index + 1, // Set id as the index value (1-based index)
+                            approvedOn = x?.ApprovedOn,
+                            description = x?.Particular,
+                            month = string.IsNullOrEmpty(x?.ApprovedOn?.Trim()) ? "NA" : CommonUtility.getMonthName(Convert.ToDateTime(x.ApprovedOn?.Trim()).Month),
+                            year = string.IsNullOrEmpty(x?.ApprovedOn?.Trim()) ? "NA" : Convert.ToDateTime(x.ApprovedOn?.Trim()).Year.ToString(),
+                            ispensionContributed = penstionContribution == null ? "NA" : penstionContribution == true ? "Yes" : "No"
+                        };
+
+                        passbookDetailsList.Add(pssbkData);
+                        if (penstionContribution == true)
+                        {
+                            isPensionGapIdentified = false;
+                            isPensionApplicable = true;
+                        }
+                        if (penstionContribution == false)
+                        {
+                            if (isPensionGapIdentified == false)
+                                isPensionGapIdentified = true;
+                        }
+
+                        index++;
+                    }
+
+                    PfCompanyDetails _companyDetails = new()
+                    {
+                        passbook = passbookDetailsList,
+                        companyName = obj?.EstName,
+                        establishmentId = "NA", // Placeholder value; update as needed
+                        memberId = obj?.MemberId,
+                        LastTransactionApprovedOn = obj?.Passbook?.LastOrDefault()?.ApprovedOn,
                         LastTransactionMonth = CommonUtility.getMonthName(transMonth.Month),
-                        LastTransactionYear = transMonth.Year.ToString()
+                        LastTransactionYear = transMonth.Year.ToString(),
+                        IsPensionApplicable = isPensionApplicable == null ? "NA" : isPensionApplicable ?? false ? "Yes" : "No",
+                        IsPensionGap = isPensionGapIdentified == null ? "NA" : isPensionGapIdentified ?? false ? "Yes" : "No",
+                        //LastPensionDate = LastPensionDate?.ToString("dd-MM-yyyy") ?? "NA",
+                        LastPensionDate = !string.IsNullOrEmpty(LastPensionApprovedOn) ? LastPensionApprovedOn : "NA",
                     };
 
-                    List<CompanyPassbookDetails> passbookDetailsList = estDetails.Passbook.Select((x, index) => new CompanyPassbookDetails
-                    {
-                        id = index + 1,
-                        approvedOn = x.ApprovedOn,
-                        description = x?.Particular,
-                        month = CommonUtility.getMonthName(Convert.ToDateTime(x.ApprovedOn).Month),
-                        year = Convert.ToDateTime(x.ApprovedOn).Year.ToString()
-                    }).ToList();
-
-                    companyDetails.passbook = passbookDetailsList;
-                    companyDetailsList.Add(companyDetails);
+                    companyDetailsList.Add(_companyDetails);
                 }
-
                 passbookDetails.companies = companyDetailsList;
             }
 

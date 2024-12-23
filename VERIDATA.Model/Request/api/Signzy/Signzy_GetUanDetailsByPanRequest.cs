@@ -12,7 +12,7 @@
             nameMatchMethod = string.Empty;
         }
 
-        public string panNumber { get; set; }
+        public string? panNumber { get; set; }
         public string mobileNumber { get; set; }
         public string dateOfBirth { get; set; }
         public string uanNumber { get; set; }

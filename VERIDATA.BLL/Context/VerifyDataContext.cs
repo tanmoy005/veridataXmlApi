@@ -521,7 +521,7 @@ namespace VERIDATA.BLL.Context
             {
                 var msg = _apiResponse.StatusCode switch
                 {
-                    HttpStatusCode.BadRequest => "Invalid mobile or PAN number.Please try again later.",
+                    HttpStatusCode.BadRequest => "Invalid mobile number.Please try again later.",
                     HttpStatusCode.Conflict => "server is currently busy! Please try again later",
                     _ => string.Empty
                 };
