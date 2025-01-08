@@ -195,8 +195,8 @@ namespace PfcAPI.Controllers.Report
                 List<UnderProcessDetailsResponse> LapsedAppointeeList = Task.Run(async () => await _workflowcontext.GetExpiredProcessDataAsync(reqObj)).GetAwaiter().GetResult();
                 if (LapsedAppointeeList.Count > 0)
                 {
-                    List<UnderProcessedDataReportDetails> appointeeList = _reportContext.GetUnderProcessDetails(LapsedAppointeeList);
-                    DataTable _exportdt = CommonUtility.ToDataTable<UnderProcessedDataReportDetails>(appointeeList);
+                    List<LapsedDataReportDetails> appointeeList = _reportContext.GetLapsedDetails(LapsedAppointeeList);
+                    DataTable _exportdt = CommonUtility.ToDataTable<LapsedDataReportDetails>(appointeeList);
                     byte[] exportbytes = CommonUtility.ExportFromDataTableToExcel(_exportdt, reportname, string.Empty);
                     Filedata _Filedata = new() { FileData = exportbytes, FileName = reportname, FileType = "xlsx" };
                     return Ok(new BaseResponse<Filedata>(HttpStatusCode.OK, _Filedata));
