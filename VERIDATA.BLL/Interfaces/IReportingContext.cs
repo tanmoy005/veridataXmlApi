@@ -16,6 +16,7 @@ namespace VERIDATA.BLL.Interfaces
         public Task<List<PfCreateAppointeeDetailsResponse>> DownloadedPfUserCreateAppointeeDetails(PfUserListRequest filter);
 
         public List<UnderProcessedDataReportDetails> GetUnderProcessDetails(List<UnderProcessDetailsResponse> reqList);
+        public List<LapsedDataReportDetails> GetLapsedDetails(List<UnderProcessDetailsResponse> reqList);
 
         public Task<ApiCountReportResponse> ApiCountReport(DateTime? FromDate, DateTime? ToDate);
 
