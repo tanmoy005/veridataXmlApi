@@ -485,7 +485,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 RoleUserMapping UserRoleMappingData = new()
                 {
                     RoleId = userDetails.RoleId ?? 0,
-                    UserId = userDetails.UserId,
+                    UserId = userDetails.Id,
                     ActiveStatus = true,
                     CreatedBy = userDetails.UserId,
                     CreatedOn = DateTime.Now

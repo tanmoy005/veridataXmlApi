@@ -137,7 +137,7 @@ namespace VERIDATA.BLL.Context
                        Qualification = r?.AppointeeData?.Qualification,
                        UANNumber = string.IsNullOrEmpty(r?.AppointeeData?.UANNumber) ? null : CommonUtility.DecryptString(key, r?.AppointeeData?.UANNumber),
                        EPFWages = r?.AppointeeData?.EPFWages ?? 00,
-                       Gender = r?.AppointeeData?.Gender == "M" ? "Maile" : r?.AppointeeData?.Gender == "F" ? "Female" : "Others",
+                       Gender = r?.AppointeeData?.Gender == "M" ? "Male" : r?.AppointeeData?.Gender == "F" ? "Female" : "Others",
                        MaratialStatus = r?.AppointeeData?.MaratialStatus,
                        MemberName = r?.AppointeeData?.MemberName,
                        MemberRelation = r?.AppointeeData?.MemberRelation,
@@ -174,6 +174,25 @@ namespace VERIDATA.BLL.Context
                     CreatedDate = x?.createdDate?.ToShortDateString() ?? string.Empty,
                     Status = x?.status,
                     verificationType = x?.verificationStatusCode
+                })?.ToList();
+            }
+            return response;
+        }
+        public List<LapsedDataReportDetails> GetLapsedDetails(List<UnderProcessDetailsResponse> reqList)
+        {
+            List<LapsedDataReportDetails>? response = new();
+            if (reqList.Count > 0)
+            {
+                response = reqList?.Select(x => new LapsedDataReportDetails
+                {
+                    AppointeeName = x?.appointeeName,
+                    candidateId = x?.candidateId,
+                    EmailId = x?.appointeeEmailId,
+                    mobileNo = x?.mobileNo,
+                    dateOfJoining = x?.dateOfJoining?.ToShortDateString(),
+                    CreatedDate = x?.createdDate?.ToShortDateString() ?? string.Empty,
+                    Status = x?.status,
+                   // verificationType = x?.verificationStatusCode
                 })?.ToList();
             }
             return response;
