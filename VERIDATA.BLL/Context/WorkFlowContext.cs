@@ -538,7 +538,8 @@ namespace VERIDATA.BLL.Context
                 if (_appointeedetails != null && !_isSubmit)
                 {
                     await _fileContext.postappointeeUploadedFiles(AppointeeFileDetails);
-                    var isManual = _appointeedetails?.IsPassbookFetch == true || string.IsNullOrEmpty(_appointeedetails.UANNumber) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
+                    //var isManual = _appointeedetails?.IsPassbookFetch == true || string.IsNullOrEmpty(_appointeedetails.UANNumber) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
+                    var isManual = AppointeeFileDetails?.IsManualPassbookUploaded == true ? true : (_appointeedetails?.IsPassbookFetch == true || string.IsNullOrEmpty(_appointeedetails.UANNumber)) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
                     await _dbContextCandiate.UpdateAppointeeSubmit(appointeeId, AppointeeFileDetails.IsSubmit ?? false, isManual);
                     mailType = MailType.Submit;
                     if (isManual ?? false)
