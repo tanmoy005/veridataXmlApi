@@ -278,6 +278,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                                 dateOfJoining = ap.dateOfJoining,
                                 status = ap.status,
                                 remarks = p?.Remarks,
+                                createdDate = ap?.createdDate
                             };
 
             List<ManualVerificationProcessDetailsResponse> rejectedAppointeeList = querydata.ToList();
