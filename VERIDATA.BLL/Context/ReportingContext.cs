@@ -105,7 +105,7 @@ namespace VERIDATA.BLL.Context
                     epfWages = row?.AppointeeData?.EPFWages,
                     uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
                     status = row?.ProcessData?.DataUploaded ?? false ? "Downloaded" : "Not Downloaded",
-                    isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" :  "No",
+                    isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
                     uanAadharLink = row?.AppointeeData?.IsUanAadharLink == null ? "NA" : row?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
                 })?.ToList();
             }
@@ -178,6 +178,7 @@ namespace VERIDATA.BLL.Context
             }
             return response;
         }
+
         public List<LapsedDataReportDetails> GetLapsedDetails(List<UnderProcessDetailsResponse> reqList)
         {
             List<LapsedDataReportDetails>? response = new();
@@ -322,85 +323,85 @@ namespace VERIDATA.BLL.Context
             List<AppointeeTotalCount> _appointeeTotalCountList = new();
             List<AppointeeCountDateWise> _appointeeCountDateWises = new();
             List<AppointeeCountDateWise> _appointeeNonProcessDateWise = new();
-            if (reqObj.StatusCode == ReportFilterStatus.LinkNotSent || string.IsNullOrEmpty(reqObj.StatusCode))
+            //if (reqObj.StatusCode == ReportFilterStatus.LinkNotSent || string.IsNullOrEmpty(reqObj.StatusCode))
+            //{
+            List<NonProcessCandidateReportDataResponse> nonProcessAppointeeList = await _reportingDalContext.GetNonProcessCandidateReport(reqObj);
+
+            List<IGrouping<string?, NonProcessCandidateReportDataResponse>>? _noProcessAppointeeCountdateWise = nonProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToShortDateString())?.ToList();
+
+            foreach ((List<NonProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate,
+                AppointeeCountDateWise _currDateWiseCount, AppointeeTotalCount _currAppointeeCount) in from obj in _noProcessAppointeeCountdateWise
+                                                                                                       let _currdata = obj?.ToList()
+                                                                                                       let _totalCount = _currdata?.Count ?? 0
+                                                                                                       let _currDate = obj?.Key
+                                                                                                       let _currDateWiseCount = new AppointeeCountDateWise()
+                                                                                                       let _currAppointeeCount = new AppointeeTotalCount()
+                                                                                                       select (_currdata, _totalCount, _currDate, _currDateWiseCount, _currAppointeeCount))
             {
-                List<NonProcessCandidateReportDataResponse> nonProcessAppointeeList = await _reportingDalContext.GetNonProcessCandidateReport(reqObj);
-
-                List<IGrouping<string?, NonProcessCandidateReportDataResponse>>? _noProcessAppointeeCountdateWise = nonProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToShortDateString())?.ToList();
-
-                foreach ((List<NonProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate,
-                    AppointeeCountDateWise _currDateWiseCount, AppointeeTotalCount _currAppointeeCount) in from obj in _noProcessAppointeeCountdateWise
-                                                                                                           let _currdata = obj?.ToList()
-                                                                                                           let _totalCount = _currdata?.Count ?? 0
-                                                                                                           let _currDate = obj?.Key
-                                                                                                           let _currDateWiseCount = new AppointeeCountDateWise()
-                                                                                                           let _currAppointeeCount = new AppointeeTotalCount()
-                                                                                                           select (_currdata, _totalCount, _currDate, _currDateWiseCount, _currAppointeeCount))
+                List<AppointeeCountDetails>? _apntDetails = _currdata?.Select(x => new AppointeeCountDetails
                 {
-                    List<AppointeeCountDetails>? _apntDetails = _currdata?.Select(x => new AppointeeCountDetails
-                    {
-                        AppointeeName = x?.AppointeeName,
-                        CandidateId = x?.CandidateId,
-                        CompanyId = x?.CompanyId,
-                        CompanyName = x?.CompanyName,
-                        EmailId = x?.AppointeeEmail,
-                        ActionTaken = x?.CreatedOn?.ToShortDateString(),
-                        AppointeeStatus = "Link Not Sent",
-                        Date = _currDate,
-                    })?.ToList();
+                    AppointeeName = x?.AppointeeName,
+                    CandidateId = x?.CandidateId,
+                    CompanyId = x?.CompanyId,
+                    CompanyName = x?.CompanyName,
+                    EmailId = x?.AppointeeEmail,
+                    ActionTaken = x?.CreatedOn?.ToShortDateString(),
+                    AppointeeStatus = "Link Not Sent",
+                    Date = _currDate,
+                })?.ToList();
 
-                    _currAppointeeCount.Date = _currDate;
-                    _currAppointeeCount.TotalLinkNotSentCount = _totalCount;
-                    _currAppointeeCount.TotalLinkSentCount = 0;
-                    _currAppointeeCount.TotalAppointeeCount = _totalCount + 0;
-                    _currDateWiseCount.appointeeTotalCount = _currAppointeeCount;
-                    _currDateWiseCount.AppointeeCountDetails = _apntDetails;
-                    _apntDetailsList.AddRange(_apntDetails);
-                    _appointeeCountDateWises.Add(_currDateWiseCount);
-                    _appointeeTotalCountList.Add(_currAppointeeCount);
-                }
+                _currAppointeeCount.Date = _currDate;
+                _currAppointeeCount.TotalLinkNotSentCount = _totalCount;
+                _currAppointeeCount.TotalLinkSentCount = 0;
+                _currAppointeeCount.TotalAppointeeCount = _totalCount + 0;
+                _currDateWiseCount.appointeeTotalCount = _currAppointeeCount;
+                _currDateWiseCount.AppointeeCountDetails = _apntDetails;
+                _apntDetailsList.AddRange(_apntDetails);
+                _appointeeCountDateWises.Add(_currDateWiseCount);
+                _appointeeTotalCountList.Add(_currAppointeeCount);
             }
-            if (reqObj.StatusCode != ReportFilterStatus.LinkNotSent || string.IsNullOrEmpty(reqObj.StatusCode))
+            //}
+            //if (reqObj.StatusCode != ReportFilterStatus.LinkNotSent || string.IsNullOrEmpty(reqObj.StatusCode))
+            //{
+            string? _statusCode = null;
+            bool? _intSubmitCode = null;
+            int? _intSubStatusCode = null;
+            if (!string.IsNullOrEmpty(reqObj.StatusCode))
             {
-                string? _statusCode = null;
-                bool? _intSubmitCode = null;
-                int? _intSubStatusCode = null;
-                if (!string.IsNullOrEmpty(reqObj.StatusCode))
+                switch (reqObj.StatusCode)
                 {
-                    switch (reqObj.StatusCode)
-                    {
-                        case ReportFilterStatus.ProcessIniNoResponse:
-                            _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
-                            _intSubStatusCode = 0;
-                            break;
+                    case ReportFilterStatus.ProcessIniNoResponse:
+                        _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
+                        _intSubStatusCode = 0;
+                        break;
 
-                        case ReportFilterStatus.ProcessIniOnGoing:
-                            _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
-                            _intSubStatusCode = 1;
-                            break;
+                    case ReportFilterStatus.ProcessIniOnGoing:
+                        _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
+                        _intSubStatusCode = 1;
+                        break;
 
-                        case ReportFilterStatus.ProcessIniSubmit:
-                            _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
-                            _intSubmitCode = true;
-                            break;
+                    case ReportFilterStatus.ProcessIniSubmit:
+                        _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
+                        _intSubmitCode = true;
+                        break;
 
-                        case ReportFilterStatus.Approved:
-                            _statusCode = WorkFlowStatusType.Approved?.Trim();
-                            break;
+                    case ReportFilterStatus.Approved:
+                        _statusCode = WorkFlowStatusType.Approved?.Trim();
+                        break;
 
-                        case ReportFilterStatus.Rejected:
-                            _statusCode = WorkFlowStatusType.Rejected?.Trim();
-                            break;
+                    case ReportFilterStatus.Rejected:
+                        _statusCode = WorkFlowStatusType.Rejected?.Trim();
+                        break;
 
-                        case ReportFilterStatus.ForcedApproved:
-                            _statusCode = WorkFlowStatusType.ForcedApproved?.Trim();
-                            break;
+                    case ReportFilterStatus.ForcedApproved:
+                        _statusCode = WorkFlowStatusType.ForcedApproved?.Trim();
+                        break;
 
-                        default:
-                            _statusCode = reqObj.StatusCode;
-                            break;
-                    }
+                    default:
+                        _statusCode = reqObj.StatusCode;
+                        break;
                 }
+                //}
 
                 List<UnderProcessCandidateReportDataResponse> underProcessAppointeeList = await _reportingDalContext.GetUnderProcessCandidateReport(reqObj, _statusCode, _intSubmitCode, _intSubStatusCode);
 
