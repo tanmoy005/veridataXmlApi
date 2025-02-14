@@ -23,6 +23,11 @@ namespace VERIDATA.BLL.apiContext.Common
 
         public async Task<HttpResponseMessage> HttpPostApi(ApiConfigResponse apiConfig, StringContent content, int userId)
         {
+            HttpResponseMessage responsse = new();
+            if (apiConfig == null)
+            {
+                return responsse;
+            }
             HttpClient client = new();
             //var apiConfig = await _masterContext.GetApiConfigData(apiType);
             //string _url = apiConfig?.apiUrl;
@@ -60,7 +65,7 @@ namespace VERIDATA.BLL.apiContext.Common
                 ////Token Auth
             }
             request.Content = content;
-            HttpResponseMessage responsse = await client.SendAsync(request);
+            responsse = await client.SendAsync(request);
 
             if (responsse.StatusCode != HttpStatusCode.OK)
             {

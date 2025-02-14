@@ -212,7 +212,7 @@
                                                         "
                                                     >
                                                         <p style="font-size: 22px; line-height: 2; word-break: break-word; text-align: center; mso-line-height-alt: 44px; margin: 0;">
-                                                            <span style="font-size: 22px;">User Info Remider/Process Incomplete</span>
+                                                            <span style="font-size: 22px;">User Info Reminder/Process Incomplete</span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -427,14 +427,14 @@
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
 														This is a friendly reminder that your verification process with {{CompanyName}} is incomplete.</br> </p> <br>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-														Please enter the requested details in <strong>VERIDATA<sup>®</sup></strong>, by following the instructions one step at a time.</br>Successful completion of this process will facilitate your onboarding to {{CompanyName}}.</p></br>
+														Please enter the requested details in <strong>VERIDATA<sup>&reg;</sup></strong>, by following the instructions one step at a time.</br>Successful completion of this process will facilitate your onboarding to {{CompanyName}}.</p></br>
 														
 																								
 													
 
                                                          <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"> <strong>Before verification there are some prerequisites, that you must possess:</strong></p></br>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>1. Aadhar Number</strong></br>Please have your Aadhar number and PAN number before you start the verification process-If you don't have an Aadhar,please contact PwC HC.</p>
-														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>2. Mobile Number</strong></br>Make sure that the mobile number you have provided to PwC, is pinned with Aadhar-Else, contact with your HC representative to update mobile number.</p>
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>2. Mobile Number</strong></br>Make sure that the mobile number you have provided to PwC HC, is pinned with Aadhar-Else, contact with your HC representative to update mobile number.</p>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>3. UAN </strong></br>If you have a UAN account, please make sure you have activated it-Please login to the EPFO portal at least once to activate it.</p>
                                                         <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>4. Verify</strong></br>All verifications are mandatory -<strong> Please complete all of them</strong>. Don't leave out any information asked for.</p>
 														</p>

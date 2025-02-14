@@ -57,8 +57,8 @@ namespace PfcAPI.Controllers.Account
                 else
                 {
                     _ErrorResponse.ErrorCode = 500;
-                    _ErrorResponse.UserMessage = "User Already Exsist,please try another name";
-                    _ErrorResponse.InternalMessage = "User Already Exsist";
+                    _ErrorResponse.UserMessage = "The user already exists. Please try a different name.";
+                    _ErrorResponse.InternalMessage = "User already exist";
                     return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
                 }
             }
@@ -136,8 +136,8 @@ namespace PfcAPI.Controllers.Account
                     else
                     {
                         _ErrorResponse.ErrorCode = (int)HttpStatusCode.Ambiguous;
-                        _ErrorResponse.UserMessage = "User Already Exsist,please try another name";
-                        _ErrorResponse.InternalMessage = "User Already Exsist";
+                        _ErrorResponse.UserMessage = "The user already exists. Please try a different name.";
+                        _ErrorResponse.InternalMessage = "User already exist";
                         return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.Ambiguous, _ErrorResponse));
                     }
                 }

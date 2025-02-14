@@ -312,7 +312,7 @@ namespace VERIDATA.BLL.Notification.Sender
                 case ValidationType.NonExsist:
                     mailtext = $"{"The appointee details from the latest Update data upload, present in the attached excel report, are not present in VERIDATA." +
                         " Hence were not updated."}";
-                    mailSubject = "VERIDATA: Non Exsist Appointee Data Rejected";
+                    mailSubject = "VERIDATA: Data Rejected_Wrong CandidateId ";
                     break;
 
                 default:

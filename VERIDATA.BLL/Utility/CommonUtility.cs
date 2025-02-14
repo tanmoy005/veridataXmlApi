@@ -17,6 +17,7 @@ namespace VERIDATA.BLL.utility
     {
         public static Random random = new();
         public static ApiConfiguration config;
+        private static readonly Regex WhitespaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
 
         public static void Initialize(ApiConfiguration Configuration)
         {
@@ -362,6 +363,14 @@ namespace VERIDATA.BLL.utility
 
                 return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
             }
+        }
+
+        public static string NormalizeWhitespace(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return string.Empty;
+
+            return System.Text.RegularExpressions.Regex.Replace(input?.Trim(), @"\s+", " ");
         }
     }
 }

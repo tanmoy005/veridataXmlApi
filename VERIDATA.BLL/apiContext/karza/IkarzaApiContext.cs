@@ -15,8 +15,6 @@ namespace VERIDATA.BLL.apiContext.karza
 
         public Task<PassportDetails> GetPassportDetails(AppointeePassportValidateRequest reqObj);
 
-        //public Task<AadharGenerateOTPDetails> GenerateAadharOTP(string aadharNumber, int userId);
-        //public Task<AadharSubmitOtpDetails> SubmitAadharOTP(string clientId, string aadharNumber, string otp, int userId);
         public Task<UanGenerateOtpDetails> GenerateUANOTP(string UanNumber, int userId);
 
         public Task<PfPassbookDetails> GetPassbookBySubmitUanOTP(string clientId, string otp, int userId);
@@ -26,5 +24,9 @@ namespace VERIDATA.BLL.apiContext.karza
         public Task<EpsContributionCheckResult> CheckEpsContributionConsistencyForkarza(UanPassbookDetails uanPassbookDetails);
 
         public Task<GetAadharMobileLinkDetails> GetMobileAadharLinkStatus(string aadharNo, string mobileNo, int userId);
+
+        public Task<AadharGenerateOTPDetails> GenerateAadharOTP(string aadharNumber, int userId);
+
+        public Task<AadharSubmitOtpDetails> SubmitAadharOTP(string clientId, string aadharNumber, string otp, string shareCode, int userId);
     }
 }

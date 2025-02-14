@@ -423,8 +423,18 @@
                                                            Dear {{Name}}
                                                         </p></br>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
-														We hope this message finds you well.</br>In order to enhance the security of your account and verify your identity, we have implemented a One-Time Password (OTP) authentication process.</br></br> Please use the OTP below to complete your verification:</p> <br>
-														<strong>OTP Code: {{Otp}}</strong></p>		
+														We hope this message finds you well.</br>In order to enhance the security of your account and verify your identity, we have implemented a One-Time Password (OTP) authentication process.</br></br><strong> Please use the OTP below to complete your verification:</strong></p> <br>
+														<!-- <strong>OTP Code: {{Otp}}</strong></p>		 -->
+														<div style="font-size: 24px;
+														font-weight: bold;
+														color: #E7607D;
+            padding: 10px;
+            <!-- border: 2px solid #8A65D9;  -->
+            border-radius: 5px;
+            text-align: center;
+            background-color: #fff3f3;"
+			>{{Otp}}
+			</div>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">Please enter this OTP in the designated field in VERIDATA<sup>®</sup> login page, to complete the authentication process. This additional layer of security helps ensure that your account remains protected.</p></br></br>
                                                     <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;">
 														You can reach out to your HC representative regarding any queries.</p></br>

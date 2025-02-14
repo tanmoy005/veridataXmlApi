@@ -104,8 +104,8 @@ namespace VERIDATA.BLL.Context
                     dateOfJoining = row?.AppointeeData?.DateOfJoining,
                     epfWages = row?.AppointeeData?.EPFWages,
                     uanNo = string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeData?.UANNumber)),
-                    status = row?.ProcessData?.DataUploaded ?? false ? "Downloaded" : "NA",
-                    isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" : "No",
+                    status = row?.ProcessData?.DataUploaded ?? false ? "Downloaded" : "Not Downloaded",
+                    isPensionApplicable = row?.AppointeeData?.IsPensionApplicable == null ? "NA" : row?.AppointeeData?.IsPensionApplicable ?? false ? "Yes" :  "No",
                     uanAadharLink = row?.AppointeeData?.IsUanAadharLink == null ? "NA" : row?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
                 })?.ToList();
             }
@@ -192,7 +192,7 @@ namespace VERIDATA.BLL.Context
                     dateOfJoining = x?.dateOfJoining?.ToShortDateString(),
                     CreatedDate = x?.createdDate?.ToShortDateString() ?? string.Empty,
                     Status = x?.status,
-                   // verificationType = x?.verificationStatusCode
+                    // verificationType = x?.verificationStatusCode
                 })?.ToList();
             }
             return response;

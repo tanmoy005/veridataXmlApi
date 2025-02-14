@@ -71,7 +71,7 @@ namespace PfcAPI.Controllers.Account
                 int validatedUserId = Task.Run(async () => await _userContext.validateUserByOtp(user.clientId, user.OTP, user.dbUserType)).GetAwaiter().GetResult();
                 if (validatedUserId <= 0)
                 {
-                    string _errormsg = validatedUserId == 0 ? "The OTP is invalid. Please try again." : validatedUserId == -1 ? "Your profile is locked due to consecutive wrong otp, please try after some time" : "Otp timed out, Please retry";
+                    string _errormsg = validatedUserId == 0 ? "The OTP entered is invalid. Please check and try again." : validatedUserId == -1 ? "Your profile has been locked due to consecutive incorrect OTP attempts. Please try again after some time." : "OTP is timed out. please click in resend OTP";
 
                     _ErrorResponse.ErrorCode = 400;
                     _ErrorResponse.UserMessage = _errormsg;
@@ -100,7 +100,7 @@ namespace PfcAPI.Controllers.Account
                 int validatedUserId = Task.Run(async () => await _userContext.getUserByEmail(email)).GetAwaiter().GetResult();
                 if (validatedUserId <= 0)
                 {
-                    string _errormsg = "Invalid User Please Login with valid user mail";
+                    string _errormsg = "Invalid User please Login with valid user mail";
 
                     _ErrorResponse.ErrorCode = 400;
                     _ErrorResponse.UserMessage = _errormsg;
@@ -161,7 +161,7 @@ namespace PfcAPI.Controllers.Account
                 int validatedUserId = Task.Run(async () => await _userContext.validateUserByOtp(user.clientId, user.OTP, (int)UserType.Appoientee)).GetAwaiter().GetResult();
                 if (validatedUserId <= 0)
                 {
-                    string _errormsg = validatedUserId == 0 ? "The OTP is invalid. Please try again." : validatedUserId == -1 ? "Your profile is locked due to consecutive wrong otp, please try after some time" : "Otp timed out, Please retry";
+                    string _errormsg = validatedUserId == 0 ? "The OTP entered is invalid. Please check and try again." : validatedUserId == -1 ? "Your profile has been locked due to consecutive incorrect OTP attempts. Please try again after some time." : "Otp timed out. please click in resend OTP";
 
                     _ErrorResponse.ErrorCode = 400;
                     _ErrorResponse.UserMessage = _errormsg;
@@ -187,7 +187,7 @@ namespace PfcAPI.Controllers.Account
                 int validatedUserId = Task.Run(async () => await _userContext.validateUserByOtp(req.clientId, req.otp, (int)UserType.Appoientee)).GetAwaiter().GetResult();
                 if (validatedUserId <= 0)
                 {
-                    string _errormsg = validatedUserId == 0 ? "The OTP is invalid. Please try again." : validatedUserId == -1 ? "Your profile is locked due to consecutive wrong otp, please try after some time" : "Otp timed out, Please retry";
+                    string _errormsg = validatedUserId == 0 ? "The OTP entered is invalid. Please check and try again." : validatedUserId == -1 ? "Your profile has been locked due to consecutive incorrect OTP attempts. Please try again after some time." : "Otp timed out. please click in resend OTP";
 
                     _ErrorResponse.ErrorCode = 400;
                     _ErrorResponse.UserMessage = _errormsg;
@@ -229,7 +229,7 @@ namespace PfcAPI.Controllers.Account
                 TokenDetailsResponse RefreshTokenResponse = Task.Run(async () => await _userContext.getRefreshToken(req)).GetAwaiter().GetResult();
                 if (!(RefreshTokenResponse.IsValid ?? false))
                 {
-                    string _errormsg = "Invalid client request, Please try log in again";
+                    string _errormsg = "Invalid client request. Please try log in again";
 
                     _ErrorResponse.ErrorCode = 400;
                     _ErrorResponse.UserMessage = _errormsg;

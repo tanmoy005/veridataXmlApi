@@ -1,7 +1,10 @@
 ﻿using System.Data;
 using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
@@ -870,73 +873,81 @@ namespace VERIDATA.BLL.Context
                     messeege = messeege + " share code can not be null";
                 }
             }
-
+            if (isValid)
+            {
+                var isValidDigtalSig = await OfflineKycDigitalSignatureCheck(unzipFileContent);
+                if (!isValidDigtalSig)
+                {
+                    isValid = false;
+                    messeege = "eKYC file digital signature failed, Aadhar XML should not be tampered,";
+                }
+            }
             response.FileContent = unzipFileContent;
             response.IsValid = isValid;
             response.Message = messeege;
             return response;
         }
 
-        //private async Task<bool> OfflineKycDigitalSignatureCheck(string? xmlFileData)
-        //{
-        //    bool isValid = false;
-        //    try
-        //    {
-        //        if (xmlFileData != null)
-        //        {
-        //            XmlDocument xmlDoc = new XmlDocument();
-        //            xmlDoc.LoadXml(xmlFileData);
+        private async Task<bool> OfflineKycDigitalSignatureCheck(string? xmlFileData)
+        {
+            bool isValid = false;
+            try
+            {
+                if (xmlFileData != null)
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(xmlFileData);
 
-        //            // Navigate and extract data
-        //            XmlNode root = xmlDoc.DocumentElement;
+                    // Navigate and extract data
+                    XmlNode root = xmlDoc.DocumentElement;
 
-        //            // Find the signature node
-        //            XmlNode signatureNode = root.SelectSingleNode("//ds:Signature", GetNamespaceManager(xmlDoc));
-        //            if (signatureNode == null)
-        //            {
-        //                return false;
-        //            }
+                    // Find the signature node
+                    XmlNode signatureNode = root.SelectSingleNode("//ds:Signature", GetNamespaceManager(xmlDoc));
+                    if (signatureNode == null)
+                    {
+                        return false;
+                    }
 
-        //            // Create a new SignedXml object and load the signature node
-        //            SignedXml signedXml = new SignedXml(xmlDoc);
-        //            signedXml.LoadXml((XmlElement)signatureNode);
+                    // Create a new SignedXml object and load the signature node
+                    SignedXml signedXml = new SignedXml(xmlDoc);
+                    signedXml.LoadXml((XmlElement)signatureNode);
 
-        //            // Find the signing certificate
-        //            X509Certificate2 certificate = null;
-        //            foreach (KeyInfoClause keyInfoClause in signedXml.KeyInfo)
-        //            {
-        //                if (keyInfoClause is KeyInfoX509Data)
-        //                {
-        //                    foreach (var cert in ((KeyInfoX509Data)keyInfoClause).Certificates)
-        //                    {
-        //                        certificate = (X509Certificate2)cert;
-        //                        break;
-        //                    }
-        //                }
-        //            }
+                    // Find the signing certificate
+                    X509Certificate2 certificate = null;
+                    foreach (KeyInfoClause keyInfoClause in signedXml.KeyInfo)
+                    {
+                        if (keyInfoClause is KeyInfoX509Data)
+                        {
+                            foreach (var cert in ((KeyInfoX509Data)keyInfoClause).Certificates)
+                            {
+                                certificate = (X509Certificate2)cert;
+                                break;
+                            }
+                        }
+                    }
 
-        //            if (certificate == null)
-        //            {
-        //                return false;
-        //            }
+                    if (certificate == null)
+                    {
+                        return false;
+                    }
 
-        //            // Verify the signature
-        //            isValid = signedXml.CheckSignature(certificate, true);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("Error: " + ex.Message);
-        //    }
+                    // Verify the signature
+                    isValid = signedXml.CheckSignature(certificate, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
 
-        //    return isValid;
-        //}
+            return isValid;
+        }
 
-        //private static XmlNamespaceManager GetNamespaceManager(XmlDocument xmlDoc)
-        //{
-        //    XmlNamespaceManager nsMgr = new XmlNamespaceManager(xmlDoc.NameTable);
-        //    nsMgr.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
-        //    return nsMgr;
-        //}
+        private static XmlNamespaceManager GetNamespaceManager(XmlDocument xmlDoc)
+        {
+            XmlNamespaceManager nsMgr = new XmlNamespaceManager(xmlDoc.NameTable);
+            nsMgr.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
+            return nsMgr;
+        }
     }
 }

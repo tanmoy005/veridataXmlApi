@@ -61,7 +61,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.UAN, ApiSubTYpeName.FindUan, ApiProviderType.Signzy);
             Signzy_GetUanDetailsByPanRequest request = new()
             {
-                panNumber = panNo??"",
+                panNumber = panNo ?? "",
                 mobileNumber = mobileNo,
             };
             StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -132,9 +132,13 @@ namespace VERIDATA.BLL.apiContext.signzy
         {
             UanGenerateOtpDetails Response = new();
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.EPFO, ApiSubTYpeName.UANGenerateOTP, ApiProviderType.Signzy);
+            //var callBackBaseUrl = "https://fd20-136-232-69-90.ngrok-free.app";
+            //string callBackActionUrl = "/api/AadhaarValidate/callback";
+            //var _callBackUrl = $"{callBackBaseUrl}{callBackActionUrl}";
             Signzy_UanGenerateOtpRequest request = new()
             {
                 phoneNumber = PhoneNumber,
+                //callbackUrl = _callBackUrl,
             };
             StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
@@ -170,7 +174,7 @@ namespace VERIDATA.BLL.apiContext.signzy
                 else
                 {
                     Response.StatusCode = HttpStatusCode.BadRequest;
-                    Response.ReasonPhrase = "Invalid  Mobile Number ";
+                    Response.ReasonPhrase = "Invalid Mobile Number ";
                 }
             }
             else
@@ -216,7 +220,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.EPFO, ApiSubTYpeName.UanPassbook, ApiProviderType.Signzy);
             Signzy_UanPassbookFetchRequest request = new()
             {
-                txnId = clientId,
+                requestId = clientId,
             };
             StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
@@ -265,7 +269,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             else
             {
                 res.StatusCode = _apiResponse.StatusCode;
-                res.ReasonPhrase = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
+                res.ReasonPhrase = "The site is currently unreachable. Please try again after some time or opt for manual passbook upload.";
                 // res.ReasonPhrase = employementUanResponse?.Error?.Message?.ToString() ?? employementUanResponse?.Message;
             }
 

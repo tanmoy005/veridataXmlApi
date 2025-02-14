@@ -26,5 +26,7 @@
         public string? lvl1Email { get; set; }
         public string? lvl2Email { get; set; }
         public string? lvl3Email { get; set; }
+        public string? passbookStatusCode { get; set; }
+        public string? uanNo { get; set; }
     }
 }

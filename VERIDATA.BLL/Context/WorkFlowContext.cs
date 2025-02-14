@@ -76,6 +76,7 @@ namespace VERIDATA.BLL.Context
                     uanLinkWithAadhar = row?.AppointeeData?.IsUanAadharLink == null ? "NA" : row?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
                     passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "Auto" : "NA",
                     passbookStatusCode = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? string.Empty : row?.AppointeeData?.IsManualPassbook ?? false ? "MNL" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AF" : string.Empty,
+                    IsDualEmployement = row?.AppointeeData?.IsDualEmployement == null ? "NA" : row?.AppointeeData?.IsDualEmployement ?? false ? "Yes" : "No",
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
                 }).ToList();
             }
@@ -105,6 +106,8 @@ namespace VERIDATA.BLL.Context
                     uanLinkWithAadhar = row?.AppointeeData?.IsUanAadharLink == null ? "NA" : row?.AppointeeData?.IsUanAadharLink ?? false ? "Yes" : "No",
                     passbookStatus = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? "NA" : row?.AppointeeData?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeData?.IsPassbookFetch ?? false ? "Auto" : "NA",
                     passbookStatusCode = row?.AppointeeData?.IsManualPassbook == null && row?.AppointeeData?.IsPassbookFetch == null ? string.Empty : row?.AppointeeData?.IsManualPassbook ?? false ? "MNL" : row?.AppointeeData?.IsPassbookFetch ?? false ? "AF" : string.Empty,
+                    IsDualEmployement = row?.AppointeeData?.IsDualEmployement == null ? "NA" : row?.AppointeeData?.IsDualEmployement ?? false ? "Yes" : "No",
+
                     //PassbookVerifiedStatus = row?.AppointeeData?.IsEmployementVarified != null ? (row?.AppointeeData?.IsEmployementVarified ?? false) ? "Yes" : "No" : string.IsNullOrEmpty(row?.AppointeeData?.UANNumber) ? "NA" : "No",
                 }).ToList();
             }
@@ -177,8 +180,10 @@ namespace VERIDATA.BLL.Context
                         verificationStatusCode = row?.AppvlStatusCode,
                         consentStatusCode = row.ConsentStatusId ?? 0,
                         passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "Auto" : "NA",
+                        passbookStatusCode = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? string.Empty : row?.AppointeeDetails?.IsManualPassbook ?? false ? "MNL" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "AF" : string.Empty,
+                        uanNo = string.IsNullOrEmpty(row?.AppointeeDetails?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeDetails?.UANNumber)),
                         createdDate = row.UnderProcess?.CreatedOn
-                    }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
+                    }).OrderByDescending(x => x.createdDate).ThenBy(y => y.dateOfJoining).ToList();
                 }
                 else
                 {
@@ -207,9 +212,10 @@ namespace VERIDATA.BLL.Context
                         verificationStatusCode = row?.AppvlStatusCode,
                         consentStatusCode = row.ConsentStatusId ?? 0,
                         passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "Auto" : "NA",
-                        //passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : "AutoFetch",
+                        passbookStatusCode = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? string.Empty : row?.AppointeeDetails?.IsManualPassbook ?? false ? "MNL" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "AF" : string.Empty,
+                        uanNo = string.IsNullOrEmpty(row?.AppointeeDetails?.UANNumber) ? "NA" : CommonUtility.MaskedString(CommonUtility.DecryptString(key, row?.AppointeeDetails?.UANNumber)),
                         createdDate = row.UnderProcess?.CreatedOn
-                    }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
+                    }).OrderByDescending(x => x.createdDate).ThenBy(y => y.dateOfJoining).ToList();
                 }
 
                 _underProcessViewdata = (typeFilterCode != null) ? (typeFilterCode == 0) ? _underProcessdata.Where(x => x.statusCode == typeFilterCode).ToList()
@@ -257,7 +263,7 @@ namespace VERIDATA.BLL.Context
                         statusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         consentStatusCode = row.ConsentStatusId ?? 0,
                         createdDate = row.UnderProcess?.CreatedOn
-                    }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
+                    }).OrderByDescending(x => x.createdDate).ThenBy(y => y.dateOfJoining).ToList();
                 }
                 else
                 {
@@ -282,7 +288,7 @@ namespace VERIDATA.BLL.Context
                         statusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
                         consentStatusCode = row.ConsentStatusId ?? 0,
                         createdDate = row.UnderProcess?.CreatedOn
-                    }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
+                    }).OrderByDescending(x => x.createdDate).ThenBy(y => y.dateOfJoining).ToList();
                 }
                 _expiredProcessData = (reqObj.StatusCode == null || reqObj.StatusCode?.ToUpper() == "ALL") ? _expiredProcessViewdata :
                     _expiredProcessViewdata?.Where(x => x.statusCode == Convert.ToInt32(reqObj.StatusCode ?? "0"))?.ToList();
@@ -346,6 +352,7 @@ namespace VERIDATA.BLL.Context
             {
                 actionRequiredListdata.AddRange(_unProcessViewdata);
             }
+            actionRequiredListdata?.OrderByDescending(x => x.DaysToJoin)?.ToList();
             return actionRequiredListdata;
         }
 
@@ -532,6 +539,7 @@ namespace VERIDATA.BLL.Context
             int appointeeId = AppointeeFileDetails.AppointeeId;
             AppointeeDetails? _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
             string mailType = string.Empty;
+            bool? isManual = null;
             if (_appointeedetails.IsProcessed != true)
             {
                 bool _isSubmit = _appointeedetails?.IsSubmit ?? false;
@@ -539,7 +547,7 @@ namespace VERIDATA.BLL.Context
                 {
                     await _fileContext.postappointeeUploadedFiles(AppointeeFileDetails);
                     //var isManual = _appointeedetails?.IsPassbookFetch == true || string.IsNullOrEmpty(_appointeedetails.UANNumber) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
-                    var isManual = AppointeeFileDetails?.IsManualPassbookUploaded == true ? true : (_appointeedetails?.IsPassbookFetch == true || string.IsNullOrEmpty(_appointeedetails.UANNumber)) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
+                    isManual = AppointeeFileDetails?.IsManualPassbookUploaded == true ? true : (_appointeedetails?.IsPassbookFetch == true || string.IsNullOrEmpty(_appointeedetails.UANNumber)) && AppointeeFileDetails?.IsManualPassbookUploaded == false ? null : AppointeeFileDetails?.IsManualPassbookUploaded;
                     await _dbContextCandiate.UpdateAppointeeSubmit(appointeeId, AppointeeFileDetails.IsSubmit ?? false, isManual);
                     mailType = MailType.Submit;
                     if (isManual ?? false)
@@ -582,6 +590,10 @@ namespace VERIDATA.BLL.Context
             }
 
             await _dbContextActivity.PostActivityDetails(AppointeeFileDetails?.AppointeeId ?? 0, AppointeeFileDetails?.UserId ?? 0, ActivityLog.DATASBMT);
+            if (isManual ?? false)
+            {
+                await _dbContextActivity.PostActivityDetails(AppointeeFileDetails?.AppointeeId ?? 0, AppointeeFileDetails?.UserId ?? 0, ActivityLog.MNLVERIFREQ);
+            }
         }
 
         private async Task DataUploadAndApproved(int? appointeeId, int userId, bool IsApproved)
@@ -1005,6 +1017,7 @@ namespace VERIDATA.BLL.Context
         private async Task<bool> VefifyDocValidityManual(int appointeeId, List<VerificationUpdatesubCategory>? docValidity, int userId, string? VerificationCategory)// TODO
         {
             bool isVerificationRequired = true;
+            bool reuploadRequest = false;
             // Dynamically update each field specified in the request
             foreach (var obj in docValidity)
             {
@@ -1036,7 +1049,11 @@ namespace VERIDATA.BLL.Context
                 if (!isVerificationRequired)
                 {
                     string remarks = await _dbContextCandiate.UpdateRemarksByType(appointeeId, reasonList, RemarksType.Manual, userId, obj.SubCategory);
-                    await docReuploadRequested(appointeeId, userId, remarks, obj.SubCategory);
+                    if (reuploadRequest == false)
+                    {
+                        await docReuploadRequested(appointeeId, userId, remarks, obj.SubCategory);
+                        reuploadRequest = true;
+                    }
                     //return false;
                 }
                 else

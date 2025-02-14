@@ -4,5 +4,7 @@
     {
         //public string? uan { get; set; }
         public string? phoneNumber { get; set; }
+
+        //public string? callbackUrl { get; set; }
     }
 }

@@ -416,7 +416,8 @@ namespace PfcAPI.Controllers.Appoientee
             }
         }
 
-        [Authorize]
+        //[Authorize]
+        [AllowAnonymous]
         [HttpPost]
         [Route("GetPassbookDetails")]
         public ActionResult GetPassbookDetails(int AppointeeId)

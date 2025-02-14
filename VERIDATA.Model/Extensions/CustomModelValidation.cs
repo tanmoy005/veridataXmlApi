@@ -9,18 +9,25 @@ namespace VERIDATA.Model.Extensions
         {
             protected override ValidationResult? IsValid(object value, ValidationContext validationContext)
             {
-                var Appointee = (AppointeeSaveDetailsRequest)validationContext.ObjectInstance;
-                if (Appointee.IsSubmit)
+                var appointee = (AppointeeSaveDetailsRequest)validationContext.ObjectInstance;
+
+                // Check if the appointee's date of birth is required
+                if (appointee?.IsSubmit == true && appointee.DateOfBirth == null)
+                    return new ValidationResult("Please fill in the Date of Birth field.");
+
+                // If date of birth is provided, calculate age and check if they are at least 18 years old
+                if (appointee?.DateOfBirth != null)
                 {
-                    if (Appointee?.DateOfBirth == null)
-                        return new ValidationResult("Date of Birth is required, Please fill Date of Birth field.");
+                    var age = DateTime.Today.Year - appointee.DateOfBirth.Value.Year;
 
-                    var age = DateTime.Today.Year - Appointee?.DateOfBirth.Value.Year;
+                    // Adjust for the case when the birthday hasn't occurred yet this year
+                    if (DateTime.Today < appointee.DateOfBirth.Value.AddYears(age))
+                        age--;
 
-                    return (age >= 18)
-                        ? ValidationResult.Success
-                        : new ValidationResult("Appointee should be at least 18 years old.");
+                    if (age < 18)
+                        return new ValidationResult("Appointee should be at least 18 years old.");
                 }
+
                 return ValidationResult.Success;
             }
         }
@@ -35,7 +42,7 @@ namespace VERIDATA.Model.Extensions
                     var objname = validationContext.DisplayName;
                     var msg = string.Empty;
                     if (value == null)
-                        msg = ($"{objname} {"field is required,"} {"Please fill the"} {objname} {"feild."}");
+                        msg = ($"{"Please fill the"} {objname} {"field."}");
 
                     return (string.IsNullOrEmpty(msg))
                         ? ValidationResult.Success
@@ -89,7 +96,7 @@ namespace VERIDATA.Model.Extensions
                     var objname = validationContext.DisplayName;
                     var msg = string.Empty;
                     if (value == null)
-                        msg = ($"{objname} {"field is required,"} {"Please fill the"} {objname} {"feild."}");
+                        msg = ($"{"Please fill the"} {objname} {"field."}");
 
                     return (string.IsNullOrEmpty(msg))
                         ? ValidationResult.Success
@@ -120,7 +127,7 @@ namespace VERIDATA.Model.Extensions
         {
             var msg = string.Empty;
             if (string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value))
-                msg = ($"{name} {"field is required, "}{"Please fill the "}{name}{" feild."}");
+                msg = ($"{"Please fill the "}{name}{" field."}");
             return msg;
         }
 
@@ -152,7 +159,7 @@ namespace VERIDATA.Model.Extensions
                     var msg = string.Empty;
                     if (value == null)
                     {
-                        msg = ($"{objname} {"field is required,"} {"Please fill the"} {objname} {"feild."}");
+                        msg = ($"{"Please fill the"} {objname} {"field."}");
                     }
                     else if (Convert.ToDateTime(value) < DateTime.Now)
                     {
@@ -171,25 +178,39 @@ namespace VERIDATA.Model.Extensions
         {
             protected override ValidationResult? IsValid(object value, ValidationContext validationContext)
             {
-                var Appointee = (AppointeeSaveDetailsRequest)validationContext.ObjectInstance;
-                if (Appointee.IsSubmit && Appointee.IsPassportAvailable == "Y")
+                var appointee = (AppointeeSaveDetailsRequest)validationContext.ObjectInstance;
+                var objName = validationContext.DisplayName;
+                string msg = string.Empty;
+
+                if (appointee.IsSubmit && appointee.IsPassportAvailable == "Y")
                 {
-                    var objname = validationContext.DisplayName;
-                    var msg = string.Empty;
                     if (value == null)
                     {
-                        msg = ($"{objname} {"field is required,"} {"Please fill the"} {objname} {"feild."}");
+                        msg = $" Please fill the {objName} field.";
                     }
-                    else if (Convert.ToDateTime(value) > DateTime.Now)
+                    else
                     {
-                        msg = ($"{objname} {"must have past date ."}");
+                        DateTime dateValue = Convert.ToDateTime(value);
+                        if (dateValue > DateTime.Now)
+                        {
+                            msg = $"{objName} must have a past date.";
+                        }
                     }
-
-                    return (string.IsNullOrEmpty(msg))
-                        ? ValidationResult.Success
-                        : new ValidationResult(msg);
                 }
-                return ValidationResult.Success;
+                else if (appointee.IsPassportAvailable == "Y" && value != null)
+                {
+                    DateTime dateValue = Convert.ToDateTime(value);
+                    if (dateValue > DateTime.Now)
+                    {
+                        msg = $"{objName} must have a past date.";
+                    }
+                    else if (dateValue < DateTime.Today.AddYears(-100)) // Restrict minimum date to 100 years before today
+                    {
+                        msg = $"{objName} cannot be older than 100 years.";
+                    }
+                }
+
+                return string.IsNullOrEmpty(msg) ? ValidationResult.Success : new ValidationResult(msg);
             }
         }
     }

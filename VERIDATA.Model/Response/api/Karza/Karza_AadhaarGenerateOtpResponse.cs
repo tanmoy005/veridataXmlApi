@@ -2,7 +2,7 @@
 
 namespace VERIDATA.Model.Response.api.Karza
 {
-    public class Karza_AadhaarGenerateOtpResponse : Karza_BaseResponse
+    public class Karza_AadhaarGenerateOtpResponse : Karza_BaseResponsev2
     {
         public AadharGenerateOtp? result { get; set; }
     }

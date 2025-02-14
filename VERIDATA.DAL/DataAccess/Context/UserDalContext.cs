@@ -108,7 +108,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 switch (true)
                 {
                     case bool _ when _userStatusDetails.AppvlStatusId == verifiedState.AppvlStatusId || _userStatusDetails.AppvlStatusId == forcedVerifiedState.AppvlStatusId:
-                        status = "Approved";
+                        status = "Verified";
                         statusCode = "APPRVD";
                         break;
 
@@ -251,6 +251,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
                 obj.DateOfJoining = !string.IsNullOrEmpty(currRawdata.DateOfJoining) ? Convert.ToDateTime(currRawdata.DateOfJoining) : obj.DateOfJoining;
                 obj.AppointeeName = (!string.IsNullOrEmpty(currRawdata.AppointeeName) && (obj.AppointeeName?.Trim() != currRawdata.AppointeeName)) ? currRawdata.AppointeeName : obj.AppointeeName;
+                obj.AadhaarName = (!string.IsNullOrEmpty(currRawdata.AppointeeName) && (obj.AppointeeName?.Trim() != currRawdata.AppointeeName)) ? currRawdata.AppointeeName : obj.AppointeeName;
                 obj.MobileNo = (!string.IsNullOrEmpty(currRawdata.MobileNo) && (obj.MobileNo?.Trim() != currRawdata.MobileNo)) ? currRawdata.MobileNo : obj.MobileNo;
                 if (!string.IsNullOrEmpty(currRawdata.AppointeeName) && (obj.AppointeeName?.Trim() != currRawdata.AppointeeName))
                 {
@@ -347,7 +348,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
         public async Task<UserMaster?> getUserByUserCode(string? userCode)
         {
-            UserMaster? dbusers = await _dbContextClass.UserMaster.FirstOrDefaultAsync(m => m.UserCode == userCode);
+            UserMaster? dbusers = await _dbContextClass.UserMaster.FirstOrDefaultAsync(m => m.UserCode.Equals(userCode));
 
             return dbusers;
         }
@@ -526,7 +527,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                 TokenNo = req.Token,
                 RefreshTokenExpiryTime = timeOutTime.AddMinutes(-1),
                 Otp = req.Otp,
-                OtpExpiryTime = string.IsNullOrEmpty(req.Otp) ? null : userAuthDetails?.Otp == req.Otp ? userAuthDetails?.OtpExpiryTime : DateTime.Now.AddMinutes(_apiConfig.OtpExpiryDuration),
+                OtpExpiryTime = string.IsNullOrEmpty(req.Otp) ? null : userAuthDetails?.Otp == req.Otp ? userAuthDetails?.OtpExpiryTime : DateTime.Now.AddSeconds(_apiConfig.OtpExpiryDuration),
                 ActiveStatus = true,
                 CreatedBy = req.UserId,
                 CreatedOn = DateTime.Now

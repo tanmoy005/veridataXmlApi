@@ -3,6 +3,7 @@ using VERIDATA.Model.DataAccess.Request;
 using VERIDATA.Model.DataAccess.Response;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Response;
+using VERIDATA.Model.Response.api.Signzy;
 
 namespace VERIDATA.BLL.Interfaces
 {
@@ -31,6 +32,8 @@ namespace VERIDATA.BLL.Interfaces
 
         public Task<GetPassbookDetailsResponse> GetPfPassbookData(GetPassbookDetailsRequest reqObj);
 
+        public Task<GetPassbookDetailsResponse> ValidateBackGetPfPassbookData(SignzyUanPassbookDetails reqObj, int appointeeId, int userId, string uanNumber);
+
         public Task<CandidateValidateResponse> VerifyUanData(UanValidationRequest reqObj);
 
         public Task PostActivity(int appointeeId, int userId, string activityCode);
@@ -38,6 +41,9 @@ namespace VERIDATA.BLL.Interfaces
         //public Task<EmployementHistoryDetailsRespons> GetEmployementHistoryDetails(GetEmployemntDetailsRequest reqObj);
         public Task<GetUanResponse> GetUanNumberPriorityBase(GetUanNumberDetailsRequest reqObj);   // mGhosh
 
-        //public Task<CandidateValidateResponse> VerifyUanDataPriorityBase(UanValidationRequest reqObj);  // mGhosh
+        public Task<AppointeePassportValidateResponse> PassportDetailsValidationPriorityBase(AppointeePassportValidateRequest reqObj);
+
+        public Task<TResponse> ValidateDetailsPriorityBase<TRequest, TResponse>(TRequest reqObj, string apiType)
+            where TResponse : BaseApiResponse, new() where TRequest : class;
     }
 }

@@ -282,12 +282,12 @@ namespace VERIDATA.BLL.Context
             {
                 string _errormsg = _dbUserId switch
                 {
-                    0 => "User ID Password mismatch",
-                    -1 => "User ID invalid",
-                    -2 => "User ID expired",
-                    -3 => "You have crossed your joining date with grace pireod",
-                    -4 => "Your application has been cancelled by your Recruitment partner / Admin",
-                    -5 => "Your profile is locked due to consecutive wrong otp, please try after some time",
+                    0 => "The User ID and password do not match. Please check your credentials and try again.",
+                    -1 => "The User ID is invalid. Please check and try again",
+                    -2 => "Your User ID has expired. Please contact support for assistance.",
+                    -3 => "You have exceeded your joining date, including the grace period.",
+                    -4 => "Your application has been canceled by your recruitment partner or administrator.",
+                    -5 => "Your profile has been locked due to consecutive incorrect OTP attempts. Please try again after some time.",
                     _ => string.Empty,
                 };
                 validateUserResponse.StatusCode = HttpStatusCode.NotFound;
@@ -323,11 +323,11 @@ namespace VERIDATA.BLL.Context
                 string _errormsg = _dbUserId switch
                 {
                     //0 => "User ID Password mismatch",
-                    -1 => "User ID invalid",
-                    -2 => "User ID expired",
+                    -1 => "The User ID is invalid. Please check and try again",
+                    -2 => "Your User ID has expired. Please contact support for assistance.",
                     //-3 => "You have crossed your joining date with grace pireod",
-                    -4 => "Your application has been cancelled by your Recruitment partner / Admin",
-                    -5 => "Your profile is locked due to consecutive wrong otp, please try after some time",
+                    -4 => "Your application has been canceled by your recruitment partner or administrator.",
+                    -5 => "Your profile has been locked due to consecutive incorrect OTP attempts. Please try again after some time.",
                     _ => string.Empty,
                 };
                 validateUserResponse.StatusCode = HttpStatusCode.NotFound;
@@ -391,6 +391,7 @@ namespace VERIDATA.BLL.Context
             GeneralSetup GeneralSetup = await _masterDalContext.GetGeneralSetupData();
 
             UserMaster? dbusers = await _userDalContext.getUserByUserCode(user.UserCode);
+            dbusers = dbusers?.UserCode == user.UserCode ? dbusers : null;
 
             if (dbusers != null)
             {

@@ -391,7 +391,7 @@ namespace VERIDATA.BLL.Context
                     bool? isPensionGapIdentified = null;
                     DateTime? LastPensionDate = null;
                     string LastApprovedOn = obj?.passbook?.LastOrDefault().approved_on;
-                    string LastPensionApprovedOn = obj?.passbook?.LastOrDefault(x => Convert.ToInt32(x.cr_pen_bal ?? "0") > 0 && x.particular.ToLower().Contains("cont.")).approved_on;
+                    string LastPensionApprovedOn = obj?.passbook?.LastOrDefault(x => Convert.ToInt32(x.cr_pen_bal ?? "0") > 0 && x.particular.ToLower().Contains("cont"))?.approved_on;
                     DateTime transMonth = string.IsNullOrEmpty(LastApprovedOn) ? Convert.ToDateTime(obj.doe_epf) : Convert.ToDateTime(LastApprovedOn);
                     List<CompanyPassbookDetails> passbookDetailsList = new();
 
@@ -453,7 +453,7 @@ namespace VERIDATA.BLL.Context
             string? key = _apiConfig.EncriptKey;
             AppointeePassbookDetailsViewResponse passbookDetails = new();
             AppointeeDetails appointeeDetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
-            if (passBookResponse != null)
+            if (passBookResponse?.EstDetails != null)
             {
                 passbookDetails.clientId = "NA";
                 passbookDetails.fullName = passBookResponse?.EmployeeDetails?.MemberName ?? "NA";
@@ -462,7 +462,7 @@ namespace VERIDATA.BLL.Context
                 passbookDetails.dob = passBookResponse?.EmployeeDetails?.Dob ?? "NA";
 
                 List<PfCompanyDetails> companyDetailsList = new();
-                var sortedEstDetails = passBookResponse.EstDetails.OrderByDescending(estDetail => DateTime.TryParse(estDetail.DojEpf, out var dojDate) ? dojDate : DateTime.MinValue).ToList();
+                var sortedEstDetails = passBookResponse?.EstDetails?.OrderByDescending(estDetail => DateTime.TryParse(estDetail.DojEpf, out var dojDate) ? dojDate : DateTime.MinValue)?.ToList();
 
                 foreach (var obj in sortedEstDetails)
                 {
@@ -470,7 +470,7 @@ namespace VERIDATA.BLL.Context
                     bool? isPensionGapIdentified = null;
                     DateTime? LastPensionDate = null;
                     string LastApprovedOn = obj?.Passbook?.LastOrDefault().ApprovedOn;
-                    string LastPensionApprovedOn = obj?.Passbook?.LastOrDefault(x => Convert.ToInt32(x.CrPenBal ?? "0") > 0 && x.Particular.ToLower().Contains("cont.")).ApprovedOn;
+                    string LastPensionApprovedOn = obj?.Passbook?.LastOrDefault(x => Convert.ToInt32(x.CrPenBal ?? "0") > 0 && x.Particular.ToLower().Contains("cont."))?.ApprovedOn;
 
                     DateTime transMonth = Convert.ToDateTime(obj.Passbook.LastOrDefault()?.ApprovedOn);
                     //DateTime transMonth = string.IsNullOrEmpty(LastApprovedOn) ? Convert.ToDateTime(obj.doe_epf) : Convert.ToDateTime(LastApprovedOn);
@@ -580,6 +580,10 @@ namespace VERIDATA.BLL.Context
                     var karzaResponse = JsonConvert.DeserializeObject<UanPassbookDetails>(passbookData);
                     return await ParseEmployementDetailsKarzaByPassbook(karzaResponse, appointeeId);
 
+                case ApiProviderType.Signzy:
+                    var signzyResponse = JsonConvert.DeserializeObject<SignzyUanPassbookDetails>(passbookData);
+                    return await ParseEmployementDetailsSignzy(signzyResponse, appointeeId);
+
                 default:
                     throw new ArgumentException("Invalid provider type for passbook");
             }
@@ -607,24 +611,24 @@ namespace VERIDATA.BLL.Context
             }
 
             // If no employment history, decrypt UAN number and fetch external data
-            var decryptedUANNumber = CommonUtility.DecryptString(key, appointeeDetails?.UANNumber);
+            //var decryptedUANNumber = CommonUtility.DecryptString(key, appointeeDetails?.UANNumber);
 
-            var employmentHistData = await GetEmployementHistoryDetails(new GetEmployemntDetailsRequest
-            {
-                appointeeId = appointeeId,
-                uanNummber = decryptedUANNumber,
-                userId = userId,
-            });
+            //var employmentHistData = await GetEmployementHistoryDetails(new GetEmployemntDetailsRequest
+            //{
+            //    appointeeId = appointeeId,
+            //    uanNummber = decryptedUANNumber,
+            //    userId = userId,
+            //});
 
-            // Parse based on provider type from external API
-            if (employmentHistData?.EmployementData != null)
-            {
-                return await ParseEmploymentDetailsBasedOnProvider(employmentHistData.Provider, employmentHistData.EmployementData, appointeeId);
-            }
+            //// Parse based on provider type from external API
+            //if (employmentHistData?.EmployementData != null)
+            //{
+            //    return await ParseEmploymentDetailsBasedOnProvider(employmentHistData.Provider, employmentHistData.EmployementData, appointeeId);
+            //}
 
-            // If no valid data found, return failure response
-            passbookDetails.isEmployementDetailsAvailable = false;
-            passbookDetails.remarks = employmentHistData?.Remarks;
+            //// If no valid data found, return failure response
+            //passbookDetails.isEmployementDetailsAvailable = false;
+            //passbookDetails.remarks = employmentHistData?.Remarks;
             return passbookDetails;
         }
 
@@ -857,12 +861,60 @@ namespace VERIDATA.BLL.Context
             return passbookDetails;
         }
 
+        private async Task<AppointeeEmployementDetailsViewResponse> ParseEmployementDetailsSignzy(SignzyUanPassbookDetails? EmpHistResponse, int appointeeId)
+        {
+            string? key = _apiConfig.EncriptKey;
+            AppointeeEmployementDetailsViewResponse passbookDetails = new();
+            AppointeeDetails _appointeedetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
+            if (EmpHistResponse?.EstDetails != null)
+            {
+                var EmployementData = EmpHistResponse;
+                var personalData = EmployementData?.EmployeeDetails;
+                List<PfEmployementDetails> _companyDetailsList = new();
+                passbookDetails.clientId = "NA"; //PassBookResponseData.client_id;
+                passbookDetails.fullName = personalData?.MemberName;
+                passbookDetails.fatherName = personalData?.FatherName;
+                passbookDetails.pfUan = CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.UANNumber));
+                passbookDetails.dob = _appointeedetails?.DateOfBirth?.ToShortDateString();
+                List<PfCompanyDetails> companyDetailsList = new();
+
+                var sortedEstDetails = EmployementData?.EstDetails?.OrderByDescending(estDetail => DateTime.TryParse(estDetail.DojEpf, out var dojDate) ? dojDate : DateTime.MinValue)?.ToList();
+                foreach (EstablishmentDetails obj in sortedEstDetails)
+                {
+                    //var _copmnyData = obj.Value;
+                    var TotalWorkDays = Convert.ToInt32(((Convert.ToDateTime(obj?.Passbook.LastOrDefault()?.ApprovedOn)) - (Convert.ToDateTime(obj?.Passbook.FirstOrDefault()?.ApprovedOn))).TotalDays);
+
+                    DateTime transFirstMonth = Convert.ToDateTime(obj?.Passbook.FirstOrDefault()?.ApprovedOn);
+                    DateTime transLastMonth = Convert.ToDateTime(obj?.Passbook.LastOrDefault()?.ApprovedOn);
+                    //var _copmnyData = obj.Value;
+                    PfEmployementDetails _companyDetails = new()
+                    {
+                        companyName = obj?.EstName,
+                        establishmentId = "NA",// _copmnyData?.establishment_id;
+                        memberId = obj?.MemberId,
+                        FirstTransactionApprovedOn = obj?.Passbook.FirstOrDefault()?.ApprovedOn,
+                        FirstTransactionMonth = CommonUtility.getMonthName(transFirstMonth.Month),
+                        FirstTransactionYear = transFirstMonth.Year.ToString(),
+                        LastTransactionApprovedOn = obj?.Passbook.LastOrDefault()?.ApprovedOn,
+                        LastTransactionMonth = CommonUtility.getMonthName(transLastMonth.Month),
+                        LastTransactionYear = transLastMonth.Year.ToString(),
+                        TotalWorkDays = TotalWorkDays,
+                        WorkForYear = TotalWorkDays / 365,
+                        WorkForMonth = (TotalWorkDays % 365) / 30,
+                    };
+                    _companyDetailsList.Add(_companyDetails);
+                }
+                passbookDetails.companies = _companyDetailsList;
+            }
+            return passbookDetails;
+        }
+
         private async Task<AppointeeEmployementDetailsViewResponse> ParseEmployementDetailsSignzy(Signzy_GetEmployementDetailsByUanResponse? EmpHistResponse, int appointeeId)
         {
             string? key = _apiConfig.EncriptKey;
             AppointeeEmployementDetailsViewResponse passbookDetails = new();
             AppointeeDetails _appointeedetails = await _appointeeDalContext.GetAppinteeDetailsById(appointeeId);
-            if (EmpHistResponse != null)
+            if (EmpHistResponse?.Result != null)
             {
                 var EmployementData = EmpHistResponse.Result;
                 var personalData = EmployementData.FirstOrDefault();
@@ -987,8 +1039,8 @@ namespace VERIDATA.BLL.Context
         public string GenarateErrorMsg(int statusCode, string reasonCode, string type)
         {
             string msg = statusCode == (int)HttpStatusCode.InternalServerError
-                ? $"{type} {"server is currently busy! Please try again later"}"
-                : $"{reasonCode}, {"Please try again later."}";
+                ? $"{"The"} {type} {"server is currently busy. Please try again later."}"
+                : $"{reasonCode}. {"Please try again later."}";
             return msg;
         }
 

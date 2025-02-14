@@ -122,7 +122,7 @@ namespace VERIDATA.BLL.apiContext.karza
                 else
                 {
                     res.StatusCode = HttpStatusCode.InternalServerError;
-                    res.ReasonPhrase = "EPFO server is currently busy!Please try again later";
+                    res.ReasonPhrase = "The EPFO server is currently busy. Please try again later.";
                 }
             }
             else
@@ -212,7 +212,7 @@ namespace VERIDATA.BLL.apiContext.karza
                     else
                     {
                         res.StatusCode = HttpStatusCode.InternalServerError;
-                        res.ReasonPhrase = "EPFO server is currently busy!Please try again later";
+                        res.ReasonPhrase = "The EPFO server is currently busy. Please try again later.";
                     }
                 }
             }
@@ -311,13 +311,13 @@ namespace VERIDATA.BLL.apiContext.karza
                 else
                 {
                     Response.StatusCode = HttpStatusCode.BadRequest;
-                    Response.ReasonPhrase = "Invalid  Uan Number ";
+                    Response.ReasonPhrase = "Invalid Uan Number ";
                 }
             }
             else
             {
                 Response.StatusCode = _apiResponse.StatusCode;
-                Response.ReasonPhrase = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
+                Response.ReasonPhrase = "The site is currently unreachable. Please try again after some time or opt for manual passbook upload.";
             }
             return Response;
         }
@@ -342,7 +342,7 @@ namespace VERIDATA.BLL.apiContext.karza
                 if (OTPResponse.statusCode == (int)KarzaStatusCode.Invalid || OTPResponse.statusCode == (int)KarzaStatusCode.NotFound)
                 {
                     Response.StatusCode = HttpStatusCode.BadRequest;
-                    Response.ReasonPhrase = "Invalid OTP File Number or Combination of Inputs";
+                    Response.ReasonPhrase = "Invalid or incorrect OTP. Please enter the correct OTP.";
                     return Response;
                 }
 
@@ -352,7 +352,7 @@ namespace VERIDATA.BLL.apiContext.karza
             else
             {
                 Response.StatusCode = _apiResponse.StatusCode;
-                Response.ReasonPhrase = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
+                Response.ReasonPhrase = "The site is currently unreachable. Please try again after some time or opt for manual passbook upload.";
             }
 
             return Response;
@@ -544,9 +544,109 @@ namespace VERIDATA.BLL.apiContext.karza
             else
             {
                 Response.StatusCode = _apiResponse.StatusCode;
-                Response.ReasonPhrase = "Site Not Reachable. Please try again after some time";
+                Response.ReasonPhrase = "The site is currently unreachable. Please try again after some time.";
             }
 
+            return Response;
+        }
+
+        public async Task<AadharGenerateOTPDetails> GenerateAadharOTP(string aadharNumber, int userId)
+        {
+            AadharGenerateOTPDetails Response = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Adhaar, ApiSubTYpeName.AadharGenerateOTP, ApiProviderType.Karza);
+            Karza_AadhaarGenerateOTPRequest request = new()
+            {
+                aadhaarNo = aadharNumber,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+
+            if (_apiResponse.IsSuccessStatusCode)
+            {
+                string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+                Karza_AadhaarGenerateOtpResponse OTPResponse = JsonConvert.DeserializeObject<Karza_AadhaarGenerateOtpResponse>(apiResponse);
+                AadharGenerateOtp? data = OTPResponse?.result;
+                if ((string.IsNullOrEmpty(data?.message) && OTPResponse?.statusCode == (int)KarzaStatusCode.Invalid) || (OTPResponse?.statusCode == (int)KarzaStatusCode.MaxTry))
+                {
+                    string msg = (OTPResponse.statusCode == (int)KarzaStatusCode.MaxTry) ? "Max retries exceeded " : "Invalid  Aadhaar Number or Combination of Inputs";
+                    Response.StatusCode = HttpStatusCode.UnprocessableEntity;
+                    Response.ReasonPhrase = msg;
+                }
+                else
+                {
+                    Response.StatusCode = _apiResponse.StatusCode;
+                    Response.if_number = OTPResponse.statusCode != (int)KarzaStatusCode.Invalid;// OTPResponse?.data?.if_number ?? false;
+                    Response.otp_sent = OTPResponse.statusCode == (int)KarzaStatusCode.Sent;//OTPResponse?.data?.otp_sent ?? false;
+                    Response.client_id = OTPResponse?.requestId ?? string.Empty;
+                    Response.valid_aadhaar = true;//OTPResponse?.data?.valid_aadhaar ?? false;
+                }
+            }
+            else
+            {
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
+            }
+            return Response;
+        }
+
+        public async Task<AadharSubmitOtpDetails> SubmitAadharOTP(string clientId, string aadharNumber, string otp, string shareCode, int userId)
+        {
+            AadharSubmitOtpDetails Response = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Adhaar, ApiSubTYpeName.AadharVerifyOTP, ApiProviderType.Karza);
+            AadhaarXmlDownloadRequest request = new()
+            {
+                requestId = clientId,
+                aadhaarNo = aadharNumber,
+                otp = otp,
+                shareCode = shareCode,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+
+            if (_apiResponse.IsSuccessStatusCode)
+            {
+                string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+                Karza_AadhaarSubmitOtpResponse OTPResponse = JsonConvert.DeserializeObject<Karza_AadhaarSubmitOtpResponse>(apiResponse);
+
+                //var appointeeCareOfDetails = OTPResponse?.data?.care_of?.Split(":");
+                //var appointeeCareOf = appointeeCareOfDetails?.Count() > 1 ? appointeeCareOfDetails?.LastOrDefault()?.ToUpper()?.Trim() : OTPResponse?.data?.care_of?.ToUpper();
+                var data = OTPResponse?.result;
+
+                if ((OTPResponse?.statusCode ?? 0) == 101)
+                {
+                    if (data?.dataFromAadhaar != null)
+                    {
+                        DataFromAadhaar? resData = data?.dataFromAadhaar;
+                        Response.StatusCode = _apiResponse.StatusCode;
+                        Response.Name = resData?.name?.Trim();
+                        Response.Gender = resData?.gender?.Trim();
+                        Response.Dob = resData?.dob?.Trim();
+                        Response.AadharNumber = aadharNumber.Trim();
+                        Response.CareOf = resData?.fatherName;
+                        Response.MobileNumberHash = resData?.mobileHash;
+
+                    }
+                    else
+                    {
+                        Response.StatusCode = HttpStatusCode.UnprocessableEntity;
+                        Response.ReasonPhrase = "No records found for the given Aadhar";
+                    }
+                }
+                else
+                {
+                    string msg = (OTPResponse.statusCode == (int)KarzaStatusCode.MaxTry) ? "Max retries exceeded " :
+                        (OTPResponse.statusCode == (int)KarzaStatusCode.NotFound) ? "No records found for the given Aadhar" : string.Empty;
+                    Response.StatusCode = HttpStatusCode.UnprocessableEntity;
+                    Response.ReasonPhrase = OTPResponse.statusCode == (int)KarzaStatusCode.Invalid ? "Invalid  OTP " : msg;
+                }
+            }
+            else
+            {
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
+            }
             return Response;
         }
     }

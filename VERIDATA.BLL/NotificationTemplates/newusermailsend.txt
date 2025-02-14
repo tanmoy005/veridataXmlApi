@@ -430,8 +430,162 @@
 													
 
                                                          <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"> <strong>Before verification there are some prerequisites, that you must possess:</strong></p></br>
-														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>1. Aadhar Number</strong></br>Please have your Aadhar number and PAN number before you start the verification process — If you don’t have an Aadhar, please contact PwC HC.</p>
-														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>2. Mobile Number</strong></br>Make sure that the mobile number you have provided to PwC, is pinned with Aadhar — Else, contact with your HC representative to update mobile number.</p>
+													
+<div style="background-color: transparent;">
+                            <div class="block-grid mixed-two-up" style="margin: 0 auto; min-width: 320px; max-width: 640px; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; background-color: #fcfbeb;">
+                                <div style="border-collapse: collapse; display: table; width: 100%; background-color: #fcfbeb;">
+                                    <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:transparent;"><tr><td align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:640px"><tr class="layout-full-width" style="background-color:#fcfbeb"><![endif]-->
+                                    <!--[if (mso)|(IE)]><td align="center" width="213" style="background-color:#fcfbeb;width:213px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:5px; padding-bottom:5px;background-color:#fbc5b8;"><![endif]-->
+                                    <div class="col num4" style="display: table-cell; vertical-align: top; max-width: 320px; min-width: 212px; background-color: #fbc5b8; width: 213px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 5px;
+                                                    padding-bottom: 5px;
+                                                    padding-right: 0px;
+                                                    padding-left: 0px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 5px; padding-bottom: 5px; font-family: Tahoma, sans-serif"><![endif]-->
+                                                <div
+                                                    style="
+                                                        color: #595959;
+                                                        font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                        line-height: 2;
+                                                        padding-top: 5px;
+                                                        padding-right: 10px;
+                                                        padding-bottom: 5px;
+                                                        padding-left: 10px;
+                                                    "
+                                                >
+                                                    <div
+                                                        style="
+                                                            line-height: 2;
+                                                            font-size: 12px;
+                                                            color: #595959;
+                                                            font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+                                                            mso-line-height-alt: 24px;
+                                                        "
+                                                    >
+                                                        <p style="font-size: 18px; line-height: 2; word-break: break-word; text-align: left; mso-line-height-alt: 24px; margin: 0;">
+                                                          <strong><span style="font-size: 16px;">Must-have Information</span></strong> 
+                                                     </p>
+                                                    </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td><td align="center" width="426" style="background-color:#fcfbeb;width:426px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px; padding-top:5px; padding-bottom:5px;"><![endif]-->
+                                    <div class="col num8" style="display: table-cell; vertical-align: top; min-width: 320px; max-width: 424px; width: 426px;">
+                                        <div style="width: 100% !important;">
+                                            <!--[if (!mso)&(!IE)]><!-->
+                                            <div
+                                                style="
+                                                    border-top: 0px solid transparent;
+                                                    border-left: 0px solid transparent;
+                                                    border-bottom: 0px solid transparent;
+                                                    border-right: 0px solid transparent;
+                                                    padding-top: 5px;
+                                                    padding-bottom: 5px;
+                                                    padding-right: 0px;
+                                                    padding-left: 0px;
+                                                "
+                                            >
+                                                <!--<![endif]-->
+                                                <div class="mobile_hide">
+                                                    <table
+                                                        border="0"
+                                                        cellpadding="0"
+                                                        cellspacing="0"
+                                                        class="divider"
+                                                        role="presentation"
+                                                        style="
+                                                            table-layout: fixed;
+                                                            vertical-align: top;
+                                                            border-spacing: 0;
+                                                            border-collapse: collapse;
+                                                            mso-table-lspace: 0pt;
+                                                            mso-table-rspace: 0pt;
+                                                            min-width: 100%;
+                                                            -ms-text-size-adjust: 100%;
+                                                            -webkit-text-size-adjust: 100%;
+                                                        "
+                                                        valign="top"
+                                                        width="100%"
+                                                    >
+                                                        <tbody>
+                                                            <tr style="vertical-align: top;" valign="top">
+                                                                <td
+                                                                    class="divider_inner"
+                                                                    style="
+                                                                        word-break: break-word;
+                                                                        vertical-align: top;
+                                                                        min-width: 100%;
+                                                                        -ms-text-size-adjust: 100%;
+                                                                        -webkit-text-size-adjust: 100%;
+                                                                        padding-top: 5px;
+                                                                        padding-right: 0px;
+                                                                        padding-bottom: 0px;
+                                                                        padding-left: 0px;
+                                                                    "
+                                                                    valign="top"
+                                                                >
+                                                                    <table
+                                                                        align="center"
+                                                                        border="0"
+                                                                        cellpadding="0"
+                                                                        cellspacing="0"
+                                                                        class="divider_content"
+                                                                        role="presentation"
+                                                                        style="
+                                                                            table-layout: fixed;
+                                                                            vertical-align: top;
+                                                                            border-spacing: 0;
+                                                                            border-collapse: collapse;
+                                                                            mso-table-lspace: 0pt;
+                                                                            mso-table-rspace: 0pt;
+                                                                            border-top: 3px solid #fbc5b8;
+                                                                            width: 100%;
+                                                                        "
+                                                                        valign="top"
+                                                                        width="100%"
+                                                                    >
+                                                                        <tbody>
+                                                                            <tr style="vertical-align: top;" valign="top">
+                                                                                <td style="word-break: break-word; vertical-align: top; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;" valign="top"><span></span></td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <!--[if (!mso)&(!IE)]><!-->
+                                            </div>
+                                            <!--<![endif]-->
+                                        </div>
+                                    </div>
+                                    <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
+                                    <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
+                                </div>
+                            </div>
+                        </div>
+                   
+													<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>1. Aadhar/PAN</strong></br> — Please have your Aadhar No. /Aadhar XML (<a href ="https://uidai.gov.in/en/307-faqs/aadhaar-online-services/aadhaar-paperless-offline-e-kyc/10731-how-to-generate-offline-aadhaar-2.html" target="_blank">check Aadhar XML download process</a>),
+														</br>&nbsp;&nbsp; - If you don’t have an Aadhar, please contact PwC HC.
+														</br> — PAN number before you start the verification process</p>
+														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>2. Mobile Number</strong></br>Make sure that the mobile number you have provided to PwC HC, is pinned with Aadhar — Else, contact with your HC representative to update mobile number.</p>
 														<p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>3. UAN </strong></br>If you have a UAN account, please make sure you have activated it — Please login to the EPFO portal at least once to activate it.</p>
                                                         <p style="font-size: 14px; line-height: 1.8; word-break: break-word; mso-line-height-alt: 25px; margin: 0;"><strong>4. Verify</strong></br>All verifications are mandatory —<strong> Please complete all of them</strong>. Don’t leave out any information asked for.</p>
 														</p>
@@ -644,19 +798,35 @@
 													Please have the following documents with you, before you start the verification process:</p></br></br>
 
                                                     	<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
-														1. 10th Pass certificate + another official document to provide your father’s name.<br>
+														1. PAN + 10th Pass certificate to provide your father’s name.<br>
 														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">
 														2. Your visa image, if you are an international passport holder.</br>
-														3. Current year PF Passbook, downloaded from EPFO portal</br>
+														3. Entire PF Passbook & Service History, downloaded from EPFO portal</br>
                                                           (required if you opt for manual UAN verification in the Veridata portal).</br>
 														4. Trust PF Passbook softcopy, if you are / have been a Trust or Private PF holder.</br></br>
 
-														<strong><a href={{Url}}>Click on the login link:</a></strong></p>
-														
+<p style="font-size: 14px; font-weight: bold; color: #333; text-align: center; margin: 20px 0;">
+    <a href="{{Url}}" style="text-decoration: none; color: #ffffff; background-color: #A154CA; padding: 10px 15px; border-radius: 5px; transition: background-color 0.3s;">
+        Click on the login link
+    </a>
+</p>
 
-                                                       <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>User Name :</strong> {{UserCode}}</p>
-													   
-                                                        <p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;"><strong>Password :</strong> {{Password}}</p>
+<div style="font-size: 24px;
+														font-weight: bold;
+														color: #E7607D;
+            padding: 10px;
+            <!-- border: 2px solid #8A65D9;  -->
+            border-radius: 5px;
+            text-align: center;
+            background-color: #fff3f3;"
+			><p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0; color: #555;">
+    <strong style="color: #A154CA;">User Name:</strong> <span style="font-weight: bold;color:  #A154CA;">{{UserCode}}</span>
+</p>
+
+<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0; color: #555;">
+    <strong style="color: #A154CA;">Password:</strong> <span style="font-weight: bold;color:  #A154CA;">{{Password}}</span>
+</p>
+			</div>
 														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">You can reach out to your HC representative regarding any queries.</p>
 														<p style="font-size: 14px; line-height: 2; word-break: break-word; mso-line-height-alt: 28px; margin: 0;">Regards,</br>
                                                            Human Capital</p></br>

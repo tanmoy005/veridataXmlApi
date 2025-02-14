@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.Model.DataAccess.Response;
+using VERIDATA.Model.Response.api.Signzy;
 
 namespace VERIDATA.BLL.Services
 {
@@ -62,6 +63,46 @@ namespace VERIDATA.BLL.Services
                 response = responseData?.FirstOrDefault();
             }
             return response;
+        }
+
+        public async Task<string> StoreCallBacKPassbookData(SignzyUanPassbookDetails data)
+        {
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(10)) // Expire after 10 minutes if not accessed
+            .SetAbsoluteExpiration(TimeSpan.FromHours(1)); // Expire after 1 hour regardless of access
+
+            _memoryCache.Set(data.EmployeeDetails.MemberName, data, cacheEntryOptions);
+
+            return data.EmployeeDetails.MemberName;
+        }
+
+        public async Task<SignzyUanPassbookDetails> CheckForCallBacKPassbookData(string keyData)
+        {
+            var maxRetries = 10;
+            var retryDelay = 2000; // 2 seconds delay between checks
+
+            for (int i = 0; i < maxRetries; i++)
+            {
+                // Step 1: Check if callback data is available in cache
+                var response = GetCallbackPassbookResponse(keyData);
+                if (response != null)
+                {
+                    // Step 2: Return response when found
+                    return response;
+                }
+
+                // Step 3: If not found, wait before retrying
+                Thread.Sleep(retryDelay); // wait before retrying
+            }
+
+            return null;
+        }
+
+        private SignzyUanPassbookDetails? GetCallbackPassbookResponse(string keyData)
+        {
+            // Try to get the callback data from the cache
+            _memoryCache.TryGetValue(keyData, out SignzyUanPassbookDetails? response);
+            return response; // return null if not found
         }
     }
 }

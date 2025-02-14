@@ -48,8 +48,8 @@ namespace VERIDATA.BLL.Context
         public string GenarateErrorMsg(int statusCode, string reasonCode, string type)
         {
             string msg = statusCode == (int)HttpStatusCode.InternalServerError
-                ? $"{type} {"server is currently busy! Please try again later"}"
-                : $"{reasonCode}, {"Please try again later."}";
+                ? $"{"The"} {type} {"server is currently busy. Please try again later."}"
+                : $"{reasonCode}. {"Please try again later."}";
             return msg;
         }
 
@@ -65,6 +65,8 @@ namespace VERIDATA.BLL.Context
             string? panNumber = request?.PanNumber?.Trim();
             string? panDOB = request?.DateOfBirth?.Trim();
             string? phoneNo = request?.MobileNumber?.Trim();
+            string normalizedPanName = CommonUtility.NormalizeWhitespace(panName?.Trim());
+            string normalizedPanFullName = CommonUtility.NormalizeWhitespace(panFullName?.Trim());
 
             if (appointeedetail.AppointeeDetailsId != null && request != null)
             {
@@ -78,10 +80,8 @@ namespace VERIDATA.BLL.Context
                 {
                     _inptdob = Convert.ToDateTime(panDOB);
                 }
-
-                if (panName?.ToUpper() == panFullName?.Trim()?.ToUpper() &&
+                if (string.Equals(normalizedPanName, normalizedPanFullName, StringComparison.OrdinalIgnoreCase) &&
                     (appointeedetail?.DateOfBirth == _inptdob || dOBVarified))
-                //&& (string.IsNullOrEmpty(phoneNo?.ToUpper()) || appointeedetail?.MobileNo?.ToUpper() == phoneNo?.ToUpper()))
                 {
                     IsValid = true;
                     string maskedPhoneNumber = CommonUtility.MaskedString(phoneNo);
@@ -92,7 +92,7 @@ namespace VERIDATA.BLL.Context
                 }
                 else
                 {
-                    if (appointeedetail?.AppointeeName?.Trim()?.ToUpper() != panFullName?.Trim()?.ToUpper())
+                    if (!string.Equals(normalizedPanName, normalizedPanFullName, StringComparison.OrdinalIgnoreCase))
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = panFullName });
                     }
@@ -243,14 +243,14 @@ namespace VERIDATA.BLL.Context
             List<ReasonRemarks> ReasonList = new();
             CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new();
             AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(appointeeId);
-            string passportName = request?.Name?.Trim();
+            string passportName = CommonUtility.NormalizeWhitespace(request?.Name?.Trim());
             string? passportNo = request?.PassportNumber?.Trim();
             string? passportDOB = request?.DateOfBirth;
-
+            string? appointeeName = CommonUtility.NormalizeWhitespace(appointeedetail?.AppointeeName?.ToUpper());
             if (appointeedetail.AppointeeDetailsId != null && request != null && !string.IsNullOrEmpty(passportName) && !string.IsNullOrEmpty(passportDOB))
             {
                 DateTime _inptdob = Convert.ToDateTime(passportDOB);
-                if (appointeedetail?.DateOfBirth == _inptdob && appointeedetail?.AppointeeName?.ToUpper() == passportName?.ToUpper())
+                if (appointeedetail?.DateOfBirth == _inptdob && string.Equals(appointeeName, passportName, StringComparison.OrdinalIgnoreCase))
                 {
                     IsValid = true;
                 }
@@ -260,7 +260,7 @@ namespace VERIDATA.BLL.Context
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PASSPRTDOB, Inputdata = appointeedetail?.DateOfBirth?.ToShortDateString(), Fetcheddata = passportDOB });
                     }
-                    if (appointeedetail?.AppointeeName?.ToUpper() != passportName?.ToUpper())
+                    if (!string.Equals(appointeeName, passportName, StringComparison.OrdinalIgnoreCase))
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PASSPRTNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = passportName });
                     }
@@ -282,7 +282,7 @@ namespace VERIDATA.BLL.Context
             else
             {
                 response.IsValid = false;
-                response.Remarks = "No data fetch from passport, please try again later";
+                response.Remarks = "No data could be fetched from the passport. Please try again later.";
             }
 
             return response;
@@ -392,7 +392,7 @@ namespace VERIDATA.BLL.Context
                 {
                     ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = string.Empty, Fetcheddata = string.Empty });
                     Response.StatusCode = HttpStatusCode.UnprocessableEntity;
-                    Response.UserMessage = "Inactive UAN, Please activate your UAN from epfo site and try again.";
+                    Response.UserMessage = "Your UAN is inactive. Please activate it on the EPFO portal before proceeding. Visit EPFO UAN Activation for assistance.";
                     Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
                 }
                 string activitystate = _apiResponse.IsUanAvailable ?? false ? ActivityLog.UANFETCH : ActivityLog.NOUAN;
@@ -452,7 +452,7 @@ namespace VERIDATA.BLL.Context
                 {
                     ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = string.Empty, Fetcheddata = string.Empty });
                     Response.StatusCode = HttpStatusCode.UnprocessableEntity;
-                    Response.UserMessage = "Inactive UAN, Please activate your UAN from epfo site and try again.";
+                    Response.UserMessage = "Your UAN is inactive. Please activate it on the EPFO portal before proceeding. Visit EPFO UAN Activation for assistance.";
                     Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
                 }
                 string activitystate = _apiResponse.IsUanAvailable ?? false ? ActivityLog.UANFETCH : ActivityLog.NOUAN;
@@ -511,7 +511,7 @@ namespace VERIDATA.BLL.Context
                 {
                     ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = string.Empty, Fetcheddata = string.Empty });
                     Response.StatusCode = HttpStatusCode.UnprocessableEntity;
-                    Response.UserMessage = "Inactive UAN, Please activate your UAN from epfo site and try again.";
+                    Response.UserMessage = "Your UAN is inactive. Please activate it on the EPFO portal before proceeding. Visit EPFO UAN Activation for assistance.";
                     Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
                 }
                 string activitystate = _apiResponse.IsUanAvailable ?? false ? ActivityLog.UANFETCH : ActivityLog.NOUAN;
@@ -521,8 +521,8 @@ namespace VERIDATA.BLL.Context
             {
                 var msg = _apiResponse.StatusCode switch
                 {
-                    HttpStatusCode.BadRequest => "Invalid mobile number.Please try again later.",
-                    HttpStatusCode.Conflict => "server is currently busy! Please try again later",
+                    HttpStatusCode.BadRequest => "The mobile number entered is invalid. Please check and try again later.",
+                    HttpStatusCode.Conflict => "server is currently busy. Please try again later.",
                     _ => string.Empty
                 };
                 Response.IsUanAvailable = false;
@@ -540,9 +540,9 @@ namespace VERIDATA.BLL.Context
 
             AadharDetailsData _AaddhaarDetails = new()
             {
-                AadhaarName = reqObj?.aaddharName,
-                AadhaarNumber = reqObj?.aaddharNumber,
-                AadhaarNumberView = reqObj?.aaddharNumber,
+                AadhaarName = reqObj?.aadharName,
+                AadhaarNumber = reqObj?.aadharNumber,
+                AadhaarNumberView = reqObj?.aadharNumber,
             };
 
             CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
@@ -558,7 +558,11 @@ namespace VERIDATA.BLL.Context
 
             if (apiProvider?.ToLower() == ApiProviderType.SurePass)
             {
-                _apiResponse = await _surepassApiContext.GenerateAadharOTP(reqObj.aaddharNumber, reqObj.userId);
+                _apiResponse = await _surepassApiContext.GenerateAadharOTP(reqObj.aadharNumber, reqObj.userId);
+            }
+            if (apiProvider?.ToLower() == ApiProviderType.Karza)
+            {
+                _apiResponse = await _karzaApiContext.GenerateAadharOTP(reqObj.aadharNumber, reqObj.userId);
             }
             Response.StatusCode = _apiResponse.StatusCode;
             if (_apiResponse.StatusCode == HttpStatusCode.OK)
@@ -572,11 +576,11 @@ namespace VERIDATA.BLL.Context
                     await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.ADHINVALID);
 
                     AadharValidationRequest VarifyReq = new();
-                    AadharSubmitOtpDetails _adhaardata = new() { AadharNumber = reqObj?.aaddharNumber };
+                    AadharSubmitOtpDetails _adhaardata = new() { AadharNumber = reqObj?.aadharNumber };
                     VarifyReq.AadharDetails = _adhaardata;
                     VarifyReq.isValidAdhar = false;
                     VarifyReq.AppointeeId = reqObj.appointeeId;
-                    VarifyReq.AppointeeAadhaarName = reqObj.aaddharName;
+                    VarifyReq.AppointeeAadhaarName = reqObj.aadharName;
                     _ = await VerifyAadharData(VarifyReq);
                 }
                 else
@@ -597,8 +601,10 @@ namespace VERIDATA.BLL.Context
             var apiProvider = await _masterContext.GetApiProviderData(ApiType.Adhaar);
             if (apiProvider?.ToLower() == ApiProviderType.Karza)
             {
-                AppointeeDetailsResponse appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.appointeeId);
-                string? aadharNo = appointeedetail.AadhaarNumber;
+                //AppointeeDetailsResponse appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.appointeeId);
+                _apiResponse = await _karzaApiContext.SubmitAadharOTP(reqObj.client_id, reqObj.aadharNumber, reqObj.otp, reqObj.shareCode, reqObj.userId);
+
+                //string? aadharNo = appointeedetail.AadhaarNumber;
             }
             if (apiProvider?.ToLower() == ApiProviderType.SurePass)
             {
@@ -609,7 +615,7 @@ namespace VERIDATA.BLL.Context
             if (_apiResponse.StatusCode != HttpStatusCode.OK)
             {
                 bool IsUnprocessableEntity = (int)_apiResponse.StatusCode == (int)HttpStatusCode.UnprocessableEntity;
-                Response.UserMessage = IsUnprocessableEntity ? "Invalid OTP, Please retry" : GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "UIDAI (Aadhar)");
+                Response.UserMessage = IsUnprocessableEntity ? "Invalid OTP. Please enter the correct OTP and try again." : GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "UIDAI (Aadhar)");
                 Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
             }
             else
@@ -666,12 +672,13 @@ namespace VERIDATA.BLL.Context
                 var lastAdhar4Digit = reqObj.AadharDetails?.AadharNumber?.Trim()?.LastOrDefault().ToString();
                 var isMobileValid = CommonUtility.CheckMobileNumber(appointeedetail.MobileNo, reqObj.AadharDetails?.MobileNumberHash, reqObj?.sharePhrase ?? "", lastAdhar4Digit);
 
-                string? aadharName = reqObj?.AppointeeAadhaarName?.Trim();
-                string? appointeeAadhaarFullName = reqObj?.AadharDetails?.Name;
+                string? aadharName = CommonUtility.NormalizeWhitespace(reqObj?.AppointeeAadhaarName?.Trim());
+                string? appointeeAadhaarFullName = CommonUtility.NormalizeWhitespace(reqObj?.AadharDetails?.Name);
                 string? appointeeAadhaarGender = reqObj?.AadharDetails?.Gender;
                 string? appointeeAadhaarDOB = reqObj?.AadharDetails?.Dob;
                 string? appointeeCareOf = reqObj?.AadharDetails?.CareOf;
                 string? appointeeAadhaarNumber = reqObj?.AadharDetails?.AadharNumber;
+                string? appointeeNname = CommonUtility.NormalizeWhitespace(appointeedetail.AppointeeName?.Trim());
 
                 _aadharData.AadhaarName = aadharName;
                 _aadharData.AadhaarNumber = appointeeAadhaarNumber;
@@ -685,7 +692,7 @@ namespace VERIDATA.BLL.Context
                     bool hasCoName = !string.IsNullOrEmpty(appointeeCareOf);
                     _ = !hasCoName || appointeedetail?.MemberName?.ToUpper() == appointeeCareOf;
 
-                    if (isMobileValid && aadharName?.ToUpper() == appointeedetail.AppointeeName?.Trim()?.ToUpper() &&
+                    if (isMobileValid && string.Equals(appointeeNname, appointeeAadhaarFullName, StringComparison.OrdinalIgnoreCase) &&
                         appointeedetail?.Gender?.ToUpper() == appointeeAadhaarGender?.ToUpper() && appointeedetail?.DateOfBirth == _inptdob)//&& validateCareOfName)
 
                     {
@@ -705,9 +712,9 @@ namespace VERIDATA.BLL.Context
                         {
                             ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.DOB, Inputdata = appointeedetail?.DateOfBirth?.ToShortDateString(), Fetcheddata = appointeeAadhaarDOB });
                         }
-                        if (appointeedetail.AppointeeName?.Trim()?.ToUpper() != appointeeAadhaarFullName?.Trim()?.ToUpper())
+                        if (!string.Equals(appointeeNname, appointeeAadhaarFullName, StringComparison.OrdinalIgnoreCase))
                         {
-                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail.AppointeeName, Fetcheddata = appointeeAadhaarFullName });
+                            ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeeNname, Fetcheddata = appointeeAadhaarFullName });
                         }
                     }
 
@@ -776,7 +783,7 @@ namespace VERIDATA.BLL.Context
             {
                 await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.UANVERIFIFAILED);
                 Response.UserMessage = (int)_apiResponse.StatusCode == (int)HttpStatusCode.UnprocessableEntity ?
-                    "Inactive UAN, Please activate your UAN from epfo site and try again." : GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "EPFO");
+                    "Your UAN is inactive. Please activate it on the EPFO portal before proceeding. Visit EPFO UAN Activation for assistance." : GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "EPFO");
                 Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
             }
 
@@ -805,7 +812,7 @@ namespace VERIDATA.BLL.Context
                     if (!(SubmitOtpResponse?.OtpValidated ?? false))
                     {
                         GetPassbookDetails.StatusCode = HttpStatusCode.NotAcceptable;
-                        GetPassbookDetails.UserMessage = "OTP not validated, Please retry";
+                        GetPassbookDetails.UserMessage = "OTP verification failed. Please enter the correct OTP and try again.";
                         GetPassbookDetails.ReasonPhrase = SubmitOtpResponse?.ReasonPhrase?.ToString() ?? string.Empty;
                     }
                     else
@@ -834,7 +841,7 @@ namespace VERIDATA.BLL.Context
                     if (!(SubmitOtpResponse?.OtpValidated ?? false))
                     {
                         GetPassbookDetails.StatusCode = HttpStatusCode.NotAcceptable;
-                        GetPassbookDetails.UserMessage = "OTP not validated, Please retry";
+                        GetPassbookDetails.UserMessage = "OTP verification failed. Please enter the correct OTP and try again.";
                         GetPassbookDetails.ReasonPhrase = SubmitOtpResponse?.ReasonPhrase?.ToString() ?? string.Empty;
                     }
                     else
@@ -891,7 +898,7 @@ namespace VERIDATA.BLL.Context
                                     ? (int)HttpStatusCode.UnprocessableEntity
                                     : (int)HttpStatusCode.BadRequest);
 
-                response.UserMessage = isInvalidOtp ? "Invalid OTP, Please retry"
+                response.UserMessage = isInvalidOtp ? "Invalid OTP. Please enter the correct OTP and try again."
                                                     : GenarateErrorMsg((int)apiResponse.StatusCode, apiResponse.ReasonPhrase, "EPFO");
                 response.ReasonPhrase = apiResponse.ReasonPhrase ?? string.Empty;
                 response.OtpValidated = apiResponse.OtpValidated;
@@ -899,7 +906,7 @@ namespace VERIDATA.BLL.Context
             else
             {
                 response.StatusCode = apiResponse?.StatusCode ?? HttpStatusCode.NotAcceptable;
-                response.UserMessage = "Somethin went wrong, Please retry";
+                response.UserMessage = "Somethin went wrong. Please retry";
                 response.ReasonPhrase = apiResponse?.ReasonPhrase ?? string.Empty;
                 response.OtpValidated = apiResponse?.OtpValidated ?? false;
                 response = apiResponse;
@@ -942,8 +949,25 @@ namespace VERIDATA.BLL.Context
             }
             if (apiProvider?.ToLower() == ApiProviderType.Signzy)
             {
-                _apiResponse = await _signzyApiContext.GetPassbook(reqObj.OtpDetails.ClientId, reqObj.UserId);
-                SignzyUanPassbookDetails? _passBookData = _apiResponse?.SignzyPassbkdata;
+                var maxRetries = 10;
+                var retryDelay = 2000; // 2 seconds delay between checks
+                SignzyUanPassbookDetails? _passBookData = new();
+                for (int i = 0; i < maxRetries; i++)
+                {
+                    // Step 1: Check if callback data is available in cache
+                    _apiResponse = await _signzyApiContext.GetPassbook(reqObj.OtpDetails.ClientId, reqObj.UserId);
+                    _passBookData = _apiResponse?.SignzyPassbkdata;
+                    if (_passBookData != null || _apiResponse.StatusCode != HttpStatusCode.OK)
+                    {
+                        // Step 2: Return response when found
+                        break;
+                    }
+
+                    // Step 3: If not found, wait before retrying
+                    Thread.Sleep(retryDelay); // wait before retrying
+                }
+                //_apiResponse = await _signzyApiContext.GetPassbook(reqObj.OtpDetails.ClientId, reqObj.UserId);
+                //SignzyUanPassbookDetails? _passBookData = _apiResponse?.SignzyPassbkdata;
                 epsContributionDetails = await _signzyApiContext.CheckEpsContributionConsistency(_passBookData);
 
                 // TO DO EPS Contribution
@@ -962,7 +986,7 @@ namespace VERIDATA.BLL.Context
             if (_apiResponse.StatusCode != HttpStatusCode.OK)
             {
                 await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.UANVERIFIFAILED);
-                Response.UserMessage = (int)_apiResponse.StatusCode == (int)HttpStatusCode.UnprocessableEntity ? "Invalid Uan, Please retry" : GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "EPFO");
+                Response.UserMessage = (int)_apiResponse.StatusCode == (int)HttpStatusCode.UnprocessableEntity ? "The UAN entered is invalid. Please check and try again." : GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "EPFO");
                 Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
             }
             else
@@ -971,7 +995,7 @@ namespace VERIDATA.BLL.Context
                 {
                     await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.UANVERIFIFAILED);
                     Response.StatusCode = HttpStatusCode.UnprocessableEntity;
-                    Response.UserMessage = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
+                    Response.UserMessage = "The site is currently unreachable. Please try again after some time or opt for manual passbook upload.";
                 }
                 else
                 {
@@ -1006,14 +1030,63 @@ namespace VERIDATA.BLL.Context
                         Response.EpsContributionDetails = epsContributionDetails?.EpsContributionSummary;
                         Response.IsDualEmployement = epsContributionDetails?.HasDualEmplyement ?? false;
                         Response.PfUan = reqObj.UanNumber;
+                        //Response.IsCallBack = true;
                     }
 
                     if (string.IsNullOrEmpty(Response.Name) || string.IsNullOrEmpty(Response.DateOfBirth))
                     {
                         await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.UANVERIFIFAILED);
                         Response.StatusCode = HttpStatusCode.UnprocessableEntity;
-                        Response.UserMessage = "Site Not Reachable. Please try again after some time - OR - Opt for manual passbook upload.";
+                        Response.UserMessage = "The site is currently unreachable. Please try again after some time or opt for manual passbook upload.";
                     }
+                }
+            }
+
+            return Response;
+        }
+
+        public async Task<GetPassbookDetailsResponse> ValidateBackGetPfPassbookData(SignzyUanPassbookDetails reqObj, int appointeeId, int userId, string uanNumber)
+        {
+            GetPassbookDetailsResponse Response = new();
+            PfPassbookDetails _apiResponse = new();
+            EpsContributionCheckResult? epsContributionDetails = new();
+            List<EpsContributionSummary>? epsContributionSummary = new();
+            SignzyUanPassbookDetails? _passBookData = reqObj;
+            epsContributionDetails = await _signzyApiContext.CheckEpsContributionConsistency(_passBookData);
+
+            string passbookJsonData = JsonConvert.SerializeObject(_passBookData);
+
+            Response.StatusCode = _apiResponse.StatusCode;
+            if (_apiResponse.StatusCode != HttpStatusCode.OK)
+            {
+                await _activityContext.PostActivityDetails(appointeeId, userId, ActivityLog.UANVERIFIFAILED);
+                Response.UserMessage = (int)_apiResponse.StatusCode == (int)HttpStatusCode.UnprocessableEntity ? "The UAN entered is invalid. Please check and try again." : GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase?.ToString(), "EPFO");
+                Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString() ?? string.Empty;
+            }
+            else
+            {
+                if (reqObj == null)
+                {
+                    await _activityContext.PostActivityDetails(appointeeId, userId, ActivityLog.UANVERIFIFAILED);
+                    Response.StatusCode = HttpStatusCode.UnprocessableEntity;
+                    Response.UserMessage = "The site is currently unreachable. Please try again after some time or opt for manual passbook upload.";
+                }
+                else
+                {
+                    GetPassbookDetailsRequest req = new GetPassbookDetailsRequest
+                    {
+                        AppointeeId = appointeeId,
+                        UanNumber = uanNumber,
+                        UserId = userId,
+                    };
+                    await SavePfPassbookData(req, passbookJsonData, ApiProviderType.Signzy?.ToLower());
+                    Response.FathersName = _passBookData?.EmployeeDetails?.FatherName ?? string.Empty;
+                    Response.Name = _passBookData?.EmployeeDetails?.MemberName;
+                    Response.DateOfBirth = _passBookData?.EmployeeDetails?.Dob ?? string.Empty;
+                    Response.IsPensionApplicable = HasEpsContribution(epsContributionDetails?.EpsContributionSummary);
+                    Response.EpsContributionDetails = epsContributionDetails?.EpsContributionSummary;
+                    Response.IsDualEmployement = epsContributionDetails?.HasDualEmplyement ?? false;
+                    Response.PfUan = uanNumber;
                 }
             }
 
@@ -1041,12 +1114,14 @@ namespace VERIDATA.BLL.Context
             _ = new CandidateValidateUpdatedDataRequest();
             AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.AppointeeId);
             string? UanFullName = reqObj?.PassbookDetails?.Name;
-            string? UanFatherName = reqObj?.PassbookDetails?.FathersName;
+            string? UanFatherName = CommonUtility.NormalizeWhitespace(reqObj?.PassbookDetails?.FathersName);
             string? UanDob = reqObj?.PassbookDetails?.DateOfBirth;
             bool _IsPensionApplicable = reqObj?.PassbookDetails?.IsPensionApplicable ?? false;
             bool _IsPensionGapIdentified = HasEpsGap(reqObj?.PassbookDetails?.EpsContributionDetails);
             bool _IsDualEmployementIdentified = reqObj?.PassbookDetails?.IsDualEmployement ?? false;
             bool _isFatherNameValidate = false;
+            string normalizedUANFullName = CommonUtility.NormalizeWhitespace(UanFullName?.Trim());
+
             if (!reqObj.IsUanActive)
             {
                 ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = string.Empty, Fetcheddata = string.Empty });
@@ -1054,17 +1129,19 @@ namespace VERIDATA.BLL.Context
             else if (appointeedetail.AppointeeDetailsId != null && reqObj?.PassbookDetails != null)
             {
                 string? AppointeeFullName = string.IsNullOrEmpty(appointeedetail?.NameFromAadhaar) ? appointeedetail?.AppointeeName?.Trim() : appointeedetail?.NameFromAadhaar?.Trim();
-                string? fathersName = appointeedetail.MemberName;
+                string normalizedApoointeeName = CommonUtility.NormalizeWhitespace(AppointeeFullName?.Trim());
+                string? fathersName = CommonUtility.NormalizeWhitespace(appointeedetail.MemberName);
                 DateTime _inptdob = Convert.ToDateTime(UanDob);
-                _isFatherNameValidate = !string.IsNullOrEmpty(fathersName) && fathersName.ToUpper() == UanFatherName?.ToUpper();
-                if (AppointeeFullName?.ToUpper() == UanFullName?.ToUpper()
+                _isFatherNameValidate = !string.IsNullOrEmpty(fathersName) && (string.Equals(fathersName, UanFatherName, StringComparison.OrdinalIgnoreCase));
+                if (string.Equals(normalizedApoointeeName, normalizedUANFullName, StringComparison.OrdinalIgnoreCase)
+
                     && appointeedetail?.DateOfBirth == _inptdob && _isFatherNameValidate && !_IsPensionGapIdentified)
                 {
                     IsValid = true;
                 }
                 else
                 {
-                    if (AppointeeFullName?.ToUpper() != UanFullName?.ToUpper())
+                    if (!string.Equals(normalizedApoointeeName, normalizedUANFullName, StringComparison.OrdinalIgnoreCase))
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = AppointeeFullName, Fetcheddata = UanFullName });
                     }
@@ -1127,6 +1204,118 @@ namespace VERIDATA.BLL.Context
                 await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.APNTVERIFICATIONCOMPLETE);
             }
             return response;
+        }
+
+        public async Task<CandidateValidateResponse> VerifyUanData1(UanValidationRequest reqObj)
+        {
+            bool IsValid = false;
+            List<ReasonRemarks> ReasonList = new();
+
+            AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.AppointeeId);
+
+            if (!reqObj.IsUanActive)
+            {
+                ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = string.Empty, Fetcheddata = string.Empty });
+            }
+            else if (appointeedetail.AppointeeDetailsId != null && reqObj?.PassbookDetails != null)
+            {
+                // 1️⃣ Verify Father's Name Separately
+                bool _isFatherNameValid = VerifyFatherName(appointeedetail.MemberName, reqObj?.PassbookDetails?.FathersName, ReasonList);
+
+                // 2️⃣ Perform Other UAN Verification
+                IsValid = VerifyUanDetails(appointeedetail, reqObj, _isFatherNameValid, ReasonList);
+
+                // 3️⃣ Log Activity
+                string _activityStatus = IsValid ? ActivityLog.UANVERIFICATIONCMPLTE : ActivityLog.UANDATAVERIFICATIONFAILED;
+                await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, _activityStatus);
+            }
+
+            // 4️⃣ Prepare Candidate Validation Data
+            CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = PrepareCandidateUpdatedDataRequest(reqObj, appointeedetail, IsValid, ReasonList);
+
+            CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+
+            if (IsValid)
+            {
+                await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.APNTVERIFICATIONCOMPLETE);
+            }
+            return response;
+        }
+
+        // ✅ 1️⃣ Separate Method for Father's Name Verification
+        private bool VerifyFatherName(string? appointeeFatherName, string? uanFatherName, List<ReasonRemarks> reasonList)
+        {
+            bool isValid = !string.IsNullOrEmpty(appointeeFatherName) && appointeeFatherName.ToUpper() == uanFatherName?.ToUpper();
+            if (!isValid)
+            {
+                reasonList.Add(new ReasonRemarks()
+                {
+                    ReasonCode = ReasonCode.CAREOFNAME,
+                    Inputdata = appointeeFatherName,
+                    Fetcheddata = uanFatherName
+                });
+            }
+            return isValid;
+        }
+
+        // ✅ 2️⃣ Separate Method for UAN Verification
+        private bool VerifyUanDetails(AppointeeDetailsResponse appointeeDetails, UanValidationRequest reqObj, bool isFatherNameValid, List<ReasonRemarks> reasonList)
+        {
+            string? AppointeeFullName = string.IsNullOrEmpty(appointeeDetails?.NameFromAadhaar) ? appointeeDetails?.AppointeeName?.Trim() : appointeeDetails?.NameFromAadhaar?.Trim();
+            string? UanFullName = reqObj?.PassbookDetails?.Name;
+            string? UanDob = reqObj?.PassbookDetails?.DateOfBirth;
+            DateTime _inptdob = Convert.ToDateTime(UanDob);
+
+            bool isPensionGapIdentified = HasEpsGap(reqObj?.PassbookDetails?.EpsContributionDetails);
+
+            if (AppointeeFullName?.ToUpper() == UanFullName?.ToUpper()
+                && appointeeDetails?.DateOfBirth == _inptdob
+                && isFatherNameValid
+                && !isPensionGapIdentified)
+            {
+                return true; // ✅ UAN Verification Passed
+            }
+
+            // ❌ Add Reasons for Failed Verification
+            if (AppointeeFullName?.ToUpper() != UanFullName?.ToUpper())
+            {
+                reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.NAME, Inputdata = AppointeeFullName, Fetcheddata = UanFullName });
+            }
+            if (appointeeDetails?.DateOfBirth != _inptdob)
+            {
+                reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.DOB, Inputdata = appointeeDetails?.DateOfBirth?.ToShortDateString(), Fetcheddata = UanDob });
+            }
+            if (isPensionGapIdentified)
+            {
+                reasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.PENSIONGAPFIND, Inputdata = string.Empty, Fetcheddata = string.Empty });
+            }
+
+            return false; // ❌ UAN Verification Failed
+        }
+
+        // ✅ 3️⃣ Method to Prepare Candidate Data for Update
+        private CandidateValidateUpdatedDataRequest PrepareCandidateUpdatedDataRequest(UanValidationRequest reqObj, AppointeeDetailsResponse appointeeDetails, bool isValid, List<ReasonRemarks> reasonList)
+        {
+            return new CandidateValidateUpdatedDataRequest()
+            {
+                AppointeeId = reqObj.AppointeeId,
+                EmailId = appointeeDetails?.AppointeeEmailId,
+                Status = isValid,
+                Reasons = reasonList,
+                UserId = reqObj.UserId,
+                UserName = appointeeDetails?.AppointeeName,
+                Type = RemarksType.UAN,
+                uanData = new UanData
+                {
+                    IsPassbookFetch = reqObj.IsPassbookFetch,
+                    IsPensionApplicable = reqObj?.PassbookDetails?.IsPensionApplicable ?? false,
+                    IsPensionGap = HasEpsGap(reqObj?.PassbookDetails?.EpsContributionDetails),
+                    UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? appointeeDetails?.UANNumber : reqObj?.PassbookDetails?.PfUan,
+                    IsEmployementVarified = isValid,
+                    IsFNameVarified = reasonList.All(r => r.ReasonCode != ReasonCode.CAREOFNAME),
+                    IsDualEmployementIdentified = reqObj?.PassbookDetails?.IsDualEmployement ?? false
+                }
+            };
         }
 
         public async Task PostActivity(int appointeeId, int userId, string activityCode)
@@ -1217,6 +1406,334 @@ namespace VERIDATA.BLL.Context
             {
                 response = _apiResponse;
             }
+            return response;
+        }
+
+        public async Task<AppointeePassportValidateResponse> PassportDetailsValidationPriorityBase(AppointeePassportValidateRequest reqObj)
+        {
+            PassportDetails _apiResponse = new();
+            AppointeePassportValidateResponse Response = new();
+            int priority = 1;  // Start with highest priority
+            bool isSuccess = false;
+
+            //var apiProvider = await _masterContext.GetApiProviderData(ApiType.Passport);
+            await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PASPRTVERIFICATIONSTART);
+
+            while (!isSuccess)
+            {
+                var apiProvider = await _masterContext.GetApiProviderDataPriorityBase(ApiType.Passport, priority);
+
+                if (string.IsNullOrEmpty(apiProvider))
+                {
+                    break;  // Exit loop if no more providers
+                }
+                if (apiProvider?.ToLower() == ApiProviderType.Karza)
+                {
+                    _apiResponse = await _karzaApiContext.GetPassportDetails(reqObj);
+                }
+                if (apiProvider?.ToLower() == ApiProviderType.SurePass)
+                {
+                    _apiResponse = await _surepassApiContext.GetPassportDetails(reqObj);
+                }
+                if (apiProvider?.ToLower() == ApiProviderType.Signzy)
+                {
+                    _apiResponse = await _signzyApiContext.GetPassportDetails(reqObj);
+                    if (_apiResponse.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        _apiResponse.ReasonPhrase = "Invalid Passport information";
+                    }
+                }
+
+                // Check if the call was successful
+                if (_apiResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    isSuccess = true; // Mark success and exit the loop
+                }
+                if (_apiResponse.StatusCode == HttpStatusCode.ServiceUnavailable || _apiResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    priority++;  // Increase priority to try the next provider
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            // Post-process response once successful or log failure
+            if (isSuccess)
+            {
+                CandidateValidateResponse verifyResponse = await VarifyPassportData(_apiResponse, reqObj.appointeeId);
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.IsValid = verifyResponse.IsValid;
+                Response.Remarks = verifyResponse.Remarks;
+
+                string activityState = Response?.IsValid ?? false ? ActivityLog.PASPRTVERIFICATIONCMPLTE : ActivityLog.PASPRTDATAVERIFICATIONFAILED;
+                await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, activityState);
+            }
+            else
+            {
+                await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.PASPRTVERIFIFAILED);
+                Response.IsValid = false;
+                Response.Remarks = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "PASSPORT");
+            }
+
+            return Response;
+        }
+
+        public async Task<TResponse> ValidateDetailsPriorityBase<TRequest, TResponse>(TRequest reqObj, string apiType)
+            // where TResponse : new()
+            where TResponse : BaseApiResponse, new()
+            where TRequest : class
+        {
+            TResponse response = new TResponse();
+            int priority = 1;
+            bool isSuccess = false;
+
+            switch (apiType.ToUpper())
+            {
+                case ApiType.Pan:
+                    var panRequest = reqObj as AppointeePanValidateRequest;
+                    if (panRequest != null)
+                        await _activityContext.PostActivityDetails(panRequest.appointeeId, panRequest.userId, ActivityLog.PANVERIFICATIONSTART);
+                    break;
+
+                case ApiType.UAN:
+                    var uanRequest = reqObj as GetUanNumberDetailsRequest;
+                    if (uanRequest != null)
+                        await _activityContext.PostActivityDetails(uanRequest.appointeeId, uanRequest.userId, ActivityLog.UANVERIFICATIONSTART);
+                    break;
+
+                case ApiType.Passport:
+                    var passportRequest = reqObj as AppointeePassportValidateRequest;
+                    if (passportRequest != null)
+                        await _activityContext.PostActivityDetails(passportRequest.appointeeId, passportRequest.userId, ActivityLog.PASPRTVERIFICATIONSTART);
+                    break;
+            }
+            // Fetch providers and process based on priority
+            while (!isSuccess)
+            {
+                var apiProvider = await _masterContext.GetApiProviderDataPriorityBase(apiType, priority);
+                if (string.IsNullOrEmpty(apiProvider))
+                {
+                    break;
+                }
+                try
+                {
+                    response = await ProviderHandler<TRequest, TResponse>(
+                        apiProvider.ToLower(),
+                        reqObj,
+                        apiType
+                    );
+                    //if (response is BaseApiResponse baseApiResponse &&
+                    //    baseApiResponse.StatusCode == HttpStatusCode.OK)
+                    //{
+                    //    isSuccess = true; // Exit the loop if successful
+                    //}
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error calling provider {apiProvider}: {ex.Message}");
+                }
+
+                // Check if the call was successful
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    isSuccess = true;
+                }
+                if (response.StatusCode == HttpStatusCode.ServiceUnavailable || response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    priority++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            // Post-process response once successful or log failure
+
+            switch (apiType.ToUpper())
+            {
+                case ApiType.Pan:
+                    var panRequest = reqObj as AppointeePanValidateRequest;
+                    var _panResponse = response as AppointeePanValidateResponse;
+                    if (isSuccess)
+                    {
+                        var _apiPanResponse = _panResponse.PanDetails;
+
+                        CandidateValidateResponse verifyResponse = await VarifyPanData(_apiPanResponse, panRequest.appointeeId, panRequest.panName);
+                        _panResponse.StatusCode = _apiPanResponse.StatusCode;
+                        _panResponse.IsValid = verifyResponse.IsValid;
+                        _panResponse.Remarks = verifyResponse.Remarks;
+                        _panResponse.IsUanFetchCall = false;
+                        string activityState = _panResponse?.IsValid ?? false ? ActivityLog.PANVERIFICATIONCMPLTE : ActivityLog.PANDATAVERIFICATIONFAILED;
+                        await _activityContext.PostActivityDetails(panRequest.appointeeId, panRequest.userId, activityState);
+                    }
+                    else
+                    {
+                        await _activityContext.PostActivityDetails(panRequest.appointeeId, panRequest.userId, ActivityLog.PANVERIFIFAILED);
+                        _panResponse.IsValid = false;
+                        _panResponse.Remarks = GenarateErrorMsg((int)_panResponse.StatusCode, _panResponse?.ReasonPhrase, "PAN");
+                    }
+
+                    break;
+                //case ApiType.UAN:
+                //    var uanRequest = reqObj as GetUanNumberDetailsRequest;
+                //    if (uanRequest == null)
+                //        await _activityContext.PostActivityDetails(uanRequest.appointeeId, uanRequest.userId, ActivityLog.UANVERIFICATIONSTART);
+                //    break;
+                case ApiType.Passport:
+                    var passportRequest = reqObj as AppointeePassportValidateRequest;
+                    var Response = response as AppointeePassportValidateResponse;
+                    // Post-process response once successful or log failure
+                    if (isSuccess)
+                    {
+                        var _apiResponse = Response.passportDetails;
+
+                        CandidateValidateResponse verifyResponse = await VarifyPassportData(_apiResponse, passportRequest.appointeeId);
+                        Response.StatusCode = _apiResponse.StatusCode;
+                        Response.IsValid = verifyResponse.IsValid;
+                        Response.Remarks = verifyResponse.Remarks;
+
+                        string activityState = Response?.IsValid ?? false ? ActivityLog.PASPRTVERIFICATIONCMPLTE : ActivityLog.PASPRTDATAVERIFICATIONFAILED;
+                        await _activityContext.PostActivityDetails(passportRequest.appointeeId, passportRequest.userId, activityState);
+                    }
+                    else
+                    {
+                        await _activityContext.PostActivityDetails(passportRequest.appointeeId, passportRequest.userId, ActivityLog.PASPRTVERIFIFAILED);
+                        Response.IsValid = false;
+                        Response.Remarks = GenarateErrorMsg((int)Response.StatusCode, Response?.ReasonPhrase, "PASSPORT");
+                    }
+                    break;
+            }
+            //  return Response;
+            // If no success, consider throwing an exception or handling accordingly
+            //if (!isSuccess)
+            //{
+            //    throw new Exception("All API providers failed to return a valid response.");
+            //}
+            return response;
+        }
+
+        public async Task<TResponse> ProviderHandler<TRequest, TResponse>(
+            string provider,
+            TRequest request,
+            string apiType)
+            where TResponse : BaseApiResponse, new()
+            where TRequest : class
+        {
+            switch (apiType.ToUpper())
+            {
+                case ApiType.Pan:
+                    var panRequest = request as AppointeePanValidateRequest;
+                    if (panRequest == null)
+                        throw new Exception("Invalid request type for PAN API");
+
+                    // Call the appropriate provider method based on the provider
+                    if (provider == ApiProviderType.Karza.ToLower())
+                    {
+                        var panDetails = await _karzaApiContext.GetPanDetails(panRequest.panNummber, panRequest.userId);
+                        return MapDetailsToResponse<TResponse>(panDetails);
+                    }
+                    else if (provider == ApiProviderType.SurePass.ToLower())
+                    {
+                        var panDetails = await _surepassApiContext.GetPanDetails(panRequest.panNummber, panRequest.userId);
+                        return MapDetailsToResponse<TResponse>(panDetails);
+                    }
+                    else if (provider == ApiProviderType.Signzy.ToLower())
+                    {
+                        var panDetails = await _signzyApiContext.GetPanDetails(panRequest.panNummber, panRequest.userId);
+                        return MapDetailsToResponse<TResponse>(panDetails);
+                    }
+                    break;
+                    throw new Exception($"Unsupported provider or API type: {provider}, {apiType}");
+                case ApiType.UAN:
+                    var uanRequest = request as GetUanNumberDetailsRequest;
+                    if (uanRequest == null)
+                        throw new Exception("Invalid request type for PAN API");
+
+                    // Call the appropriate provider method based on the provider
+                    if (provider?.ToLower() == ApiProviderType.SurePass)
+                    {
+                        var res = await GetAadharToUan(uanRequest);
+                        return MapDetailsToResponse<TResponse>(res);
+                    }
+                    else if (provider?.ToLower() == ApiProviderType.Karza)
+                    {
+                        var res = await GetMobileToUan(uanRequest);
+                        return MapDetailsToResponse<TResponse>(res);
+                    }
+                    else if (provider?.ToLower() == ApiProviderType.Signzy)
+                    {
+                        var res = await GetMobilePanToUan(uanRequest);
+                        return MapDetailsToResponse<TResponse>(res);
+                    }
+                    break;
+
+                case ApiType.Passport:
+                    var passportRequest = request as AppointeePassportValidateRequest;
+                    if (string.IsNullOrEmpty(provider))
+                    {
+                        break;  // Exit loop if no more providers
+                    }
+                    if (provider?.ToLower() == ApiProviderType.Karza)
+                    {
+                        var result = await _karzaApiContext.GetPassportDetails(passportRequest);
+                        return MapDetailsToResponse<TResponse>(result);
+                    }
+                    if (provider?.ToLower() == ApiProviderType.SurePass)
+                    {
+                        var result = await _surepassApiContext.GetPassportDetails(passportRequest);
+                        return MapDetailsToResponse<TResponse>(result);
+                    }
+                    if (provider?.ToLower() == ApiProviderType.Signzy)
+                    {
+                        var result = await _signzyApiContext.GetPassportDetails(passportRequest);
+                        if (result.StatusCode == HttpStatusCode.BadRequest)
+                        {
+                            result.ReasonPhrase = "Invalid Passport information";
+                        }
+                        return MapDetailsToResponse<TResponse>(result);
+                    }
+                    break;
+            }
+
+            throw new Exception($"Unsupported provider or API type: {provider}, {apiType}");
+        }
+
+        private TResponse MapDetailsToResponse<TResponse>(object details) where TResponse : BaseApiResponse, new()
+        {
+            var response = new TResponse();
+
+            if (details is PanDetails panDetails)
+            {
+                response.StatusCode = panDetails.StatusCode;
+                response.ReasonPhrase = panDetails.ReasonPhrase;
+                if (response is AppointeePanValidateResponse appointeeResponse)
+                {
+                    appointeeResponse.PanDetails = panDetails; // Set the PanDetails property
+                }
+            }
+            //else if (details is UanDetails uanDetails)
+            //{
+            //    response.UanNumber = uanDetails.UanNumber;
+            //    // Map other properties from uanDetails to uanResponse
+            //}
+            else if (details is PassportDetails passportDetails)
+            {
+                response.StatusCode = passportDetails.StatusCode;
+                response.ReasonPhrase = passportDetails.ReasonPhrase;
+                if (response is AppointeePassportValidateResponse appointeeResponse)
+                {
+                    appointeeResponse.passportDetails = passportDetails; // Set the PanDetails property
+                }
+            }
+            else
+            {
+                throw new Exception("Unsupported details type for mapping.");
+            }
+
+            //response.StatusCode = HttpStatusCode.OK; // Set status code as needed
             return response;
         }
     }

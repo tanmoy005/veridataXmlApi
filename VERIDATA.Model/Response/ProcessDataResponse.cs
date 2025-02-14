@@ -21,5 +21,6 @@
         public string? passbookStatusCode { get; set; }
         public DateTime? dateOfJoining { get; set; }
         public decimal? epfWages { get; set; }
+        public string? IsDualEmployement { get; set; }
     }
 }

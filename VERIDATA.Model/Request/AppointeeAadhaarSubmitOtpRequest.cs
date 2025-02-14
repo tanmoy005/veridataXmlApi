@@ -17,6 +17,10 @@ namespace VERIDATA.Model.Request
         public string? otp { get; set; }
 
         [Required]
+        public string? aadharNumber { get; set; }
+
         public string? aadharName { get; set; }
+
+        public string? shareCode { get; set; }
     }
 }

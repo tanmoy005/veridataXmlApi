@@ -283,6 +283,7 @@
             public const string PREREQUISITECONFIRMYES = "PREREQCNFYES";
             public const string PREREQUISITECONFIRMNO = "PREREQCNFNO";
             public const string MNLFTHRVERIFIED = "MNFTRVCMPT";
+            public const string MNLVERIFREQ = "MNLVERREQ";
             public const string MNLFTHRVERIFLD = "MNFTHRVFLD";
             public const string MNLUANERICMPLTE = "MNUANVCMPT";
             public const string MNLUANVERIFLD = "MNUANVFLD";

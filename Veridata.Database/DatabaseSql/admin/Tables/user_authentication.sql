@@ -2,7 +2,7 @@
     [user_autho_id]   BIGINT        IDENTITY (1, 1) NOT NULL,
     [user_id]         BIGINT        NOT NULL,
     [user_pwd]        NVARCHAR (250) NULL,
-    [user_pwd_txt]    NVARCHAR (12) NULL,
+    [user_pwd_txt]    NVARCHAR (15) NULL,
     [user_profile_pwd] NVARCHAR(250) NULL, 
     [is_default_pass] CHAR (1)      NULL,
     [password_set_date]      DATETIME      NULL,
