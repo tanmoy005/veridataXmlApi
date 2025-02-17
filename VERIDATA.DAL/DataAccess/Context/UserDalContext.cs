@@ -435,7 +435,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     UserId = Users.UserId,
                     UserPwd = !string.IsNullOrEmpty(obj.Password) ? CommonDalUtility.hashPassword(obj.Password) : obj.Password,
                     UserPwdTxt = obj.Password,
-                    IsDefaultPass = obj.UserTypeId == 3 ? CommonEnum.CheckType.yes : CommonEnum.CheckType.no,
+                    IsDefaultPass = CommonEnum.CheckType.yes,
                     ActiveStatus = true,
                     CreatedBy = userId,
                     CreatedOn = DateTime.Now
