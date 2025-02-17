@@ -318,155 +318,126 @@ namespace VERIDATA.BLL.Context
 
         public async Task<AppointeeCountDateWiseDetails> AppointeeCountReport(AppointeeCountReportSearchRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
         {
-            AppointeeCountDateWiseDetails _response = new();
-            List<AppointeeCountDetails>? _apntDetailsList = new();
-            List<AppointeeTotalCount> _appointeeTotalCountList = new();
-            List<AppointeeCountDateWise> _appointeeCountDateWises = new();
-            List<AppointeeCountDateWise> _appointeeNonProcessDateWise = new();
-            //if (reqObj.StatusCode == ReportFilterStatus.LinkNotSent || string.IsNullOrEmpty(reqObj.StatusCode))
-            //{
-            List<NonProcessCandidateReportDataResponse> nonProcessAppointeeList = await _reportingDalContext.GetNonProcessCandidateReport(reqObj);
+            var response = new AppointeeCountDateWiseDetails();
+            var appointeeDetailsList = new List<AppointeeCountDetails>();
+            var appointeeTotalCountList = new List<AppointeeTotalCount>();
+            var appointeeCountDateWises = new List<AppointeeCountDateWise>();
 
-            List<IGrouping<string?, NonProcessCandidateReportDataResponse>>? _noProcessAppointeeCountdateWise = nonProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToShortDateString())?.ToList();
-
-            foreach ((List<NonProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate,
-                AppointeeCountDateWise _currDateWiseCount, AppointeeTotalCount _currAppointeeCount) in from obj in _noProcessAppointeeCountdateWise
-                                                                                                       let _currdata = obj?.ToList()
-                                                                                                       let _totalCount = _currdata?.Count ?? 0
-                                                                                                       let _currDate = obj?.Key
-                                                                                                       let _currDateWiseCount = new AppointeeCountDateWise()
-                                                                                                       let _currAppointeeCount = new AppointeeTotalCount()
-                                                                                                       select (_currdata, _totalCount, _currDate, _currDateWiseCount, _currAppointeeCount))
+            if (reqObj.StatusCode == ReportFilterStatus.LinkNotSent || string.IsNullOrEmpty(reqObj.StatusCode))
             {
-                List<AppointeeCountDetails>? _apntDetails = _currdata?.Select(x => new AppointeeCountDetails
+                var nonProcessAppointeeList = await _reportingDalContext.GetNonProcessCandidateReport(reqObj);
+                var groupedNonProcessData = nonProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToShortDateString()).ToList();
+
+                foreach (var group in groupedNonProcessData)
                 {
-                    AppointeeName = x?.AppointeeName,
-                    CandidateId = x?.CandidateId,
-                    CompanyId = x?.CompanyId,
-                    CompanyName = x?.CompanyName,
-                    EmailId = x?.AppointeeEmail,
-                    ActionTaken = x?.CreatedOn?.ToShortDateString(),
-                    AppointeeStatus = "Link Not Sent",
-                    Date = _currDate,
-                })?.ToList();
+                    var details = group.Select(x => new AppointeeCountDetails
+                    {
+                        AppointeeName = x.AppointeeName,
+                        CandidateId = x.CandidateId,
+                        CompanyId = x.CompanyId,
+                        CompanyName = x.CompanyName,
+                        EmailId = x.AppointeeEmail,
+                        ActionTaken = x.CreatedOn?.ToShortDateString(),
+                        AppointeeStatus = "Link Not Sent",
+                        Date = group.Key,
+                    }).ToList();
 
-                _currAppointeeCount.Date = _currDate;
-                _currAppointeeCount.TotalLinkNotSentCount = _totalCount;
-                _currAppointeeCount.TotalLinkSentCount = 0;
-                _currAppointeeCount.TotalAppointeeCount = _totalCount + 0;
-                _currDateWiseCount.appointeeTotalCount = _currAppointeeCount;
-                _currDateWiseCount.AppointeeCountDetails = _apntDetails;
-                _apntDetailsList.AddRange(_apntDetails);
-                _appointeeCountDateWises.Add(_currDateWiseCount);
-                _appointeeTotalCountList.Add(_currAppointeeCount);
-            }
-            //}
-            //if (reqObj.StatusCode != ReportFilterStatus.LinkNotSent || string.IsNullOrEmpty(reqObj.StatusCode))
-            //{
-            string? _statusCode = null;
-            bool? _intSubmitCode = null;
-            int? _intSubStatusCode = null;
-            if (!string.IsNullOrEmpty(reqObj.StatusCode))
-            {
-                switch (reqObj.StatusCode)
-                {
-                    case ReportFilterStatus.ProcessIniNoResponse:
-                        _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
-                        _intSubStatusCode = 0;
-                        break;
+                    var appointeeCount = new AppointeeTotalCount
+                    {
+                        Date = group.Key,
+                        TotalLinkNotSentCount = group.Count(),
+                        TotalLinkSentCount = 0,
+                        TotalAppointeeCount = group.Count()
+                    };
 
-                    case ReportFilterStatus.ProcessIniOnGoing:
-                        _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
-                        _intSubStatusCode = 1;
-                        break;
-
-                    case ReportFilterStatus.ProcessIniSubmit:
-                        _statusCode = WorkFlowStatusType.ProcessIni?.Trim();
-                        _intSubmitCode = true;
-                        break;
-
-                    case ReportFilterStatus.Approved:
-                        _statusCode = WorkFlowStatusType.Approved?.Trim();
-                        break;
-
-                    case ReportFilterStatus.Rejected:
-                        _statusCode = WorkFlowStatusType.Rejected?.Trim();
-                        break;
-
-                    case ReportFilterStatus.ForcedApproved:
-                        _statusCode = WorkFlowStatusType.ForcedApproved?.Trim();
-                        break;
-
-                    default:
-                        _statusCode = reqObj.StatusCode;
-                        break;
+                    appointeeDetailsList.AddRange(details);
+                    appointeeCountDateWises.Add(new AppointeeCountDateWise { AppointeeCountDetails = details, appointeeTotalCount = appointeeCount });
+                    appointeeTotalCountList.Add(appointeeCount);
                 }
-                //}
+            }
 
-                List<UnderProcessCandidateReportDataResponse> underProcessAppointeeList = await _reportingDalContext.GetUnderProcessCandidateReport(reqObj, _statusCode, _intSubmitCode, _intSubStatusCode);
-
-                List<IGrouping<string?, UnderProcessCandidateReportDataResponse>>? _appointeeCountdateWise = underProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToShortDateString())?.ToList();
-                foreach ((List<UnderProcessCandidateReportDataResponse> _currdata, int _totalCount, string _currDate, AppointeeCountDateWise _currDateWiseCount,
-                    AppointeeCountDateWise _nonProcessExsistingData, AppointeeTotalCount _currAppointeeCount) in from obj in _appointeeCountdateWise
-                                                                                                                 let _currdata = obj?.ToList()
-                                                                                                                 let _totalCount = _currdata?.Count ?? 0
-                                                                                                                 let _currDate = obj?.Key
-                                                                                                                 let _nonProcessExsistingData = _appointeeCountDateWises?.Where(x => x?.appointeeTotalCount?.Date == _currDate).FirstOrDefault()
-                                                                                                                 let _currDateWiseCount = new AppointeeCountDateWise()
-                                                                                                                 let _currAppointeeCount = new AppointeeTotalCount()
-                                                                                                                 select (_currdata, _totalCount, _currDate, _currDateWiseCount, _nonProcessExsistingData, _currAppointeeCount))
+            if (reqObj.StatusCode != ReportFilterStatus.LinkNotSent || string.IsNullOrEmpty(reqObj.StatusCode))
+            {
+                string? statusCode = reqObj.StatusCode switch
                 {
-                    //var _date = _currdata;
-                    List<AppointeeCountDetails>? _apntListDetails = new();
-                    List<AppointeeCountDetails>? _apntDetails = _currdata?.Select(x => new AppointeeCountDetails
+                    ReportFilterStatus.ProcessIniNoResponse => WorkFlowStatusType.ProcessIni?.Trim(),
+                    ReportFilterStatus.ProcessIniOnGoing => WorkFlowStatusType.ProcessIni?.Trim(),
+                    ReportFilterStatus.ProcessIniSubmit => WorkFlowStatusType.ProcessIni?.Trim(),
+                    ReportFilterStatus.Approved => WorkFlowStatusType.Approved?.Trim(),
+                    ReportFilterStatus.Rejected => WorkFlowStatusType.Rejected?.Trim(),
+                    ReportFilterStatus.ForcedApproved => WorkFlowStatusType.ForcedApproved?.Trim(),
+                    _ => reqObj.StatusCode
+                };
+
+                bool? intSubmitCode = reqObj.StatusCode == ReportFilterStatus.ProcessIniSubmit ? true : null;
+                int? intSubStatusCode = reqObj.StatusCode switch
+                {
+                    ReportFilterStatus.ProcessIniNoResponse => 0,
+                    ReportFilterStatus.ProcessIniOnGoing => 1,
+                    _ => null
+                };
+
+                var underProcessAppointeeList = await _reportingDalContext.GetUnderProcessCandidateReport(reqObj, statusCode, intSubmitCode, intSubStatusCode);
+                var groupedUnderProcessData = underProcessAppointeeList.GroupBy(x => x.CreatedOn?.ToShortDateString()).ToList();
+
+                foreach (var group in groupedUnderProcessData)
+                {
+                    var details = group.Select(x => new AppointeeCountDetails
                     {
-                        AppointeeName = x?.AppointeeName,
-                        CandidateId = x?.CandidateId,
-                        CompanyId = x?.CompanyId,
-                        CompanyName = x?.CompanyName,
-                        EmailId = x?.AppointeeEmail,
-                        ActionTaken = (x?.AppvlStatusCode != WorkFlowStatusType.ProcessIni?.Trim() && x?.SaveStep == 1) ? x?.UpdatedOn?.ToShortDateString() ?? x?.ActionTakenAt?.ToShortDateString()
-                                      : x?.ActionTakenAt?.ToShortDateString(),
-                        AppointeeStatus = x?.AppvlStatusCode == WorkFlowStatusType.ProcessIni?.Trim() ?
-                                      x?.AppvlStatusDesc + "(" + (x?.IsSubmit ?? false ? "Submitted" : x?.SaveStep == 1 ? "Ongoing" : "No Response") + ")"
-                                      : x?.AppvlStatusDesc,
-                        Date = _currDate,
-                    })?.ToList();
-                    _apntDetailsList.AddRange(_apntDetails);
-                    if (_nonProcessExsistingData != null)
+                        AppointeeName = x.AppointeeName,
+                        CandidateId = x.CandidateId,
+                        CompanyId = x.CompanyId,
+                        CompanyName = x.CompanyName,
+                        EmailId = x.AppointeeEmail,
+                        ActionTaken = (x.AppvlStatusCode != WorkFlowStatusType.ProcessIni?.Trim() && x.SaveStep == 1) ?
+                                        x.UpdatedOn?.ToShortDateString() ?? x.ActionTakenAt?.ToShortDateString() :
+                                        x.ActionTakenAt?.ToShortDateString(),
+                        AppointeeStatus = x.AppvlStatusCode == WorkFlowStatusType.ProcessIni?.Trim()
+                                        ? $"{x.AppvlStatusDesc} ({(x.IsSubmit ?? false ? "Submitted" : x.SaveStep == 1 ? "Ongoing" : "No Response")})"
+                                        : x.AppvlStatusDesc,
+                        Date = group.Key
+                    }).ToList();
+
+                    appointeeDetailsList.AddRange(details);
+                    var existingData = appointeeCountDateWises.FirstOrDefault(x => x.appointeeTotalCount?.Date == group.Key);
+
+                    if (existingData != null)
                     {
-                        _nonProcessExsistingData.appointeeTotalCount.TotalAppointeeCount = (_nonProcessExsistingData != null) ? (_nonProcessExsistingData?.appointeeTotalCount?.TotalAppointeeCount ?? 0) + _totalCount : _totalCount;
-                        _nonProcessExsistingData.appointeeTotalCount.TotalLinkSentCount = _totalCount;
+                        existingData.appointeeTotalCount.TotalAppointeeCount += group.Count();
+                        existingData.appointeeTotalCount.TotalLinkSentCount = group.Count();
+                        existingData.AppointeeCountDetails.AddRange(details);
                     }
                     else
                     {
-                        _currAppointeeCount.TotalAppointeeCount = _totalCount;
-                        _currAppointeeCount.TotalLinkNotSentCount = 0;
-                        _currAppointeeCount.TotalLinkSentCount = _totalCount;
-                        _currAppointeeCount.Date = _currDate;
-                        _currDateWiseCount.appointeeTotalCount = _currAppointeeCount;
-                        _currDateWiseCount.AppointeeCountDetails = _apntDetails;
+                        var appointeeCount = new AppointeeTotalCount
+                        {
+                            Date = group.Key,
+                            TotalAppointeeCount = group.Count(),
+                            TotalLinkNotSentCount = existingData?.appointeeTotalCount?.TotalLinkNotSentCount??0,
+                            TotalLinkSentCount = group.Count()
+                        };
 
-                        _appointeeCountDateWises.Add(_currDateWiseCount);
-                        _appointeeTotalCountList.Add(_currAppointeeCount);
+                        appointeeCountDateWises.Add(new AppointeeCountDateWise { AppointeeCountDetails = details, appointeeTotalCount = appointeeCount });
+                        appointeeTotalCountList.Add(appointeeCount);
                     }
                 }
             }
-            _response.AppointeeCountDateWise = _appointeeCountDateWises;
-            _response.AppointeeCountDetails = _apntDetailsList?.OrderBy(x => Convert.ToDateTime(x.Date))?.ToList();
-            _response.appointeeCountDetailsXls = _apntDetailsList?.OrderBy(x => Convert.ToDateTime(x.Date))?.Select(y => new AppointeeCountDetailsXls
+
+            response.AppointeeCountDateWise = appointeeCountDateWises;
+            response.AppointeeCountDetails = appointeeDetailsList.OrderBy(x => Convert.ToDateTime(x.Date)).ToList();
+            response.appointeeCountDetailsXls = response.AppointeeCountDetails.Select(y => new AppointeeCountDetailsXls
             {
-                AppointeeName = y?.AppointeeName,
-                CandidateId = y?.CandidateId,
-                CompanyName = y?.CompanyName,
-                EmailId = y?.EmailId,
+                AppointeeName = y.AppointeeName,
+                CandidateId = y.CandidateId,
+                CompanyName = y.CompanyName,
+                EmailId = y.EmailId,
                 ActionTaken = y.ActionTaken,
                 AppointeeStatus = y.AppointeeStatus,
                 Date = y.Date,
-            })?.ToList();
-            _response.AppointeeTotalCount = _appointeeTotalCountList;
+            }).ToList();
+            response.AppointeeTotalCount = appointeeTotalCountList;
 
-            return _response;
+            return response;
         }
 
         public async Task<List<AppointeeAgingDataReportDetails>> AppointeeDetailsAgingReport(GetAgingReportRequest reqObj)//DateTime? FromDate, DateTime? ToDate)
