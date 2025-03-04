@@ -12,5 +12,6 @@
         public string? AppointeeName { get; set; }
         public string? CandidateId { get; set; }
         public string? FilePassword { get; set; }
+        public bool? IsPensionApplicable { get; set; }
     }
 }
