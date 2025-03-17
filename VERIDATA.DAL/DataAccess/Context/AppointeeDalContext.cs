@@ -1,5 +1,7 @@
 ﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using MimeKit;
 using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.DAL.DBContext;
 using VERIDATA.DAL.utility;
@@ -96,7 +98,7 @@ namespace VERIDATA.DAL.DataAccess.Context
                     _appointeedetails.IsUanVarified = validationReq.Status;
                     _appointeedetails.IsPassbookFetch = validationReq.uanData?.IsPassbookFetch;
                     _appointeedetails.UANNumber = validationReq.uanData?.UanNumber;
-                    _appointeedetails.IsFNameVarified = validationReq.uanData?.IsFNameVarified;
+                    _appointeedetails.IsFNameVarified = _appointeedetails.IsFNameVarified != true ? validationReq?.IsFNameVarified : _appointeedetails.IsFNameVarified;
                     _appointeedetails.IsDualEmployement = validationReq.uanData?.IsDualEmployementIdentified;
                     if (validationReq.uanData?.IsUanFromMobile ?? false)
                     {
@@ -110,13 +112,56 @@ namespace VERIDATA.DAL.DataAccess.Context
                 }
                 if (validationReq.Type == RemarksType.Pan)
                 {
+                    _appointeedetails.HasPan = validationReq?.HasData;
                     _appointeedetails.IsPanVarified = validationReq.Status;
                     _appointeedetails.PANNumber = validationReq?.panData?.PanNumber;
                     _appointeedetails.PANName = validationReq?.panData?.PanName;
                     _appointeedetails.FathersNameFromPan = validationReq?.panData?.PanFatherName;
                 }
+                if (validationReq.Type == RemarksType.Bank)
+                {
+                    _appointeedetails.IsBankVarified = validationReq.Status;
+                    _appointeedetails.AccountNo = validationReq?.BankDetails?.AccountNo;
+                    _appointeedetails.IfscCode = validationReq?.BankDetails?.IFSCCode;
+                }
+                if (validationReq.Type == RemarksType.Police)
+                {
+                    _appointeedetails.FirDetails = !string.IsNullOrEmpty(validationReq?.FirDetails) ? validationReq?.FirDetails : null;
+                    _appointeedetails.IsPoliceVarified = validationReq?.Status;
+                }
+                if (validationReq.Type == RemarksType.DRLNC)
+                {
+                    _appointeedetails.DrivingLicense = !string.IsNullOrEmpty(validationReq?.DlNumber) ? validationReq?.DlNumber : null;
+                    _appointeedetails.IsDlVarified = validationReq?.Status;
+                    _appointeedetails.HasDrivingLicense = validationReq?.HasData;
+                    _appointeedetails.IsFNameVarified = validationReq.IsFNameVarified;
+                }
+                _appointeedetails.SaveStep = validationReq.step ?? _appointeedetails.SaveStep;
             }
             _ = await _dbContextClass.SaveChangesAsync();
+        }
+
+        public async Task UpdateAppointeeAahdaarImage(int appointeeId, string candidateId, int userId, string imageBase64Data)
+        {
+            var req = new List<AppointeeUploadDetails>();
+            var _fileDetails = await getFileTypeDataByAliasAsync(FileTypealias.AdhaarProfile);
+            byte[] fileContent = Convert.FromBase64String(imageBase64Data);
+            AppointeeUploadDetails uploaddata = new()
+            {
+                AppointeeId = appointeeId,
+                UploadTypeId = _fileDetails.UploadTypeId,
+                UploadTypeCode = _fileDetails.UploadTypeCode,
+                FileName = candidateId + "_" + "profileImage",
+                UploadPath = null,
+                IsPathRefered = CheckType.no,
+                MimeType = "image/jpeg",
+                ActiveStatus = true,
+                CreatedBy = userId,
+                CreatedOn = DateTime.Now,
+                Content = fileContent
+            };
+            req.Add(uploaddata);
+            await Uploadfiles(req);
         }
 
         public async Task UpdateAppointeeUanNumber(int appointeeId, string uanNumber)
@@ -535,6 +580,27 @@ namespace VERIDATA.DAL.DataAccess.Context
             await _dbContextClass.SaveChangesAsync();
 
             return appointeeDetails;
+        }
+
+        public async Task UpdateAppinteeDocAvailibilityById(DoctypeAvailibilityUpdateRequest reqObj)
+        {
+            var updateDocAvailibility = await _dbContextClass.AppointeeDetails
+         .FirstOrDefaultAsync(x => x.AppointeeId == reqObj.AppointeeId && x.ActiveStatus == true);
+
+            if (updateDocAvailibility.AppointeeDetailsId > 0)
+            {
+                if (reqObj.Type == "PAN")
+                {
+                    updateDocAvailibility.HasPan = reqObj.Value;
+                }
+                if (reqObj.Type == "DL")
+                {
+                    updateDocAvailibility.HasDrivingLicense = reqObj.Value;
+                }
+                updateDocAvailibility.UpdatedBy = reqObj.UserId;
+                updateDocAvailibility.UpdatedOn = DateTime.Now;
+                _ = await _dbContextClass.SaveChangesAsync();
+            }
         }
     }
 }

@@ -26,6 +26,36 @@ namespace PfcAPI.Controllers.Account
             key = aadhaarConfig?.EncriptKey ?? string.Empty;
         }
 
+
+        [Authorize]
+        [HttpPost]
+        [Route("UserDetailsById")]
+        public ActionResult UserDetailsById(int userId)
+        {
+            try
+            {
+                UserDetailsResponse userDetails = new();
+
+                if (userId <= 0)
+                {
+                    string _errormsg = "Invalid User please Login with valid user mail";
+
+                    _ErrorResponse.ErrorCode = 400;
+                    _ErrorResponse.UserMessage = _errormsg;
+                    _ErrorResponse.InternalMessage = "Bad Request";
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.BadRequest, _ErrorResponse));
+                }
+                userDetails = Task.Run(async () => await _userContext.getUserDetailsAsyncbyId(userId)).GetAwaiter().GetResult();
+
+                return Ok(new BaseResponse<UserDetailsResponse>(HttpStatusCode.OK, userDetails));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
         ////[Authorize(Roles = $"{RoleTypeAlias.SuperAdmin},{RoleTypeAlias.CompanyAdmin},{RoleTypeAlias.GeneralAdmin}")]
         [Authorize]
         [HttpGet("GetAdminUserList")]

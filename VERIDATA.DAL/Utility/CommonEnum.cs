@@ -107,7 +107,7 @@
         public static class FileTypealias
         {
             public const string Pan = "PAN";
-            public const string Adhaar = "ADH";
+            public const string AdhaarProfile = "ADHPRF";
             public const string PFFile = "PFD";
             public const string PFPassbook = "EPFPSBK";
             public const string PFPassbookExcel = "EPFPSBKEXCL";
@@ -124,6 +124,9 @@
             public const string Others = "OTH";
             public const string Manual = "MNAL";
             public const string AadharUanLink = "AdhrUanLnk";
+            public const string Bank = "BANK";
+            public const string Police = "POLICE";
+            public const string DRLNC = "DRVLNC";
         }
 
         public static class RemedyType
@@ -148,6 +151,9 @@
             public const string Pan = "PAN";
             public const string EPFO = "EPFO";
             public const string EPFOUAN = "EPFOUAN";
+            public const string Bank = "BANK";
+            public const string Police = "POLICE";
+            public const string Driving = "DRIVING";
         }
 
         public static class ApiSubTYpeName
@@ -162,6 +168,10 @@
             public const string UANSubmitOTP = "UanSubmitOTP";
             public const string UanPassbook = "UanPassbook";
             public const string UanValidation = "UanValidation";
+            public const string AccDetails = "BankAcc";
+            public const string FirDetails = "FirDetails";
+            public const string FirSearchId = "FirSearch";
+            public const string DrvLicns = "DrvLcns";
         }
 
         public static class ApiProviderType
@@ -213,6 +223,8 @@
             public const string INVDDOC = "122";
             public const string INCMPLTDOC = "123";
             public const string DUALEMPNT = "124";
+            public const string FIR = "125";
+            //public const string DL = "126";
             //public const string MANUALOVERRIDE = "121";
             //public const string REJECT = "122";
             //public const string QUALIFICATION = "QUA";
@@ -289,6 +301,19 @@
             public const string MNLUANVERIFLD = "MNUANVFLD";
             public const string DOCUMENTREUPLOADRQST = "DCRUPLDRQ";
             public const string DOCUMENTREUPLED = "DCRUPLD";
+            public const string BANKVERIFICATIONSTART = "BANKVSTRT";
+            public const string BANKVERIFICATIONCMPLTE = "BANKVCMPT";
+            public const string BANKVERIFIFAILED = "BANKVFALD";
+            public const string BANKDATAVERIFICATIONFAILED = "BANKDTVFLD";
+            public const string FIRVERIFICATIONSTART = "FIRVSTRT";
+            public const string FIRVERIFICATIONCMPLTE = "FIRVCMPT";
+            public const string FIRVERIFIFAILED = "FIRVFALD";
+            public const string FIRDATAVERIFICATIONFAILED = "FIRDTVFLD";
+
+            public const string DLVERIFICATIONSTART = "DLVSTRT";
+            public const string DLVERIFICATIONCMPLTE = "DLVCMPT";
+            public const string DLVERIFIFAILED = "DLVFALD";
+            public const string DLDATAVERIFICATIONFAILED = "DLDTVFLD";
         }
 
         public static class MenuCode

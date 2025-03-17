@@ -8,5 +8,6 @@
         public string? CareOf { get; set; }
         public string? AadharNumber { get; set; }
         public string? MobileNumberHash { get; set; }
+        public string? AadharImage { get; set; }
     }
 }

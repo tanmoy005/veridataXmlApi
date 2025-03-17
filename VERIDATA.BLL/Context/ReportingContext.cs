@@ -389,11 +389,11 @@ namespace VERIDATA.BLL.Context
                         CompanyId = x.CompanyId,
                         CompanyName = x.CompanyName,
                         EmailId = x.AppointeeEmail,
-                        ActionTaken = (x.AppvlStatusCode != WorkFlowStatusType.ProcessIni?.Trim() && x.SaveStep == 1) ?
+                        ActionTaken = (x.AppvlStatusCode != WorkFlowStatusType.ProcessIni?.Trim() && x.SaveStep >= 1) ?
                                         x.UpdatedOn?.ToShortDateString() ?? x.ActionTakenAt?.ToShortDateString() :
                                         x.ActionTakenAt?.ToShortDateString(),
                         AppointeeStatus = x.AppvlStatusCode == WorkFlowStatusType.ProcessIni?.Trim()
-                                        ? $"{x.AppvlStatusDesc} ({(x.IsSubmit ?? false ? "Submitted" : x.SaveStep == 1 ? "Ongoing" : "No Response")})"
+                                        ? $"{x.AppvlStatusDesc} ({(x.IsSubmit ?? false ? "Submitted" : x.SaveStep >= 1 ? "Ongoing" : "No Response")})"
                                         : x.AppvlStatusDesc,
                         Date = group.Key
                     }).ToList();
@@ -413,7 +413,7 @@ namespace VERIDATA.BLL.Context
                         {
                             Date = group.Key,
                             TotalAppointeeCount = group.Count(),
-                            TotalLinkNotSentCount = existingData?.appointeeTotalCount?.TotalLinkNotSentCount??0,
+                            TotalLinkNotSentCount = existingData?.appointeeTotalCount?.TotalLinkNotSentCount ?? 0,
                             TotalLinkSentCount = group.Count()
                         };
 
@@ -469,7 +469,7 @@ namespace VERIDATA.BLL.Context
                     MobileNo = row?.UnderProcess?.MobileNo,
                     DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
                     CreatedDate = row?.UnderProcess?.CreatedOn,
-                    Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
+                    Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response",
                     LastActionDate = row?.LastActionDate,
                     LastActivityDesc = row?.ActivityDesc,
                 }).OrderByDescending(y => y.DateOfJoining).ToList();
@@ -477,7 +477,7 @@ namespace VERIDATA.BLL.Context
             }
             else
             {
-                List<AppointeeAgingDataReportDetails>? _underProcessViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed && (X?.AppointeeDetails?.IsSubmit == true || X?.AppointeeDetails?.SaveStep == 1))?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeAgingDataReportDetails
+                List<AppointeeAgingDataReportDetails>? _underProcessViewdata = _lastActionDateFilterList?.Where(X => !X.IsJoiningDateLapsed && (X?.AppointeeDetails?.IsSubmit == true || X?.AppointeeDetails?.SaveStep >= 1))?.DistinctBy(x => x.AppointeeId).Select(row => new AppointeeAgingDataReportDetails
                 {
                     AppointeeId = row?.AppointeeDetails?.AppointeeId ?? row?.UnderProcess?.AppointeeId,
                     AppointeeName = row?.AppointeeDetails?.AppointeeName ?? row?.UnderProcess?.AppointeeName,
@@ -486,7 +486,7 @@ namespace VERIDATA.BLL.Context
                     MobileNo = row?.UnderProcess?.MobileNo,
                     DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
                     CreatedDate = row?.UnderProcess?.CreatedOn,
-                    Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
+                    Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response",
                     LastActionDate = row?.LastActionDate,
                     LastActivityDesc = row?.ActivityDesc,
                 }).OrderByDescending(y => y.DateOfJoining).ToList();
@@ -663,7 +663,7 @@ namespace VERIDATA.BLL.Context
                     MobileNo = row?.UnderProcess?.MobileNo,
                     DateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
                     CreatedDate = row?.UnderProcess?.CreatedOn,
-                    Status = string.IsNullOrEmpty(status) ? row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response" : status,
+                    Status = string.IsNullOrEmpty(status) ? row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response" : status,
                 }).ToList();
                 _response.AddRange(_underProcessViewdata);
             }

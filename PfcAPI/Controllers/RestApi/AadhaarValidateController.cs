@@ -488,7 +488,7 @@ namespace PfcAPI.Controllers.RestApi
         }
 
         [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
-       // [AllowAnonymous]
+        // [AllowAnonymous]
         [HttpPost]
         [Route("GenerateOTP")]
         public IActionResult GenerateAadhaarOTP(AppointeeAadhaarValidateRequest reqObj)
@@ -562,7 +562,6 @@ namespace PfcAPI.Controllers.RestApi
                             AppointeeId = reqObj.appointeeId,
                             AppointeeAadhaarName = reqObj.aadharName,
                             sharePhrase = reqObj.shareCode
-
                         };
 
                         CandidateValidateResponse? VerifyAadhar = Task.Run(async () => await _varifyCandidate.VerifyAadharData(VarifyReq)).GetAwaiter().GetResult();
@@ -586,6 +585,107 @@ namespace PfcAPI.Controllers.RestApi
                 string msg = _varifyCandidate.GenarateErrorMsg((int)HttpStatusCode.InternalServerError, "", "UIDAI (Aadhar)");
                 CustomException excp = new(msg, ex);
                 throw excp;
+            }
+        }
+
+        [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        [HttpPost]
+        [Route("VerifyBanKDetails")]
+        public IActionResult VerifyBanKDetails(AppointeeBankValidateRequest reqobj)
+        {
+            try
+            {
+                AppointeeBankValidateResponse Response = new();
+                if (_apiConfig.IsApiCall)
+                {
+                    Response = Task.Run(async () => await _varifyCandidate.BankDetailsValidation(reqobj)).GetAwaiter().GetResult();
+                    if (Response.StatusCode != HttpStatusCode.OK)
+                    {
+                        _ErrorResponse.ErrorCode = Response.StatusCode == HttpStatusCode.NotAcceptable ? (int)HttpStatusCode.OK : (int)Response.StatusCode;
+                        _ErrorResponse.UserMessage = Response?.Remarks ?? string.Empty;
+                        _ErrorResponse.InternalMessage = Response?.Remarks ?? string.Empty;
+                        return Ok(new BaseResponse<ErrorResponse>(Response.StatusCode, _ErrorResponse));
+                    }
+                }
+                else
+                {
+                    Response.IsValid = false;
+                    Response.Remarks = "The server has been temporarily shut down by the administrator. Please contact the administrator for further assistance.";
+                }
+                return Ok(new BaseResponse<AppointeeBankValidateResponse>(HttpStatusCode.OK, Response));
+            }
+            catch (Exception)
+            {
+                Task.Run(async () => await _varifyCandidate.PostActivity(reqobj.AppointeeId, reqobj.UserId, ActivityLog.BANKVERIFIFAILED)).GetAwaiter().GetResult();
+                throw;
+            }
+        }
+
+        [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        //[AllowAnonymous]
+        [HttpPost]
+        [Route("VerifyFirDetails")]
+        public IActionResult VerifyFirDetails(AppointeeFirValidateRequest reqobj)
+        {
+            try
+            {
+                AppointeeFirDetailsResponse Response = new();
+                if (_apiConfig.IsApiCall)
+                {
+                    Response = Task.Run(async () => await _varifyCandidate.FIRDetailsValidation(reqobj)).GetAwaiter().GetResult();
+                    if (Response.StatusCode != HttpStatusCode.OK)
+                    {
+                        _ErrorResponse.ErrorCode = Response.StatusCode == HttpStatusCode.NotAcceptable ? (int)HttpStatusCode.OK : (int)Response.StatusCode;
+                        _ErrorResponse.UserMessage = Response?.Remarks ?? string.Empty;
+                        _ErrorResponse.InternalMessage = Response?.Remarks ?? string.Empty;
+                        return Ok(new BaseResponse<ErrorResponse>(Response.StatusCode, _ErrorResponse));
+                    }
+                }
+                else
+                {
+                    Response.IsValid = false;
+                    Response.Remarks = "The server has been temporarily shut down by the administrator. Please contact the administrator for further assistance.";
+                }
+                return Ok(new BaseResponse<AppointeeFirDetailsResponse>(HttpStatusCode.OK, Response));
+            }
+            catch (Exception)
+            {
+                Task.Run(async () => await _varifyCandidate.PostActivity(reqobj.AppointeeId, reqobj.UserId, ActivityLog.FIRVERIFIFAILED)).GetAwaiter().GetResult();
+                throw;
+            }
+        }
+
+        //[AllowAnonymous]
+        [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        [HttpPost]
+        [Route("VerifyDlDetails")]
+        public IActionResult VerifyDlDetails(AppointeeDLValidateRequest reqobj)
+        {
+            try
+            {
+                AppointeeDLValidateResponse Response = new();
+                if (_apiConfig.IsApiCall)
+                {
+                    Response = Task.Run(async () => await _varifyCandidate.DrivingLicenseValidation(reqobj)).GetAwaiter().GetResult();
+                    if (Response.StatusCode != HttpStatusCode.OK)
+                    {
+                        _ErrorResponse.ErrorCode = Response.StatusCode == HttpStatusCode.NotAcceptable ? (int)HttpStatusCode.OK : (int)Response.StatusCode;
+                        _ErrorResponse.UserMessage = Response?.Remarks ?? string.Empty;
+                        _ErrorResponse.InternalMessage = Response?.Remarks ?? string.Empty;
+                        return Ok(new BaseResponse<ErrorResponse>(Response.StatusCode, _ErrorResponse));
+                    }
+                }
+                else
+                {
+                    Response.IsValid = false;
+                    Response.Remarks = "The server has been temporarily shut down by the administrator. Please contact the administrator for further assistance.";
+                }
+                return Ok(new BaseResponse<AppointeeDLValidateResponse>(HttpStatusCode.OK, Response));
+            }
+            catch (Exception)
+            {
+                Task.Run(async () => await _varifyCandidate.PostActivity(reqobj.AppointeeId, reqobj.UserId, ActivityLog.FIRVERIFIFAILED)).GetAwaiter().GetResult();
+                throw;
             }
         }
     }

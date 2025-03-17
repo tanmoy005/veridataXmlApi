@@ -1,10 +1,13 @@
 ﻿using System.Net;
+using System.Reflection;
 using System.Text;
+using System.Xml.Linq;
 using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.Services;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.Request;
+using VERIDATA.Model.Request.api.Karza;
 using VERIDATA.Model.Request.api.Signzy;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
@@ -261,7 +264,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             Signzy_GetEmployementDetailsByUanResponse employementUanResponse = JsonConvert.DeserializeObject<Signzy_GetEmployementDetailsByUanResponse>(apiResponse);
 
             res.StatusCode = _apiResponse.StatusCode;
-            if (!_apiResponse.IsSuccessStatusCode)
+            if (_apiResponse.IsSuccessStatusCode)
             {
                 res.StatusCode = _apiResponse.StatusCode;
                 res.EmployementData = apiResponse;
@@ -355,6 +358,155 @@ namespace VERIDATA.BLL.apiContext.signzy
             result.EpsContributionSummary = epsContributionSummary;
             result.HasDualEmplyement = isDualEmployement;
             return result;
+        }
+
+        public async Task<BankDetails> GetBankDetails(string? accountNo, string ifscCode, string name, string mobile, int userId)
+        {
+            BankDetails res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Bank, ApiSubTYpeName.AccDetails, ApiProviderType.Signzy);
+            Signzy_GetCandidateBankDetailsRequest request = new()
+            {
+                beneficiaryAccount = accountNo,
+                beneficiaryIFSC = ifscCode,
+                beneficiaryMobile = mobile,
+                beneficiaryName = name,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+            string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+            Signzy_GetCandidateBankDetailsResponse response = JsonConvert.DeserializeObject<Signzy_GetCandidateBankDetailsResponse>(apiResponse);
+
+            res.StatusCode = _apiResponse.StatusCode;
+            if ((int)res.StatusCode == (int)SignzyStatusCode.Invalid || (int)res.StatusCode == (int)SignzyStatusCode.NotFound)
+            {
+                res.StatusCode = HttpStatusCode.BadRequest;
+                res.ReasonPhrase = "No details found";
+            }
+            else
+            {
+                var accountResult = response?.Result;
+                res.StatusCode = _apiResponse.StatusCode;
+                var status = accountResult?.Active?.ToUpper()?.Trim();
+                if (status != null && status != "YES")
+                {
+                    res.StatusCode = HttpStatusCode.BadRequest;
+                    res.ReasonPhrase = string.IsNullOrEmpty(accountResult?.Reason) ? "No details found" : accountResult?.Reason;
+                }
+                res.AccountNo = accountNo;
+                res.IFSCCode = ifscCode;
+                res.AccountHolderName = name;
+            }
+
+            return res;
+        }
+
+        public async Task<GetFirStatusDetails> GetFirStatusDetails(string name, string fatherName, int userId)
+        {
+            GetFirStatusDetails res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Police, ApiSubTYpeName.FirSearchId, ApiProviderType.Signzy);
+            Signzy_SearchCandidateFirDataRequest request = new()
+            {
+                name = name,
+                fatherName = fatherName,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+            string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+            Signzy_SearchCandidateFirDataResponse response = JsonConvert.DeserializeObject<Signzy_SearchCandidateFirDataResponse>(apiResponse);
+
+            res.StatusCode = _apiResponse.StatusCode;
+            if (_apiResponse.IsSuccessStatusCode || (int)res.StatusCode == (int)SignzyStatusCode.NotFound)
+            {
+                res.StatusCode = HttpStatusCode.OK;
+                res.SearchId = response?.searchId;
+            }
+            else
+            {
+                res.StatusCode = _apiResponse.StatusCode;
+                res.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
+            }
+            return res;
+        }
+
+        public async Task<FirDetails> GetFirDetails(string? searchId, int userId)
+        {
+            FirDetails res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Police, ApiSubTYpeName.FirDetails, ApiProviderType.Signzy);
+            Signzy_GetCandidateFirDetailsRequest request = new()
+            {
+                searchId = searchId,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+            string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+            Signzy_CandidateFirDetailsResponse response = JsonConvert.DeserializeObject<Signzy_CandidateFirDetailsResponse>(apiResponse);
+
+            res.StatusCode = _apiResponse.StatusCode;
+            if ((int)res.StatusCode == (int)SignzyStatusCode.Invalid || (int)res.StatusCode == (int)SignzyStatusCode.NotFound)
+            {
+                res.StatusCode = HttpStatusCode.BadRequest;
+                res.ReasonPhrase = "No details found";
+            }
+            else
+            {
+                var records = response?.cases;
+                res.StatusCode = _apiResponse.StatusCode;
+                foreach (var record in records)
+                {
+                    var policeFirDetails = new PoliceFirDetails
+                    {
+                        FirNumber = record.FIRNumber.ToString(),
+                        PoliceStation = record.PoliceStation,
+                        FirDate = record.Date,
+                    };
+
+                    policeFirDetails.FirActDetails.Add(new FirActAndSection
+                    {
+                        Acts = record.UnderActs,
+                        Sections = record.UnderSections,
+                    });
+
+                    res.PoliceFirDetails.Add(policeFirDetails);
+                }
+            }
+            return res;
+        }
+
+        public async Task<DrivingLicenseDetails> GetDrivingLicenseDetails(string? number, DateTime dob, int userId)
+        {
+            DrivingLicenseDetails res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Driving, ApiSubTYpeName.DrvLicns, ApiProviderType.Signzy);
+            Signzy_GetCandidateDrivingLicenseDetailsRequest request = new()
+            {
+                number = number,
+                dob = dob.ToString("dd/MM/yyyy"),
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+            string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+            Signzy_GetCandidateDrivingLicenseDetailsResponse response = JsonConvert.DeserializeObject<Signzy_GetCandidateDrivingLicenseDetailsResponse>(apiResponse);
+
+            res.StatusCode = _apiResponse.StatusCode;
+            if ((int)res.StatusCode == (int)SignzyStatusCode.Invalid || (int)res.StatusCode == (int)SignzyStatusCode.NotFound)
+            {
+                res.StatusCode = HttpStatusCode.BadRequest;
+                res.ReasonPhrase = "No details found";
+            }
+            else
+            {
+                var DLResult = response?.Result;
+                res.StatusCode = _apiResponse.StatusCode;
+                res.LicenseStatus = DLResult.DlNumber;
+                res.Name = DLResult.DetailsOfDrivingLicence?.Name;
+                res.FatherOrHusbandName = DLResult.DetailsOfDrivingLicence?.FatherOrHusbandName;
+                res.Dob = DLResult.Dob;
+            }
+
+            return res;
         }
     }
 }

@@ -28,5 +28,11 @@ namespace VERIDATA.BLL.apiContext.karza
         public Task<AadharGenerateOTPDetails> GenerateAadharOTP(string aadharNumber, int userId);
 
         public Task<AadharSubmitOtpDetails> SubmitAadharOTP(string clientId, string aadharNumber, string otp, string shareCode, int userId);
+
+        public Task<BankDetails> GetBackAccountDetails(string accountNumber, string ifsc, int userId);
+
+        public Task<FirDetails> GetFirDetails(string name, DateTime? dob, string contactNo, int userId);
+
+        public Task<DrivingLicenseDetails> GetDrivingLicenseDetails(string? number, DateTime dob, int userId);
     }
 }

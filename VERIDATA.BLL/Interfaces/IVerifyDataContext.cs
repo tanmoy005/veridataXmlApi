@@ -43,6 +43,12 @@ namespace VERIDATA.BLL.Interfaces
 
         public Task<AppointeePassportValidateResponse> PassportDetailsValidationPriorityBase(AppointeePassportValidateRequest reqObj);
 
+        public Task<AppointeeBankValidateResponse> BankDetailsValidation(AppointeeBankValidateRequest reqObj);
+
+        public Task<AppointeeFirDetailsResponse> FIRDetailsValidation(AppointeeFirValidateRequest reqObj);
+
+        public Task<AppointeeDLValidateResponse> DrivingLicenseValidation(AppointeeDLValidateRequest reqObj);
+
         public Task<TResponse> ValidateDetailsPriorityBase<TRequest, TResponse>(TRequest reqObj, string apiType)
             where TResponse : BaseApiResponse, new() where TRequest : class;
     }

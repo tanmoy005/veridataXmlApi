@@ -1,5 +1,7 @@
 ﻿using System.Net;
+using System.Text.RegularExpressions;
 using System.Xml;
+using System.Xml.Linq;
 using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.karza;
 using VERIDATA.BLL.apiContext.signzy;
@@ -117,6 +119,8 @@ namespace VERIDATA.BLL.Context
                     UserName = appointeedetail.AppointeeName,
                     Type = RemarksType.Pan,
                     panData = _panData,
+                    HasData = true,
+                    step = 3
                     //PanNumber = panNumber,
                 };
             }
@@ -434,6 +438,7 @@ namespace VERIDATA.BLL.Context
                     Reasons = ReasonList,
                     uanData = _uanDetails,
                     Type = RemarksType.UAN,
+                    step = 5
                 };
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
@@ -493,6 +498,7 @@ namespace VERIDATA.BLL.Context
                     Reasons = ReasonList,
                     uanData = _uanDetails,
                     Type = RemarksType.UAN,
+                    step = 5
                 };
                 if (_apiResponse.IsUanAvailable ?? false)
                 {
@@ -636,9 +642,9 @@ namespace VERIDATA.BLL.Context
                 // Navigate and extract data
                 XmlNode root = xmlDoc.DocumentElement;
                 XmlNode personNode = root.SelectSingleNode("UidData");
-
                 if (personNode != null)
                 {
+                    XmlNode personNodeImage = personNode.SelectSingleNode("Pht");
                     XmlNode personalInfoNode = personNode.SelectSingleNode("Poi");
                     XmlNode personalAddresNode = personNode.SelectSingleNode("Poa");
                     string referenceId = root.SelectSingleNode("@referenceId").Value;
@@ -647,6 +653,7 @@ namespace VERIDATA.BLL.Context
                     string dobNode = personalInfoNode.SelectSingleNode("@dob").Value;
                     string hashMobileNo = personalInfoNode.SelectSingleNode("@m").Value;
                     string careofNode = personalAddresNode.SelectSingleNode("@careof").Value;
+                    string profileImage = personNodeImage.InnerText;
                     var lastFourDigit = new string(referenceId.Where(char.IsDigit).Take(4).ToArray());
                     response.Name = nameNode;
                     response.Dob = dobNode;
@@ -654,6 +661,7 @@ namespace VERIDATA.BLL.Context
                     response.Gender = genderNode;
                     response.AadharNumber = $"{"XXXXXXXX"}{lastFourDigit}";
                     response.MobileNumberHash = hashMobileNo?.Trim();
+                    response.AadharImage = profileImage;
                 }
             }
             return response;
@@ -685,6 +693,7 @@ namespace VERIDATA.BLL.Context
                 _aadharData.NameFromAadhaar = appointeeAadhaarFullName;
                 _aadharData.GenderFromAadhaar = appointeeAadhaarGender;
                 _aadharData.DobFromAadhaar = appointeeAadhaarDOB;
+                _aadharData.ProfileImageAadhaar = reqObj?.AadharDetails?.AadharImage;
 
                 if (appointeedetail.AppointeeDetailsId != null && reqObj.AadharDetails != null)
                 {
@@ -742,7 +751,7 @@ namespace VERIDATA.BLL.Context
             };
 
             response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
-
+            await _candidateContext.UpdateCandidateImageData(appointeedetail.AppointeeId ?? 0, appointeedetail.CandidateId, appointeedetail.UserId, _aadharData.ProfileImageAadhaar);
             return response;
         }
 
@@ -1132,7 +1141,8 @@ namespace VERIDATA.BLL.Context
                 string normalizedApoointeeName = CommonUtility.NormalizeWhitespace(AppointeeFullName?.Trim());
                 string? fathersName = CommonUtility.NormalizeWhitespace(appointeedetail.MemberName);
                 DateTime _inptdob = Convert.ToDateTime(UanDob);
-                _isFatherNameValidate = !string.IsNullOrEmpty(fathersName) && (string.Equals(fathersName, UanFatherName, StringComparison.OrdinalIgnoreCase));
+
+                _isFatherNameValidate = appointeedetail.IsFnameVarified ?? false ? true : !string.IsNullOrEmpty(fathersName) && (string.Equals(fathersName, UanFatherName, StringComparison.OrdinalIgnoreCase));
                 if (string.Equals(normalizedApoointeeName, normalizedUANFullName, StringComparison.OrdinalIgnoreCase)
 
                     && appointeedetail?.DateOfBirth == _inptdob && _isFatherNameValidate && !_IsPensionGapIdentified)
@@ -1182,7 +1192,6 @@ namespace VERIDATA.BLL.Context
                 IsPensionGap = _IsPensionGapIdentified,
                 UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? appointeedetail?.UANNumber : reqObj?.PassbookDetails?.PfUan,
                 IsEmployementVarified = IsValid,
-                IsFNameVarified = _isFatherNameValidate,
                 IsDualEmployementIdentified = _IsDualEmployementIdentified,
             };
             CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
@@ -1195,6 +1204,7 @@ namespace VERIDATA.BLL.Context
                 UserName = appointeedetail?.AppointeeName,
                 Type = RemarksType.UAN,
                 uanData = _uanDetails,
+                IsFNameVarified = _isFatherNameValidate,
             };
 
             CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
@@ -1312,7 +1322,7 @@ namespace VERIDATA.BLL.Context
                     IsPensionGap = HasEpsGap(reqObj?.PassbookDetails?.EpsContributionDetails),
                     UanNumber = string.IsNullOrEmpty(reqObj?.PassbookDetails?.PfUan) ? appointeeDetails?.UANNumber : reqObj?.PassbookDetails?.PfUan,
                     IsEmployementVarified = isValid,
-                    IsFNameVarified = reasonList.All(r => r.ReasonCode != ReasonCode.CAREOFNAME),
+                    //IsFNameVarified = reasonList.All(r => r.ReasonCode != ReasonCode.CAREOFNAME),
                     IsDualEmployementIdentified = reqObj?.PassbookDetails?.IsDualEmployement ?? false
                 }
             };
@@ -1734,6 +1744,358 @@ namespace VERIDATA.BLL.Context
             }
 
             //response.StatusCode = HttpStatusCode.OK; // Set status code as needed
+            return response;
+        }
+
+        public async Task<AppointeeBankValidateResponse> BankDetailsValidation(AppointeeBankValidateRequest reqObj)
+        {
+            BankDetails _apiResponse = new();
+            AppointeeBankValidateResponse Response = new();
+            int priority = 1;  // Start with highest priority
+            bool isSuccess = false;
+
+            await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.BANKVERIFICATIONSTART);
+            AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.AppointeeId);
+            // Attempt provider calls based on priority
+
+            while (!isSuccess)
+            {
+                var apiProvider = await _masterContext.GetApiProviderDataPriorityBase(ApiType.Bank, priority);
+
+                if (string.IsNullOrEmpty(apiProvider))
+                {
+                    break;  // Exit loop if no more providers
+                }
+
+                if (apiProvider?.ToLower() == ApiProviderType.Karza)
+                {
+                    _apiResponse = await _karzaApiContext.GetBackAccountDetails(reqObj.AccountNumber, reqObj.Ifsc, reqObj.UserId);
+                }
+                else if (apiProvider?.ToLower() == ApiProviderType.Signzy)
+                {
+                    _apiResponse = await _signzyApiContext.GetBankDetails(reqObj.AccountNumber, reqObj.Ifsc, appointeedetail?.AppointeeName, appointeedetail?.MobileNo, reqObj.UserId);
+                }
+
+                // Check if the call was successful
+                if (_apiResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    isSuccess = true; // Mark success and exit the loop
+                }
+                if (_apiResponse.StatusCode == HttpStatusCode.ServiceUnavailable || _apiResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    priority++;  // Increase priority to try the next provider
+                }
+                else
+                {
+                    break;
+                }
+            }
+            // Post-process response once successful or log failure
+            if (isSuccess)
+            {
+                CandidateValidateResponse verifyResponse = await VarifyBanKData(_apiResponse, appointeedetail, reqObj.AppointeeId, reqObj.UserId);
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.IsValid = verifyResponse.IsValid;
+                Response.Remarks = verifyResponse.Remarks;
+                string activityState = Response?.IsValid ?? false ? ActivityLog.BANKVERIFICATIONCMPLTE : ActivityLog.BANKDATAVERIFICATIONFAILED;
+                await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, activityState);
+            }
+            else
+            {
+                await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.BANKVERIFIFAILED);
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.IsValid = false;
+                Response.Remarks = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "BANK");
+            }
+
+            return Response;
+        }
+
+        private async Task<CandidateValidateResponse> VarifyBanKData(BankDetails request, AppointeeDetailsResponse appointeedetail, int appointeeId, int userId)
+        {
+            bool IsValid = false;
+            _ = new CandidateValidateResponse();
+            List<ReasonRemarks> ReasonList = new();
+            CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new();
+            //AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(appointeeId);
+
+            string? accountHolderName = request?.AccountHolderName?.Trim();
+            string? accNumber = request?.AccountNo?.Trim();
+            string? ifscNo = request?.IFSCCode?.Trim();
+            string normalizedName = CommonUtility.NormalizeWhitespace(appointeedetail?.AppointeeName?.Trim());
+
+            string TrimmedAccountHolderName = RemoveTitle(accountHolderName);
+            accountHolderName = Regex.Replace(TrimmedAccountHolderName, @"\s+", " ");
+            string normalizedBankFullName = CommonUtility.NormalizeWhitespace(accountHolderName?.Trim());
+            if (appointeedetail.AppointeeDetailsId != null && request != null)
+            {
+                if (string.Equals(normalizedName, normalizedBankFullName, StringComparison.OrdinalIgnoreCase))
+                //&& (appointeedetail?.DateOfBirth == _inptdob || dOBVarified))
+                {
+                    IsValid = true;
+                }
+                else
+                {
+                    if (!string.Equals(normalizedName, normalizedBankFullName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = normalizedBankFullName });
+                    }
+                }
+
+                candidateUpdatedDataReq = new CandidateValidateUpdatedDataRequest()
+                {
+                    AppointeeId = appointeeId,
+                    EmailId = appointeedetail?.AppointeeEmailId ?? string.Empty,
+                    Status = IsValid,
+                    Reasons = ReasonList,
+                    UserId = appointeedetail.UserId,
+                    UserName = appointeedetail.AppointeeName,
+                    Type = RemarksType.Bank,
+                    BankDetails = request,
+                    step = 3
+                    //PanNumber = panNumber,
+                };
+            }
+            CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+
+            return response;
+        }
+
+        private static string RemoveTitle(string name)
+        {
+            // Remove common prefixes and trim extra spaces
+            string cleanedName = Regex.Replace(name, @"^(Mrs\.?|Mr\.?|Ms\.?|Dr\.?|Shri\.?)\s*", "", RegexOptions.IgnoreCase);
+            return cleanedName.Trim(); // Ensure no leading/trailing spaces
+        }
+
+        public async Task<AppointeeFirDetailsResponse> FIRDetailsValidation(AppointeeFirValidateRequest reqObj)
+        {
+            FirDetails _apiResponse = new();
+            AppointeeFirDetailsResponse Response = new();
+            int priority = 1;  // Start with highest priority
+            bool isSuccess = false;
+
+            await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.FIRVERIFICATIONSTART);
+            AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.AppointeeId);
+
+            while (!isSuccess)
+            {
+                // Attempt provider calls based on priority
+                var apiProvider = await _masterContext.GetApiProviderDataPriorityBase(ApiType.Police, priority);
+                if (apiProvider?.ToLower() == ApiProviderType.Karza)
+                {
+                    _apiResponse = await _karzaApiContext.GetFirDetails(appointeedetail.AppointeeName, appointeedetail.DateOfBirth, appointeedetail.MobileNo, reqObj.UserId);
+                }
+                if (apiProvider?.ToLower() == ApiProviderType.Signzy)
+                {
+                    var fathersName = appointeedetail.MemberRelation?.Trim() == "F" ? appointeedetail.MemberName : string.Empty;
+                    var _searchResponse = await _signzyApiContext.GetFirStatusDetails(appointeedetail.AppointeeName, fathersName, reqObj.UserId);
+                    if (_searchResponse.StatusCode == HttpStatusCode.OK)
+                    {
+                        if (!string.IsNullOrEmpty(_searchResponse.SearchId))
+                        {
+                            _apiResponse = await _signzyApiContext.GetFirDetails(_searchResponse.SearchId, reqObj.UserId);
+                        }
+                        else
+                        {
+                            _apiResponse.StatusCode = HttpStatusCode.OK;
+                        }
+                    }
+                    else
+                    {
+                        _apiResponse.StatusCode = _searchResponse.StatusCode;
+                        _apiResponse.ReasonPhrase = _searchResponse.ReasonPhrase;
+                    }
+                }
+
+                if (_apiResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    isSuccess = true; // Mark success and exit the loop
+                }
+                if (_apiResponse.StatusCode == HttpStatusCode.ServiceUnavailable || _apiResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    priority++;  // Increase priority to try the next provider
+                }
+                else
+                {
+                    break;
+                }
+            }
+            if (isSuccess)
+            {
+                CandidateValidateResponse verifyResponse = await UpdateFirDetails(appointeedetail, _apiResponse, reqObj.UserId);
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.IsValid = verifyResponse.IsValid;
+                Response.Remarks = verifyResponse.Remarks;
+                Response.PoliceFirDetails = _apiResponse.PoliceFirDetails;
+                string activityState = Response?.IsValid ?? false ? ActivityLog.FIRVERIFICATIONCMPLTE : ActivityLog.FIRDATAVERIFICATIONFAILED;
+                await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, activityState);
+            }
+            else
+            {
+                await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.FIRVERIFIFAILED);
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.IsValid = false;
+                Response.Remarks = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "FIR");
+            }
+            return Response;
+        }
+
+        private async Task<CandidateValidateResponse> UpdateFirDetails(AppointeeDetailsResponse appntDetails, FirDetails? firDetails, int userId)
+        {
+            bool IsValid = true;
+            List<ReasonRemarks> ReasonList = new();
+            CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new();
+            string _firDetails = string.Empty;
+
+            if (appntDetails.AppointeeDetailsId != null && firDetails?.PoliceFirDetails?.Count > 0)
+            {
+                IsValid = false;
+                _firDetails = JsonConvert.SerializeObject(_firDetails, Newtonsoft.Json.Formatting.Indented);
+
+                ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.FIR, Inputdata = appntDetails?.AppointeeName, Fetcheddata = "" });
+            }
+            candidateUpdatedDataReq = new CandidateValidateUpdatedDataRequest()
+            {
+                AppointeeId = appntDetails.AppointeeId ?? 0,
+                EmailId = appntDetails?.AppointeeEmailId ?? string.Empty,
+                Status = IsValid,
+                Reasons = ReasonList,
+                UserId = appntDetails.UserId,
+                UserName = appntDetails.AppointeeName,
+                Type = RemarksType.Police,
+                FirDetails = _firDetails,
+                step = 4
+                //PanNumber = panNumber,
+            };
+            CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+
+            return response;
+        }
+
+        public async Task<AppointeeDLValidateResponse> DrivingLicenseValidation(AppointeeDLValidateRequest reqObj)
+        {
+            DrivingLicenseDetails _apiResponse = new();
+            AppointeeDLValidateResponse Response = new();
+            int priority = 1;  // Start with highest priority
+            bool isSuccess = false;
+            AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.AppointeeId);
+            var _inptdob = appointeedetail.DateOfBirth ?? new DateTime();
+            await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.DLVERIFICATIONSTART);
+            //AppointeeDetailsResponse? appointeedetail = await _candidateContext.GetAppointeeDetailsAsync(reqObj.AppointeeId);
+
+            while (!isSuccess)
+            {
+                // Attempt provider calls based on priority
+                var apiProvider = await _masterContext.GetApiProviderDataPriorityBase(ApiType.Driving, priority);
+
+                //if (string.IsNullOrEmpty(apiProvider))
+                //{
+                //    break;  // Exit loop if no more providers
+                //}
+
+                if (apiProvider?.ToLower() == ApiProviderType.Karza)
+                {
+                    _apiResponse = await _karzaApiContext.GetDrivingLicenseDetails(reqObj.DLNumber, _inptdob, reqObj.UserId);
+                }
+                else
+                if (apiProvider?.ToLower() == ApiProviderType.Signzy)
+                {
+                    _apiResponse = await _signzyApiContext.GetDrivingLicenseDetails(reqObj.DLNumber, _inptdob, reqObj.UserId);
+                }
+
+                // Check if the call was successful
+                if (_apiResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    isSuccess = true; // Mark success and exit the loop
+                }
+                if (_apiResponse.StatusCode == HttpStatusCode.ServiceUnavailable || _apiResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    priority++;  // Increase priority to try the next provider
+                }
+                else
+                {
+                    break;
+                }
+            }
+            // Post-process response once successful or log failure
+            if (isSuccess)
+            {
+                CandidateValidateResponse verifyResponse = await VarifyDLData(_apiResponse, appointeedetail, reqObj.AppointeeId, reqObj.UserId);
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.IsValid = verifyResponse.IsValid;
+                Response.Remarks = verifyResponse.Remarks;
+                string activityState = Response?.IsValid ?? false ? ActivityLog.DLVERIFICATIONCMPLTE : ActivityLog.DLDATAVERIFICATIONFAILED;
+                await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, activityState);
+            }
+            else
+            {
+                await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.DLVERIFIFAILED);
+                Response.StatusCode = _apiResponse.StatusCode;
+                Response.IsValid = false;
+                Response.Remarks = GenarateErrorMsg((int)_apiResponse.StatusCode, _apiResponse?.ReasonPhrase, "Deiving License");
+            }
+
+            return Response;
+        }
+
+        private async Task<CandidateValidateResponse> VarifyDLData(DrivingLicenseDetails request, AppointeeDetailsResponse appointeedetail, int appointeeId, int userId)
+        {
+            bool IsValid = false;
+            _ = new CandidateValidateResponse();
+            List<ReasonRemarks> ReasonList = new();
+            CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new();
+
+            string? dLName = request?.Name?.Trim();
+            string? dLNumberStatus = request?.LicenseStatus?.Trim();
+            string? dob = request?.Dob?.Trim();
+            string? fatherOrHusbandName = request?.FatherOrHusbandName?.Trim();
+            string? dbFatherOrHusbandName = appointeedetail?.MemberName?.Trim();
+            string normalizedName = CommonUtility.NormalizeWhitespace(appointeedetail?.AppointeeName?.Trim());
+            string normalizedFullName = CommonUtility.NormalizeWhitespace(dLName?.Trim());
+
+            if (appointeedetail.AppointeeDetailsId != null && request != null)
+            {
+                if (string.Equals(normalizedName, normalizedFullName, StringComparison.OrdinalIgnoreCase) && string.Equals(dLNumberStatus, "ACTIVE", StringComparison.OrdinalIgnoreCase))
+                //&& (appointeedetail?.DateOfBirth == _inptdob || dOBVarified))
+                {
+                    IsValid = true;
+                }
+                else
+                {
+                    if (!string.Equals(normalizedName, normalizedFullName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = normalizedFullName });
+                    }
+                    if (!string.Equals(dLNumberStatus, "ACTIVE", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = normalizedFullName });
+                    }
+                }
+                bool _isFatherNameValidate = !string.IsNullOrEmpty(fatherOrHusbandName) && (string.Equals(fatherOrHusbandName, dbFatherOrHusbandName, StringComparison.OrdinalIgnoreCase));
+                if (!_isFatherNameValidate && !string.IsNullOrEmpty(fatherOrHusbandName))
+                {
+                    ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.CAREOFNAME, Inputdata = dbFatherOrHusbandName, Fetcheddata = fatherOrHusbandName });
+                }
+                candidateUpdatedDataReq = new CandidateValidateUpdatedDataRequest()
+                {
+                    AppointeeId = appointeeId,
+                    EmailId = appointeedetail?.AppointeeEmailId ?? string.Empty,
+                    Status = IsValid,
+                    Reasons = ReasonList,
+                    UserId = appointeedetail.UserId,
+                    UserName = appointeedetail.AppointeeName,
+                    Type = RemarksType.DRLNC,
+                    DlNumber = request.LicenseStatus,
+                    HasData = true,
+                    IsFNameVarified = _isFatherNameValidate,
+                    step = 2
+                    //BankDetails = request,
+                    //PanNumber = panNumber,
+                };
+            }
+            CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+
             return response;
         }
     }

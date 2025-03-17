@@ -23,5 +23,13 @@ namespace VERIDATA.BLL.apiContext.signzy
         public Task<GetEmployemntDetailsResponse> GetEmploymentHistoryByUan(string Uan, int userId);
 
         public Task<EpsContributionCheckResult> CheckEpsContributionConsistency(SignzyUanPassbookDetails uanPassbookDetails);
+
+        public Task<BankDetails> GetBankDetails(string? accountNo, string ifscCode, string name, string mobile, int userId);
+
+        public Task<GetFirStatusDetails> GetFirStatusDetails(string name, string fatherName, int userId);
+
+        public Task<FirDetails> GetFirDetails(string? searchId, int userId);
+
+        public Task<DrivingLicenseDetails> GetDrivingLicenseDetails(string? number, DateTime dob, int userId);
     }
 }

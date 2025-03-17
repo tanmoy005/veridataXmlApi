@@ -19,6 +19,8 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
 
         public Task UpdateAppointeeVerifiedData(CandidateValidateUpdatedDataRequest validationReq);
 
+        public Task UpdateAppointeeAahdaarImage(int appointeeId, string candidateId, int userId, string imageBase64Data);
+
         public Task UpdateAppointeeUanNumber(int appointeeId, string uanNumber);
 
         public Task<string> UpdateRemarksByType(int AppointeeId, List<ReasonRemarks> Reasons, string Type, int UserId);
@@ -70,5 +72,6 @@ namespace VERIDATA.DAL.DataAccess.Interfaces
         public Task<AppointeeDetails> VefifyAppinteeFathersNameManualById(int appointeeId, bool? isValid, string type, int userId);
 
         public Task<AppointeeDetails> VefifyAppinteePfDetailsManualById(AppointeePfVerificationRequest reqObj);
+        public Task UpdateAppinteeDocAvailibilityById(DoctypeAvailibilityUpdateRequest reqObj);
     }
 }

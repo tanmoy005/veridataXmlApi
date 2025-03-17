@@ -38,7 +38,6 @@ namespace PfcAPI.Controllers.Account
             try
             {
                 string _Otp = string.Empty;
-                UserDetailsResponse userDetails = new();
                 ValidateUserDetails validateUserResponse = Task.Run(async () => await _userContext.validateUserSign(user)).GetAwaiter().GetResult();
                 if (validateUserResponse.StatusCode == HttpStatusCode.NotFound)
                 {
@@ -126,7 +125,6 @@ namespace PfcAPI.Controllers.Account
             {
                 string _Otp = string.Empty;
                 ChangePasswordGenerateOTPResponse ChangePasswordGenerateOTPRes = new();
-                UserDetailsResponse userDetails = new();
                 ValidateUserDetails validateUserResponse = Task.Run(async () => await _userContext.validateUserChangePassword(user)).GetAwaiter().GetResult();
                 if (validateUserResponse.StatusCode == HttpStatusCode.NotFound)
                 {

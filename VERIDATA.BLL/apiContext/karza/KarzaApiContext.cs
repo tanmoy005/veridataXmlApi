@@ -626,7 +626,6 @@ namespace VERIDATA.BLL.apiContext.karza
                         Response.AadharNumber = aadharNumber.Trim();
                         Response.CareOf = resData?.fatherName;
                         Response.MobileNumberHash = resData?.mobileHash;
-
                     }
                     else
                     {
@@ -648,6 +647,151 @@ namespace VERIDATA.BLL.apiContext.karza
                 Response.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
             }
             return Response;
+        }
+
+        public async Task<BankDetails> GetBackAccountDetails(string accountNumber, string ifsc, int userId)
+        {
+            BankDetails res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Bank, ApiSubTYpeName.AccDetails, ApiProviderType.Karza);
+            Karza_BankAccVerifyRequest request = new()
+            {
+                accountNumber = accountNumber,
+                ifsc = ifsc,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+
+            if (_apiResponse.IsSuccessStatusCode)
+            {
+                string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+                Karza_BankAccVerifyResponse bankResponse = JsonConvert.DeserializeObject<Karza_BankAccVerifyResponse>(apiResponse);
+                var statusCode = Convert.ToInt32(bankResponse.statusCode ?? "0");
+                if (statusCode == (int)KarzaStatusCode.Invalid || statusCode == (int)KarzaStatusCode.NotFound)
+                {
+                    res.StatusCode = HttpStatusCode.BadRequest;
+                    res.ReasonPhrase = "Invalid PAN Number or PAN number not found";
+                }
+                else
+                {
+                    BankTransactionResult? bankInfo = bankResponse?.result;
+                    res.StatusCode = _apiResponse.StatusCode;
+                    res.AccountNo = bankInfo?.AccountNumber?.Trim();
+                    res.IFSCCode = bankInfo?.Ifsc?.Trim();
+                    res.AccountHolderName = bankInfo?.AccountName?.Trim();
+                }
+            }
+            else
+            {
+                res.StatusCode = _apiResponse.StatusCode;
+                res.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
+            }
+
+            return res;
+        }
+
+        public async Task<FirDetails> GetFirDetails(string name, DateTime? dob, string contactNo, int userId)
+        {
+            FirDetails res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Police, ApiSubTYpeName.FirDetails, ApiProviderType.Karza);
+            Karza_GetCandidateFirDetailsRequest request = new()
+            {
+                candidateName = name,
+                contactNo = contactNo,
+                dob = dob?.ToString("dd/MM/yyyy") ?? string.Empty,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+
+            if (_apiResponse.IsSuccessStatusCode)
+            {
+                string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+                Karza_GetCandidateFirDetailsResponse response = JsonConvert.DeserializeObject<Karza_GetCandidateFirDetailsResponse>(apiResponse);
+                var statusCode = response.statusCode ?? 0;
+                if (statusCode == (int)KarzaStatusCode.Invalid || statusCode == (int)KarzaStatusCode.NotFound)
+                {
+                    res.StatusCode = statusCode == (int)KarzaStatusCode.NotFound ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
+                    res.ReasonPhrase = "No details found";
+                }
+                else
+                {
+                    var records = response?.Result?.Records;
+                    res.StatusCode = _apiResponse.StatusCode;
+
+                    foreach (var record in records)
+                    {
+                        var policeFirDetails = new PoliceFirDetails
+                        {
+                            FirNumber = record.FirNo,
+                            PoliceStation = record.PoliceStation,
+                            FirDate = record.FirDate,
+                        };
+                        foreach (var act in record?.ActsAndSections)
+                        {
+                            policeFirDetails.FirActDetails.Add(new FirActAndSection
+                            {
+                                Acts = act.Acts,
+                                Sections = act.Sections.FirstOrDefault(),
+                            });
+                        }
+                        res.PoliceFirDetails.Add(policeFirDetails);
+                    }
+                }
+            }
+            else
+            {
+                res.StatusCode = _apiResponse.StatusCode;
+                res.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
+            }
+            return res;
+        }
+
+        public async Task<DrivingLicenseDetails> GetDrivingLicenseDetails(string? number, DateTime dob, int userId)
+        {
+            DrivingLicenseDetails res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Driving, ApiSubTYpeName.DrvLicns, ApiProviderType.Karza);
+            karza_GetCandidateDrivingLicenseDetailsRequest request = new()
+            {
+                dlNo = number?.ToUpper(),
+                dob = dob.ToString("dd-MM-yyyy"),
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, userId);
+
+            if (_apiResponse.IsSuccessStatusCode)
+            {
+                string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+                karza_GetCandidateDrivingLicenseDetailsResponse dLResponse = JsonConvert.DeserializeObject<karza_GetCandidateDrivingLicenseDetailsResponse>(apiResponse);
+                var jsonObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(apiResponse);
+                var resultJson = jsonObject["result"].ToString();
+
+                var resultData = JsonConvert.DeserializeObject<Dictionary<string, object>>(resultJson);
+                string fatherHusband = resultData.ContainsKey("father/husband") ? resultData["father/husband"].ToString() : string.Empty;
+                var statusCode = dLResponse.statusCode;
+                if (statusCode == (int)KarzaStatusCode.Invalid || statusCode == (int)KarzaStatusCode.NotFound)
+                {
+                    res.StatusCode = HttpStatusCode.BadRequest;
+                    res.ReasonPhrase = "Invalid DL Number or DL number not found";
+                }
+                else
+                {
+                    DlResult? resInfo = dLResponse?.Result;
+                    res.StatusCode = _apiResponse.StatusCode;
+                    res.Dob = resInfo?.DateOfBirth?.Trim();
+                    res.Name = resInfo?.Name?.Trim();
+                    res.FatherOrHusbandName = fatherHusband?.Trim();
+                    res.LicenseStatus = resInfo?.Status?.Trim();
+                }
+            }
+            else
+            {
+                res.StatusCode = _apiResponse.StatusCode;
+                res.ReasonPhrase = _apiResponse?.ReasonPhrase?.ToString();
+            }
+
+            return res;
         }
     }
 }

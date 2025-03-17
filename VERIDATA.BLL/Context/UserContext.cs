@@ -926,8 +926,8 @@ namespace VERIDATA.BLL.Context
                 dateOfJoining = row.AppointeeDetails?.DateOfJoining ?? row.UnderProcess.DateOfJoining,
                 isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                 isReprocess = false,
-                status = row.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                statusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
+                status = row.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response",
+                statusCode = row.AppointeeDetails?.IsSubmit ?? false ? 5 : row.AppointeeDetails?.SaveStep ?? 0,
                 consentStatusCode = row.ConsentStatusId ?? 0,
                 createdDate = row.UnderProcess?.CreatedOn
             }).OrderByDescending(x => x.isDocSubmitted).ThenBy(y => y.dateOfJoining).ToList();
@@ -1206,8 +1206,8 @@ namespace VERIDATA.BLL.Context
                 mobileNo = row?.UnderProcess?.MobileNo,
                 IsReprocess = false,
                 dateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
-                Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                StatusCode = row?.AppointeeDetails?.IsSubmit ?? false ? 2 : row?.AppointeeDetails?.SaveStep == 1 ? 2 : 1,
+                Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response",
+                StatusCode = row?.AppointeeDetails?.IsSubmit ?? false ? 2 : row?.AppointeeDetails?.SaveStep >= 1 ? 2 : 1,
                 CreatedDate = row?.UnderProcess?.CreatedOn
             })?.ToList();
 

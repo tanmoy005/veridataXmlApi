@@ -13,6 +13,8 @@ namespace VERIDATA.BLL.Interfaces
 
         public Task<CandidateValidateResponse> UpdateCandidateValidateData(CandidateValidateUpdatedDataRequest validationReq);
 
+        public Task UpdateCandidateImageData(int appointeeId, string candidateId, int userId, string imageBase64Data);
+
         public Task<List<GetRemarksResponse>> GetRemarks(int appointeeId);
 
         public Task<string?> GetRemarksRemedy(GetRemarksRemedyRequest reqObj);
@@ -34,5 +36,6 @@ namespace VERIDATA.BLL.Interfaces
         public Task<AppointeeEmployementDetails> PostAppointeeEmployementDetailsAsync(EmployementHistoryDetails reqObj);
 
         public Task<AppointeeDetails> PostAppointeepensionAsync(AppointeeApprovePensionRequest reqObj);
+        public Task PostAppointeeDocAvailibilituAsync(DoctypeAvailibilityUpdateRequest reqObj);
     }
 }

@@ -130,7 +130,7 @@ namespace VERIDATA.DAL.DataAccess.Context
 
                         break;
 
-                    case bool _ when _userDetails?.SaveStep == 1:
+                    case bool _ when _userDetails?.SaveStep >= 1:
                         status = "Ongoing";
                         statusCode = "ONGNG";
 

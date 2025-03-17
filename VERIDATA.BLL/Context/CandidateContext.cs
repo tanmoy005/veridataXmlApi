@@ -144,6 +144,14 @@ namespace VERIDATA.BLL.Context
                 data.UanAadharLinkStatus = _appointeedetails?.IsUanAadharLink;
                 data.UserId = _appointeedetails?.CreatedBy ?? 0;
                 data.workFlowStatus = await _workFlowContext?.AppointeeWorkflowCurrentState(appointeeId);
+                data.isBankAccVarified = _appointeedetails?.IsBankVarified;
+                data.BankAccNumber = string.IsNullOrEmpty(_appointeedetails?.AccountNo) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.AccountNo));
+                data.BankIfscNumber = string.IsNullOrEmpty(_appointeedetails?.IfscCode) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.IfscCode));
+                data.DrivingLicense = string.IsNullOrEmpty(_appointeedetails?.DrivingLicense) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.DrivingLicense));
+                data.IsDLAvailable = _appointeedetails?.HasDrivingLicense;
+                data.IsPanAvailable = _appointeedetails?.HasPan;
+                data.FirDetails = _appointeedetails?.FirDetails;
+                data.IsPoliceVarified = _appointeedetails?.IsPoliceVarified;
                 string? _paddedName = _appointeedetails?.AppointeeName?.Length > 4 ? _appointeedetails.AppointeeName?[..3] : _appointeedetails?.AppointeeName?.PadRight(3, '0');
                 string candidateFileName = $"{_appointeedetails?.CandidateId}_{_paddedName}";
                 await _fileContext.getFiledetailsByAppointeeId(appointeeId, _FileDataList);
@@ -172,6 +180,18 @@ namespace VERIDATA.BLL.Context
             {
                 string? UANNumber = !string.IsNullOrEmpty(validationReq.uanData?.UanNumber) ? CommonUtility.CustomEncryptString(key, validationReq.uanData?.UanNumber) : null;
                 validationReq.uanData.UanNumber = UANNumber;
+            }
+            if (validationReq.Type == RemarksType.Bank && validationReq?.BankDetails != null)
+            {
+                string? accNumber = validationReq?.BankDetails?.AccountNo;
+                string? ifscNumber = validationReq?.BankDetails?.IFSCCode;
+                validationReq.BankDetails.AccountNo = !string.IsNullOrEmpty(accNumber) ? CommonUtility.CustomEncryptString(key, accNumber) : null;
+                validationReq.BankDetails.IFSCCode = !string.IsNullOrEmpty(ifscNumber) ? CommonUtility.CustomEncryptString(key, ifscNumber) : null;
+            }
+            if (validationReq.Type == RemarksType.DRLNC)
+            {
+                string? dLNumber = validationReq?.DlNumber;
+                validationReq.DlNumber = !string.IsNullOrEmpty(dLNumber) ? CommonUtility.CustomEncryptString(key, dLNumber) : null;
             }
 
             await _appointeeDalContext.UpdateAppointeeVerifiedData(validationReq);
@@ -204,6 +224,17 @@ namespace VERIDATA.BLL.Context
             Response.Remarks = Remarks;
 
             return Response;
+        }
+
+        public async Task UpdateCandidateImageData(int appointeeId, string candidateId, int userId, string imageBase64Data)
+        {
+            List<AppointeeUploadDetails>? _prevDocList = await _appointeeDalContext.GetAppinteeUploadDetails(appointeeId);
+            var filesToBeRemoved = _prevDocList?.Where(x => x.UploadTypeCode == FileTypealias.AdhaarProfile).ToList();
+            if (filesToBeRemoved.Any())
+            {
+                await _appointeeDalContext.RemovePrevfiles(filesToBeRemoved, userId);
+            }
+            await _appointeeDalContext.UpdateAppointeeAahdaarImage(appointeeId, candidateId, userId, imageBase64Data);
         }
 
         public async Task<List<GetRemarksResponse>> GetRemarks(int appointeeId)
@@ -1054,6 +1085,11 @@ namespace VERIDATA.BLL.Context
             }
 
             return updatedAppointeeDetails;
+        }
+
+        public async Task PostAppointeeDocAvailibilituAsync(DoctypeAvailibilityUpdateRequest reqObj)
+        {
+            await _appointeeDalContext.UpdateAppinteeDocAvailibilityById(reqObj);
         }
     }
 }

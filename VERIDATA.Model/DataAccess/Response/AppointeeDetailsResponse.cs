@@ -58,6 +58,15 @@
         public bool IsSubmit { get; set; }
         public int UserId { get; set; }
         public string workFlowStatus { get; set; }
+        public bool? isBankAccVarified { get; set; }
+        public string? BankAccNumber { get; set; }
+        public string? BankIfscNumber { get; set; }
+        public bool? IsPanAvailable { get; set; }
+        public bool? IsDLAvailable { get; set; }
+        public bool? IsDLVarified { get; set; }
+        public bool? IsPoliceVarified { get; set; }
+        public string? DrivingLicense { get; set; }
+        public string? FirDetails { get; set; }
 
         //public List<string>? UploadedFileType { get; set; }
         public List<FileDetailsResponse>? FileUploaded { get; set; }

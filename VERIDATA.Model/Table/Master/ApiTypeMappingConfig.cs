@@ -22,7 +22,7 @@ namespace VERIDATA.Model.Table.Master
         [Column("api_base_url", TypeName = DbDataType._text50)]
         public string? BaseUrl { get; set; }
 
-        [Column("api_url", TypeName = DbDataType._text50)]
+        [Column("api_url", TypeName = DbDataType._text100)]
         public string? Url { get; set; }
 
         //[Column("provider", TypeName = DbDataType._text50)]

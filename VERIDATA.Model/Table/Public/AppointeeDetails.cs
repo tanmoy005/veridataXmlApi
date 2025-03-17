@@ -225,5 +225,37 @@ namespace VERIDATA.Model.Table.Public
         [Column("is_dual_employement", TypeName = DbDataType._boolean)]
         [DefaultValue(false)]
         public bool? IsDualEmployement { get; set; }
+
+        [Column("is_bankvarified", TypeName = DbDataType._boolean)]
+        [DefaultValue(false)]
+        public bool? IsBankVarified { get; set; }
+
+        [Column("account_no", TypeName = DbDataType._text50)]
+        public string? AccountNo { get; set; }
+
+        [Column("ifsc_code", TypeName = DbDataType._text50)]
+        public string? IfscCode { get; set; }
+
+        [Column("is_policevarified", TypeName = DbDataType._boolean)]
+        [DefaultValue(false)]
+        public bool? IsPoliceVarified { get; set; }
+
+        [Column("fir_details", TypeName = DbDataType._textmax)]
+        public string? FirDetails { get; set; }
+
+        [Column("has_pan", TypeName = DbDataType._boolean)]
+        [DefaultValue(false)]
+        public bool? HasPan { get; set; }
+
+        [Column("has_drivinglicense", TypeName = DbDataType._boolean)]
+        [DefaultValue(false)]
+        public bool? HasDrivingLicense { get; set; }
+
+        [Column("is_dlvarified", TypeName = DbDataType._boolean)]
+        [DefaultValue(false)]
+        public bool? IsDlVarified { get; set; }
+
+        [Column("driving_license", TypeName = DbDataType._text50)]
+        public string? DrivingLicense { get; set; }
     }
 }

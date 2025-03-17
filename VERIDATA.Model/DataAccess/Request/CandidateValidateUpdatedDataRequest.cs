@@ -7,6 +7,7 @@
             aadharData = new AadharDetailsData();
             panData = new PanData();
             uanData = new UanData();
+            BankDetails = new BankDetails();
         }
 
         public int AppointeeId { get; set; }
@@ -16,10 +17,16 @@
         public int UserId { get; set; }
         public bool? Status { get; set; }
         public string? PassportFileNo { get; set; }
+        public string? FirDetails { get; set; }
+        public string? DlNumber { get; set; }
+        public bool? HasData { get; set; }
+        public bool? IsFNameVarified { get; set; }
+        public int? step { get; set; }
         public List<ReasonRemarks> Reasons { get; set; }
         public AadharDetailsData? aadharData { get; set; }
         public PanData? panData { get; set; }
         public UanData? uanData { get; set; }
+        public BankDetails? BankDetails { get; set; }
     }
 
     public class AadharDetailsData
@@ -30,6 +37,7 @@
         public string? NameFromAadhaar { get; set; }
         public string? GenderFromAadhaar { get; set; }
         public string? DobFromAadhaar { get; set; }
+        public string? ProfileImageAadhaar { get; set; }
     }
 
     public class PanData
@@ -46,8 +54,10 @@
         public string? UanNumber { get; set; }
         public bool? IsPassbookFetch { get; set; }
         public bool? IsEmployementVarified { get; set; }
-        public bool? IsFNameVarified { get; set; }
+
+        //public bool? IsFNameVarified { get; set; }
         public bool? IsUanFromMobile { get; set; }
+
         public bool? AadharUanLinkYN { get; set; }
         public bool? IsDualEmployementIdentified { get; set; }
     }

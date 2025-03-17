@@ -638,5 +638,27 @@ namespace PfcAPI.Controllers.Appoientee
                 throw;
             }
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("PostAppointeeDocAvailibility")]
+        public ActionResult PostAppointeeDocAvailibility(DoctypeAvailibilityUpdateRequest reqObj)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                Task.Run(async () => await _candidateContext.PostAppointeeDocAvailibilituAsync(reqObj)).GetAwaiter().GetResult();
+
+                return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

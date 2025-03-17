@@ -175,8 +175,8 @@ namespace VERIDATA.BLL.Context
                         isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                         isReprocess = false,
                         isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false || row.AppointeeDetails?.IsFNameVarified == false),
-                        status = (row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument) ? "Submitted" : (row.AppointeeDetails?.IsSubmit ?? false) ? "Submitted" : (row?.AppvlStatusCode == WorkFlowStatusType.ManualVerification) || (row?.AppvlStatusCode == WorkFlowStatusType.ManualReVerification) || row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                        statusCode = row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
+                        status = (row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument) ? "Submitted" : (row.AppointeeDetails?.IsSubmit ?? false) ? "Submitted" : (row?.AppvlStatusCode == WorkFlowStatusType.ManualVerification) || (row?.AppvlStatusCode == WorkFlowStatusType.ManualReVerification) || row.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response",
+                        statusCode = row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 5 : row.AppointeeDetails?.SaveStep ?? 0,
                         verificationStatusCode = row?.AppvlStatusCode,
                         consentStatusCode = row.ConsentStatusId ?? 0,
                         passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "Auto" : "NA",
@@ -206,9 +206,9 @@ namespace VERIDATA.BLL.Context
                         isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                         isReprocess = false,
                         isNoIsuueinVerification = !(row.AppointeeDetails?.IsAadhaarVarified == false || row.AppointeeDetails?.IsUanVarified == false || row.AppointeeDetails?.IsPanVarified == false || row.AppointeeDetails?.IsPasssportVarified == false || row.AppointeeDetails?.IsFNameVarified == false),
-                        //Status = row?.IsReupload ?? false ? "Reupload Requested" : row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                        status = (row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument) ? "Submitted" : (row.AppointeeDetails?.IsSubmit ?? false) ? "Submitted" : (row?.AppvlStatusCode == WorkFlowStatusType.ManualVerification) || (row?.AppvlStatusCode == WorkFlowStatusType.ManualReVerification) || row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                        statusCode = row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
+                        //Status = row?.IsReupload ?? false ? "Reupload Requested" : row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response",
+                        status = (row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument) ? "Submitted" : (row.AppointeeDetails?.IsSubmit ?? false) ? "Submitted" : (row?.AppvlStatusCode == WorkFlowStatusType.ManualVerification) || (row?.AppvlStatusCode == WorkFlowStatusType.ManualReVerification) || row.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response",
+                        statusCode = row?.AppvlStatusCode == WorkFlowStatusType.ReuploadDocument ? 4 : row.AppointeeDetails?.IsSubmit ?? false ? 5 : row.AppointeeDetails?.SaveStep ?? 0,
                         verificationStatusCode = row?.AppvlStatusCode,
                         consentStatusCode = row.ConsentStatusId ?? 0,
                         passbookStatus = row?.AppointeeDetails?.IsManualPassbook == null && row?.AppointeeDetails?.IsPassbookFetch == null ? "NA" : row?.AppointeeDetails?.IsManualPassbook ?? false ? "Manual" : row?.AppointeeDetails?.IsPassbookFetch ?? false ? "Auto" : "NA",
@@ -221,8 +221,15 @@ namespace VERIDATA.BLL.Context
                 _underProcessViewdata = (typeFilterCode != null) ? (typeFilterCode == 0) ? _underProcessdata.Where(x => x.statusCode == typeFilterCode).ToList()
                          : _underProcessdata.Where(x => x.statusCode != 0).ToList() : _underProcessdata;
 
-                _underProcessViewdata = (reqObj.StatusCode == null || reqObj.StatusCode?.ToUpper() == "ALL") ? _underProcessViewdata
-                         : _underProcessdata.Where(x => x.statusCode == Convert.ToInt32(reqObj.StatusCode ?? "0"))?.ToList();
+                _underProcessViewdata = reqObj.StatusCode?.ToUpper() switch
+                {
+                    null or "ALL" => _underProcessViewdata,
+                    "0" => _underProcessdata.Where(x => x.statusCode < 1).ToList(),
+                    "1" => _underProcessdata.Where(x => x.statusCode >= 1 && x.statusCode != 5).ToList(),
+                    "2" => _underProcessdata.Where(x => x.statusCode == 5 && x.isDocSubmitted == true).ToList(),
+                    _ => _underProcessdata.Where(x => x.statusCode >= Convert.ToInt32(reqObj.StatusCode ?? "0")).ToList()
+                };
+
 
                 if (reqObj.IssueFilter != null)
                 {
@@ -259,8 +266,8 @@ namespace VERIDATA.BLL.Context
                         dateOfJoining = row.AppointeeDetails?.DateOfJoining ?? row.UnderProcess?.DateOfJoining,
                         isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                         isReprocess = false,
-                        status = row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                        statusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
+                        status = row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response",
+                        statusCode = row.AppointeeDetails?.IsSubmit ?? false ? 5 : row.AppointeeDetails?.SaveStep ?? 0,
                         consentStatusCode = row.ConsentStatusId ?? 0,
                         createdDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.createdDate).ThenBy(y => y.dateOfJoining).ToList();
@@ -284,8 +291,8 @@ namespace VERIDATA.BLL.Context
                         dateOfJoining = row.AppointeeDetails?.DateOfJoining ?? row.UnderProcess?.DateOfJoining,
                         isDocSubmitted = row.AppointeeDetails?.IsSubmit ?? false,
                         isReprocess = false,
-                        status = row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                        statusCode = row.AppointeeDetails?.IsSubmit ?? false ? 2 : row.AppointeeDetails?.SaveStep ?? 0,
+                        status = row.AppointeeDetails?.IsSubmit ?? false ? "Submitted" : row.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response",
+                        statusCode = row.AppointeeDetails?.IsSubmit ?? false ? 5 : row.AppointeeDetails?.SaveStep ?? 0,
                         consentStatusCode = row.ConsentStatusId ?? 0,
                         createdDate = row.UnderProcess?.CreatedOn
                     }).OrderByDescending(x => x.createdDate).ThenBy(y => y.dateOfJoining).ToList();
@@ -320,8 +327,8 @@ namespace VERIDATA.BLL.Context
                 appointeeEmailId = row?.AppointeeDetails?.AppointeeEmailId ?? row?.UnderProcess?.AppointeeEmailId,
                 mobileNo = row?.UnderProcess?.MobileNo,
                 dateOfJoining = row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining,
-                Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep == 1 ? "Ongoing" : "No Response",
-                StatusCode = row?.AppointeeDetails?.IsSubmit ?? false ? 2 : row?.AppointeeDetails?.SaveStep == 1 ? 2 : 1,
+                Status = row?.AppointeeDetails?.IsSubmit ?? false ? "Ongoing" : row?.AppointeeDetails?.SaveStep >= 1 ? "Ongoing" : "No Response",
+                StatusCode = row?.AppointeeDetails?.IsSubmit ?? false ? 2 : row?.AppointeeDetails?.SaveStep >= 1 ? 2 : 1,
                 ConsentStatusCode = row.ConsentStatusId ?? 0,
                 DaysToJoin = Convert.ToInt32(((row?.AppointeeDetails?.DateOfJoining ?? row?.UnderProcess?.DateOfJoining) - DateTime.Now)?.TotalDays ?? 0),
                 CreatedDate = row?.UnderProcess?.CreatedOn
@@ -566,7 +573,7 @@ namespace VERIDATA.BLL.Context
                 if ((AppointeeFileDetails.IsSubmit ?? false) && !_isSubmit)
                 {
                     //if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsPanVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false))
-                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false))
+                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false) && (_appointeedetails.IsPoliceVarified ?? false))
                     {
                         mailType = MailType.AutoApprove;
                         await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeFileDetails?.UserId ?? 0, true);//isapprove set true
