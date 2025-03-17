@@ -747,6 +747,7 @@ namespace VERIDATA.BLL.Context
                 UserName = appointeedetail.AppointeeName,
                 Type = RemarksType.Adhaar,
                 aadharData = _aadharData,
+                step = 2
                 //PanNumber = panNumber,
             };
 
