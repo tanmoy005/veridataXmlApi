@@ -588,6 +588,7 @@ namespace PfcAPI.Controllers.RestApi
             }
         }
 
+        //[AllowAnonymous]
         [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
         [HttpPost]
         [Route("VerifyBanKDetails")]

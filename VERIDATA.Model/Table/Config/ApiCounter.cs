@@ -18,7 +18,7 @@ namespace VERIDATA.Model.Table.Config
         [Column("api_name", TypeName = DbDataType._text100)]
         public string? ApiName { get; set; }
 
-        [Column("api_url", TypeName = DbDataType._text50)]
+        [Column("api_url", TypeName = DbDataType._text100)]
         public string? Url { get; set; }
 
         [Column("api_type", TypeName = DbDataType._text50)]

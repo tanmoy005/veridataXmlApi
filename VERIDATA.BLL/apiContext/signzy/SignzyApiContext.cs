@@ -44,10 +44,10 @@ namespace VERIDATA.BLL.apiContext.signzy
             if (_apiResponse.IsSuccessStatusCode)
             {
                 res.StatusCode = _apiResponse.StatusCode;
-                res.PanNumber = PanResponse?.Number?.Trim();
-                res.Name = PanResponse?.Name?.Trim();
-                res.MobileNumber = PanResponse?.MobileNumber?.Trim();
-                res.DateOfBirth = PanResponse?.DateOfBirth?.Trim();
+                res.PanNumber = panNo?.Trim();
+                res.Name = PanResponse?.Result?.Name?.Trim();
+                res.MobileNumber = string.Empty;
+                res.DateOfBirth = PanResponse?.Result?.DateOfBirth?.Trim();
             }
             else
             {

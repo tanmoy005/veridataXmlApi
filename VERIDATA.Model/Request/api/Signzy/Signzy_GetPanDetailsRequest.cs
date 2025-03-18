@@ -4,12 +4,12 @@ namespace VERIDATA.Model.Request.api.Signzy
 {
     public class Signzy_GetPanDetailsRequest : Signzy_BaseRequest
     {
-        public Signzy_GetPanDetailsRequest()
-        {
-            getStatusInfo = true;
-        }
+        //public Signzy_GetPanDetailsRequest()
+        //{
+        //    returnIndividualTaxComplianceInfo = "true";
+        //}
 
         public string? panNumber { get; set; }
-        public bool? getStatusInfo { get; set; }
+        //public string? returnIndividualTaxComplianceInfo { get; set; }
     }
 }

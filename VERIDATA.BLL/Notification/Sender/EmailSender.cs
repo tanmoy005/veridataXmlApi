@@ -162,6 +162,24 @@ namespace VERIDATA.BLL.Notification.Sender
                     mailSubject = "VERIDATA:User Details Verification Failed";
                     break;
 
+                case MailType.BANK:
+                    _filename = "userValidityRemarks";
+                    validtionType = "Bank";
+                    mailSubject = "VERIDATA:User Details Verification Failed";
+                    break;
+
+                case MailType.POLICE:
+                    _filename = "userValidityRemarks";
+                    validtionType = "Poilce";
+                    mailSubject = "VERIDATA:User Details Verification Failed";
+                    break;
+
+                case MailType.DRVLNC:
+                    _filename = "userValidityRemarks";
+                    validtionType = "Driving licence";
+                    mailSubject = "VERIDATA:User Details Verification Failed";
+                    break;
+
                 case MailType.Passport:
                     _filename = "userValidityRemarks";
                     validtionType = "Passport";

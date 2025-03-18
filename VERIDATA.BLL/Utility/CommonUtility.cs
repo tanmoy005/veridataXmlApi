@@ -312,6 +312,9 @@ namespace VERIDATA.BLL.utility
                     RemarksType.Passport => MailType.Passport,
                     RemarksType.Pan => MailType.Pan,
                     RemarksType.Others => MailType.Others,
+                    RemarksType.Bank => MailType.BANK,
+                    RemarksType.Police => MailType.POLICE,
+                    RemarksType.DRLNC => MailType.DRVLNC,
                     RemarksType.Manual => MailType.Manual,
                     _ => string.Empty,
                 };

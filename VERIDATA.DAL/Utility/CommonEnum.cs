@@ -58,6 +58,9 @@
             public const string UANValidation = "UANVALIDTN";
             public const string Passport = "PASSPORT";
             public const string Pan = "PAN";
+            public const string BANK = "BANK";
+            public const string POLICE = "POLICE";
+            public const string DRVLNC = "DRVLNC";
             public const string ForceApprove = "FRCEAPPRVE";
             public const string Reject = "REJECT";
             public const string CandidateCreate = "CNDCREATE";
