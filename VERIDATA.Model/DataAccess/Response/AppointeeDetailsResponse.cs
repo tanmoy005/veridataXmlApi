@@ -66,6 +66,7 @@
         public bool? IsDLVarified { get; set; }
         public bool? IsPoliceVarified { get; set; }
         public string? DrivingLicense { get; set; }
+        public string? MaskedDrivingLicense { get; set; }
         public string? FirDetails { get; set; }
 
         //public List<string>? UploadedFileType { get; set; }
