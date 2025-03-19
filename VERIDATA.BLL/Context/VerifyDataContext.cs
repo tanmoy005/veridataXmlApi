@@ -2048,10 +2048,10 @@ namespace VERIDATA.BLL.Context
             CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new();
 
             string? dLName = request?.Name?.Trim();
-            string? dLNumberStatus = request?.LicenseStatus?.Trim();
+            string? dLNumberStatus = CommonUtility.NormalizeWhitespace(request?.LicenseStatus?.Trim()?.ToUpperInvariant());
             string? dob = request?.Dob?.Trim();
-            string? fatherOrHusbandName = request?.FatherOrHusbandName?.Trim();
-            string? dbFatherOrHusbandName = appointeedetail?.MemberName?.Trim();
+            string? fatherOrHusbandName = CommonUtility.NormalizeWhitespace(request?.FatherOrHusbandName?.Trim());
+            string? dbFatherOrHusbandName = CommonUtility.NormalizeWhitespace(appointeedetail?.MemberName?.Trim());
             string normalizedName = CommonUtility.NormalizeWhitespace(appointeedetail?.AppointeeName?.Trim());
             string normalizedFullName = CommonUtility.NormalizeWhitespace(dLName?.Trim());
 
