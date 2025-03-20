@@ -148,7 +148,7 @@ namespace VERIDATA.BLL.Context
                 data.BankAccNumber = string.IsNullOrEmpty(_appointeedetails?.AccountNo) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.AccountNo));
                 data.BankIfscNumber = string.IsNullOrEmpty(_appointeedetails?.IfscCode) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.IfscCode));
                 data.MaskedDrivingLicense = string.IsNullOrEmpty(_appointeedetails?.DrivingLicense) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.DrivingLicense));
-                data.DrivingLicense = string.IsNullOrEmpty(_appointeedetails?.DrivingLicense) ? null : (CommonUtility.DecryptString(key, _appointeedetails?.DrivingLicense);
+                data.DrivingLicense = string.IsNullOrEmpty(_appointeedetails?.DrivingLicense) ? null : (CommonUtility.DecryptString(key, _appointeedetails?.DrivingLicense));
                 data.IsDLAvailable = _appointeedetails?.HasDrivingLicense;
                 data.IsPanAvailable = _appointeedetails?.HasPan;
                 data.FirDetails = _appointeedetails?.FirDetails;

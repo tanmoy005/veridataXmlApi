@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.Services;
 using VERIDATA.Model.DataAccess;
+using VERIDATA.Model.ExchangeModels;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Request.api.Karza;
 using VERIDATA.Model.Request.api.Signzy;
@@ -481,7 +482,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Driving, ApiSubTYpeName.DrvLicns, ApiProviderType.Signzy);
             Signzy_GetCandidateDrivingLicenseDetailsRequest request = new()
             {
-                number = number,
+                number = number?.Trim(),
                 dob = dob.ToString("dd/MM/yyyy"),
             };
             StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -494,7 +495,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             if ((int)res.StatusCode == (int)SignzyStatusCode.Invalid || (int)res.StatusCode == (int)SignzyStatusCode.NotFound)
             {
                 res.StatusCode = HttpStatusCode.BadRequest;
-                res.ReasonPhrase = "No details found";
+                res.ReasonPhrase = string.IsNullOrEmpty(response?.Error?.Message) ? "No details found" : response?.Error?.Message;
             }
             else
             {
