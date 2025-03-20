@@ -150,6 +150,7 @@ namespace VERIDATA.BLL.Context
                 data.MaskedDrivingLicense = string.IsNullOrEmpty(_appointeedetails?.DrivingLicense) ? null : CommonUtility.MaskedString(CommonUtility.DecryptString(key, _appointeedetails?.DrivingLicense));
                 data.DrivingLicense = string.IsNullOrEmpty(_appointeedetails?.DrivingLicense) ? null : (CommonUtility.DecryptString(key, _appointeedetails?.DrivingLicense));
                 data.IsDLAvailable = _appointeedetails?.HasDrivingLicense;
+                data.IsDLVarified = _appointeedetails?.IsDlVarified;
                 data.IsPanAvailable = _appointeedetails?.HasPan;
                 data.FirDetails = _appointeedetails?.FirDetails;
                 data.IsPoliceVarified = _appointeedetails?.IsPoliceVarified;
