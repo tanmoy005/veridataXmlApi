@@ -61,6 +61,8 @@
         public bool? isBankAccVarified { get; set; }
         public string? BankAccNumber { get; set; }
         public string? BankIfscNumber { get; set; }
+        public string? MaskedBankAccNumber { get; set; }
+        public string? MaskedBankIfscNumber { get; set; }
         public bool? IsPanAvailable { get; set; }
         public bool? IsDLAvailable { get; set; }
         public bool? IsDLVarified { get; set; }

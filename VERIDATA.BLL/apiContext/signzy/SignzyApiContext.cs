@@ -394,9 +394,14 @@ namespace VERIDATA.BLL.apiContext.signzy
                     res.StatusCode = HttpStatusCode.BadRequest;
                     res.ReasonPhrase = string.IsNullOrEmpty(accountResult?.Reason) ? "No details found" : accountResult?.Reason;
                 }
+                if (!string.IsNullOrEmpty(accountResult?.BankTransfer?.BeneficiaryIFSC) && (!string.Equals(accountResult?.BankTransfer?.BeneficiaryIFSC, ifscCode?.ToUpper(), StringComparison.OrdinalIgnoreCase)))
+                {
+                    res.StatusCode = HttpStatusCode.BadRequest;
+                    res.ReasonPhrase = "Worng IFSC code found";
+                }
                 res.AccountNo = accountNo;
-                res.IFSCCode = ifscCode;
-                res.AccountHolderName = name;
+                res.IFSCCode = accountResult?.BankTransfer?.BeneficiaryIFSC ?? string.Empty;
+                res.AccountHolderName = accountResult?.BankTransfer?.BeneficiaryName ?? string.Empty;
             }
 
             return res;
@@ -501,7 +506,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             {
                 var DLResult = response?.Result;
                 res.StatusCode = _apiResponse.StatusCode;
-                res.LicenseStatus = DLResult.DlNumber;
+                res.LicenseStatus = DLResult.DetailsOfDrivingLicence?.Status;
                 res.Name = DLResult.DetailsOfDrivingLicence?.Name;
                 res.FatherOrHusbandName = DLResult.DetailsOfDrivingLicence?.FatherOrHusbandName;
                 res.Dob = DLResult.Dob;
