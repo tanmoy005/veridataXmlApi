@@ -175,6 +175,8 @@
             public const string FirDetails = "FirDetails";
             public const string FirSearchId = "FirSearch";
             public const string DrvLicns = "DrvLcns";
+            public const string DigilockerUrl = "DigiUrl";
+            public const string DigilockerAadhar = "DigiAadhaar";
         }
 
         public static class ApiProviderType

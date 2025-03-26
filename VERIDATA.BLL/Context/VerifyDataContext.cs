@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -678,7 +679,7 @@ namespace VERIDATA.BLL.Context
             if (reqObj.isValidAdhar)
             {
                 var lastAdhar4Digit = reqObj.AadharDetails?.AadharNumber?.Trim()?.LastOrDefault().ToString();
-                var isMobileValid = CommonUtility.CheckMobileNumber(appointeedetail.MobileNo, reqObj.AadharDetails?.MobileNumberHash, reqObj?.sharePhrase ?? "", lastAdhar4Digit);
+                var isMobileValid = string.IsNullOrEmpty(reqObj.AadharDetails?.MobileNumberHash) ? true : CommonUtility.CheckMobileNumber(appointeedetail.MobileNo, reqObj.AadharDetails?.MobileNumberHash, reqObj?.sharePhrase ?? "", lastAdhar4Digit);
 
                 string? aadharName = CommonUtility.NormalizeWhitespace(reqObj?.AppointeeAadhaarName?.Trim());
                 string? appointeeAadhaarFullName = CommonUtility.NormalizeWhitespace(reqObj?.AadharDetails?.Name);
@@ -2098,6 +2099,148 @@ namespace VERIDATA.BLL.Context
             CandidateValidateResponse response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
 
             return response;
+        }
+
+        public async Task<DigilockerAccessDetails> GeneratetDigilockerUrl(GetDigilockerUrlRequest reqObj)
+        {
+            DigilockerAccessDetails Response = new();
+
+            var apiProvider = await _masterContext.GetApiProviderData(ApiType.Adhaar);
+
+            if (apiProvider?.ToLower() == ApiProviderType.Signzy)
+            {
+                Response = await _signzyApiContext.GetDigiLockerUrl(reqObj);
+            }
+            //AadharDetailsData _AaddhaarDetails = new()
+            //{
+            //    AadhaarName = reqObj?.aadharName,
+            //    AadhaarNumber = reqObj?.aadharNumber,
+            //    AadhaarNumberView = reqObj?.aadharNumber,
+            //};
+
+            //CandidateValidateUpdatedDataRequest candidateUpdatedDataReq = new()
+            //{
+            //    AppointeeId = reqObj.appointeeId,
+            //    EmailId = string.Empty,
+            //    UserId = reqObj.userId,
+            //    UserName = string.Empty,
+            //    Type = RemarksType.Adhaar,
+            //    aadharData = _AaddhaarDetails,
+            //};
+            //_ = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
+
+            //if (apiProvider?.ToLower() == ApiProviderType.SurePass)
+            //{
+            //    _apiResponse = await _surepassApiContext.GenerateAadharOTP(reqObj.aadharNumber, reqObj.userId);
+            //}
+            //if (apiProvider?.ToLower() == ApiProviderType.Karza)
+            //{
+            //    _apiResponse = await _karzaApiContext.GenerateAadharOTP(reqObj.aadharNumber, reqObj.userId);
+            //}
+            Response.StatusCode = Response.StatusCode;
+            if (Response.StatusCode == HttpStatusCode.OK)
+            {
+                return Response;
+            }
+            else
+            {
+                if ((int)Response.StatusCode == (int)HttpStatusCode.UnprocessableEntity)
+                {
+                    await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.ADHINVALID);
+
+                    //    AadharValidationRequest VarifyReq = new();
+                    //    AadharSubmitOtpDetails _adhaardata = new() { AadharNumber = reqObj?.aadharNumber };
+                    //    VarifyReq.AadharDetails = _adhaardata;
+                    //    VarifyReq.isValidAdhar = false;
+                    //    VarifyReq.AppointeeId = reqObj.appointeeId;
+                    //    VarifyReq.AppointeeAadhaarName = reqObj.aadharName;
+                    //    _ = await VerifyAadharData(VarifyReq);
+                    //}
+                    //else
+                    //{
+                    //    await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.ADHVERIFIFAILED);
+                    //}
+                    Response.UserMessage = GenarateErrorMsg((int)Response.StatusCode, Response?.ReasonPhrase?.ToString(), "UIDAI (Aadhar)");
+                    Response.ReasonPhrase = Response?.ReasonPhrase?.ToString() ?? string.Empty;
+                }
+
+                return Response;
+            }
+        }
+
+        public async Task<AadharSubmitOtpDetails> GetAadharDetailsFromXmlDigilocker(AppointeeDigilockerAadhaarVarifyRequest reqObj)
+        {
+            AadharSubmitOtpDetails response = new();
+            //DigilockerAadhaarXmlDetails _apiResponse = new();
+
+            var apiProvider = await _masterContext.GetApiProviderData(ApiType.Adhaar);
+
+            if (apiProvider?.ToLower() == ApiProviderType.Signzy)
+            {
+                response = await _signzyApiContext.GetDigiLockerAadharDetails(reqObj);
+            }
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                //using HttpClient client = new HttpClient();
+                //string xmlContent = await client.GetStringAsync(_apiResponse.DigilockerXmlUrl);
+                //response = await GetAadharDetailsFromXml(xmlContent);
+                return response;
+            }
+            else
+            {
+                if ((int)response.StatusCode == (int)HttpStatusCode.UnprocessableEntity)
+                {
+                    await _activityContext.PostActivityDetails(reqObj.AppointeeId, reqObj.UserId, ActivityLog.ADHINVALID);
+
+                    //    AadharValidationRequest VarifyReq = new();
+                    //    AadharSubmitOtpDetails _adhaardata = new() { AadharNumber = reqObj?.aadharNumber };
+                    //    VarifyReq.AadharDetails = _adhaardata;
+                    //    VarifyReq.isValidAdhar = false;
+                    //    VarifyReq.AppointeeId = reqObj.appointeeId;
+                    //    VarifyReq.AppointeeAadhaarName = reqObj.aadharName;
+                    //    _ = await VerifyAadharData(VarifyReq);
+                    //}
+                    //else
+                    //{
+                    //    await _activityContext.PostActivityDetails(reqObj.appointeeId, reqObj.userId, ActivityLog.ADHVERIFIFAILED);
+                    //}
+                    response.UserMessage = GenarateErrorMsg((int)response.StatusCode, response?.ReasonPhrase?.ToString(), "UIDAI (Aadhar)");
+                    response.ReasonPhrase = response?.ReasonPhrase?.ToString() ?? string.Empty;
+                }
+
+                return response;
+            }
+            //if (xmlData != null)
+            //{
+            //    XmlDocument xmlDoc = new XmlDocument();
+            //    xmlDoc.LoadXml(xmlData);
+
+            //    // Navigate and extract data
+            //    XmlNode root = xmlDoc.DocumentElement;
+            //    XmlNode personNode = root.SelectSingleNode("UidData");
+            //    if (personNode != null)
+            //    {
+            //        XmlNode personNodeImage = personNode.SelectSingleNode("Pht");
+            //        XmlNode personalInfoNode = personNode.SelectSingleNode("Poi");
+            //        XmlNode personalAddresNode = personNode.SelectSingleNode("Poa");
+            //        string referenceId = root.SelectSingleNode("@referenceId").Value;
+            //        string nameNode = personalInfoNode.SelectSingleNode("@name").Value;
+            //        string genderNode = personalInfoNode.SelectSingleNode("@gender").Value;
+            //        string dobNode = personalInfoNode.SelectSingleNode("@dob").Value;
+            //        string hashMobileNo = personalInfoNode.SelectSingleNode("@m").Value;
+            //        string careofNode = personalAddresNode.SelectSingleNode("@careof").Value;
+            //        string profileImage = personNodeImage.InnerText;
+            //        var lastFourDigit = new string(referenceId.Where(char.IsDigit).Take(4).ToArray());
+            //        response.Name = nameNode;
+            //        response.Dob = dobNode;
+            //        response.CareOf = careofNode;
+            //        response.Gender = genderNode;
+            //        response.AadharNumber = $"{"XXXXXXXX"}{lastFourDigit}";
+            //        response.MobileNumberHash = hashMobileNo?.Trim();
+            //        response.AadharImage = profileImage;
+            //    }
+            //}
+            //return response;
         }
     }
 }

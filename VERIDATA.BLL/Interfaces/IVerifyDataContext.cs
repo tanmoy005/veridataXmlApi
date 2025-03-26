@@ -49,6 +49,10 @@ namespace VERIDATA.BLL.Interfaces
 
         public Task<AppointeeDLValidateResponse> DrivingLicenseValidation(AppointeeDLValidateRequest reqObj);
 
+        public Task<DigilockerAccessDetails> GeneratetDigilockerUrl(GetDigilockerUrlRequest reqObj);
+
+        public Task<AadharSubmitOtpDetails> GetAadharDetailsFromXmlDigilocker(AppointeeDigilockerAadhaarVarifyRequest reqObj);
+
         public Task<TResponse> ValidateDetailsPriorityBase<TRequest, TResponse>(TRequest reqObj, string apiType)
             where TResponse : BaseApiResponse, new() where TRequest : class;
     }

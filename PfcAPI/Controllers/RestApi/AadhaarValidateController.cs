@@ -115,6 +115,155 @@ namespace PfcAPI.Controllers.RestApi
         [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
         //[AllowAnonymous]
         [HttpPost]
+        [Route("GetDigilockerUrl")]
+        public IActionResult GetDigilockerUrl(GetDigilockerUrlRequest reqObj)
+        {
+            try
+            {
+                DigilockerAccessDetails response = new();
+                if (_apiConfig.IsApiCall)
+                {
+                    response = Task.Run(async () => await _varifyCandidate.GeneratetDigilockerUrl(reqObj)).GetAwaiter().GetResult();
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        _ErrorResponse.ErrorCode = (int)Response.StatusCode;
+                        _ErrorResponse.UserMessage = response?.UserMessage ?? string.Empty;
+                        _ErrorResponse.InternalMessage = response?.ReasonPhrase ?? string.Empty;
+                        return Ok(new BaseResponse<ErrorResponse>(response?.StatusCode ?? HttpStatusCode.InternalServerError, _ErrorResponse));
+                    }
+                }
+                else
+                {
+                    _ErrorResponse.ErrorCode = (int)HttpStatusCode.InternalServerError;
+                    _ErrorResponse.UserMessage = "The server has been temporarily shut down by the administrator. Please contact the administrator for further assistance.";
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _ErrorResponse));
+                }
+                return Ok(new BaseResponse<DigilockerAccessDetails>(HttpStatusCode.OK, response));
+            }
+            catch (Exception ex)
+            {
+                string msg = _varifyCandidate.GenarateErrorMsg((int)HttpStatusCode.InternalServerError, "", "UIDAI (Aadhar)");
+                CustomException excp = new(msg, ex);
+                throw excp;
+            }
+        }
+
+        [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        //[AllowAnonymous]
+        [HttpPost]
+        [Route("GetAadharDetailsFromDigilocker")]
+        public IActionResult GetAadharDetailsFromDigilocker(AppointeeDigilockerAadhaarVarifyRequest reqObj)
+        {
+            try
+            {
+                VarificationStatusResponse response = new();
+                if (_apiConfig.IsApiCall)
+                {
+                    var _response = Task.Run(async () => await _varifyCandidate.GetAadharDetailsFromXmlDigilocker(reqObj)).GetAwaiter().GetResult();
+
+                    if (_response.StatusCode != HttpStatusCode.OK)
+                    {
+                        _ErrorResponse.ErrorCode = (int)Response.StatusCode;
+                        _ErrorResponse.UserMessage = _response?.UserMessage ?? string.Empty;
+                        _ErrorResponse.InternalMessage = _response?.ReasonPhrase ?? string.Empty;
+                        return Ok(new BaseResponse<ErrorResponse>(_response?.StatusCode ?? HttpStatusCode.InternalServerError, _ErrorResponse));
+                    }
+                    else
+                    {
+                        AadharValidationRequest VarifyReq = new()
+                        {
+                            AadharDetails = _response,
+                            isValidAdhar = true,
+                            AppointeeId = reqObj.AppointeeId,
+                            AppointeeAadhaarName = reqObj.AadharName,
+                            //sharePhrase = reqObj.shareCode
+                        };
+                        var VerifyAadhar = Task.Run(async () => await _varifyCandidate.VerifyAadharData(VarifyReq)).GetAwaiter().GetResult();
+
+                        response = new()
+                        {
+                            IsVarified = VerifyAadhar?.IsValid ?? false,
+                            Remarks = VerifyAadhar?.Remarks
+                        };
+                    }
+                }
+                else
+                {
+                    _ErrorResponse.ErrorCode = (int)HttpStatusCode.InternalServerError;
+                    _ErrorResponse.UserMessage = "The server has been temporarily shut down by the administrator. Please contact the administrator for further assistance.";
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _ErrorResponse));
+                }
+                return Ok(new BaseResponse<VarificationStatusResponse>(HttpStatusCode.OK, response));
+            }
+            catch (Exception ex)
+            {
+                string msg = _varifyCandidate.GenarateErrorMsg((int)HttpStatusCode.InternalServerError, "", "UIDAI (Aadhar)");
+                CustomException excp = new(msg, ex);
+                throw excp;
+            }
+        }
+
+        [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        //[AllowAnonymous]
+        [HttpPost]
+        [Route("GetDigilockerAadhaarDetails")]
+        public IActionResult GetDigilockerAadhaarDetails(AppointeeDigilockerAadhaarVarifyRequest reqObj)
+        {
+            try
+            {
+                VarificationStatusResponse response = new();
+                if (_apiConfig.IsApiCall)
+                {
+                    var _response = Task.Run(async () => await _varifyCandidate.GetAadharDetailsFromXmlDigilocker(reqObj)).GetAwaiter().GetResult();
+
+                    if (_response.StatusCode != HttpStatusCode.OK)
+                    {
+                        _ErrorResponse.ErrorCode = (int)Response.StatusCode;
+                        _ErrorResponse.UserMessage = _response?.UserMessage ?? string.Empty;
+                        _ErrorResponse.InternalMessage = _response?.ReasonPhrase ?? string.Empty;
+                        return Ok(new BaseResponse<ErrorResponse>(_response?.StatusCode ?? HttpStatusCode.InternalServerError, _ErrorResponse));
+                    }
+                    else
+                    {
+                        //var getAadharDetails = Task.Run(async () => await _varifyCandidate.GetAadharDetailsFromXml(_response.FileContent)).GetAwaiter().GetResult();
+                        AadharValidationRequest VarifyReq = new()
+                        {
+                            AadharDetails = _response,
+                            isValidAdhar = true,
+                            AppointeeId = reqObj.AppointeeId,
+                            AppointeeAadhaarName = reqObj.AadharName,
+                            //sharePhrase = reqObj.shareCode
+                        };
+                        var VerifyAadhar = Task.Run(async () => await _varifyCandidate.VerifyAadharData(VarifyReq)).GetAwaiter().GetResult();
+
+                        response = new()
+                        {
+                            IsVarified = VerifyAadhar?.IsValid ?? false,
+                            Remarks = VerifyAadhar?.Remarks
+                        };
+                    }
+                }
+                else
+                {
+                    _ErrorResponse.ErrorCode = (int)HttpStatusCode.InternalServerError;
+                    _ErrorResponse.UserMessage = "The server has been temporarily shut down by the administrator. Please contact the administrator for further assistance.";
+                    return Ok(new BaseResponse<ErrorResponse>(HttpStatusCode.InternalServerError, _ErrorResponse));
+                }
+
+                return Ok(new BaseResponse<VarificationStatusResponse>(HttpStatusCode.OK, response));
+            }
+            catch (Exception ex)
+            {
+                string msg = _varifyCandidate.GenarateErrorMsg((int)HttpStatusCode.InternalServerError, "", "UIDAI (Aadhar)");
+                CustomException excp = new(msg, ex);
+                throw excp;
+            }
+        }
+
+        [Authorize(Roles = $"{RoleTypeAlias.Appointee}")]
+        //[AllowAnonymous]
+        [HttpPost]
         [Route("GetUANDetails")]
         public IActionResult GetUAN(GetUanNumberDetailsRequest reqObj)
         {

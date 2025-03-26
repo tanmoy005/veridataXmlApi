@@ -31,5 +31,9 @@ namespace VERIDATA.BLL.apiContext.signzy
         public Task<FirDetails> GetFirDetails(string? searchId, int userId);
 
         public Task<DrivingLicenseDetails> GetDrivingLicenseDetails(string? number, DateTime dob, int userId);
+
+        public Task<DigilockerAccessDetails> GetDigiLockerUrl(GetDigilockerUrlRequest getDigilockerUrlRequest);
+
+        public Task<AadharSubmitOtpDetails> GetDigiLockerAadharDetails(AppointeeDigilockerAadhaarVarifyRequest getDigilockerAadharRequest);
     }
 }

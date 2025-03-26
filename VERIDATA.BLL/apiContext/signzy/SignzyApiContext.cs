@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
+using MimeKit;
 using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.Services;
@@ -510,6 +511,71 @@ namespace VERIDATA.BLL.apiContext.signzy
                 res.Name = DLResult.DetailsOfDrivingLicence?.Name;
                 res.FatherOrHusbandName = DLResult.DetailsOfDrivingLicence?.FatherOrHusbandName;
                 res.Dob = DLResult.Dob;
+            }
+
+            return res;
+        }
+
+        public async Task<DigilockerAccessDetails> GetDigiLockerUrl(GetDigilockerUrlRequest getDigilockerUrlRequest)
+        {
+            DigilockerAccessDetails res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Adhaar, ApiSubTYpeName.DigilockerUrl, ApiProviderType.Signzy);
+            SignzyGenerateDigilockerUrlRequest request = new()
+            {
+                redirectUrl = getDigilockerUrlRequest.SuccessRedirectUrl,
+                successRedirectUrl = getDigilockerUrlRequest.SuccessRedirectUrl,
+                failureRedirectUrl = getDigilockerUrlRequest.FailureRedirectUrl,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, getDigilockerUrlRequest.userId);
+            string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+            SignzyGenerateDigilockerUrlResponse Response = JsonConvert.DeserializeObject<SignzyGenerateDigilockerUrlResponse>(apiResponse);
+
+            if (_apiResponse.IsSuccessStatusCode)
+            {
+                res.StatusCode = _apiResponse.StatusCode;
+                res.DigilockerUrl = Response?.result?.url?.Trim();
+                res.RequestId = Response?.result?.requestId?.Trim();
+            }
+            else
+            {
+                res.StatusCode = _apiResponse.StatusCode;
+                res.ReasonPhrase = Response?.Error?.Message?.ToString();
+            }
+
+            return res;
+        }
+
+        public async Task<AadharSubmitOtpDetails> GetDigiLockerAadharDetails(AppointeeDigilockerAadhaarVarifyRequest getDigilockerAadharRequest)
+        {
+            AadharSubmitOtpDetails res = new();
+            var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Adhaar, ApiSubTYpeName.DigilockerAadhar, ApiProviderType.Signzy);
+            SignzyGetDigilockerAadharRequest request = new()
+            {
+                requestId = getDigilockerAadharRequest.RequestId,
+            };
+            StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage _apiResponse = await _apicontext.HttpPostApi(apiConfig, content, getDigilockerAadharRequest.UserId);
+            string apiResponse = await _apiResponse.Content.ReadAsStringAsync();
+            SignzyGenerateDigilockerAadharResponse response = JsonConvert.DeserializeObject<SignzyGenerateDigilockerAadharResponse>(apiResponse);
+
+            if (_apiResponse.IsSuccessStatusCode)
+            {
+                var Response = response?.Result;
+                var gender = Response?.Gender?.Trim().ElementAtOrDefault(0);
+                res.StatusCode = _apiResponse.StatusCode;
+                res.AadharNumber = Response?.Uid?.Trim();
+                res.Name = Response?.Name?.Trim();
+                res.Dob = Response?.Dob?.Trim();
+                res.Gender = gender.ToString();
+                //res.MobileNumberHash = Response?.Gender?.Trim();
+            }
+            else
+            {
+                res.StatusCode = _apiResponse.StatusCode;
+                res.ReasonPhrase = response?.Error?.Message?.ToString();
             }
 
             return res;
