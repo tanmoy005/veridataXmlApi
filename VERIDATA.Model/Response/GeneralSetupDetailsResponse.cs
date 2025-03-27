@@ -7,6 +7,7 @@
         public List<CaseSetupDetails> CaseSetupDetails { get; set; }
         public int CriticalDays { get; set; }
         public int GracePeriod { get; set; }
+        public int EmployementOverLapDay { get; set; }
         public string? AadharVerificationType { get; set; }
 
         //public int UserId { get; set; }

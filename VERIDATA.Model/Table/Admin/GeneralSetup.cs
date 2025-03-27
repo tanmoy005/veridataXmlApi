@@ -19,6 +19,9 @@ namespace VERIDATA.Model.Table.Admin
         [Column("grace_period_days", TypeName = DbDataType._integer)]
         public int? GracePeriod { get; set; }
 
+        [Column("employement_overlap_days", TypeName = DbDataType._integer)]
+        public int? OverLapDays { get; set; }
+
         [Column("aadhar_verification_type", TypeName = DbDataType._text10)]
         public string? AadharVerificationType { get; set; }
 

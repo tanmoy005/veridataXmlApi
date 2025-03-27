@@ -307,6 +307,10 @@ namespace VERIDATA.DAL.DataAccess.Context
                     {
                         generalsetupData.GracePeriod = setupRequest.GracePeriod;
                     }
+                    if (generalsetupData?.OverLapDays != setupRequest.OverlapDays)
+                    {
+                        generalsetupData.OverLapDays = setupRequest.OverlapDays;
+                    }
                     generalsetupData.UpdatedBy = setupRequest.UserId;
                     generalsetupData.UpdatedOn = DateTime.Now;
                 }

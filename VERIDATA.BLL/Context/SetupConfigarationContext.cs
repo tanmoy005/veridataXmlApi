@@ -77,6 +77,7 @@ namespace VERIDATA.BLL.Context
 
             res.CriticalDays = generalsetupdata.CriticalNoOfDays ?? 0;
             res.GracePeriod = generalsetupdata.GracePeriod ?? 0;
+            res.EmployementOverLapDay = generalsetupdata.OverLapDays ?? 0;
             res.AadharVerificationType = generalsetupdata.AadharVerificationType ?? "XML";
             res.EmailEscalationLevelDetails = levelres.OrderBy(x => x.LevelCode).ToList();
             res.EmailEscalationSetupDetails = levelcasesetupres.OrderBy(x => x.LevelCode).ToList();
