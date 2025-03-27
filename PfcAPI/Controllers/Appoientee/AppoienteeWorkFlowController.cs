@@ -78,6 +78,26 @@ namespace PfcAPI.Controllers.Appoientee
         }
 
         [Authorize]
+        [HttpPost("AppointeeProfileImageUpdate")]
+        public ActionResult AppointeeProfileImageUpdate(AppointeeProfileImageUpdateRequest AppointeeDetails)
+        {
+            if (AppointeeDetails == null)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                Task.Run(async () => await _workflowContext.PostAppointeeProfileImageAsync(AppointeeDetails)).GetAwaiter().GetResult();
+
+                return Ok(new BaseResponse<string>(HttpStatusCode.OK, "success"));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [Authorize]
         [HttpPost("PostAppointeeDetailsSave")]
         public ActionResult PostAppointeeDetailsSave(AppointeeSaveDetailsRequest AppointeeDetails)
         {

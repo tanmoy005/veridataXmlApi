@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using static VERIDATA.Model.Extensions.CustomModelValidation;
 
 namespace VERIDATA.Model.Request
@@ -134,5 +135,7 @@ namespace VERIDATA.Model.Request
         public bool? IsUanVarified { get; set; }
         public bool IsSubmit { get; set; }
         public int UserId { get; set; }
+        public IFormFile? ProfileImage { get; set; }
+        public string? FileUploaded { get; set; }
     }
 }

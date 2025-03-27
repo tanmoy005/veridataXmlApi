@@ -230,7 +230,6 @@ namespace VERIDATA.BLL.Context
                     _ => _underProcessdata.Where(x => x.statusCode >= Convert.ToInt32(reqObj.StatusCode ?? "0")).ToList()
                 };
 
-
                 if (reqObj.IssueFilter != null)
                 {
                     _underProcessViewdata = reqObj.IssueFilter == true ? _underProcessViewdata?.Where(x => x.isNoIsuueinVerification == false)?.ToList() : _underProcessViewdata?.Where(x => x.isNoIsuueinVerification == true)?.ToList();
@@ -1248,6 +1247,32 @@ namespace VERIDATA.BLL.Context
                     AppointeeFileDetailsReupload?.UserId ?? 0,
                     ActivityLog.DOCUMENTREUPLED
                 );
+            }
+        }
+
+        public async Task PostAppointeeProfileImageAsync(AppointeeProfileImageUpdateRequest AppointeeFileDetails)
+        {
+            _ = _aadhaarConfig.EncriptKey;
+            int appointeeId = AppointeeFileDetails.AppointeeId;
+            AppointeeDetails? _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
+            string mailType = string.Empty;
+            bool? isManual = null;
+            if (_appointeedetails.IsProcessed != true)
+            {
+                bool _isSubmit = _appointeedetails?.IsSubmit ?? false;
+                if (_appointeedetails != null && !_isSubmit)
+                {
+                    var profileImageUpload = new AppointeeFileDetailsRequest
+                    {
+                        AppointeeId = appointeeId,
+                        FileUploaded = AppointeeFileDetails.FileUploaded,
+                        UserId = AppointeeFileDetails.UserId,
+                        IsManualPassbookUploaded = false,
+                        IsSubmit = false
+                    };
+                    profileImageUpload.FileDetails.Add(AppointeeFileDetails.ProfileImage);
+                    await _fileContext.postappointeeUploadedFiles(profileImageUpload);
+                }
             }
         }
     }
