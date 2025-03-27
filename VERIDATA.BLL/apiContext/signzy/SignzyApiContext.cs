@@ -564,12 +564,21 @@ namespace VERIDATA.BLL.apiContext.signzy
             if (_apiResponse.IsSuccessStatusCode)
             {
                 var Response = response?.Result;
+                string url = Response.Photo;
+
+                using HttpClient client = new HttpClient();
+                byte[] fileBytes = await client.GetByteArrayAsync(url);
+
+                // Convert to Base64
+                string base64String = Convert.ToBase64String(fileBytes);
+
                 var gender = Response?.Gender?.Trim().ElementAtOrDefault(0);
                 res.StatusCode = _apiResponse.StatusCode;
                 res.AadharNumber = Response?.Uid?.Trim();
                 res.Name = Response?.Name?.Trim();
                 res.Dob = Response?.Dob?.Trim();
                 res.Gender = gender.ToString();
+                res.AadharImage = base64String;
                 //res.MobileNumberHash = Response?.Gender?.Trim();
             }
             else

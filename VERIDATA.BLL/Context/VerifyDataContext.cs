@@ -753,7 +753,10 @@ namespace VERIDATA.BLL.Context
             };
 
             response = await _candidateContext.UpdateCandidateValidateData(candidateUpdatedDataReq);
-            await _candidateContext.UpdateCandidateImageData(appointeedetail.AppointeeId ?? 0, appointeedetail.CandidateId, appointeedetail.UserId, _aadharData.ProfileImageAadhaar);
+            if (!string.IsNullOrEmpty(_aadharData.ProfileImageAadhaar))
+            {
+                await _candidateContext.UpdateCandidateImageData(appointeedetail.AppointeeId ?? 0, appointeedetail.CandidateId, appointeedetail.UserId, _aadharData.ProfileImageAadhaar);
+            }
             return response;
         }
 
