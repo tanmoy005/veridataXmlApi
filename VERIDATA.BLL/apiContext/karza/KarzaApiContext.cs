@@ -3,6 +3,7 @@ using System.Text;
 using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.Services;
+using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.Request;
 using VERIDATA.Model.Request.api.Karza;
@@ -16,11 +17,13 @@ namespace VERIDATA.BLL.apiContext.karza
     {
         private readonly IUitityContext _apicontext;
         private readonly IApiConfigService _apiConfigContext;
+        private readonly IMasterDalContext _masterDalContext;
 
-        public KarzaApiContext(IUitityContext context, IApiConfigService apiConfigContext)
+        public KarzaApiContext(IUitityContext context, IApiConfigService apiConfigContext, IMasterDalContext masterDalContext)
         {
             _apicontext = context;
             _apiConfigContext = apiConfigContext;
+            _masterDalContext = masterDalContext;
         }
 
         public async Task<PanDetails> GetPanDetails(string panNo, int userId)
@@ -424,6 +427,7 @@ namespace VERIDATA.BLL.apiContext.karza
             var epsSummary = new List<EpsContributionSummary>();
             DateTime? lastCompanyEndDate = null;
             bool isDualEmployement = false;
+            var GeneralSetup = await _masterDalContext.GetGeneralSetupData();
 
             if (uanPassbookDetails?.est_details == null)
             {
@@ -476,7 +480,13 @@ namespace VERIDATA.BLL.apiContext.karza
                     // Check if this company has consistent EPS contribution from the start date
                     if (hasEpsContribution && !isDualEmployement && lastCompanyEndDate.HasValue && startDate < lastCompanyEndDate)
                     {
-                        isDualEmployement = true;
+                        var overlapDays = (lastCompanyEndDate.Value - startDate)?.TotalDays ?? 0;
+                        if (overlapDays > (GeneralSetup?.OverLapDays ?? 0))
+                        {
+                            isDualEmployement = true;
+                        }
+
+                        //isDualEmployement = true;
                     }
                     // Check if this company has consistent EPS contribution from the start date
                     //if (hasEpsContribution && lastCompanyEndDate.HasValue && startDate < lastCompanyEndDate)

@@ -6,6 +6,7 @@ using MimeKit;
 using Newtonsoft.Json;
 using VERIDATA.BLL.apiContext.Common;
 using VERIDATA.BLL.Services;
+using VERIDATA.DAL.DataAccess.Interfaces;
 using VERIDATA.Model.DataAccess;
 using VERIDATA.Model.ExchangeModels;
 using VERIDATA.Model.Request;
@@ -14,6 +15,7 @@ using VERIDATA.Model.Request.api.Signzy;
 using VERIDATA.Model.Response;
 using VERIDATA.Model.Response.api.Karza;
 using VERIDATA.Model.Response.api.Signzy;
+using VERIDATA.Model.Table.Admin;
 using static VERIDATA.DAL.utility.CommonEnum;
 
 namespace VERIDATA.BLL.apiContext.signzy
@@ -22,11 +24,13 @@ namespace VERIDATA.BLL.apiContext.signzy
     {
         private readonly IUitityContext _apicontext;
         private readonly IApiConfigService _apiConfigContext;
+        private readonly IMasterDalContext _masterDalContext;
 
-        public SignzyApiContext(IUitityContext context, IApiConfigService apiConfigContext)
+        public SignzyApiContext(IUitityContext context, IApiConfigService apiConfigContext, IMasterDalContext masterDalContext)
         {
             _apicontext = context;
             _apiConfigContext = apiConfigContext;
+            _masterDalContext = masterDalContext;
         }
 
         public async Task<PanDetails> GetPanDetails(string panNo, int userId)
@@ -287,6 +291,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             var epsContributionSummary = new List<EpsContributionSummary>();
             DateTime? lastCompanyEndDate = null;
             bool isDualEmployement = false;
+            var GeneralSetup = await _masterDalContext.GetGeneralSetupData();
 
             if (uanPassbookDetails?.EstDetails == null)
             {
@@ -337,7 +342,12 @@ namespace VERIDATA.BLL.apiContext.signzy
                     // Check if this company has consistent EPS contribution from the start date
                     if (hasEpsContribution && !isDualEmployement && lastCompanyEndDate.HasValue && startDate < lastCompanyEndDate)
                     {
-                        isDualEmployement = true;
+                        var overlapDays = (lastCompanyEndDate.Value - startDate)?.TotalDays ?? 0;
+                        if (overlapDays > (GeneralSetup?.OverLapDays ?? 0))
+                        {
+                            isDualEmployement = true;
+                        }
+                        //isDualEmployement = true;
                     }
 
                     // Record the response for this company
