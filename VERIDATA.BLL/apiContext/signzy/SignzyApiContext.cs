@@ -39,7 +39,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Pan, ApiSubTYpeName.Pan, ApiProviderType.Signzy);
             Signzy_GetPanDetailsRequest request = new()
             {
-                panNumber = panNo,
+                number = panNo,
             };
             StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 

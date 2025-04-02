@@ -9,7 +9,7 @@ namespace VERIDATA.Model.Request.api.Signzy
         //    returnIndividualTaxComplianceInfo = "true";
         //}
 
-        public string? panNumber { get; set; }
+        public string? number { get; set; }
         //public string? returnIndividualTaxComplianceInfo { get; set; }
     }
 }
