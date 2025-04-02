@@ -229,7 +229,8 @@ namespace VERIDATA.BLL.apiContext.signzy
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.EPFO, ApiSubTYpeName.UanPassbook, ApiProviderType.Signzy);
             Signzy_UanPassbookFetchRequest request = new()
             {
-                requestId = clientId,
+                //requestId = clientId,
+                txnId = clientId,
             };
             StringContent content = new(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 

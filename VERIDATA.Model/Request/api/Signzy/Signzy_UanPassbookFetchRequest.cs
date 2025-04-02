@@ -2,7 +2,7 @@
 {
     public class Signzy_UanPassbookFetchRequest
     {
-        //public string? txnId { get; set; }
-        public string? requestId { get; set; }
+        public string? txnId { get; set; }
+        //public string? requestId { get; set; }
     }
 }
