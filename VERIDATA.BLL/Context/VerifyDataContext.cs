@@ -2061,7 +2061,8 @@ namespace VERIDATA.BLL.Context
 
             if (appointeedetail.AppointeeDetailsId != null && request != null)
             {
-                if (string.Equals(normalizedName, normalizedFullName, StringComparison.OrdinalIgnoreCase) && string.Equals(dLNumberStatus, "ACTIVE", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(normalizedName, normalizedFullName, StringComparison.OrdinalIgnoreCase))
+                //&& string.Equals(dLNumberStatus, "ACTIVE", StringComparison.OrdinalIgnoreCase))
                 //&& (appointeedetail?.DateOfBirth == _inptdob || dOBVarified))
                 {
                     IsValid = true;
@@ -2072,10 +2073,10 @@ namespace VERIDATA.BLL.Context
                     {
                         ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.UPLOADEDNAME, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = normalizedFullName });
                     }
-                    if (!string.Equals(dLNumberStatus, "ACTIVE", StringComparison.OrdinalIgnoreCase))
-                    {
-                        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = normalizedFullName });
-                    }
+                    //    if (!string.Equals(dLNumberStatus, "ACTIVE", StringComparison.OrdinalIgnoreCase))
+                    //    {
+                    //        ReasonList.Add(new ReasonRemarks() { ReasonCode = ReasonCode.INACTIVE, Inputdata = appointeedetail?.AppointeeName, Fetcheddata = normalizedFullName });
+                    //    }
                 }
                 bool _isFatherNameValidate = !string.IsNullOrEmpty(fatherOrHusbandName) && (string.Equals(fatherOrHusbandName, dbFatherOrHusbandName, StringComparison.OrdinalIgnoreCase));
                 if (!_isFatherNameValidate && !string.IsNullOrEmpty(fatherOrHusbandName))

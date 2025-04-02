@@ -135,7 +135,7 @@ namespace VERIDATA.Model.Request
         public bool? IsUanVarified { get; set; }
         public bool IsSubmit { get; set; }
         public int UserId { get; set; }
-        public IFormFile? ProfileImage { get; set; }
-        public string? FileUploaded { get; set; }
+        //public IFormFile? ProfileImage { get; set; }
+        //public string? FileUploaded { get; set; }
     }
 }

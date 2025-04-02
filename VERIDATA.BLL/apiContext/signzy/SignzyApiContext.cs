@@ -494,6 +494,7 @@ namespace VERIDATA.BLL.apiContext.signzy
 
         public async Task<DrivingLicenseDetails> GetDrivingLicenseDetails(string? number, DateTime dob, int userId)
         {
+
             DrivingLicenseDetails res = new();
             var apiConfig = await _apiConfigContext.GetApiConfigData(ApiType.Driving, ApiSubTYpeName.DrvLicns, ApiProviderType.Signzy);
             Signzy_GetCandidateDrivingLicenseDetailsRequest request = new()
@@ -517,7 +518,7 @@ namespace VERIDATA.BLL.apiContext.signzy
             {
                 var DLResult = response?.Result;
                 res.StatusCode = _apiResponse.StatusCode;
-                res.LicenseStatus = DLResult.DetailsOfDrivingLicence?.Status;
+                res.LicenseStatus = DLResult.DetailsOfDrivingLicence?.Status?? "";
                 res.Name = DLResult.DetailsOfDrivingLicence?.Name;
                 res.FatherOrHusbandName = DLResult.DetailsOfDrivingLicence?.FatherOrHusbandName;
                 res.Dob = DLResult.Dob;
