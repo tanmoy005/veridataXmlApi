@@ -971,7 +971,7 @@ namespace VERIDATA.BLL.Context
                     // Step 1: Check if callback data is available in cache
                     _apiResponse = await _signzyApiContext.GetPassbook(reqObj.OtpDetails.ClientId, reqObj.UserId);
                     _passBookData = _apiResponse?.SignzyPassbkdata;
-                    if (_passBookData != null || _apiResponse.StatusCode != HttpStatusCode.OK)
+                    if (_passBookData?.EmployeeDetails != null || _apiResponse.StatusCode != HttpStatusCode.OK)
                     {
                         // Step 2: Return response when found
                         break;
