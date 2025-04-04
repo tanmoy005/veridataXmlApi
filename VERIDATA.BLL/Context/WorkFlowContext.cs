@@ -1,4 +1,5 @@
-﻿using VERIDATA.BLL.Interfaces;
+﻿using Microsoft.AspNetCore.Http;
+using VERIDATA.BLL.Interfaces;
 using VERIDATA.BLL.Notification.Provider;
 using VERIDATA.BLL.utility;
 using VERIDATA.DAL.DataAccess.Interfaces;
@@ -572,7 +573,7 @@ namespace VERIDATA.BLL.Context
                 if ((AppointeeFileDetails.IsSubmit ?? false) && !_isSubmit)
                 {
                     //if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsPanVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false))
-                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false) && (_appointeedetails.IsPoliceVarified ?? false))
+                    if ((_appointeedetails?.IsUanVarified ?? false) && (_appointeedetails.IsAadhaarVarified ?? false) && (_appointeedetails.IsFNameVarified ?? false)) //&& (_appointeedetails.IsPoliceVarified ?? false)
                     {
                         mailType = MailType.AutoApprove;
                         await DataUploadAndApproved(_appointeedetails.AppointeeId, AppointeeFileDetails?.UserId ?? 0, true);//isapprove set true
@@ -1257,6 +1258,7 @@ namespace VERIDATA.BLL.Context
             AppointeeDetails? _appointeedetails = await _dbContextCandiate.GetAppinteeDetailsById(appointeeId);
             string mailType = string.Empty;
             bool? isManual = null;
+            IFormFile file = AppointeeFileDetails.ProfileImage;
             if (_appointeedetails.IsProcessed != true)
             {
                 bool _isSubmit = _appointeedetails?.IsSubmit ?? false;
@@ -1268,9 +1270,10 @@ namespace VERIDATA.BLL.Context
                         FileUploaded = AppointeeFileDetails.FileUploaded,
                         UserId = AppointeeFileDetails.UserId,
                         IsManualPassbookUploaded = false,
-                        IsSubmit = false
+                        IsSubmit = false,
+                        FileDetails = new List<IFormFile>()
                     };
-                    profileImageUpload.FileDetails.Add(AppointeeFileDetails.ProfileImage);
+                    profileImageUpload.FileDetails.Add(file);
                     await _fileContext.postappointeeUploadedFiles(profileImageUpload);
                 }
             }
