@@ -680,7 +680,7 @@ namespace VERIDATA.BLL.apiContext.karza
                 if (statusCode == (int)KarzaStatusCode.Invalid || statusCode == (int)KarzaStatusCode.NotFound)
                 {
                     res.StatusCode = HttpStatusCode.BadRequest;
-                    res.ReasonPhrase = "Invalid PAN Number or PAN number not found";
+                    res.ReasonPhrase = "Invalid Account Number or Account number not found";
                 }
                 else
                 {
